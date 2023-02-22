@@ -1,0 +1,21 @@
+{
+  "compilerOptions": {
+    "outDir": "./dist",
+    "target": "es5",
+    "module": "es6",
+    "strict": true,
+    "jsx": "preserve",
+    "noImplicitAny": true,
+    "lib": ["DOM", "ES5", "ES2015"],
+    "allowJs": true,
+    "esModuleInterop": true,
+    "allowSyntheticDefaultImports": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"],
+  "extends": "./tsconfig.path.json"
+}

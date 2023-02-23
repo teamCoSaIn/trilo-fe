@@ -1,3 +1,4 @@
+const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const { merge } = require('webpack-merge');
 
@@ -12,5 +13,23 @@ module.exports = merge(common, {
         use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
     ],
+  },
+  plugins: [new MiniCssExtractPlugin()],
+  optimization: {
+    usedExports: true,
+    minimize: true,
+    minimizer: [
+      new TerserPlugin({
+        terserOptions: {
+          compress: {
+            drop_console: true,
+          },
+        },
+      }),
+      new CssMinimizerPlugin(),
+    ],
+    splitChunks: {
+      chunks: 'all',
+    },
   },
 });

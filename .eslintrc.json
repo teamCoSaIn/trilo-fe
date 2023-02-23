@@ -1,7 +1,6 @@
 {
   "env": { "browser": true, "es2021": true, "node": true },
-
-  "plugins": ["react", "@typescript-eslint", "prettier", "import"],
+  "plugins": ["react", "@typescript-eslint", "import"],
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
@@ -15,10 +14,10 @@
   "parserOptions": {
     "ecmaFeatures": { "jsx": true },
     "ecmaVersion": "latest",
-    "sourceType": "module"
+    "sourceType": "module",
+    "project": "./tsconfig.json"
   },
   "rules": {
-    "prettier/prettier": "error",
     "import/order": [
       "error",
       {
@@ -30,10 +29,10 @@
         "alphabetize": { "order": "asc", "caseInsensitive": true },
         "newlines-between": "always"
       }
-    ]
+    ],
+    "@typescript-eslint/no-var-requires": "off"
   },
   "settings": {
-    "import/resolver": { "webpack": {}, "typescript": {} },
-    "import/parsers": { "@typescript-eslint/parser": [".ts", ".tsx"] }
+    "import/resolver": { "webpack": {}, "typescript": {} }
   }
 }

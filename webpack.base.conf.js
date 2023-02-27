@@ -16,10 +16,12 @@ dotenv.config({
 
 module.exports = {
   name: 'react-typescript',
-  entry: path.resolve(__dirname, 'src/index.tsx'),
+  entry: {
+    app: path.resolve(__dirname, 'src/index.tsx')
+  },
   output: {
     path: path.join(__dirname, 'dist'),
-    filename: 'app.js',
+    filename: '[name].bundle.js',
     publicPath: '/',
   },
   resolve: {

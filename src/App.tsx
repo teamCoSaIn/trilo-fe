@@ -1,7 +1,15 @@
+import { RecoilRoot } from 'recoil';
+
 import Router from '@/Router';
+import GlobalStyle from '@/styles/GlobalStyle';
 
 const App = () => {
-  return <Router />;
+  return (
+    <RecoilRoot>
+      <GlobalStyle />
+      <Router />
+    </RecoilRoot>
+  );
 };
 
 export default App;

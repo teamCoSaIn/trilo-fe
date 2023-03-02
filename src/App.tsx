@@ -1,16 +1,7 @@
-import styled from 'styled-components';
+import Router from '@/Router';
 
-function App() {
-  return (
-    <>
-      <div className="app">TriLo 사이트 입니당! ^0^b</div>
-      <StyledDiv>styled div</StyledDiv>
-    </>
-  );
-}
-
-const StyledDiv = styled.div`
-  color: blue;
-`;
+const App = () => {
+  return <Router />;
+};
 
 export default App;

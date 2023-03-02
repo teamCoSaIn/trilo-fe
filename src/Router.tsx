@@ -1,10 +1,6 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import Layout from '@/components/Layout';
-import Home from '@/pages/Home';
-import Login from '@/pages/Login';
-import NotFound from '@/pages/NotFound';
-import User from '@/pages/User';
+import { Layout, User, Home, Login, NotFound } from '@/pages';
 
 const Router = () => {
   return (

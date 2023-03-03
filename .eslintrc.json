@@ -40,7 +40,8 @@
         "unnamedComponents": "arrow-function"
       }
     ],
-    "arrow-body-style": "off"
+    "arrow-body-style": "off",
+    "import/no-extraneous-dependencies": "off"
   },
   "settings": {
     "import/resolver": { "webpack": {}, "typescript": {} }

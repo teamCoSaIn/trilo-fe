@@ -1,17 +1,11 @@
-import { useQuery } from '@tanstack/react-query';
 import styled from 'styled-components';
-
-import OAUTH_API from '@/api/oauth';
 
 interface OAuthBtnProps {
   authorizationServer: string;
+  authUrl: string;
 }
 
-const OAuthBtn = ({ authorizationServer }: OAuthBtnProps) => {
-  const { data: authUrl } = useQuery(['login-uri', authorizationServer], () =>
-    OAUTH_API.LoginUri<string>(authorizationServer)
-  );
-
+const OAuthBtn = ({ authorizationServer, authUrl }: OAuthBtnProps) => {
   return (
     <ButtonBox>
       <a href={authUrl}>{authorizationServer}</a>

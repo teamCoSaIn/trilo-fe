@@ -1,9 +1,9 @@
 import client from '@/api/core';
 
-const loginUri = async <Response = unknown>(authorizationServer: string) => {
+const loginUri = async <Response = unknown>() => {
   const res = await client<Response>({
     method: 'get',
-    url: `/oauth-login/${authorizationServer}`,
+    url: `/oauth-loginUrl/`,
   });
   return res.data;
 };

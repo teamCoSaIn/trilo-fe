@@ -5,38 +5,6 @@ const sleep = (ms: number) =>
     setTimeout(r, ms);
   });
 
-const getLoginUrlByAuthName = rest.get(
-  '/oauth-login/:authName',
-  async (req, res, ctx) => {
-    const { authName } = req.params;
-    let authUrl;
-    switch (authName) {
-      case 'google':
-        await sleep(3000);
-        authUrl = 'https://www.google.com';
-        break;
-      case 'naver':
-        await sleep(1000);
-        authUrl = 'https://www.naver.com';
-        return res(
-          // Send a valid HTTP status code
-          ctx.status(403),
-          // And a response body, if necessary
-          ctx.json({
-            errorMessage: `url not found`,
-          })
-        );
-        break;
-      case 'kakao':
-        authUrl = 'https://www.kakaocorp.com';
-        break;
-      default:
-        authUrl = 'http://localhost:3000';
-    }
-
-    return res(ctx.json(authUrl));
-  }
-);
 let error = true;
 const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
   await sleep(1000);
@@ -59,5 +27,19 @@ const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
   return res(ctx.json(authTable));
 });
 
-const handlers = [getLoginUrl];
+const getAccessToken = rest.get('/oauth-login', async (req, res, ctx) => {
+  const oauthCode = req.url.searchParams.get('code');
+  return res(
+    ctx.json({
+      token_type: `${oauthCode}`,
+      expires_in: 86400,
+      access_token:
+        'AfRHlYzZT2ixtT7uZrj60d6zW5M2hplKhlfWv8ItMyMPrldoXSJ48p9azCLA7JGa8VdVGIPc',
+      scope: 'photo offline_access',
+      refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+    })
+  );
+});
+
+const handlers = [getLoginUrl, getAccessToken];
 export default handlers;

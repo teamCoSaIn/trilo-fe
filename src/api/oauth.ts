@@ -1,7 +1,8 @@
-import client from '@/api/core';
+import axios from '@/api/core';
 
-const loginUri = async <Response = unknown>() => {
-  const res = await client<Response>({
+// 백엔드 서버에 OAuth 로그인 url 요청
+export const getLoginUri = async <Response = unknown>() => {
+  const res = await axios<Response>({
     method: 'get',
     url: `/oauth-loginUrl/`,
   });

@@ -1,10 +1,10 @@
-import axios from 'axios';
+import Axios from 'axios';
 
 const BASE_URL = process.env.API_SERVER;
 
-const client = axios.create({
+const axios = Axios.create({
   baseURL: BASE_URL,
   withCredentials: true,
 });
 
-export default client;
+export default axios;

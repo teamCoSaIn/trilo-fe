@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Logo from '@/components/common/Logo';
-import UserStatus, { UserStatusTypes } from '@/state/UserStatus';
+import UserStatus, { UserStatusTypes } from '@/state/userStatus';
 import { HEADER_HEIGHT } from '@/styles/constants';
 
 const Header = () => {

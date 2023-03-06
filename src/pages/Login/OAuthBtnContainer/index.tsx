@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 
-import OAUTH_API from '@/api/oauth';
+import HTTP from '@/api';
 import OAuthBtn from '@/pages/Login/OAuthBtn';
 
 interface OAuthUri {

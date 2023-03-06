@@ -8,8 +8,12 @@ interface OAuthUri {
 }
 
 const OAuthBtnContainer = () => {
-  const { data: authUrl } = useQuery(['login-uri'], () =>
-    OAUTH_API.LoginUri<OAuthUri>()
+  const { data: authUrl } = useQuery(
+    ['login-uri'],
+    () => HTTP.getLoginUri<OAuthUri>(),
+    {
+      suspense: true,
+    }
   );
 
   const OAuthBtnList = !authUrl

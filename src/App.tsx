@@ -9,7 +9,6 @@ import worker from './mocks/browser';
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      suspense: true,
       retry: false,
     },
   },

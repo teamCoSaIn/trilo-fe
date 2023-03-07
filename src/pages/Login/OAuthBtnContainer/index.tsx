@@ -3,14 +3,16 @@ import { useQuery } from '@tanstack/react-query';
 import HTTP from '@/api';
 import OAuthBtn from '@/pages/Login/OAuthBtn';
 
-interface OAuthUri {
-  [name: string]: string;
+interface OAuthUriResponse {
+  id: number;
+  name: string;
+  url: string;
 }
 
 const OAuthBtnContainer = () => {
   const { data: authUrl } = useQuery(
     ['login-uri'],
-    () => HTTP.getLoginUri<OAuthUri>(),
+    () => HTTP.getLoginUri<OAuthUriResponse[]>(),
     {
       suspense: true,
     }
@@ -18,14 +20,8 @@ const OAuthBtnContainer = () => {
 
   const OAuthBtnList = !authUrl
     ? null
-    : Object.keys(authUrl).map((name: keyof OAuthUri) => {
-        return (
-          <OAuthBtn
-            key={name}
-            authorizationServer={name as string}
-            authUrl={authUrl[name]}
-          />
-        );
+    : authUrl.map(({ id, name, url }) => {
+        return <OAuthBtn key={id} authorizationServer={name} authUrl={url} />;
       });
   return <div>{OAuthBtnList}</div>;
 };

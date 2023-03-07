@@ -19,12 +19,14 @@ const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
       })
     );
   }
-  const authTable = {
-    kakao: 'https://www.kakaocorp.com',
-    google: 'https://www.google.com',
-    naver: 'https://www.naver.com',
-  };
-  return res(ctx.json(authTable));
+
+  const authArr = [
+    { name: 'google', url: 'https://www.google.com', id: 1 },
+    { name: 'naver', url: 'https://www.kakaocorp.com', id: 2 },
+    { name: 'kakao', url: 'https://www.naver.com', id: 3 },
+  ];
+
+  return res(ctx.json(authArr));
 });
 
 const getAccessToken = rest.get('/oauth-login', async (req, res, ctx) => {

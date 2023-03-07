@@ -1,8 +1,22 @@
 import axios from '@/api/core';
 
+interface OAuthUriResponse {
+  id: number;
+  name: string;
+  url: string;
+}
+
+interface AccessTokenResponse {
+  token_type: string;
+  expires_in: number;
+  access_token: string;
+  scope: string;
+  refresh_token: string;
+}
+
 // 백엔드 서버에 OAuth 로그인 url 요청
-export const getLoginUri = async <Response = unknown>() => {
-  const res = await axios<Response>({
+export const getLoginUri = async () => {
+  const res = await axios<OAuthUriResponse[]>({
     method: 'get',
     url: `/oauth-loginUrl/`,
   });
@@ -10,8 +24,8 @@ export const getLoginUri = async <Response = unknown>() => {
 };
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
-export const getAccessToken = async <Response = unknown>(oauthCode: string) => {
-  const res = await axios<Response>({
+export const getAccessToken = async (oauthCode: string) => {
+  const res = await axios<AccessTokenResponse>({
     method: 'get',
     url: `/oauth-login?code=${oauthCode}`,
   });

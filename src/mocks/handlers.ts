@@ -31,6 +31,7 @@ const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
 
 const getAccessToken = rest.get('/oauth-login', async (req, res, ctx) => {
   const oauthCode = req.url.searchParams.get('code');
+  await sleep(1000);
   return res(
     ctx.json({
       token_type: `${oauthCode}`,

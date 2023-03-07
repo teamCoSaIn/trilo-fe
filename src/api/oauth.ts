@@ -15,6 +15,7 @@ export const getAccessToken = async <Response = unknown>(oauthCode: string) => {
     method: 'get',
     url: `/oauth-login?code=${oauthCode}`,
   });
+  axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
   return res.data;
 };
 

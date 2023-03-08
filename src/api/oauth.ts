@@ -45,3 +45,12 @@ export const refreshAccessToken = async () => {
   axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
   return res.data;
 };
+
+export const logout = async () => {
+  const res = await axios<AccessTokenResponse>({
+    method: 'get',
+    url: `/auth/logout`,
+    requireAuth: false,
+  });
+  return res.data;
+};

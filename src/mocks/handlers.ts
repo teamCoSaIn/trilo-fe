@@ -44,5 +44,22 @@ const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
   );
 });
 
-const handlers = [getLoginUrl, getAccessToken];
+const refreshAccessToken = rest.get(
+  '/api/auth/regeneration',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    return res(
+      ctx.json({
+        token_type: 'Bearer Token',
+        expires_in: 86400,
+        access_token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.E9bQ6QAil4HpH825QC5PtjNGEDQTtMpcj0SO2W8vmag',
+        scope: 'photo offline_access',
+        refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+      })
+    );
+  }
+);
+
+const handlers = [getLoginUrl, getAccessToken, refreshAccessToken];
 export default handlers;

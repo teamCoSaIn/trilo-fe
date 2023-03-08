@@ -36,10 +36,12 @@ export const getAccessToken = async (oauthCode: string) => {
 };
 
 // 만료된 액세스 토큰을 새로 고침하는 함수
-// export const refreshAccessToken = async <Response = unknown>() => {
-//   const res = await axios<Response>({
-//     method: 'get',
-//     url: ``,
-//   });
-//   return res.data;
-// };
+export const refreshAccessToken = async () => {
+  const res = await axios<AccessTokenResponse>({
+    method: 'get',
+    url: `/auth/regeneration`,
+    requireAuth: false,
+  });
+  axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
+  return res.data;
+};

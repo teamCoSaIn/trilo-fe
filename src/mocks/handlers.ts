@@ -6,7 +6,7 @@ const sleep = (ms: number) =>
   });
 
 let error = true;
-const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
+const getLoginUrl = rest.get('/api/oauth-loginUrl', async (req, res, ctx) => {
   await sleep(1000);
   if (error) {
     error = false;
@@ -29,7 +29,7 @@ const getLoginUrl = rest.get('/oauth-loginUrl', async (req, res, ctx) => {
   return res(ctx.json(authArr));
 });
 
-const getAccessToken = rest.get('/oauth-login', async (req, res, ctx) => {
+const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
   const oauthCode = req.url.searchParams.get('code');
   await sleep(1000);
   return res(
@@ -37,7 +37,7 @@ const getAccessToken = rest.get('/oauth-login', async (req, res, ctx) => {
       token_type: `${oauthCode}`,
       expires_in: 86400,
       access_token:
-        'AfRHlYzZT2ixtT7uZrj60d6zW5M2hplKhlfWv8ItMyMPrldoXSJ48p9azCLA7JGa8VdVGIPc',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.E9bQ6QAil4HpH825QC5PtjNGEDQTtMpcj0SO2W8vmag',
       scope: 'photo offline_access',
       refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
     })

@@ -19,6 +19,7 @@ export const getLoginUri = async () => {
   const res = await axios<OAuthUriResponse[]>({
     method: 'get',
     url: `/oauth-loginUrl/`,
+    requireAuth: false,
   });
   return res.data;
 };
@@ -28,6 +29,7 @@ export const getAccessToken = async (oauthCode: string) => {
   const res = await axios<AccessTokenResponse>({
     method: 'get',
     url: `/oauth-login?code=${oauthCode}`,
+    requireAuth: true,
   });
   axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
   return res.data;

@@ -36,6 +36,9 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
+    if (response.data?.access_token) {
+      axios.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
+    }
     return response;
   },
   error => {

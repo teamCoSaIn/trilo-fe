@@ -21,7 +21,11 @@ const getLoginUrl = rest.get('/api/oauth-loginUrl', async (req, res, ctx) => {
   }
 
   const authArr = [
-    { name: 'google', url: 'https://www.google.com', id: 1 },
+    {
+      name: 'google',
+      url: 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=617586228502-jt90dtphens9q13kekbgjbm1pljptju6.apps.googleusercontent.com&scope=profile email&state=B59MKaVW5uj5g7u49_6Prv0TYwgManDktWldh23NJXo=&redirect_uri=http://localhost:3000/callback&service=lso&o2v=2&flowName=GeneralOAuthFlow',
+      id: 1,
+    },
     { name: 'naver', url: 'https://www.kakaocorp.com', id: 2 },
     { name: 'kakao', url: 'https://www.naver.com', id: 3 },
   ];
@@ -31,7 +35,7 @@ const getLoginUrl = rest.get('/api/oauth-loginUrl', async (req, res, ctx) => {
 
 const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
   const oauthCode = req.url.searchParams.get('code');
-  await sleep(1000);
+  await sleep(2000);
   return res(
     ctx.json({
       token_type: `${oauthCode}`,

@@ -31,7 +31,6 @@ export const getAccessToken = async (oauthCode: string) => {
     url: `/oauth-login?code=${oauthCode}`,
     requireAuth: true,
   });
-  axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
   return res.data;
 };
 
@@ -42,7 +41,6 @@ export const refreshAccessToken = async () => {
     url: `/auth/regeneration`,
     requireAuth: false,
   });
-  axios.defaults.headers.common.Authorization = `Bearer ${res.data.access_token}`;
   return res.data;
 };
 

@@ -1,6 +1,7 @@
 import Axios from 'axios';
 
-import { refreshAccessToken } from '@/api/oauth';
+// eslint-disable-next-line import/no-cycle
+import { logout, refreshAccessToken } from '@/api/oauth';
 import isAccessTokenExpired from '@/utils/auth';
 
 const BASE_URL = process.env.API_SERVER;

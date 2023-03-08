@@ -1,3 +1,4 @@
+// eslint-disable-next-line import/no-cycle
 import axios from '@/api/core';
 
 interface OAuthUriResponse {

@@ -51,5 +51,6 @@ export const logout = async () => {
     url: `/auth/logout`,
     requireAuth: false,
   });
+  delete axios.defaults.headers.common.Authorization;
   return res.data;
 };

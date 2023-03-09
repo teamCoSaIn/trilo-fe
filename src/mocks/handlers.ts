@@ -84,5 +84,18 @@ const test2 = rest.get('/api/test2', async (req, res, ctx) => {
   return res(ctx.json({}));
 });
 
-const handlers = [getLoginUrl, getAccessToken, refreshAccessToken, test, test2];
+const logout = rest.get('/api/auth/logout', async (req, res, ctx) => {
+  // await sleep(2000);
+  // cookie에서 refresh token 삭제
+  return res(ctx.json({}));
+});
+
+const handlers = [
+  getLoginUrl,
+  getAccessToken,
+  refreshAccessToken,
+  test,
+  test2,
+  logout,
+];
 export default handlers;

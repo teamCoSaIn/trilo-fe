@@ -1,3 +1,4 @@
+import HTTP from '@/api';
 import axios from '@/api/core';
 
 const Home = () => {
@@ -22,6 +23,15 @@ const Home = () => {
         }}
       >
         버튼
+      </button>
+      <br />
+      <button
+        type="button"
+        onClick={() => {
+          HTTP.logout();
+        }}
+      >
+        로그아웃
       </button>
     </div>
   );

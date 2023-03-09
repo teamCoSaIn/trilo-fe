@@ -51,13 +51,13 @@ const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
 const refreshAccessToken = rest.get(
   '/api/auth/regeneration',
   async (req, res, ctx) => {
-    await sleep(1000);
+    await sleep(5000);
     return res(
       ctx.json({
         token_type: 'Bearer Token',
         expires_in: 86400,
         access_token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.E9bQ6QAil4HpH825QC5PtjNGEDQTtMpcj0SO2W8vmag',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
         scope: 'photo offline_access',
         refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
       })
@@ -65,5 +65,24 @@ const refreshAccessToken = rest.get(
   }
 );
 
-const handlers = [getLoginUrl, getAccessToken, refreshAccessToken];
+const test = rest.get('/api/test', async (req, res, ctx) => {
+  await sleep(2000);
+  return res(
+    ctx.json({
+      token_type: 'Bearer Token',
+      expires_in: 86400,
+      access_token:
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjE1MTYyMzAwMH0.Q',
+      scope: 'photo offline_access',
+      refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+    })
+  );
+});
+
+const test2 = rest.get('/api/test2', async (req, res, ctx) => {
+  // await sleep(2000);
+  return res(ctx.json({}));
+});
+
+const handlers = [getLoginUrl, getAccessToken, refreshAccessToken, test, test2];
 export default handlers;

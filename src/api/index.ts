@@ -1,9 +1,15 @@
-import { getLoginUri, getAccessToken, logout } from '@/api/oauth';
+import {
+  getLoginUri,
+  getAccessToken,
+  logout,
+  refreshAccessToken,
+} from '@/api/oauth';
 
 const HTTP = {
   getLoginUri,
   getAccessToken,
   logout,
+  refreshAccessToken,
 };
 
 export default HTTP;

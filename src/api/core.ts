@@ -23,8 +23,9 @@ axios.interceptors.request.use(
       const accessToken = axios.defaults.headers.common.Authorization;
       // Access token 만료 여부 체크
       if (
-        typeof accessToken === 'string' &&
-        isAccessTokenExpired(accessToken)
+        (typeof accessToken === 'string' &&
+          isAccessTokenExpired(accessToken)) ||
+        !accessToken
       ) {
         try {
           // 갱신 중 다른 갱신 요청 방지

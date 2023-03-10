@@ -1,10 +1,10 @@
 import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
-import Header from '@/components/Layout/Header';
+import Header from '@/components/Layouts/HeaderLayout/Header';
 import { HEADER_HEIGHT } from '@/styles/constants';
 
-const Layout = () => {
+const HeaderLayout = () => {
   return (
     <>
       <Header />
@@ -15,7 +15,7 @@ const Layout = () => {
   );
 };
 
-export default Layout;
+export default HeaderLayout;
 
 const Container = styled.div`
   color: blue;

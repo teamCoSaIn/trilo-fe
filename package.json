@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/teamCoSaIn/trilo-fe#readme",
   "dependencies": {
+    "@mui/material": "^5.11.12",
+    "@mui/styled-engine-sc": "^5.11.11",
     "@tanstack/react-query": "^4.24.10",
     "axios": "^1.3.4",
     "dotenv": "^16.0.1",

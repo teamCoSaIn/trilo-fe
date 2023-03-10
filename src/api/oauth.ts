@@ -15,6 +15,14 @@ interface AccessTokenResponse {
   refresh_token: string;
 }
 
+interface CheckRefreshTokenResponse {
+  response?: boolean;
+}
+
+interface LogoutResponse {
+  response?: boolean;
+}
+
 // 백엔드 서버에 OAuth 로그인 url 요청
 export const getLoginUri = async () => {
   const res = await axios<OAuthUriResponse[]>({
@@ -30,7 +38,7 @@ export const getAccessToken = async (oauthCode: string) => {
   const res = await axios<AccessTokenResponse>({
     method: 'get',
     url: `/oauth-login?code=${oauthCode}`,
-    requireAuth: true,
+    requireAuth: false,
   });
   return res.data;
 };
@@ -45,8 +53,17 @@ export const refreshAccessToken = async () => {
   return res.data;
 };
 
+export const checkRefreshToken = async () => {
+  const res = await axios<CheckRefreshTokenResponse>({
+    method: 'get',
+    url: `/auth/check`,
+    requireAuth: false,
+  });
+  return res.data;
+};
+
 export const logout = async () => {
-  const res = await axios<AccessTokenResponse>({
+  const res = await axios<LogoutResponse>({
     method: 'get',
     url: `/auth/logout`,
     requireAuth: false,

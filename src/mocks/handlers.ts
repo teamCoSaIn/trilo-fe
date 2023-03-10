@@ -23,7 +23,7 @@ const getLoginUrl = rest.get('/api/oauth-loginUrl', async (req, res, ctx) => {
   const authArr = [
     {
       name: 'google',
-      url: 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=617586228502-jt90dtphens9q13kekbgjbm1pljptju6.apps.googleusercontent.com&scope=profile email&state=B59MKaVW5uj5g7u49_6Prv0TYwgManDktWldh23NJXo=&redirect_uri=http://localhost:3000/callback&service=lso&o2v=2&flowName=GeneralOAuthFlow',
+      url: 'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=617586228502-jt90dtphens9q13kekbgjbm1pljptju6.apps.googleusercontent.com&scope=profile email&state=B59MKaVW5uj5g7u49_6Prv0TYwgManDktWldh23NJXo=&redirect_uri=http://localhost:3000/oauth2/callback&service=lso&o2v=2&flowName=GeneralOAuthFlow',
       id: 1,
     },
     { name: 'naver', url: 'https://www.kakaocorp.com', id: 2 },
@@ -41,7 +41,7 @@ const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
       token_type: `${oauthCode}`,
       expires_in: 86400,
       access_token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiZXhwIjoxNTE2MjM5MDIyfQ.E9bQ6QAil4HpH825QC5PtjNGEDQTtMpcj0SO2W8vmag',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
       scope: 'photo offline_access',
       refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
     })
@@ -51,7 +51,7 @@ const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
 const refreshAccessToken = rest.get(
   '/api/auth/regeneration',
   async (req, res, ctx) => {
-    await sleep(5000);
+    await sleep(1000);
     return res(
       ctx.json({
         token_type: 'Bearer Token',
@@ -65,6 +65,17 @@ const refreshAccessToken = rest.get(
   }
 );
 
+const checkRefreshToken = rest.get('/api/auth/check', async (req, res, ctx) => {
+  await sleep(1000);
+  // return res(
+  //   ctx.json({
+  //     response: false,
+  //   })
+  // );
+  return res(ctx.json({ response: true }));
+});
+
+// 만료 token 요청 api
 const test = rest.get('/api/test', async (req, res, ctx) => {
   await sleep(2000);
   return res(
@@ -97,5 +108,6 @@ const handlers = [
   test,
   test2,
   logout,
+  checkRefreshToken,
 ];
 export default handlers;

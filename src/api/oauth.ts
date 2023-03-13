@@ -1,12 +1,6 @@
 // eslint-disable-next-line import/no-cycle
 import axios from '@/api/core';
 
-interface OAuthUriResponse {
-  id: number;
-  name: string;
-  url: string;
-}
-
 interface AccessTokenResponse {
   token_type: string;
   expires_in: number;
@@ -24,10 +18,10 @@ interface LogoutResponse {
 }
 
 // 백엔드 서버에 OAuth 로그인 url 요청
-export const getLoginUri = async () => {
-  const res = await axios<OAuthUriResponse[]>({
+export const getLoginUri = async (oauthServer: string) => {
+  const res = await axios<string>({
     method: 'get',
-    url: `/oauth-loginUrl/`,
+    url: `/oauth-loginUrl/${oauthServer}`,
     requireAuth: false,
   });
   return res.data;

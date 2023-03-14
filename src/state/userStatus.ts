@@ -3,12 +3,12 @@ import { atom } from 'recoil';
 export const enum UserStatusTypes {
   LOGIN = 'login',
   VISITOR = 'visitor',
-  NONE = 'none',
+  LOGOUT = 'logout',
 }
 
 const UserStatus = atom<UserStatusTypes>({
   key: 'userStatus',
-  default: UserStatusTypes.NONE,
+  default: UserStatusTypes.LOGOUT,
 });
 
 export default UserStatus;

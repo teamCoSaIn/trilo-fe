@@ -50,10 +50,9 @@ const MyProfileBtn = () => {
     // logout 요청 보내고, user status 변경,
     try {
       await HTTP.logout();
-      setUserStatus(UserStatusTypes.NONE);
+      setUserStatus(UserStatusTypes.LOGOUT);
       setOpen(false);
     } catch (e) {
-      // 고민 더 해보기...
       alert('logout 이 안됐음.');
     }
   };

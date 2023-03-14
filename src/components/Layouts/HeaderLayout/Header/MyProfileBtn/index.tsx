@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-props-no-spreading */
 import Button from '@mui/material/Button';
 import ClickAwayListener from '@mui/material/ClickAwayListener';
 import Grow from '@mui/material/Grow';
@@ -99,7 +100,6 @@ const MyProfileBtn = () => {
         >
           {({ TransitionProps, placement }) => (
             <Grow
-              /* eslint-disable-next-line react/jsx-props-no-spreading */
               {...TransitionProps}
               style={{
                 transformOrigin:

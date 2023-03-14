@@ -1,6 +1,6 @@
+import Callback from '@/pages/Callback';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
-import NotFound from '@/pages/NotFound';
 import User from '@/pages/User';
 
-export { Home, Login, NotFound, User };
+export { Home, Login, User, Callback };

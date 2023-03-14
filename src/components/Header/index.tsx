@@ -3,7 +3,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Logo from '@/components/common/Logo';
-import MyProfileBtn from '@/components/Layouts/HeaderLayout/Header/MyProfileBtn';
+import MyProfileBtn from '@/components/MyProfileBtn';
 import RedirectUrl from '@/state/redirectUrl';
 import UserStatus, { UserStatusTypes } from '@/state/userStatus';
 import { HEADER_HEIGHT } from '@/styles/constants';

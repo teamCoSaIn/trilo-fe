@@ -28,7 +28,7 @@ const Header = () => {
   return (
     <HeaderBox>
       <Logo />
-      <MyTripListBtn to="/user">나의 여행 계획</MyTripListBtn>
+      <MyTripListBtn to="/trip-list">나의 여행 계획</MyTripListBtn>
       {userStatusBtn}
     </HeaderBox>
   );

@@ -10,13 +10,17 @@ interface RouteProps {
 
 const MustLogin = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
-  return userStatus === UserStatusTypes.LOGIN ? page : <Navigate to="/login" />;
+  return userStatus === UserStatusTypes.LOGIN ? (
+    page
+  ) : (
+    <Navigate to="/login" replace />
+  );
 };
 
 const ExceptLogout = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
   return userStatus === UserStatusTypes.LOGOUT ? (
-    <Navigate to="/login" />
+    <Navigate to="/login" replace />
   ) : (
     page
   );
@@ -24,7 +28,11 @@ const ExceptLogout = ({ page }: RouteProps) => {
 
 const ExceptLogin = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
-  return userStatus === UserStatusTypes.LOGIN ? <Navigate to="/" /> : page;
+  return userStatus === UserStatusTypes.LOGIN ? (
+    <Navigate to="/" replace />
+  ) : (
+    page
+  );
 };
 
 export { MustLogin, ExceptLogout, ExceptLogin };

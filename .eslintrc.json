@@ -41,7 +41,8 @@
       }
     ],
     "arrow-body-style": "off",
-    "import/no-extraneous-dependencies": "off"
+    "import/no-extraneous-dependencies": "off",
+    "react/jsx-no-useless-fragment": "off"
   },
   "settings": {
     "import/resolver": { "webpack": {}, "typescript": {} }

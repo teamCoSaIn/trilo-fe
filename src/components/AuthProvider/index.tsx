@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import UserStatus, { UserStatusTypes } from '@/state/userStatus';
+import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 interface AuthProviderProps {
   children: ReactNode;

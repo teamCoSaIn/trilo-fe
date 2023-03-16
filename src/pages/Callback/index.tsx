@@ -1,20 +1,21 @@
 import { useQuery } from '@tanstack/react-query';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import RedirectUrl from '@/state/redirectUrl';
-import UserStatus, { UserStatusTypes } from '@/state/userStatus';
+import REDIRECT_URL from '@/constants/route';
+import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Callback = () => {
   const [searchParams] = useSearchParams();
   const oauthCode = searchParams.get('code') || '';
-  const redirectUrl = useRecoilValue(RedirectUrl);
+
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
 
   const onSuccess = () => {
     setUserStatus(UserStatusTypes.LOGIN);
+    const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };
 

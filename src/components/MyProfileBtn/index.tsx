@@ -18,7 +18,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import UserStatus, { UserStatusTypes } from '@/state/userStatus';
+import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const MyProfileBtn = () => {
   const [open, setOpen] = useState(false);
@@ -47,13 +47,14 @@ const MyProfileBtn = () => {
   };
 
   const handleClickLogout = async () => {
-    // logout 요청 보내고, user status 변경,
+    navigate('/');
+    setOpen(false);
+
     try {
       await HTTP.logout();
       setUserStatus(UserStatusTypes.LOGOUT);
-      setOpen(false);
     } catch (e) {
-      alert('logout 이 안됐음.');
+      alert('logout fail. please retry.');
     }
   };
 

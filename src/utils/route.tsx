@@ -2,14 +2,30 @@ import { ReactElement } from 'react';
 import { Navigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 
-import UserStatus, { UserStatusTypes } from '@/state/userStatus';
+import REDIRECT_URL from '@/constants/route';
+import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 interface RouteProps {
   page: ReactElement | null;
 }
 
-const MustLogin = ({ page }: RouteProps) => {
+const EveryUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
+
+  if (userStatus === UserStatusTypes.LOGOUT) {
+    localStorage.setItem(REDIRECT_URL, window.location.pathname);
+  }
+
+  return page;
+};
+
+const OnlyLoginUser = ({ page }: RouteProps) => {
+  const userStatus = useRecoilValue(UserStatus);
+
+  if (userStatus === UserStatusTypes.LOGOUT) {
+    localStorage.setItem(REDIRECT_URL, window.location.pathname);
+  }
+
   return userStatus === UserStatusTypes.LOGIN ? (
     page
   ) : (
@@ -17,8 +33,13 @@ const MustLogin = ({ page }: RouteProps) => {
   );
 };
 
-const ExceptLogout = ({ page }: RouteProps) => {
+const ExceptLogoutUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
+
+  if (userStatus === UserStatusTypes.LOGOUT) {
+    localStorage.setItem(REDIRECT_URL, window.location.pathname);
+  }
+
   return userStatus === UserStatusTypes.LOGOUT ? (
     <Navigate to="/login" replace />
   ) : (
@@ -26,7 +47,7 @@ const ExceptLogout = ({ page }: RouteProps) => {
   );
 };
 
-const ExceptLogin = ({ page }: RouteProps) => {
+const ExceptLoginUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
   return userStatus === UserStatusTypes.LOGIN ? (
     <Navigate to="/" replace />
@@ -35,4 +56,4 @@ const ExceptLogin = ({ page }: RouteProps) => {
   );
 };
 
-export { MustLogin, ExceptLogout, ExceptLogin };
+export { EveryUser, OnlyLoginUser, ExceptLogoutUser, ExceptLoginUser };

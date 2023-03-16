@@ -1,28 +1,20 @@
 import { Link } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Logo from '@/components/common/Logo';
 import MyProfileBtn from '@/components/MyProfileBtn';
-import RedirectUrl from '@/state/redirectUrl';
-import UserStatus, { UserStatusTypes } from '@/state/userStatus';
+import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 import { HEADER_HEIGHT } from '@/styles/constants';
 
 const Header = () => {
   const userStatus = useRecoilValue(UserStatus);
-  const setRedirectUrl = useSetRecoilState(RedirectUrl);
-
-  const handleLoginBtnClick = () => {
-    setRedirectUrl(window.location.href);
-  };
 
   const userStatusBtn =
     userStatus === UserStatusTypes.LOGIN ? (
       <MyProfileBtn />
     ) : (
-      <LoginBtn to="/login" onClick={handleLoginBtnClick}>
-        로그인
-      </LoginBtn>
+      <LoginBtn to="/login">로그인</LoginBtn>
     );
 
   return (

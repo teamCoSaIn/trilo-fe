@@ -1,16 +1,23 @@
-import styled from 'styled-components';
+import { Suspense } from 'react';
 
-function App() {
-  return (
-    <>
-      <div className="app">TriLo 사이트 입니당! ^0^b</div>
-      <StyledDiv>styled div</StyledDiv>
-    </>
-  );
+import AuthProvider from '@/components/AuthProvider';
+import LoadingFallback from '@/components/AuthProvider/loadingFallback';
+import Router from '@/Router';
+
+import worker from './mocks/browser';
+
+if (process.env.NODE_ENV === 'development') {
+  worker.start();
 }
 
-const StyledDiv = styled.div`
-  color: blue;
-`;
+const App = () => {
+  return (
+    <Suspense fallback={<LoadingFallback />}>
+      <AuthProvider>
+        <Router />
+      </AuthProvider>
+    </Suspense>
+  );
+};
 
 export default App;

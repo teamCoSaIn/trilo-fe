@@ -18,8 +18,6 @@ const HeaderLayout = () => {
 export default HeaderLayout;
 
 const Container = styled.div`
-  color: blue;
   width: 100%;
   height: calc(100% - ${HEADER_HEIGHT});
-  background-color: skyblue;
 `;

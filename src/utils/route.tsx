@@ -12,7 +12,7 @@ interface RouteProps {
 const EveryUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
 
-  if (userStatus === UserStatusTypes.LOGOUT) {
+  if (userStatus !== UserStatusTypes.LOGIN) {
     localStorage.setItem(REDIRECT_URL, window.location.pathname);
   }
 
@@ -22,7 +22,7 @@ const EveryUser = ({ page }: RouteProps) => {
 const OnlyLoginUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
 
-  if (userStatus === UserStatusTypes.LOGOUT) {
+  if (userStatus !== UserStatusTypes.LOGIN) {
     localStorage.setItem(REDIRECT_URL, window.location.pathname);
   }
 
@@ -36,7 +36,7 @@ const OnlyLoginUser = ({ page }: RouteProps) => {
 const ExceptLogoutUser = ({ page }: RouteProps) => {
   const userStatus = useRecoilValue(UserStatus);
 
-  if (userStatus === UserStatusTypes.LOGOUT) {
+  if (userStatus !== UserStatusTypes.LOGIN) {
     localStorage.setItem(REDIRECT_URL, window.location.pathname);
   }
 

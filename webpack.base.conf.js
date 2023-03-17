@@ -1,6 +1,7 @@
 const path = require('path');
 
 const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+const CopyPlugin = require('copy-webpack-plugin');
 const dotenv = require('dotenv');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const webpack = require('webpack');
@@ -17,7 +18,7 @@ dotenv.config({
 module.exports = {
   name: 'react-typescript',
   entry: {
-    app: path.resolve(__dirname, 'src/index.tsx')
+    app: path.resolve(__dirname, 'src/index.tsx'),
   },
   output: {
     path: path.join(__dirname, 'dist'),
@@ -58,6 +59,13 @@ module.exports = {
     }),
     new webpack.DefinePlugin({
       'process.env': JSON.stringify(process.env),
+    }),
+    new CopyPlugin({
+      patterns: [
+        {
+          from: 'public/favicons',
+        },
+      ],
     }),
   ],
 };

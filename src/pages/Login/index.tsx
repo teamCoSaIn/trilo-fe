@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import Logo from '@/components/common/Logo';
 import OAuthBtnContainer from '@/components/OAuthBtnContainer';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
@@ -16,7 +17,8 @@ const Login = () => {
   };
 
   return (
-    <LoginButtonBox>
+    <LoginBtnBox>
+      <Logo />
       <OAuthBtnContainer />
       <VisitorBtn type="button" onClick={handleVisitorBtnClick}>
         로그인 없이 둘러보기

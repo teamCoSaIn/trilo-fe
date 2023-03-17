@@ -1,10 +1,14 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import { ReactComponent as LogoImg } from '@/assets/logo.svg';
+
 const Logo = () => {
   return (
     <LogoBox>
-      <Link to="/">Logo</Link>
+      <Link to="/">
+        <LogoImg />
+      </Link>
     </LogoBox>
   );
 };

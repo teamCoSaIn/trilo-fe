@@ -34,12 +34,19 @@ const OAuthBtnContainer = () => {
   });
 
   return (
-    <ul>
+    <Container>
       <ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
         <Suspense fallback={<LoadingFallback />}>{OAuthBtnList}</Suspense>
       </ErrorBoundary>
-    </ul>
+    </Container>
   );
 };
 
 export default OAuthBtnContainer;
+
+const Container = styled.ul`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 176px;
+`;

@@ -1,16 +1,17 @@
 import { useQuery } from '@tanstack/react-query';
-import styled from 'styled-components';
+import { ReactElement } from 'react';
 
 import HTTP from '@/api';
 
 interface OAuthBtnProps {
-  oauthServer: string;
+  oauthServerName: string;
+  oauthServerSvg: ReactElement;
 }
 
-const OAuthBtn = ({ oauthServer }: OAuthBtnProps) => {
+const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
   const { data: authUrl } = useQuery(
-    [`login-uri-${oauthServer}`],
-    () => HTTP.getLoginUri(oauthServer),
+    [`login-uri-${oauthServerName}`],
+    () => HTTP.getLoginUri(oauthServerName),
     {
       suspense: true,
       staleTime: 1000 * 5 * 60,
@@ -24,18 +25,10 @@ const OAuthBtn = ({ oauthServer }: OAuthBtnProps) => {
   };
 
   return (
-    <Button type="button" onClick={handleOAuthBtnClick}>
-      {oauthServer}
-    </Button>
+    <button type="button" onClick={handleOAuthBtnClick}>
+      {oauthServerSvg}
+    </button>
   );
 };
 
 export default OAuthBtn;
-
-const Button = styled.button`
-  padding: 10px;
-  border: 1px solid black;
-  width: 100px;
-  margin-top: 20px;
-  text-align: center;
-`;

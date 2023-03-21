@@ -17,6 +17,11 @@ interface LogoutResponse {
   response?: boolean;
 }
 
+interface UserProfile {
+  nickname: string;
+  imgUrl: string;
+}
+
 // 백엔드 서버에 OAuth 로그인 url 요청
 export const getLoginUri = async (oauthServer: string) => {
   const res = await axios<string>({
@@ -63,5 +68,14 @@ export const logout = async () => {
     requireAuth: false,
   });
   delete axios.defaults.headers.common.Authorization;
+  return res.data;
+};
+
+export const getUserProfile = async () => {
+  const res = await axios<UserProfile>({
+    method: 'get',
+    url: `/user-profile`,
+    requireAuth: true,
+  });
   return res.data;
 };

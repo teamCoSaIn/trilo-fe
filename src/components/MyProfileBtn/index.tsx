@@ -1,12 +1,14 @@
 /* eslint-disable react/jsx-props-no-spreading */
-import Button from '@mui/material/Button';
-import ClickAwayListener from '@mui/material/ClickAwayListener';
-import Grow from '@mui/material/Grow';
-import MenuItem from '@mui/material/MenuItem';
-import MenuList from '@mui/material/MenuList';
-import Paper from '@mui/material/Paper';
-import Popper from '@mui/material/Popper';
-import Stack from '@mui/material/Stack';
+import {
+  Button,
+  ClickAwayListener,
+  Grow,
+  MenuItem,
+  MenuList,
+  Paper,
+  Popper,
+  Stack,
+} from '@mui/material';
 import {
   KeyboardEvent,
   SyntheticEvent,
@@ -15,9 +17,11 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue, useSetRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import HTTP from '@/api';
+import { UserProfileImgUrl } from '@/states/userProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const MyProfileBtn = () => {
@@ -25,6 +29,7 @@ const MyProfileBtn = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
+  const userProfileImgUrl = useRecoilValue(UserProfileImgUrl);
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -73,14 +78,13 @@ const MyProfileBtn = () => {
     if (prevOpen.current === true && open === false) {
       anchorRef.current!.focus();
     }
-
     prevOpen.current = open;
   }, [open]);
 
   return (
     <Stack direction="row" spacing={2}>
       <div>
-        <Button
+        <UserProfileImgBtn
           ref={anchorRef}
           id="composition-button"
           aria-controls={open ? 'composition-menu' : undefined}
@@ -88,8 +92,8 @@ const MyProfileBtn = () => {
           aria-haspopup="true"
           onClick={handleToggle}
         >
-          My Profile
-        </Button>
+          <UserProfileImg profileImgUrl={userProfileImgUrl} />
+        </UserProfileImgBtn>
         <Popper
           open={open}
           anchorEl={anchorRef.current}
@@ -108,17 +112,19 @@ const MyProfileBtn = () => {
             >
               <Paper>
                 <ClickAwayListener onClickAway={handleClose}>
-                  <MenuList
+                  <DropDownMenuList
                     autoFocusItem={open}
                     id="composition-menu"
                     aria-labelledby="composition-button"
                     onKeyDown={handleListKeyDown}
                   >
-                    <MenuItem onClick={handleClickMyAccount}>
-                      My account
-                    </MenuItem>
-                    <MenuItem onClick={handleClickLogout}>Logout</MenuItem>
-                  </MenuList>
+                    <DropDownMenuItem onClick={handleClickMyAccount}>
+                      내 정보
+                    </DropDownMenuItem>
+                    <DropDownMenuItem onClick={handleClickLogout}>
+                      로그아웃
+                    </DropDownMenuItem>
+                  </DropDownMenuList>
                 </ClickAwayListener>
               </Paper>
             </Grow>
@@ -128,5 +134,38 @@ const MyProfileBtn = () => {
     </Stack>
   );
 };
+
+const UserProfileImg = styled.img<{ profileImgUrl: string }>`
+  width: 39px;
+  height: 39px;
+  border-radius: 50%;
+  background-image: url(${props => props.profileImgUrl});
+  background-size: cover;
+`;
+
+const UserProfileImgBtn = styled(Button)`
+  width: 92px;
+  height: 94px;
+  padding: 0px;
+  &:hover {
+    background-color: #eaefff;
+  }
+`;
+
+const DropDownMenuList = styled(MenuList)`
+  width: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DropDownMenuItem = styled(MenuItem)`
+  width: 92px;
+  box-sizing: border-box;
+  display: flex;
+  justify-content: center;
+  font-size: 14px;
+`;
 
 export default MyProfileBtn;

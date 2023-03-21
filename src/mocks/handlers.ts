@@ -106,12 +106,23 @@ const logout = rest.get('/api/auth/logout', async (req, res, ctx) => {
   return res(ctx.json({}));
 });
 
+const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {
+  // 쿠키에서 RT 확인 -> 유저 판별 -> 응답 전송
+  return res(
+    ctx.json({
+      nickname: 'Oliver',
+      imgUrl: 'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
+    })
+  );
+});
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
   refreshAccessToken,
   getExpiredAccessToken,
-  logout,
   checkRefreshToken,
+  logout,
+  getUserProfile,
 ];
 export default handlers;

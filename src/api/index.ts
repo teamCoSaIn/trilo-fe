@@ -4,6 +4,7 @@ import {
   logout,
   refreshAccessToken,
   checkRefreshToken,
+  getUserProfile,
 } from '@/api/oauth';
 
 const HTTP = {
@@ -12,6 +13,7 @@ const HTTP = {
   logout,
   refreshAccessToken,
   checkRefreshToken,
+  getUserProfile,
 };
 
 export default HTTP;

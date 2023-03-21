@@ -1,3 +1,3 @@
-const HEADER_HEIGHT = '60px';
+const HEADER_HEIGHT = '94px';
 
 export { HEADER_HEIGHT };

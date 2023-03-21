@@ -4,6 +4,7 @@ import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
 import REDIRECT_URL from '@/constants/route';
+import { UserProfileImgUrl, UserProfileNickname } from '@/states/userProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Callback = () => {
@@ -12,11 +13,20 @@ const Callback = () => {
 
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
+  const setUserProfileNickname = useSetRecoilState(UserProfileNickname);
+  const setUserProfileImgUrl = useSetRecoilState(UserProfileImgUrl);
 
-  const onSuccess = () => {
+  const onSuccess = async () => {
     setUserStatus(UserStatusTypes.LOGIN);
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
+    const { nickname, imgUrl } = await HTTP.getUserProfile();
+    if (nickname) {
+      setUserProfileNickname(nickname);
+    }
+    if (imgUrl) {
+      setUserProfileImgUrl(imgUrl);
+    }
   };
 
   const onError = () => {

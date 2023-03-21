@@ -1,3 +1,4 @@
+import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -14,14 +15,20 @@ const Header = () => {
     userStatus === UserStatusTypes.LOGIN ? (
       <MyProfileBtn />
     ) : (
-      <LoginBtn to="/login">로그인</LoginBtn>
+      <LoginBtn>
+        <Link to="/login">로그인</Link>
+      </LoginBtn>
     );
 
   return (
     <HeaderBox>
       <Logo />
-      <MyTripListBtn to="/trip-list">나의 여행 계획</MyTripListBtn>
-      {userStatusBtn}
+      <NavBox>
+        <MyTripListBtn>
+          <Link to="/trip-list">나의 여행 계획</Link>
+        </MyTripListBtn>
+        {userStatusBtn}
+      </NavBox>
     </HeaderBox>
   );
 };
@@ -32,22 +39,46 @@ const HeaderBox = styled.header`
   left: 0;
   height: ${HEADER_HEIGHT};
   width: 100%;
+  padding: 0px 80px;
   display: flex;
   align-items: center;
-  background-color: antiquewhite; // TODO: 삭제
-  > * {
-    margin-right: 2rem;
+  justify-content: space-between;
+  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+`;
+
+const NavBox = styled.div`
+  display: flex;
+  align-items: center;
+  color: #3867ff;
+  font-size: 16px;
+`;
+
+const MyTripListBtn = styled(Button)`
+  width: 124px;
+  height: 94px;
+  padding: 0px;
+  line-height: 94px;
+  font-size: 16px;
+  color: inherit;
+  text-align: center;
+  border-radius: 0px;
+  &:hover {
+    background-color: #eaefff;
   }
 `;
 
-const MyTripListBtn = styled(Link)`
-  font-size: 2rem;
-  display: block;
-`;
-
-const LoginBtn = styled(Link)`
-  font-size: 2rem;
-  display: block;
+const LoginBtn = styled(Button)`
+  width: 92px;
+  height: 94px;
+  padding: 0px;
+  line-height: 94px;
+  font-size: 16px;
+  color: inherit;
+  text-align: center;
+  border-radius: 0px;
+  &:hover {
+    background-color: #eaefff;
+  }
 `;
 
 export default Header;

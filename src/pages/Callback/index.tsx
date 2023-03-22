@@ -10,6 +10,7 @@ import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 const Callback = () => {
   const [searchParams] = useSearchParams();
   const oauthCode = searchParams.get('code') || '';
+  const oauthState = searchParams.get('state') || '';
 
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
@@ -35,7 +36,7 @@ const Callback = () => {
 
   useQuery(
     ['getAccessToken', oauthCode],
-    () => HTTP.getAccessToken(oauthCode),
+    () => HTTP.getAccessToken(oauthCode, oauthState),
     {
       enabled: !!oauthCode,
       onSuccess,

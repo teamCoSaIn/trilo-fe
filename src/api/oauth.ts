@@ -24,19 +24,19 @@ interface UserProfile {
 
 // 백엔드 서버에 OAuth 로그인 url 요청
 export const getLoginUri = async (oauthServer: string) => {
-  const res = await axios<string>({
+  const res = await axios({
     method: 'get',
-    url: `/oauth-loginUrl/${oauthServer}`,
+    url: `/auth/login/${oauthServer}`,
     requireAuth: false,
   });
-  return res.data;
+  return res.headers;
 };
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
-export const getAccessToken = async (oauthCode: string) => {
+export const getAccessToken = async (oauthCode: string, oauthState: string) => {
   const res = await axios<AccessTokenResponse>({
     method: 'get',
-    url: `/oauth-login?code=${oauthCode}`,
+    url: `/login/oauth2/code?code=${oauthCode}&state=${oauthState}`,
     requireAuth: false,
   });
   return res.data;

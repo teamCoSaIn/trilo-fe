@@ -8,6 +8,7 @@ import Line from '@/components/common/Line';
 import Logo from '@/components/common/Logo';
 import Spacer from '@/components/common/Spacer';
 import OAuthBtnContainer from '@/components/OAuthBtnContainer';
+import color from '@/constants/color';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Login = () => {
@@ -24,14 +25,14 @@ const Login = () => {
     <Layout>
       <Logo width={76} height={50} />
       <Spacer top={85} bottom={35}>
-        <Description color="#b8b8b8" fontSize={1.4}>
+        <Description color={color.gray2} fontSize={1.4}>
           SNS 간편 로그인
         </Description>
       </Spacer>
       <OAuthBtnContainer />
       <Spacer top={35} bottom={35}>
         <Line width={193} right={35} />
-        <Description color="#b8b8b8" fontSize={1.4}>
+        <Description color={color.gray2} fontSize={1.4}>
           또는
         </Description>
         <Line width={193} left={35} />

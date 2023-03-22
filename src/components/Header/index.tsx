@@ -5,8 +5,8 @@ import styled from 'styled-components';
 import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/MyProfileBtn';
+import { HEADER_HEIGHT } from '@/constants/size';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
-import { HEADER_HEIGHT } from '@/styles/constants';
 
 const Header = () => {
   const userStatus = useRecoilValue(UserStatus);
@@ -39,11 +39,11 @@ const HeaderBox = styled.header`
   left: 0;
   height: ${HEADER_HEIGHT};
   width: 100%;
-  padding: 0px 80px;
+  padding: 0 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.25);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 `;
 
 const NavBox = styled.div`

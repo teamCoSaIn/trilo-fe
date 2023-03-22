@@ -1,5 +1,7 @@
 import { css } from 'styled-components';
 
+import color from '@/constants/color';
+
 export const largeBtnStyle = css`
   width: 568px;
   height: 82px;
@@ -22,19 +24,19 @@ export const smallBtnStyle = css`
 `;
 
 export const blueBtnStyle = css`
-  background-color: #4d77ff;
-  color: #fff;
-  border: 1px solid #4d77ff;
+  background-color: ${color.blue3};
+  color: ${color.white};
+  border: 1px solid ${color.blue3};
 `;
 
 export const whiteBtnStyle = css`
-  background-color: #fff;
-  color: #96afff;
-  border: 1px solid #96afff;
+  background-color: ${color.white};
+  color: ${color.blue2};
+  border: 1px solid ${color.blue2};
 `;
 
 export const grayBtnStyle = css`
-  background-color: #fff;
-  color: #b8b8b8;
-  border: 1px solid #b8b8b8;
+  background-color: ${color.white};
+  color: ${color.gray2};
+  border: 1px solid ${color.gray2};
 `;

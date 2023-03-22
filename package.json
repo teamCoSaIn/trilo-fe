@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "NODE_ENV=development webpack serve --open --config webpack.dev.conf.js",
     "build": "NODE_ENV=production webpack --config webpack.prod.conf.js",
+    "api-test": "NODE_ENV=test webpack serve --open --config webpack.dev.conf.js",
     "check-types": "tsc"
   },
   "repository": {

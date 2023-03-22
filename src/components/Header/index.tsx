@@ -1,9 +1,9 @@
-import { Button } from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Logo from '@/components/common/Logo';
+import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/MyProfileBtn';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 import { HEADER_HEIGHT } from '@/styles/constants';
@@ -15,18 +15,18 @@ const Header = () => {
     userStatus === UserStatusTypes.LOGIN ? (
       <MyProfileBtn />
     ) : (
-      <LoginBtn>
+      <MuiButton width={92}>
         <Link to="/login">로그인</Link>
-      </LoginBtn>
+      </MuiButton>
     );
 
   return (
     <HeaderBox>
-      <Logo />
+      <Logo width={76} height={50} />
       <NavBox>
-        <MyTripListBtn>
+        <MuiButton width={124}>
           <Link to="/trip-list">나의 여행 계획</Link>
-        </MyTripListBtn>
+        </MuiButton>
         {userStatusBtn}
       </NavBox>
     </HeaderBox>
@@ -49,36 +49,6 @@ const HeaderBox = styled.header`
 const NavBox = styled.div`
   display: flex;
   align-items: center;
-  color: #3867ff;
-  font-size: 16px;
-`;
-
-const MyTripListBtn = styled(Button)`
-  width: 124px;
-  height: 94px;
-  padding: 0px;
-  line-height: 94px;
-  font-size: 16px;
-  color: inherit;
-  text-align: center;
-  border-radius: 0px;
-  &:hover {
-    background-color: #eaefff;
-  }
-`;
-
-const LoginBtn = styled(Button)`
-  width: 92px;
-  height: 94px;
-  padding: 0px;
-  line-height: 94px;
-  font-size: 16px;
-  color: inherit;
-  text-align: center;
-  border-radius: 0px;
-  &:hover {
-    background-color: #eaefff;
-  }
 `;
 
 export default Header;

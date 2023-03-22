@@ -1,6 +1,5 @@
 /* eslint-disable react/jsx-props-no-spreading */
 import {
-  Button,
   ClickAwayListener,
   Grow,
   MenuItem,
@@ -21,6 +20,7 @@ import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
+import MuiButton from '@/components/common/MuiButton';
 import { UserProfileImgUrl } from '@/states/userProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
@@ -84,7 +84,8 @@ const MyProfileBtn = () => {
   return (
     <Stack direction="row" spacing={2}>
       <div>
-        <UserProfileImgBtn
+        <MuiButton
+          width={92}
           ref={anchorRef}
           id="composition-button"
           aria-controls={open ? 'composition-menu' : undefined}
@@ -93,7 +94,7 @@ const MyProfileBtn = () => {
           onClick={handleToggle}
         >
           <UserProfileImg profileImgUrl={userProfileImgUrl} />
-        </UserProfileImgBtn>
+        </MuiButton>
         <Popper
           open={open}
           anchorEl={anchorRef.current}
@@ -141,15 +142,6 @@ const UserProfileImg = styled.img<{ profileImgUrl: string }>`
   border-radius: 50%;
   background-image: url(${props => props.profileImgUrl});
   background-size: cover;
-`;
-
-const UserProfileImgBtn = styled(Button)`
-  width: 92px;
-  height: 94px;
-  padding: 0px;
-  &:hover {
-    background-color: #eaefff;
-  }
 `;
 
 const DropDownMenuList = styled(MenuList)`

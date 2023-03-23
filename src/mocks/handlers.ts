@@ -40,27 +40,32 @@ const getLoginUrl = rest.get(
       await sleep(3000);
     }
 
-    return res(ctx.json(oauthServerObj[oauthServer as OauthServerKey]));
+    return res(
+      ctx.set('Auth-Url', oauthServerObj[oauthServer as OauthServerKey])
+    );
   }
 );
 
-const getAccessToken = rest.get('/login/oauth2/code', async (req, res, ctx) => {
-  const oauthCode = req.url.searchParams.get('code');
-  const oauthState = req.url.searchParams.get('state');
-  localStorage.setItem('mockLogin', 'true');
-  isLogin = true;
-  await sleep(2000);
-  return res(
-    ctx.json({
-      token_type: `code:${oauthCode} state:${oauthState}`,
-      expires_in: 86400,
-      access_token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-      scope: 'photo offline_access',
-      refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
-    })
-  );
-});
+const getAccessToken = rest.get(
+  '/api/login/oauth2/code',
+  async (req, res, ctx) => {
+    const oauthCode = req.url.searchParams.get('code');
+    const oauthState = req.url.searchParams.get('state');
+    localStorage.setItem('mockLogin', 'true');
+    isLogin = true;
+    await sleep(2000);
+    return res(
+      ctx.json({
+        token_type: `code:${oauthCode} state:${oauthState}`,
+        expires_in: 86400,
+        access_token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+        scope: 'photo offline_access',
+        refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+      })
+    );
+  }
+);
 
 const refreshAccessToken = rest.get(
   '/api/auth/regeneration',

@@ -9,7 +9,7 @@ interface OAuthBtnProps {
 }
 
 const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
-  const { data: authUrl } = useQuery(
+  const { data: header } = useQuery(
     [`login-uri-${oauthServerName}`],
     () => HTTP.getLoginUri(oauthServerName),
     {
@@ -18,9 +18,10 @@ const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
     }
   );
 
+  // TODO: 백엔드 api 연동 후 Auth-Url로 변경
   const handleOAuthBtnClick = () => {
-    if (authUrl) {
-      window.location.href = authUrl;
+    if (header && header['auth-url']) {
+      window.location.href = header['auth-url'];
     }
   };
 

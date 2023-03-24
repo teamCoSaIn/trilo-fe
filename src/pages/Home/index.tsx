@@ -1,27 +1,27 @@
 import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 
+import Button from '@/components/common/Button';
+
 const Home = () => {
   return (
     <div>
       <h1>홈 페이지입니다.</h1>
-      <NewTripLink to="/trip-list">여행 계획 만들기</NewTripLink>
+      <NewTripBtn btnColor="white">
+        <Link to="/trip-list">여행 계획 만들기</Link>
+      </NewTripBtn>
     </div>
   );
 };
 
-const NewTripLink = styled(Link)`
+const NewTripBtn = styled(Button)`
   position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 185px;
-  height: 51px;
   bottom: 86px;
   right: 199px;
-  font-size: 1.6rem;
-  color: #96afff;
-  border: 1px solid #96afff;
+  width: 185px;
+  height: 51px;
   border-radius: 3rem;
+  font-size: 1.6rem;
 `;
+
 export default Home;

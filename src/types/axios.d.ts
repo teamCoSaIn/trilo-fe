@@ -1,6 +1,6 @@
-declare module 'axios' {
-  import 'axios';
+import 'axios';
 
+declare module 'axios' {
   export interface AxiosRequestConfig {
     requireAuth?: boolean;
   }

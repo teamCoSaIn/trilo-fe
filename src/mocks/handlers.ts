@@ -11,7 +11,7 @@ let error = false;
 let isLogin = JSON.parse(localStorage.getItem('mockLogin') as string) || false;
 
 const getLoginUrl = rest.get(
-  '/api/oauth-loginUrl/:oauthServer',
+  '/api/auth/login/:oauthServer',
   async (req, res, ctx) => {
     if (error) {
       error = false;
@@ -44,22 +44,26 @@ const getLoginUrl = rest.get(
   }
 );
 
-const getAccessToken = rest.get('/api/oauth-login', async (req, res, ctx) => {
-  const oauthCode = req.url.searchParams.get('code');
-  localStorage.setItem('mockLogin', 'true');
-  isLogin = true;
-  await sleep(2000);
-  return res(
-    ctx.json({
-      token_type: `${oauthCode}`,
-      expires_in: 86400,
-      access_token:
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-      scope: 'photo offline_access',
-      refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
-    })
-  );
-});
+const getAccessToken = rest.get(
+  '/api/login/oauth2/code',
+  async (req, res, ctx) => {
+    const oauthCode = req.url.searchParams.get('code');
+    const oauthState = req.url.searchParams.get('state');
+    localStorage.setItem('mockLogin', 'true');
+    isLogin = true;
+    await sleep(2000);
+    return res(
+      ctx.json({
+        token_type: `code:${oauthCode} state:${oauthState}`,
+        expires_in: 86400,
+        access_token:
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+        scope: 'photo offline_access',
+        refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+      })
+    );
+  }
+);
 
 const refreshAccessToken = rest.get(
   '/api/auth/regeneration',

@@ -2,7 +2,7 @@ import { Outlet } from 'react-router-dom';
 import styled from 'styled-components';
 
 import Header from '@/components/Header';
-import { HEADER_HEIGHT } from '@/styles/constants';
+import { HEADER_HEIGHT } from '@/constants/size';
 
 const HeaderLayout = () => {
   return (

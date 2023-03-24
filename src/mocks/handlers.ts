@@ -40,9 +40,7 @@ const getLoginUrl = rest.get(
       await sleep(3000);
     }
 
-    return res(
-      ctx.set('Auth-Url', oauthServerObj[oauthServer as OauthServerKey])
-    );
+    return res(ctx.json(oauthServerObj[oauthServer as OauthServerKey]));
   }
 );
 

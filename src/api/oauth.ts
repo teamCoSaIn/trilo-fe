@@ -29,7 +29,7 @@ export const getLoginUri = async (oauthServer: string) => {
     url: `/auth/login/${oauthServer}`,
     requireAuth: false,
   });
-  return res.headers;
+  return res.data;
 };
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청

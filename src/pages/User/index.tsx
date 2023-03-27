@@ -1,32 +1,66 @@
 import { useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import Description from '@/components/common/Description/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
 import { UserProfileNickname } from '@/states/userProfile';
+import { nicknameRegExp } from '@/utils/regExp';
+import HTTP from '@/api';
+import { useMutation } from '@tanstack/react-query';
 
 const User = () => {
-  const nickname = useRecoilValue(UserProfileNickname);
+  const [nickname, setNickname] = useRecoilState(UserProfileNickname);
   const { totalDistanceOfPastTrip, totalNumOfTrip } = {
     totalDistanceOfPastTrip: 410,
     totalNumOfTrip: 10,
   };
   const [isEdit, setIsEdit] = useState(false);
+  const [nicknameInputValue, setNicknameInputValue] = useState('');
+
+  const { mutate, isLoading } = useMutation(
+    (newNickname: string) => HTTP.changeNickname(newNickname),
+    {
+      onSuccess: (data, variables) => {
+        setNickname(variables);
+        setIsEdit(false);
+      },
+      onError: () => {
+        alert('서버 오류');
+        setIsEdit(false);
+      },
+    }
+  );
 
   const handleNicknameEditBtnClick = () => {
-    setIsEdit(!isEdit);
+    setIsEdit(true);
   };
 
-  const handleNicknameCancleBtnClick = () => {
-    setIsEdit(!isEdit);
+  const handleNicknameCancelBtnClick = () => {
+    setIsEdit(false);
   };
 
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const isValidNickname = (curNicknameInputValue: string) => {
+    const isValid = nicknameRegExp.test(curNicknameInputValue);
+    return isValid;
+  };
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    // post 요청
-    setIsEdit(!isEdit);
+    if (isValidNickname(nicknameInputValue)) {
+      mutate(nicknameInputValue);
+    } else {
+      alert(
+        '올바르지 않은 입력입니다. 3~20 글자 사이의 한글, 영문, 숫자만 가능합니다.'
+      );
+    }
+  };
+
+  const handleChangeNicknameInput = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setNicknameInputValue(event.target.value);
   };
 
   const NicknameContainer = isEdit ? (
@@ -34,11 +68,14 @@ const User = () => {
       <NicknameEditInput
         type="text"
         placeholder="이름을 입력해주세요."
+        value={nicknameInputValue}
+        onChange={handleChangeNicknameInput}
         autoFocus
+        maxLength={20}
       />
       <NicknameIconBox>
         <NicknameIconBtn type="submit">확인</NicknameIconBtn>
-        <NicknameIconBtn type="button" onClick={handleNicknameCancleBtnClick}>
+        <NicknameIconBtn type="button" onClick={handleNicknameCancelBtnClick}>
           취소
         </NicknameIconBtn>
       </NicknameIconBox>
@@ -58,7 +95,11 @@ const User = () => {
     <UserInfoBox>
       <TripBadge src="https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png" />
       <Spacing size={52} />
-      <NicknameBox>{NicknameContainer}</NicknameBox>
+      {isLoading ? (
+        <div>loading...</div>
+      ) : (
+        <NicknameBox>{NicknameContainer}</NicknameBox>
+      )}
       <Spacing size={45} />
       <TripInfoBox>
         <TotalDistanceOfPastTrip>
@@ -121,7 +162,7 @@ const Nickname = styled.p`
 
 const NicknameEditInput = styled.input`
   height: 30px;
-  padding: 0px;
+  padding: 0;
   text-align: end;
   font-size: 3rem;
   border-bottom: 1px solid gray;

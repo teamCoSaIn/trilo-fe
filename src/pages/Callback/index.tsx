@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
+import CircularLoader from '@/components/common/Loader/index';
 import REDIRECT_URL from '@/constants/route';
 import { UserProfileImgUrl, UserProfileNickname } from '@/states/userProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
@@ -44,7 +45,7 @@ const Callback = () => {
     }
   );
 
-  return <div>Login...</div>;
+  return <CircularLoader />;
 };
 
 export default Callback;

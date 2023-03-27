@@ -3,8 +3,8 @@ import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/Loader/index';
 import ErrorFallback from '@/components/OAuthBtnContainer/errorFallback';
-import LoadingFallback from '@/components/OAuthBtnContainer/loadingFallback';
 import UserInfo from '@/components/UserInfo/index';
 
 const User = () => {
@@ -13,7 +13,7 @@ const User = () => {
   return (
     <UserInfoBox>
       <ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-        <Suspense fallback={<LoadingFallback />}>
+        <Suspense fallback={<CircularLoader />}>
           <UserInfo />
         </Suspense>
       </ErrorBoundary>

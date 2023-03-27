@@ -4,6 +4,7 @@ import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
+import CircularLoader from '@/components/common/Loader/index';
 import { UserProfileNickname } from '@/states/userProfile';
 import { nicknameRegExp } from '@/utils/regExp';
 
@@ -88,7 +89,9 @@ const UserNickname = () => {
   return (
     <>
       {isLoading ? (
-        <div>loading...</div>
+        <NicknameBox>
+          <CircularLoader />
+        </NicknameBox>
       ) : (
         <NicknameBox>{NicknameContents}</NicknameBox>
       )}
@@ -98,9 +101,10 @@ const UserNickname = () => {
 
 const NicknameBox = styled.div`
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   align-items: center;
   width: 100%;
+  height: 80px;
   gap: 17px;
 `;
 
@@ -115,6 +119,7 @@ const Nickname = styled.p`
   height: 30px;
   font-size: 3rem;
   text-align: end;
+  width: 60%;
 `;
 
 const NicknameEditInput = styled.input`
@@ -123,7 +128,7 @@ const NicknameEditInput = styled.input`
   text-align: end;
   font-size: 3rem;
   border-bottom: 1px solid gray;
-  width: 210px;
+  width: 60%;
   ::placeholder {
     font-size: 2rem;
   }
@@ -133,8 +138,7 @@ const NicknameIconBox = styled.div`
   display: flex;
   justify-content: flex-start;
   gap: 10px;
-  // TODO: 고쳐야함
-  width: 130px;
+  width: 40%;
   margin-right: 30px;
 `;
 

@@ -5,6 +5,12 @@ interface UserProfile {
   imgUrl: string;
 }
 
+interface UserInfo {
+  totalDistanceOfPastTrip: number;
+  totalNumOfTrip: number;
+  badgeImgUrl: string;
+}
+
 export const getUserProfile = async () => {
   const res = await axios<UserProfile>({
     method: 'get',
@@ -15,11 +21,20 @@ export const getUserProfile = async () => {
 };
 
 export const changeNickname = async (nickname: string) => {
-  const res = await axios<UserProfile>({
+  const res = await axios({
     method: 'put',
     url: `/user-nickname`,
     data: { nickname },
     requireAuth: true,
   });
   return res.status;
+};
+
+export const getUserInfo = async () => {
+  const res = await axios<UserInfo>({
+    method: 'get',
+    url: '/user-info',
+    requireAuth: true,
+  });
+  return res.data;
 };

@@ -5,8 +5,7 @@ import {
   refreshAccessToken,
   checkRefreshToken,
 } from '@/api/oauth';
-
-import { getUserProfile, changeNickname } from '@/api/userInfo';
+import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
   getLoginUri,
@@ -16,6 +15,7 @@ const HTTP = {
   checkRefreshToken,
   getUserProfile,
   changeNickname,
+  getUserInfo,
 };
 
 export default HTTP;

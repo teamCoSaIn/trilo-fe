@@ -110,14 +110,23 @@ const logout = rest.get('/api/auth/logout', async (req, res, ctx) => {
   return res(ctx.json({}));
 });
 
+let nickname = 'oliver';
 const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {
   // 쿠키에서 RT 확인 -> 유저 판별 -> 응답 전송
   return res(
     ctx.json({
-      nickname: 'Oliver',
+      nickname,
       imgUrl: 'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
     })
   );
+});
+
+const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
+  const { nickname: newNickname } = await req.json();
+  nickname = newNickname;
+  await sleep(2000);
+
+  return res(ctx.status(200));
 });
 
 const handlers = [
@@ -128,5 +137,6 @@ const handlers = [
   checkRefreshToken,
   logout,
   getUserProfile,
+  changeNickname,
 ];
 export default handlers;

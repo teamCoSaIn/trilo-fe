@@ -6,9 +6,9 @@ import styled from 'styled-components';
 import { ReactComponent as GoogleLogin } from '@/assets/google-login.svg';
 import { ReactComponent as KakaoLogin } from '@/assets/kakao-login.svg';
 import { ReactComponent as NaverLogin } from '@/assets/naver-login.svg';
+import Error from '@/components/common/Error';
+import CircularLoader from '@/components/common/Loader/index';
 import OAuthBtn from '@/components/OAuthBtn';
-import ErrorFallback from '@/components/OAuthBtnContainer/errorFallback';
-import LoadingFallback from '@/components/OAuthBtnContainer/loadingFallback';
 
 const OAuthBtnContainer = () => {
   const OAuthList = [
@@ -35,8 +35,8 @@ const OAuthBtnContainer = () => {
 
   return (
     <Container>
-      <ErrorBoundary FallbackComponent={ErrorFallback} onReset={reset}>
-        <Suspense fallback={<LoadingFallback />}>{OAuthBtnList}</Suspense>
+      <ErrorBoundary FallbackComponent={Error} onReset={reset}>
+        <Suspense fallback={<CircularLoader />}>{OAuthBtnList}</Suspense>
       </ErrorBoundary>
     </Container>
   );

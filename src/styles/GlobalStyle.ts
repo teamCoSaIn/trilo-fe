@@ -18,9 +18,10 @@ const GlobalStyle = createGlobalStyle`
     height: 100%;
   }
   input {
-    border:none;
+    border: none;
     background-color: transparent;
-    outline:none;
+    outline: none;
+    font-family: inherit;
   }
   button {
     cursor: pointer;
@@ -29,7 +30,7 @@ const GlobalStyle = createGlobalStyle`
     padding: 0;
   }
   a {
-    text-decoration:none;
+    text-decoration: none;
     color: inherit;
   }
   ui, li, ol{

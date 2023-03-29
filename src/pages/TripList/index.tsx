@@ -24,11 +24,11 @@ const TripList = () => {
 const Layout = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
   height: 100%;
   width: 100%;
-  padding-top: 104px;
-  margin: 0 auto;
+  padding: 104px 150px 0 150px;
+  // TODO: padding * 2 + TripCardWidth * 4 + TripCardBoxGap * 3
+  min-width: 1364px;
 `;
 
 export default TripList;

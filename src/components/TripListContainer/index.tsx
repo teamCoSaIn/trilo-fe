@@ -36,6 +36,7 @@ const TripListContainer = () => {
           <Label>{tripCardData?.length}개</Label>
         </Wrapper>
         <Spacing height={13} />
+        <Description color="#979696" fontSize={1.4}>
           트릴로와 함께 즐거운 여행을 시작해보세요.
         </Description>
       </DescriptionBox>
@@ -46,7 +47,6 @@ const TripListContainer = () => {
 };
 
 const DescriptionBox = styled.div`
-  min-width: 600px;
   display: flex;
   flex-direction: column;
 `;
@@ -69,11 +69,9 @@ const Label = styled.div`
 `;
 
 const TripCardsBox = styled.div`
-  min-width: 600px;
   display: flex;
   flex-wrap: wrap;
   gap: 48px;
-  margin-top: 47px;
 `;
 
 export default TripListContainer;

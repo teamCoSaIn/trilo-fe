@@ -23,7 +23,7 @@ const TripListContainer = () => {
   );
 
   const TripCards = tripCardData?.map(cardData => {
-    return <TripCard cardData={cardData} />;
+    return <TripCard key={cardData.id} cardData={cardData} />;
   });
 
   return (

@@ -2,6 +2,8 @@ import styled, { css } from 'styled-components';
 
 import { TripCardData, TripCardStatus } from '@/api/tripList';
 import Description from '@/components/common/Description';
+import Flex from '@/components/common/Flex/index';
+import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
 
 interface TripCardProps {
@@ -21,24 +23,19 @@ const TripCard = ({ cardData }: TripCardProps) => {
   };
 
   return (
-    <TripCardBox key={cardData.id}>
+    <Flex column key={cardData.id}>
       <TripContent picUrl={cardData.picUrl}>
         {/* TODO: 상태에 따라 컴포넌트 모양 변경 */}
         <TripStatus>{getTripStatusContent(cardData.status)}</TripStatus>
         <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
       </TripContent>
+      <Spacing height={16} />
       <Description color={color.gray3} fontSize={2}>
         {cardData.title}
       </Description>
-    </TripCardBox>
+    </Flex>
   );
 };
-
-const TripCardBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-`;
 
 const TripContent = styled.div<{ picUrl: string }>`
   position: relative;

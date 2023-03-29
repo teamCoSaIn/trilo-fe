@@ -3,6 +3,7 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import Description from '@/components/common/Description/index';
+import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import UserNickname from '@/components/UserNickname/index';
 import color from '@/constants/color';
@@ -19,24 +20,25 @@ const UserInfo = () => {
       <Spacing height={52} />
       <UserNickname />
       <Spacing height={45} />
-      <TripInfoBox>
-        <TotalDistanceOfPastTrip>
+      <Flex>
+        <Flex column>
           <Description color={color.black} fontSize={3}>
             나의 여정
           </Description>
           <Description color={color.black} fontSize={6}>
             {`${userInfo?.totalDistanceOfPastTrip} KM`}
           </Description>
-        </TotalDistanceOfPastTrip>
-        <TotalNumOfTrip>
+        </Flex>
+        <Spacing width={81} />
+        <Flex column>
           <Description color={color.black} fontSize={3}>
             나의 일정
           </Description>
           <Description color={color.black} fontSize={6}>
             {`${userInfo?.totalNumOfTrip} 개`}
           </Description>
-        </TotalNumOfTrip>
-      </TripInfoBox>
+        </Flex>
+      </Flex>
     </>
   );
 };
@@ -45,23 +47,6 @@ const TripBadge = styled.img`
   width: 282px;
   height: 421px;
   border-radius: 36px;
-`;
-
-const TripInfoBox = styled.div`
-  display: flex;
-  gap: 81px;
-`;
-
-const TotalDistanceOfPastTrip = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-`;
-
-const TotalNumOfTrip = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
 `;
 
 export default UserInfo;

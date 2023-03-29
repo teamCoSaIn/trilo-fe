@@ -16,9 +16,9 @@ const UserInfo = () => {
   return (
     <>
       <TripBadge src={userInfo?.badgeImgUrl} />
-      <Spacing size={52} />
+      <Spacing height={52} />
       <UserNickname />
-      <Spacing size={45} />
+      <Spacing height={45} />
       <TripInfoBox>
         <TotalDistanceOfPastTrip>
           <Description color={color.black} fontSize={3}>

@@ -4,6 +4,7 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import Description from '@/components/common/Description';
+import Spacing from '@/components/common/Spacing/index';
 import TripCard from '@/components/TripCard';
 import color from '@/constants/color';
 import { UserProfileNickname } from '@/states/userProfile';
@@ -31,12 +32,14 @@ const TripListContainer = () => {
           <Description color={color.blue3} fontSize={2.4}>
             {nickname}님의 여행기록
           </Description>
+          <Spacing width={14} />
           <Label>{tripCardData?.length}개</Label>
         </Wrapper>
-        <Description color="#979696">
+        <Spacing height={13} />
           트릴로와 함께 즐거운 여행을 시작해보세요.
         </Description>
       </DescriptionBox>
+      <Spacing height={47} />
       <TripCardsBox>{TripCards}</TripCardsBox>
     </>
   );
@@ -46,12 +49,10 @@ const DescriptionBox = styled.div`
   min-width: 600px;
   display: flex;
   flex-direction: column;
-  gap: 13px;
 `;
 
 const Wrapper = styled.div`
   display: flex;
-  gap: 14px;
 `;
 
 // TODO: common 분리

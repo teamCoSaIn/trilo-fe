@@ -1,8 +1,11 @@
+import { useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import { TripCardData, TripCardStatus } from '@/api/tripList';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
+import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as PlaneIcon } from '@/assets/plane.svg';
+import Button from '@/components/common/Button';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
@@ -13,6 +16,17 @@ interface TripCardProps {
 }
 
 const TripCard = ({ cardData }: TripCardProps) => {
+  const [isHover, setIsHover] = useState(false);
+
+  const handleTripCardMouseEnter = () => {
+    setIsHover(true);
+  };
+
+  const handleTripCardMouseLeave = () => {
+    setIsHover(false);
+  };
+
+  // TODO: 컴포넌트 분리
   const getTripStatusContent = (status: TripCardStatus) => {
     switch (status) {
       case 'BEFORE':
@@ -36,9 +50,25 @@ const TripCard = ({ cardData }: TripCardProps) => {
     }
   };
 
+  const HoverMask = (
+    <DimLayer>
+      <Button type="button" btnSize="medium">
+        수정하기
+      </Button>
+      <DeleteBtn>
+        <DeleteIcon />
+      </DeleteBtn>
+    </DimLayer>
+  );
+
   return (
     <Flex column>
-      <TripContent picUrl={cardData.picUrl}>
+      <TripContent
+        picUrl={cardData.picUrl}
+        onMouseEnter={handleTripCardMouseEnter}
+        onMouseLeave={handleTripCardMouseLeave}
+      >
+        {isHover && HoverMask}
         <TripStatus status={cardData.status}>
           {getTripStatusContent(cardData.status)}
         </TripStatus>
@@ -96,6 +126,28 @@ const TripPeriod = styled.p`
   justify-content: center;
   color: #4f4f4f;
   font-size: 1.4rem;
+`;
+
+const DimLayer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+`;
+
+const DeleteBtn = styled.button`
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  &:hover {
+    > svg {
+      fill: #b8b8b8;
+    }
+  }
 `;
 
 export default TripCard;

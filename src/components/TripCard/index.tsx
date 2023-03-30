@@ -1,14 +1,8 @@
-import { useState } from 'react';
-import styled, { css } from 'styled-components';
-
-import { TripCardData, TripCardStatus } from '@/api/tripList';
-import { ReactComponent as CheckIcon } from '@/assets/check.svg';
-import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
-import { ReactComponent as PlaneIcon } from '@/assets/plane.svg';
-import Button from '@/components/common/Button';
+import { TripCardData } from '@/api/tripList';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
+import TripCardContent from '@/components/TripCardContent';
 import color from '@/constants/color';
 
 interface TripCardProps {
@@ -16,64 +10,9 @@ interface TripCardProps {
 }
 
 const TripCard = ({ cardData }: TripCardProps) => {
-  const [isHover, setIsHover] = useState(false);
-
-  const handleTripCardMouseEnter = () => {
-    setIsHover(true);
-  };
-
-  const handleTripCardMouseLeave = () => {
-    setIsHover(false);
-  };
-
-  // TODO: 컴포넌트 분리
-  const getTripStatusContent = (status: TripCardStatus) => {
-    switch (status) {
-      case 'BEFORE':
-        return <>D - 10</>;
-      case 'ON':
-        return (
-          <>
-            <PlaneIcon width={12} height={10} fill="white" />
-            <Spacing width={5} />
-            여행 중
-          </>
-        );
-      default:
-        return (
-          <>
-            여행 완료
-            <Spacing width={5} />
-            <CheckIcon width={10} height={10} />
-          </>
-        );
-    }
-  };
-
-  const HoverMask = (
-    <DimLayer>
-      <Button type="button" btnSize="medium">
-        수정하기
-      </Button>
-      <DeleteBtn>
-        <DeleteIcon />
-      </DeleteBtn>
-    </DimLayer>
-  );
-
   return (
     <Flex column>
-      <TripContent
-        picUrl={cardData.picUrl}
-        onMouseEnter={handleTripCardMouseEnter}
-        onMouseLeave={handleTripCardMouseLeave}
-      >
-        {isHover && HoverMask}
-        <TripStatus status={cardData.status}>
-          {getTripStatusContent(cardData.status)}
-        </TripStatus>
-        <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
-      </TripContent>
+      <TripCardContent cardData={cardData} />
       <Spacing height={16} />
       <Description color={color.gray3} fontSize={2}>
         {cardData.title}
@@ -81,73 +20,5 @@ const TripCard = ({ cardData }: TripCardProps) => {
     </Flex>
   );
 };
-
-const TripContent = styled.div<{ picUrl: string }>`
-  position: relative;
-  width: 230px;
-  height: 230px;
-  ${({ picUrl }) => css`
-    ${picUrl && { backgroundImage: `url(${picUrl})` }};
-  `}
-  background-size: cover;
-`;
-
-const TripStatus = styled.div<{ status: TripCardStatus }>`
-  position: absolute;
-  top: 8px;
-  left: 8px;
-  height: 23px;
-  padding: 4px 13px;
-  border-radius: 16.5px;
-  background-color: #4d77ff;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.4rem;
-  ${({ status }) => css`
-    ${status === 'AFTER' && {
-      backgroundColor: `${color.white}`,
-      color: `${color.gray3}`,
-    }};
-  `}
-`;
-
-const TripPeriod = styled.p`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 144px;
-  height: 24px;
-  border-radius: 16px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4f4f4f;
-  font-size: 1.4rem;
-`;
-
-const DimLayer = styled.div`
-  position: relative;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
-  z-index: 2;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`;
-
-const DeleteBtn = styled.button`
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  &:hover {
-    > svg {
-      fill: #b8b8b8;
-    }
-  }
-`;
 
 export default TripCard;

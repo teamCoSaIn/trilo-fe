@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
 import { TripCardStatus } from '@/api/tripList';
@@ -12,8 +13,9 @@ interface TripCardStatusLabelProps {
 
 const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
   // TODO: 날짜 계산
-  const getTripStatusContent = (tripCardStatus: TripCardStatus) => {
-    switch (tripCardStatus) {
+
+  const tripStatusContent = useMemo(() => {
+    switch (status) {
       case 'BEFORE':
         return <>D - 10</>;
       case 'ON':
@@ -33,11 +35,9 @@ const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
           </>
         );
     }
-  };
+  }, [status]);
 
-  return (
-    <TripStatus status={status}>{getTripStatusContent(status)}</TripStatus>
-  );
+  return <TripStatus status={status}>{tripStatusContent}</TripStatus>;
 };
 
 const TripStatus = styled.div<{ status: TripCardStatus }>`

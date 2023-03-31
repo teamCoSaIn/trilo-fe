@@ -12,6 +12,7 @@ interface TripCardContentProps {
 
 const TripCardContent = ({ cardData }: TripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
+
   const handleTripCardMouseEnter = () => {
     setIsHover(true);
   };

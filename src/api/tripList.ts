@@ -9,6 +9,10 @@ export interface TripCardData {
   startDay: string;
   endDay: string;
 }
+export interface TripCardTitleType {
+  id: number;
+  title: string;
+}
 
 export const getTripList = async () => {
   const res = await axios<TripCardData[]>({
@@ -17,4 +21,14 @@ export const getTripList = async () => {
     requireAuth: true,
   });
   return res.data;
+};
+
+export const changeTripCardTitle = async (titleData: TripCardTitleType) => {
+  const res = await axios({
+    method: 'put',
+    url: `/tripcard-title`,
+    data: titleData,
+    requireAuth: true,
+  });
+  return res.status;
 };

@@ -5,7 +5,7 @@ import {
   refreshAccessToken,
   checkRefreshToken,
 } from '@/api/oauth';
-import { getTripList } from '@/api/tripList';
+import { getTripList, changeTripCardTitle } from '@/api/tripList';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
@@ -18,6 +18,7 @@ const HTTP = {
   changeNickname,
   getUserInfo,
   getTripList,
+  changeTripCardTitle,
 };
 
 export default HTTP;

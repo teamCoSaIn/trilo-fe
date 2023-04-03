@@ -7,6 +7,7 @@ import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import TripCard from '@/components/TripCard';
+import TripCardAddBtn from '@/components/TripCardAddBtn/index';
 import color from '@/constants/color';
 import { UserProfileNickname } from '@/states/userProfile';
 
@@ -42,7 +43,10 @@ const TripListContainer = () => {
         </Description>
       </Flex>
       <Spacing height={47} />
-      <TripCardsBox>{TripCards}</TripCardsBox>
+      <TripCardsBox>
+        <TripCardAddBtn />
+        {TripCards}
+      </TripCardsBox>
     </>
   );
 };

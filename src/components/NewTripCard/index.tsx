@@ -1,10 +1,13 @@
 import { ClickAwayListener } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState, SyntheticEvent, useRef } from 'react';
 import styled from 'styled-components';
 
+import HTTP from '@/api/index';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import Flex from '@/components/common/Flex/index';
+import CircularLoader from '@/components/common/Loader/index';
 import Spacing from '@/components/common/Spacing/index';
 
 interface NewTripCardProps {
@@ -13,13 +16,23 @@ interface NewTripCardProps {
 
 const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   const [titleInputValue, setTitleInputValue] = useState('');
-
   const newTripCardRef = useRef<HTMLDivElement>(null);
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading } = useMutation(
+    (tripCardTitle: string) => HTTP.createTripCard(tripCardTitle),
+    {
+      onSuccess: () => {
+        handleClose();
+        queryClient.invalidateQueries(['tripList']);
+      },
+    }
+  );
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setTitleInputValue('');
-    // mutation
+    mutate(titleInputValue);
+    handleClose();
   };
 
   const handleTitleInputChange = (
@@ -38,7 +51,11 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
     handleClose();
   };
 
-  return (
+  return isLoading ? (
+    <LoadingBox column>
+      <CircularLoader />
+    </LoadingBox>
+  ) : (
     <ClickAwayListener onClickAway={handleTitleFormClickAway}>
       <Flex column ref={newTripCardRef}>
         <TripContent>
@@ -64,7 +81,6 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
 };
 
 const TripContent = styled.div`
-  position: relative;
   width: 230px;
   height: 230px;
   background-color: #4d77ff;
@@ -94,6 +110,10 @@ const TitleEditInput = styled.input`
 const TitleConfirmBtn = styled.button`
   display: flex;
   align-items: center;
+`;
+
+const LoadingBox = styled(Flex)`
+  width: 230px;
 `;
 
 export default NewTripCard;

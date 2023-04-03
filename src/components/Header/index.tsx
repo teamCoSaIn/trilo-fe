@@ -17,7 +17,7 @@ const Header = () => {
       <MyProfileBtn />
     ) : (
       <MuiButton width={92}>
-        <Link to="/login">로그인</Link>
+        <HeaderLink to="/login">로그인</HeaderLink>
       </MuiButton>
     );
 
@@ -26,7 +26,7 @@ const Header = () => {
       <Logo width={76} height={50} />
       <Flex alignCenter>
         <MuiButton width={124}>
-          <Link to="/trip-list">나의 여행 계획</Link>
+          <HeaderLink to="/trip-list">나의 여행 계획</HeaderLink>
         </MuiButton>
         {userStatusBtn}
       </Flex>
@@ -47,4 +47,11 @@ const HeaderBox = styled.header`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 `;
 
+const HeaderLink = styled(Link)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
 export default Header;

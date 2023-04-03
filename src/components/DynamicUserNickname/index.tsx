@@ -19,6 +19,7 @@ const DynamicUserNickname = () => {
       onSuccess: (data, variables) => {
         setNickname(variables);
         setIsEdit(false);
+        setNicknameInputValue('');
       },
       onError: () => {
         alert('서버 오류');
@@ -43,6 +44,11 @@ const DynamicUserNickname = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (nickname === nicknameInputValue) {
+      setIsEdit(false);
+      setNicknameInputValue('');
+      return;
+    }
     if (isValidNickname(nicknameInputValue)) {
       mutate(nicknameInputValue);
     } else {
@@ -87,15 +93,9 @@ const DynamicUserNickname = () => {
   );
 
   return (
-    <>
-      {isLoading ? (
-        <NicknameBox>
-          <CircularLoader />
-        </NicknameBox>
-      ) : (
-        <NicknameBox>{NicknameContents}</NicknameBox>
-      )}
-    </>
+    <NicknameBox>
+      {isLoading ? <CircularLoader /> : DynamicNickname}
+    </NicknameBox>
   );
 };
 

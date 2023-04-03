@@ -61,7 +61,9 @@ const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    mutate({ title: titleInputValue, id: cardData.id });
+    if (cardData.title !== titleInputValue) {
+      mutate({ title: titleInputValue, id: cardData.id });
+    }
     setTitleInputValue('');
     setIsEdit(false);
   };

@@ -5,7 +5,7 @@ import HTTP from '@/api';
 import Description from '@/components/common/Description/index';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
-import UserNickname from '@/components/UserNickname/index';
+import DynamicUserNickname from '@/components/DynamicUserNickname/index';
 import color from '@/constants/color';
 
 const UserInfo = () => {
@@ -18,7 +18,7 @@ const UserInfo = () => {
     <>
       <TripBadge src={userInfo?.badgeImgUrl} />
       <Spacing height={52} />
-      <UserNickname />
+      <DynamicUserNickname />
       <Spacing height={45} />
       <Flex>
         <Flex column>

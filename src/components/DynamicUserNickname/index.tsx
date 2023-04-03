@@ -8,7 +8,7 @@ import CircularLoader from '@/components/common/Loader/index';
 import { UserProfileNickname } from '@/states/userProfile';
 import { nicknameRegExp } from '@/utils/regExp';
 
-const UserNickname = () => {
+const DynamicUserNickname = () => {
   const [nickname, setNickname] = useRecoilState(UserProfileNickname);
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
@@ -58,7 +58,7 @@ const UserNickname = () => {
     setNicknameInputValue(event.target.value);
   };
 
-  const NicknameContents = isEdit ? (
+  const DynamicNickname = isEdit ? (
     <NicknameForm onSubmit={handleSubmit}>
       <NicknameEditInput
         type="text"
@@ -150,4 +150,4 @@ const NicknameIconBtn = styled.button`
   font-size: 2rem;
 `;
 
-export default UserNickname;
+export default DynamicUserNickname;

@@ -13,7 +13,7 @@ interface TripCardTitleProps {
   cardData: TripCardData;
 }
 
-const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
+const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
   const queryClient = useQueryClient();
@@ -87,7 +87,7 @@ const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
     setTitleInputValue('');
   };
 
-  const title = isEdit ? (
+  const DynamicTitle = isEdit ? (
     <ClickAwayListener onClickAway={handleTitleFormClickAway}>
       <TitleForm onSubmit={handleTitleSubmit} ref={titleFormRef}>
         <TitleEditInput
@@ -111,7 +111,7 @@ const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
     </Box>
   );
 
-  return title;
+  return DynamicTitle;
 };
 
 const TitleForm = styled.form`
@@ -144,4 +144,4 @@ const TitleConfirmBtn = styled.button`
   align-items: center;
 `;
 
-export default TripCardTitle;
+export default DynamicTripCardTitle;

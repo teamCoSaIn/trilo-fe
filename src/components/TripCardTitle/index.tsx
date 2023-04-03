@@ -1,5 +1,6 @@
+import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import React, { useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import HTTP from '@/api/index';
@@ -16,6 +17,7 @@ const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
   const queryClient = useQueryClient();
+  const titleFormRef = useRef<HTMLFormElement>(null);
 
   const { mutate } = useMutation(
     (titleData: TripCardTitleType) => HTTP.changeTripCardTitle(titleData),
@@ -70,35 +72,37 @@ const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
     setTitleInputValue(event.target.value);
   };
 
-  const handleTitleCancelBtnClick = () => {
-    setIsEdit(false);
-    setTitleInputValue('');
-  };
-
   const handleTitleClick = () => {
     setIsEdit(true);
   };
 
+  const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
+    if (
+      titleFormRef.current &&
+      titleFormRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    setIsEdit(false);
+    setTitleInputValue('');
+  };
+
   const title = isEdit ? (
-    <TitleForm onSubmit={handleTitleSubmit}>
-      <TitleEditInput
-        type="text"
-        value={titleInputValue}
-        placeholder={cardData.title}
-        onChange={handleTitleInputChange}
-        autoFocus
-        maxLength={20}
-      />
-      <TitleConfirmBtn type="submit">
-        <CheckIcon fill="#4D77FF" width={14} height={14} />
-      </TitleConfirmBtn>
-      <CheckIcon
-        fill="red"
-        width={14}
-        height={14}
-        onClick={handleTitleCancelBtnClick}
-      />
-    </TitleForm>
+    <ClickAwayListener onClickAway={handleTitleFormClickAway}>
+      <TitleForm onSubmit={handleTitleSubmit} ref={titleFormRef}>
+        <TitleEditInput
+          type="text"
+          value={titleInputValue}
+          placeholder={cardData.title}
+          onChange={handleTitleInputChange}
+          autoFocus
+          maxLength={20}
+        />
+        <TitleConfirmBtn type="submit">
+          <CheckIcon fill="#4D77FF" width={14} height={14} />
+        </TitleConfirmBtn>
+      </TitleForm>
+    </ClickAwayListener>
   ) : (
     <Box onClick={handleTitleClick}>
       <Description color={color.gray3} fontSize={2}>
@@ -106,6 +110,7 @@ const TripCardTitle = ({ cardData }: TripCardTitleProps) => {
       </Description>
     </Box>
   );
+
   return title;
 };
 

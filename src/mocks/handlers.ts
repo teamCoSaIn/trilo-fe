@@ -201,6 +201,7 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 });
 
 const getTripList = rest.get('/api/trip-list', async (req, res, ctx) => {
+  await sleep(2000);
   return res(ctx.json(tripList));
 });
 
@@ -221,6 +222,24 @@ const changeTripCardTitle = rest.put(
   }
 );
 
+const createTripCard = rest.post('/api/tripcard', async (req, res, ctx) => {
+  const { title } = await req.json();
+  await sleep(2000);
+
+  const tripCardData = {
+    id: +new Date(),
+    title,
+    picUrl: '',
+    status: '',
+    startDay: '',
+    endDay: '',
+  };
+
+  tripList.unshift(tripCardData);
+
+  return res(ctx.status(200));
+});
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -233,6 +252,7 @@ const handlers = [
   getUserInfo,
   getTripList,
   changeTripCardTitle,
+  createTripCard,
 ];
 
 export default handlers;

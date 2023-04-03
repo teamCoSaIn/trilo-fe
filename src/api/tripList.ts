@@ -32,3 +32,13 @@ export const changeTripCardTitle = async (titleData: TripCardTitleType) => {
   });
   return res.status;
 };
+
+export const createTripCard = async (tripCardTitle: string) => {
+  const res = await axios({
+    method: 'post',
+    url: `/tripcard`,
+    data: { title: tripCardTitle },
+    requireAuth: true,
+  });
+  return res.status;
+};

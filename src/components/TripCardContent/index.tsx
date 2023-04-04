@@ -5,7 +5,9 @@ import { TripCardData } from '@/api/tripList';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
 import Button from '@/components/common/Button';
+import DimLoader from '@/components/common/DimLoader/index';
 import TripCardStatusLabel from '@/components/TripCardStatusLabel';
+import useTripCardDelete from '@/hooks/useTripCardDelete';
 
 interface TripCardContentProps {
   cardData: TripCardData;
@@ -14,6 +16,9 @@ interface TripCardContentProps {
 const TripCardContent = ({ cardData }: TripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
   const tripContentPicUrl = cardData.picUrl || tripCardDefaultPic;
+
+  const { mutate, isLoading } = useTripCardDelete();
+
   const tripPeriod = cardData.startDay ? (
     <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
   ) : null;
@@ -26,27 +31,36 @@ const TripCardContent = ({ cardData }: TripCardContentProps) => {
     setIsHover(false);
   };
 
+  const handleDeleteBtnClick = () => {
+    if (window.confirm('찐으로 삭제하시렵니까?')) {
+      mutate(cardData.id);
+    }
+  };
+
   const HoverMask = (
     <DimLayer>
       <Button type="button" btnSize="medium">
         수정하기
       </Button>
-      <DeleteBtn>
+      <DeleteBtn onClick={handleDeleteBtnClick}>
         <DeleteIcon />
       </DeleteBtn>
     </DimLayer>
   );
 
   return (
-    <TripContent
-      picUrl={tripContentPicUrl}
-      onMouseEnter={handleTripCardMouseEnter}
-      onMouseLeave={handleTripCardMouseLeave}
-    >
-      {isHover && HoverMask}
-      <TripCardStatusLabel status={cardData.status} />
-      {tripPeriod}
-    </TripContent>
+    <>
+      {isLoading && <DimLoader />}
+      <TripContent
+        picUrl={tripContentPicUrl}
+        onMouseEnter={handleTripCardMouseEnter}
+        onMouseLeave={handleTripCardMouseLeave}
+      >
+        {isHover && HoverMask}
+        <TripCardStatusLabel status={cardData.status} />
+        {tripPeriod}
+      </TripContent>
+    </>
   );
 };
 

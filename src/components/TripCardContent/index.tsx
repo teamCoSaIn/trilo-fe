@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { TripCardData } from '@/api/tripList';
@@ -40,7 +41,7 @@ const TripCardContent = ({ cardData }: TripCardContentProps) => {
   const HoverMask = (
     <DimLayer>
       <Button type="button" btnSize="medium">
-        수정하기
+        <PlanBtnLink to={`/trip-plan/${cardData.id}`}>수정하기</PlanBtnLink>
       </Button>
       <DeleteBtn onClick={handleDeleteBtnClick}>
         <DeleteIcon />
@@ -109,6 +110,14 @@ const DeleteBtn = styled.button`
       fill: #b8b8b8;
     }
   }
+`;
+
+const PlanBtnLink = styled(Link)`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default TripCardContent;

@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import HTTP from '@/api/index';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
+import DimLoader from '@/components/common/DimLoader/index';
 import Flex from '@/components/common/Flex/index';
-import CircularLoader from '@/components/common/Loader/index';
 import Spacing from '@/components/common/Spacing/index';
 
 interface NewTripCardProps {
@@ -51,9 +51,7 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   };
 
   return isLoading ? (
-    <LoadingBox justifyCenter alignCenter>
-      <CircularLoader />
-    </LoadingBox>
+    <DimLoader />
   ) : (
     <ClickAwayListener onClickAway={handleTitleFormClickAway}>
       <Flex column ref={newTripCardRef}>
@@ -109,17 +107,6 @@ const TitleEditInput = styled.input`
 const TitleConfirmBtn = styled.button`
   display: flex;
   align-items: center;
-`;
-
-const LoadingBox = styled(Flex)`
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: black;
-  opacity: 0.7;
-  z-index: 3;
 `;
 
 export default NewTripCard;

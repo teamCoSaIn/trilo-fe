@@ -22,6 +22,7 @@ const GlobalStyle = createGlobalStyle`
     background-color: transparent;
     outline: none;
     font-family: inherit;
+    padding: 0;
   }
   button {
     cursor: pointer;

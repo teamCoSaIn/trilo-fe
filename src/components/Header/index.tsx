@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import Flex from '@/components/common/Flex/index';
 import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/MyProfileBtn';
@@ -16,19 +17,19 @@ const Header = () => {
       <MyProfileBtn />
     ) : (
       <MuiButton width={92}>
-        <Link to="/login">로그인</Link>
+        <HeaderLink to="/login">로그인</HeaderLink>
       </MuiButton>
     );
 
   return (
     <HeaderBox>
       <Logo width={76} height={50} />
-      <NavBox>
+      <Flex alignCenter>
         <MuiButton width={124}>
-          <Link to="/trip-list">나의 여행 계획</Link>
+          <HeaderLink to="/trip-list">나의 여행 계획</HeaderLink>
         </MuiButton>
         {userStatusBtn}
-      </NavBox>
+      </Flex>
     </HeaderBox>
   );
 };
@@ -46,9 +47,11 @@ const HeaderBox = styled.header`
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
 `;
 
-const NavBox = styled.div`
+const HeaderLink = styled(Link)`
+  width: 100%;
+  height: 100%;
   display: flex;
   align-items: center;
+  justify-content: center;
 `;
-
 export default Header;

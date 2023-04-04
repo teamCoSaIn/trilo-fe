@@ -2,6 +2,7 @@ import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import HeaderLayout from '@/Layouts/HeaderLayout';
 import { Home, Login, User, Callback, TripList } from '@/pages';
+import TripPlan from '@/pages/TripPlan/index';
 import {
   EveryUser,
   OnlyLoginUser,
@@ -19,6 +20,10 @@ const Router = () => {
           <Route
             path="/trip-list"
             element={<ExceptLogoutUser page={<TripList />} />}
+          />
+          <Route
+            path="/trip-plan/:id"
+            element={<ExceptLogoutUser page={<TripPlan />} />}
           />
         </Route>
         <Route path="/login" element={<ExceptLoginUser page={<Login />} />} />

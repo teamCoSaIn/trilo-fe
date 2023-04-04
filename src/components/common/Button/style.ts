@@ -27,6 +27,10 @@ export const blueBtnStyle = css`
   background-color: ${color.blue3};
   color: ${color.white};
   border: 1px solid ${color.blue3};
+  &:hover {
+    background-color: ${color.blue4};
+    border: 1px solid ${color.blue4};
+  }
 `;
 
 export const whiteBtnStyle = css`

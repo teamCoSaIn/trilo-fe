@@ -42,7 +42,9 @@
     ],
     "arrow-body-style": "off",
     "import/no-extraneous-dependencies": "off",
-    "react/jsx-no-useless-fragment": "off"
+    "react/jsx-no-useless-fragment": "off",
+    "@typescript-eslint/no-redeclare": "off",
+    "no-alert": "off"
   },
   "settings": {
     "import/resolver": { "webpack": {}, "typescript": {} }

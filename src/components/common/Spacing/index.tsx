@@ -1,11 +1,13 @@
 import styled, { css } from 'styled-components';
 
 const Spacing = styled.div<{
-  size: number;
+  width?: number;
+  height?: number;
 }>`
   flex: none;
   ${props => css`
-    ${props.size && { height: props.size }}
+    ${props.width && { width: props.width }}
+    ${props.height && { height: props.height }}
   `};
 `;
 

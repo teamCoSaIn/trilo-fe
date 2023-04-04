@@ -8,7 +8,7 @@ import CircularLoader from '@/components/common/Loader/index';
 import { UserProfileNickname } from '@/states/userProfile';
 import { nicknameRegExp } from '@/utils/regExp';
 
-const UserNickname = () => {
+const DynamicUserNickname = () => {
   const [nickname, setNickname] = useRecoilState(UserProfileNickname);
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
@@ -19,6 +19,7 @@ const UserNickname = () => {
       onSuccess: (data, variables) => {
         setNickname(variables);
         setIsEdit(false);
+        setNicknameInputValue('');
       },
       onError: () => {
         alert('서버 오류');
@@ -43,6 +44,11 @@ const UserNickname = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    if (nickname === nicknameInputValue) {
+      setIsEdit(false);
+      setNicknameInputValue('');
+      return;
+    }
     if (isValidNickname(nicknameInputValue)) {
       mutate(nicknameInputValue);
     } else {
@@ -58,7 +64,7 @@ const UserNickname = () => {
     setNicknameInputValue(event.target.value);
   };
 
-  const NicknameContents = isEdit ? (
+  const DynamicNickname = isEdit ? (
     <NicknameForm onSubmit={handleSubmit}>
       <NicknameEditInput
         type="text"
@@ -87,15 +93,9 @@ const UserNickname = () => {
   );
 
   return (
-    <>
-      {isLoading ? (
-        <NicknameBox>
-          <CircularLoader />
-        </NicknameBox>
-      ) : (
-        <NicknameBox>{NicknameContents}</NicknameBox>
-      )}
-    </>
+    <NicknameBox>
+      {isLoading ? <CircularLoader /> : DynamicNickname}
+    </NicknameBox>
   );
 };
 
@@ -150,4 +150,4 @@ const NicknameIconBtn = styled.button`
   font-size: 2rem;
 `;
 
-export default UserNickname;
+export default DynamicUserNickname;

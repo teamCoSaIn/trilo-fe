@@ -45,16 +45,17 @@ const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
 
         return { previousTripList };
       },
-      onError: (context?: { previousTripList: TripCardData[] | undefined }) => {
+      onError: (
+        err,
+        variables,
+        context?: { previousTripList: TripCardData[] | undefined }
+      ) => {
         if (context?.previousTripList) {
           queryClient.setQueryData<TripCardData[]>(
             ['tripList'],
             context.previousTripList
           );
         }
-      },
-      onSettled: () => {
-        queryClient.invalidateQueries(['tripList']);
       },
     }
   );

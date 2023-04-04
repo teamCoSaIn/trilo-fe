@@ -32,7 +32,6 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     mutate(titleInputValue);
-    handleClose();
   };
 
   const handleTitleInputChange = (

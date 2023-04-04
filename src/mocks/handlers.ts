@@ -239,6 +239,20 @@ const createTripCard = rest.post('/api/tripcard', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
+const deleteTripCard = rest.delete(
+  '/api/tripcard/:id',
+  async (req, res, ctx) => {
+    await sleep(2000);
+
+    const { id } = req.params;
+
+    const idx = tripList.findIndex(el => el.id === +id);
+    tripList.splice(idx, 1);
+
+    return res(ctx.status(200));
+  }
+);
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -252,6 +266,7 @@ const handlers = [
   getTripList,
   changeTripCardTitle,
   createTripCard,
+  deleteTripCard,
 ];
 
 export default handlers;

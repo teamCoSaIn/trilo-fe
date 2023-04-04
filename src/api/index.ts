@@ -9,6 +9,7 @@ import {
   getTripList,
   changeTripCardTitle,
   createTripCard,
+  deleteTripCard,
 } from '@/api/tripList';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
@@ -24,6 +25,7 @@ const HTTP = {
   getTripList,
   changeTripCardTitle,
   createTripCard,
+  deleteTripCard,
 };
 
 export default HTTP;

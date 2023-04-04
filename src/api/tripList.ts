@@ -42,3 +42,12 @@ export const createTripCard = async (tripCardTitle: string) => {
   });
   return res.status;
 };
+
+export const deleteTripCard = async (id: number) => {
+  const res = await axios({
+    method: 'delete',
+    url: `/tripcard/${id}`,
+    requireAuth: true,
+  });
+  return res.status;
+};

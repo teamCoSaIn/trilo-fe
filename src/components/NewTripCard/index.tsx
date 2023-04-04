@@ -51,7 +51,7 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   };
 
   return isLoading ? (
-    <LoadingBox column>
+    <LoadingBox justifyCenter alignCenter>
       <CircularLoader />
     </LoadingBox>
   ) : (
@@ -112,7 +112,14 @@ const TitleConfirmBtn = styled.button`
 `;
 
 const LoadingBox = styled(Flex)`
-  width: 230px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  opacity: 0.7;
+  z-index: 3;
 `;
 
 export default NewTripCard;

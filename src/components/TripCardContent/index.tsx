@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 
 import { TripCardData } from '@/api/tripList';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
+import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
 import Button from '@/components/common/Button';
 import TripCardStatusLabel from '@/components/TripCardStatusLabel';
 
@@ -12,6 +13,10 @@ interface TripCardContentProps {
 
 const TripCardContent = ({ cardData }: TripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
+  const tripContentPicUrl = cardData.picUrl || tripCardDefaultPic;
+  const tripPeriod = cardData.startDay ? (
+    <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
+  ) : null;
 
   const handleTripCardMouseEnter = () => {
     setIsHover(true);
@@ -34,13 +39,13 @@ const TripCardContent = ({ cardData }: TripCardContentProps) => {
 
   return (
     <TripContent
-      picUrl={cardData.picUrl}
+      picUrl={tripContentPicUrl}
       onMouseEnter={handleTripCardMouseEnter}
       onMouseLeave={handleTripCardMouseLeave}
     >
       {isHover && HoverMask}
       <TripCardStatusLabel status={cardData.status} />
-      <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
+      {tripPeriod}
     </TripContent>
   );
 };

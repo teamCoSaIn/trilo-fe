@@ -26,7 +26,7 @@ const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
             여행 중
           </>
         );
-      default:
+      case 'AFTER':
         return (
           <>
             여행 완료
@@ -34,10 +34,14 @@ const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
             <CheckIcon width={10} height={10} />
           </>
         );
+      default:
+        return null;
     }
   }, [status]);
 
-  return <TripStatus status={status}>{tripStatusContent}</TripStatus>;
+  return status ? (
+    <TripStatus status={status}>{tripStatusContent}</TripStatus>
+  ) : null;
 };
 
 const TripStatus = styled.div<{ status: TripCardStatus }>`

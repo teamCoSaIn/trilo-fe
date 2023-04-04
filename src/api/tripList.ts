@@ -1,6 +1,6 @@
 import axios from '@/api/core';
 
-export type TripCardStatus = 'BEFORE' | 'AFTER' | 'ON';
+export type TripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
 export interface TripCardData {
   id: number;
   title: string;

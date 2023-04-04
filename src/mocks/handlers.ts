@@ -16,11 +16,10 @@ const tripList = [
   {
     id: 0,
     title: '2023 다낭계획',
-    picUrl:
-      'https://s3-alpha-sig.figma.com/img/3327/e6a1/5bcb290a01f335bc8da914c5c122d36b?Expires=1681084800&Signature=gVDVxEhPgeboEejFZCLW~VZh~j2GKc6UmEsg2-D0Nd-00HDHxjwjApBrL4~XWmhRLwGzbHpb1IQ7L5tuJbnDHWp53r1j5EY2rFlyeq2~c~JVVjRVrokIpV64mXFC7YFxlTHaSUBqKz6bQSTbouWlVbLnamgcDeuXbh9AvFVUQPczIdQb554WMHtJKLVy3WT5T951W6UtoUh1g4uVT2WqDtpgupfQK9Kn5hcsfDgMnKrgu~GlV3meu8q3mZrnBU2yMj2kECNS-2KskWNsIS3h5eC-mRhqnfKaH-Ok71kZe8FmRL~c7JTGxFqGuE1UX-2DhbHd1zsAQeXnAnvs-e7nTA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
-    status: 'BEFORE',
-    startDay: '23.08.20',
-    endDay: '23.08.22',
+    picUrl: '',
+    status: '',
+    startDay: '',
+    endDay: '',
   },
   {
     id: 1,

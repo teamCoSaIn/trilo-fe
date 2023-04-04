@@ -8,6 +8,7 @@ import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import TripCard from '@/components/TripCard';
 import TripCardAddBtn from '@/components/TripCardAddBtn/index';
+import TripCardListSkeleton from '@/components/TripCardListSkeleton';
 import color from '@/constants/color';
 import { UserProfileNickname } from '@/states/userProfile';
 
@@ -15,11 +16,13 @@ const TripListContainer = () => {
   // TODO: 방문자일 때와 로그인일 때 구분
   const nickname = useRecoilValue(UserProfileNickname);
 
-  const { data: tripCardData } = useQuery(
+  const { data: tripCardData, isFetching } = useQuery(
     ['tripList'],
     () => HTTP.getTripList(),
     {
       suspense: true,
+      staleTime: 30 * 60 * 1000,
+      refetchOnWindowFocus: false,
     }
   );
 
@@ -27,7 +30,9 @@ const TripListContainer = () => {
     return <TripCard key={cardData.id} cardData={cardData} />;
   });
 
-  return (
+  return isFetching ? (
+    <TripCardListSkeleton numOfTripCard={tripCardData?.length} />
+  ) : (
     <>
       <Flex column>
         <Flex>

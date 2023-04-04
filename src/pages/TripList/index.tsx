@@ -4,7 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
-import CircularLoader from '@/components/common/Loader';
+import TripCardListSkeleton from '@/components/TripCardListSkeleton';
 import TripListContainer from '@/components/TripListContainer';
 
 const TripList = () => {
@@ -13,7 +13,7 @@ const TripList = () => {
   return (
     <Layout>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
-        <Suspense fallback={<CircularLoader />}>
+        <Suspense fallback={<TripCardListSkeleton />}>
           <TripListContainer />
         </Suspense>
       </ErrorBoundary>

@@ -2,7 +2,7 @@ import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
-import Flex from '@/components/common/Flex/index';
+import Flex from '@/components/common/Flex';
 import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/MyProfileBtn';
@@ -26,7 +26,7 @@ const Header = () => {
       <Logo width={76} height={50} />
       <Flex alignCenter>
         <MuiButton width={124}>
-          <HeaderLink to="/trip-list">나의 여행 계획</HeaderLink>
+          <HeaderLink to="/tripplan-list">나의 여행 계획</HeaderLink>
         </MuiButton>
         {userStatusBtn}
       </Flex>

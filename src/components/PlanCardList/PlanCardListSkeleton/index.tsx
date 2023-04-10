@@ -5,18 +5,18 @@ import styled from 'styled-components';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 
-interface TripCardListSkeletonProps {
-  numOfTripCard?: number;
+interface PlanCardListSkeletonProps {
+  numOfPlanCard?: number;
 }
 
 interface DefaultProps {
-  numOfTripCard: number;
+  numOfPlanCard: number;
 }
 
-const TripCardListSkeleton = ({
-  numOfTripCard = 7,
-}: TripCardListSkeletonProps | DefaultProps) => {
-  const SkeletonList = Array.from({ length: numOfTripCard + 1 }).map(
+const PlanCardListSkeleton = ({
+  numOfPlanCard = 7,
+}: PlanCardListSkeletonProps | DefaultProps) => {
+  const SkeletonList = Array.from({ length: numOfPlanCard + 1 }).map(
     (_, idx) => {
       const id = Date.now() + idx;
       return (
@@ -37,15 +37,15 @@ const TripCardListSkeleton = ({
         <Skeleton variant="rounded" width={150} height={13} />
         <Spacing height={47} />
       </Flex>
-      <TripCardsBox>{SkeletonList}</TripCardsBox>
+      <PlanCardsBox>{SkeletonList}</PlanCardsBox>
     </>
   );
 };
 
-const TripCardsBox = styled.div`
+const PlanCardsBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 48px;
 `;
 
-export default TripCardListSkeleton;
+export default PlanCardListSkeleton;

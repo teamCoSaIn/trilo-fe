@@ -3,28 +3,28 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState, SyntheticEvent, useRef } from 'react';
 import styled from 'styled-components';
 
-import HTTP from '@/api/index';
+import HTTP from '@/api';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
-import DimLoader from '@/components/common/DimLoader/index';
-import Flex from '@/components/common/Flex/index';
-import Spacing from '@/components/common/Spacing/index';
+import DimLoader from '@/components/common/DimLoader';
+import Flex from '@/components/common/Flex';
+import Spacing from '@/components/common/Spacing';
 
-interface NewTripCardProps {
+interface NewPlanCardProps {
   handleClose: () => void;
 }
 
-const NewTripCard = ({ handleClose }: NewTripCardProps) => {
+const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
   const [titleInputValue, setTitleInputValue] = useState('');
-  const newTripCardRef = useRef<HTMLDivElement>(null);
+  const newPlanCardRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    (tripCardTitle: string) => HTTP.createTripCard(tripCardTitle),
+    (planCardTitle: string) => HTTP.createPlanCard(planCardTitle),
     {
       onSuccess: () => {
         handleClose();
-        queryClient.invalidateQueries(['tripList']);
+        queryClient.invalidateQueries(['planCardList']);
       },
     }
   );
@@ -42,8 +42,8 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
 
   const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
     if (
-      newTripCardRef.current &&
-      newTripCardRef.current.contains(event.target as HTMLElement)
+      newPlanCardRef.current &&
+      newPlanCardRef.current.contains(event.target as HTMLElement)
     ) {
       return;
     }
@@ -54,10 +54,10 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
     <DimLoader />
   ) : (
     <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-      <Flex column ref={newTripCardRef}>
-        <TripContent>
+      <Flex column ref={newPlanCardRef}>
+        <LogoBox>
           <LogoIcon fill="white" />
-        </TripContent>
+        </LogoBox>
         <Spacing height={16} />
         <TitleForm onSubmit={handleTitleSubmit}>
           <TitleEditInput
@@ -77,7 +77,7 @@ const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   );
 };
 
-const TripContent = styled.div`
+const LogoBox = styled.div`
   width: 230px;
   height: 230px;
   background-color: #4d77ff;
@@ -109,4 +109,4 @@ const TitleConfirmBtn = styled.button`
   align-items: center;
 `;
 
-export default NewTripCard;
+export default NewPlanCard;

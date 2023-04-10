@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { ReactComponent as PlusIcon } from '@/assets/plus.svg';
 import Description from '@/components/common/Description';
-import Flex from '@/components/common/Flex/index';
-import Spacing from '@/components/common/Spacing/index';
-import NewTripCard from '@/components/NewTripCard/index';
+import Flex from '@/components/common/Flex';
+import Spacing from '@/components/common/Spacing';
+import NewPlanCard from '@/components/PlanCardList/NewPlanCard';
 import color from '@/constants/color';
 
-const TripCardAddBtn = () => {
+const PlanCardAddBtn = () => {
   const [onCreation, setOnCreation] = useState(false);
 
   const handleAddBtnClick = () => {
@@ -32,7 +32,7 @@ const TripCardAddBtn = () => {
           </Description>
         </Box>
       </Flex>
-      {onCreation && <NewTripCard handleClose={handleClose} />}
+      {onCreation && <NewPlanCard handleClose={handleClose} />}
     </>
   );
 };
@@ -53,4 +53,4 @@ const Box = styled.div`
   padding: 3px 15px;
 `;
 
-export default TripCardAddBtn;
+export default PlanCardAddBtn;

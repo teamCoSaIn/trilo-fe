@@ -4,17 +4,17 @@ import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
-import TripCardListSkeleton from '@/components/TripCardListSkeleton';
-import TripListContainer from '@/components/TripListContainer';
+import PlanCardList from '@/components/PlanCardList';
+import PlanCardListSkeleton from '@/components/PlanCardList/PlanCardListSkeleton';
 
-const TripList = () => {
+const TripPlanList = () => {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
     <Layout>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
-        <Suspense fallback={<TripCardListSkeleton />}>
-          <TripListContainer />
+        <Suspense fallback={<PlanCardListSkeleton />}>
+          <PlanCardList />
         </Suspense>
       </ErrorBoundary>
     </Layout>
@@ -31,4 +31,4 @@ const Layout = styled.div`
   min-width: 1364px;
 `;
 
-export default TripList;
+export default TripPlanList;

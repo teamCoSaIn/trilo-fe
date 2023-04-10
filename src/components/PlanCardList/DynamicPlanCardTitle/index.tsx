@@ -3,57 +3,57 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { SyntheticEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import HTTP from '@/api/index';
-import { TripCardData, TripCardTitleType } from '@/api/tripList';
+import HTTP from '@/api';
+import { PlanCardData, PlanCardTitleType } from '@/api/tripPlanList';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
 
-interface TripCardTitleProps {
-  cardData: TripCardData;
+interface PlanCardTitleProps {
+  planCardData: PlanCardData;
 }
 
-const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
+const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
   const queryClient = useQueryClient();
   const titleFormRef = useRef<HTMLFormElement>(null);
 
   const { mutate } = useMutation(
-    (titleData: TripCardTitleType) => HTTP.changeTripCardTitle(titleData),
+    (titleData: PlanCardTitleType) => HTTP.changePlanCardTitle(titleData),
     {
-      onMutate: async (titleData: TripCardTitleType) => {
-        await queryClient.cancelQueries(['tripList']);
+      onMutate: async (titleData: PlanCardTitleType) => {
+        await queryClient.cancelQueries(['planCardList']);
 
-        const previousTripList = queryClient.getQueryData<TripCardData[]>([
-          'tripList',
+        const previousPlanCardList = queryClient.getQueryData<PlanCardData[]>([
+          'planCardList',
         ]);
 
-        if (previousTripList) {
-          queryClient.setQueryData<TripCardData[]>(
-            ['tripList'],
-            prevTripList => {
-              return prevTripList?.map((tripCard: TripCardData) => {
-                if (tripCard.id === titleData.id) {
-                  return { ...tripCard, title: titleData.title };
+        if (previousPlanCardList) {
+          queryClient.setQueryData<PlanCardData[]>(
+            ['planCardList'],
+            prevPlanCardList => {
+              return prevPlanCardList?.map((planCard: PlanCardData) => {
+                if (planCard.id === titleData.id) {
+                  return { ...planCard, title: titleData.title };
                 }
-                return tripCard;
+                return planCard;
               });
             }
           );
         }
 
-        return { previousTripList };
+        return { previousPlanCardList };
       },
       onError: (
         err,
         variables,
-        context?: { previousTripList: TripCardData[] | undefined }
+        context?: { previousPlanCardList: PlanCardData[] | undefined }
       ) => {
-        if (context?.previousTripList) {
-          queryClient.setQueryData<TripCardData[]>(
-            ['tripList'],
-            context.previousTripList
+        if (context?.previousPlanCardList) {
+          queryClient.setQueryData<PlanCardData[]>(
+            ['planCardList'],
+            context.previousPlanCardList
           );
         }
       },
@@ -62,8 +62,8 @@ const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (cardData.title !== titleInputValue) {
-      mutate({ title: titleInputValue, id: cardData.id });
+    if (planCardData.title !== titleInputValue) {
+      mutate({ title: titleInputValue, id: planCardData.id });
     }
     setTitleInputValue('');
     setIsEdit(false);
@@ -96,7 +96,7 @@ const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
         <TitleEditInput
           type="text"
           value={titleInputValue}
-          placeholder={cardData.title}
+          placeholder={planCardData.title}
           onChange={handleTitleInputChange}
           autoFocus
           maxLength={20}
@@ -109,7 +109,7 @@ const DynamicTripCardTitle = ({ cardData }: TripCardTitleProps) => {
   ) : (
     <Box onClick={handleTitleClick}>
       <Description color={color.gray3} fontSize={2}>
-        {cardData.title}
+        {planCardData.title}
       </Description>
     </Box>
   );
@@ -147,4 +147,4 @@ const TitleConfirmBtn = styled.button`
   align-items: center;
 `;
 
-export default DynamicTripCardTitle;
+export default DynamicPlanCardTitle;

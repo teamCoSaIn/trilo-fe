@@ -2,46 +2,46 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { TripCardData } from '@/api/tripList';
+import { PlanCardData } from '@/api/tripPlanList';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
-import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
+import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
 import Button from '@/components/common/Button';
-import DimLoader from '@/components/common/DimLoader/index';
-import TripCardStatusLabel from '@/components/TripCardStatusLabel';
-import useTripCardDelete from '@/hooks/useTripCardDelete';
+import DimLoader from '@/components/common/DimLoader';
+import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
+import usePlanCardDelete from '@/hooks/usePlanCardDelete';
 
-interface TripCardContentProps {
-  cardData: TripCardData;
+interface PlanCardContentProps {
+  planCardData: PlanCardData;
 }
 
-const TripCardContent = ({ cardData }: TripCardContentProps) => {
+const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
-  const tripContentPicUrl = cardData.picUrl || tripCardDefaultPic;
+  const planContentPicUrl = planCardData.picUrl || planCardDefaultPic;
 
-  const { mutate, isLoading } = useTripCardDelete();
+  const { mutate, isLoading } = usePlanCardDelete();
 
-  const tripPeriod = cardData.startDay ? (
-    <TripPeriod>{`${cardData.startDay} ~ ${cardData.endDay}`}</TripPeriod>
+  const planPeriod = planCardData.startDay ? (
+    <PlanPeriod>{`${planCardData.startDay} ~ ${planCardData.endDay}`}</PlanPeriod>
   ) : null;
 
-  const handleTripCardMouseEnter = () => {
+  const handlePlanCardMouseEnter = () => {
     setIsHover(true);
   };
 
-  const handleTripCardMouseLeave = () => {
+  const handlePlanCardMouseLeave = () => {
     setIsHover(false);
   };
 
   const handleDeleteBtnClick = () => {
     if (window.confirm('찐으로 삭제하시렵니까?')) {
-      mutate(cardData.id);
+      mutate(planCardData.id);
     }
   };
 
   const HoverMask = (
     <DimLayer>
       <Button type="button" btnSize="medium">
-        <PlanBtnLink to={`/trip-plan/${cardData.id}`}>수정하기</PlanBtnLink>
+        <PlanBtnLink to={`/tripplan/${planCardData.id}`}>수정하기</PlanBtnLink>
       </Button>
       <DeleteBtn onClick={handleDeleteBtnClick}>
         <DeleteIcon />
@@ -52,20 +52,20 @@ const TripCardContent = ({ cardData }: TripCardContentProps) => {
   return (
     <>
       {isLoading && <DimLoader />}
-      <TripContent
-        picUrl={tripContentPicUrl}
-        onMouseEnter={handleTripCardMouseEnter}
-        onMouseLeave={handleTripCardMouseLeave}
+      <PlanContent
+        picUrl={planContentPicUrl}
+        onMouseEnter={handlePlanCardMouseEnter}
+        onMouseLeave={handlePlanCardMouseLeave}
       >
         {isHover && HoverMask}
-        <TripCardStatusLabel status={cardData.status} />
-        {tripPeriod}
-      </TripContent>
+        <PlanCardStatusLabel status={planCardData.status} />
+        {planPeriod}
+      </PlanContent>
     </>
   );
 };
 
-const TripContent = styled.div<{ picUrl: string }>`
+const PlanContent = styled.div<{ picUrl: string }>`
   position: relative;
   width: 230px;
   height: 230px;
@@ -75,7 +75,7 @@ const TripContent = styled.div<{ picUrl: string }>`
   background-size: cover;
 `;
 
-const TripPeriod = styled.p`
+const PlanPeriod = styled.p`
   position: absolute;
   bottom: 8px;
   right: 8px;
@@ -120,4 +120,4 @@ const PlanBtnLink = styled(Link)`
   justify-content: center;
 `;
 
-export default TripCardContent;
+export default PlanCardContent;

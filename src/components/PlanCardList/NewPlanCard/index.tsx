@@ -23,7 +23,6 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
     (planCardTitle: string) => HTTP.createPlanCard(planCardTitle),
     {
       onSuccess: () => {
-        handleClose();
         queryClient.invalidateQueries(['planCardList']);
       },
     }
@@ -50,30 +49,31 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
     handleClose();
   };
 
-  return isLoading ? (
-    <DimLoader />
-  ) : (
-    <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-      <Flex column ref={newPlanCardRef}>
-        <LogoBox>
-          <LogoIcon fill="white" />
-        </LogoBox>
-        <Spacing height={16} />
-        <TitleForm onSubmit={handleTitleSubmit}>
-          <TitleEditInput
-            type="text"
-            value={titleInputValue}
-            placeholder="계획명을 입력해주세요."
-            onChange={handleTitleInputChange}
-            autoFocus
-            maxLength={20}
-          />
-          <TitleConfirmBtn type="submit">
-            <CheckIcon fill="#4D77FF" width={14} height={14} />
-          </TitleConfirmBtn>
-        </TitleForm>
-      </Flex>
-    </ClickAwayListener>
+  return (
+    <>
+      <ClickAwayListener onClickAway={handleTitleFormClickAway}>
+        <Flex column ref={newPlanCardRef}>
+          {isLoading && <DimLoader />}
+          <LogoBox>
+            <LogoIcon fill="white" />
+          </LogoBox>
+          <Spacing height={16} />
+          <TitleForm onSubmit={handleTitleSubmit}>
+            <TitleEditInput
+              type="text"
+              value={titleInputValue}
+              placeholder="계획명을 입력해주세요."
+              onChange={handleTitleInputChange}
+              autoFocus
+              maxLength={20}
+            />
+            <TitleConfirmBtn type="submit">
+              <CheckIcon fill="#4D77FF" width={14} height={14} />
+            </TitleConfirmBtn>
+          </TitleForm>
+        </Flex>
+      </ClickAwayListener>
+    </>
   );
 };
 

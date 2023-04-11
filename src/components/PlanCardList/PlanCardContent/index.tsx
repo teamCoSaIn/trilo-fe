@@ -8,7 +8,7 @@ import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
 import Button from '@/components/common/Button';
 import DimLoader from '@/components/common/DimLoader';
 import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
-import usePlanCardDelete from '@/hooks/usePlanCardDelete';
+import useDeletePlanCard from '@/queryHooks/useDeletePlanCard';
 
 interface PlanCardContentProps {
   planCardData: PlanCardData;
@@ -18,7 +18,7 @@ const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
   const planContentPicUrl = planCardData.picUrl || planCardDefaultPic;
 
-  const { mutate, isLoading } = usePlanCardDelete();
+  const { mutate, isLoading } = useDeletePlanCard();
 
   const planPeriod = planCardData.startDay ? (
     <PlanPeriod>{`${planCardData.startDay} ~ ${planCardData.endDay}`}</PlanPeriod>

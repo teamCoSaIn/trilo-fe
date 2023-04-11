@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api/index';
 
-const usePlanCardDelete = () => {
+const useDeletePlanCard = () => {
   const queryClient = useQueryClient();
 
   return useMutation((id: number) => HTTP.deletePlanCard(id), {
@@ -15,4 +15,4 @@ const usePlanCardDelete = () => {
   });
 };
 
-export default usePlanCardDelete;
+export default useDeletePlanCard;

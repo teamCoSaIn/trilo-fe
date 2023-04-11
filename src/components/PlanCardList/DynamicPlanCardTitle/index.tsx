@@ -1,13 +1,12 @@
 import { ClickAwayListener } from '@mui/material';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { SyntheticEvent, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import HTTP from '@/api';
-import { PlanCardData, PlanCardTitleType } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/tripPlanList';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
+import useChangePlanCardTitle from '@/queryHooks/useChangePlanCardTitle';
 
 interface PlanCardTitleProps {
   planCardData: PlanCardData;
@@ -16,49 +15,10 @@ interface PlanCardTitleProps {
 const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
   const [isEdit, setIsEdit] = useState(false);
   const [titleInputValue, setTitleInputValue] = useState('');
-  const queryClient = useQueryClient();
+
   const titleFormRef = useRef<HTMLFormElement>(null);
 
-  const { mutate } = useMutation(
-    (titleData: PlanCardTitleType) => HTTP.changePlanCardTitle(titleData),
-    {
-      onMutate: async (titleData: PlanCardTitleType) => {
-        await queryClient.cancelQueries(['planCardList']);
-
-        const previousPlanCardList = queryClient.getQueryData<PlanCardData[]>([
-          'planCardList',
-        ]);
-
-        if (previousPlanCardList) {
-          queryClient.setQueryData<PlanCardData[]>(
-            ['planCardList'],
-            prevPlanCardList => {
-              return prevPlanCardList?.map((planCard: PlanCardData) => {
-                if (planCard.id === titleData.id) {
-                  return { ...planCard, title: titleData.title };
-                }
-                return planCard;
-              });
-            }
-          );
-        }
-
-        return { previousPlanCardList };
-      },
-      onError: (
-        err,
-        variables,
-        context?: { previousPlanCardList: PlanCardData[] | undefined }
-      ) => {
-        if (context?.previousPlanCardList) {
-          queryClient.setQueryData<PlanCardData[]>(
-            ['planCardList'],
-            context.previousPlanCardList
-          );
-        }
-      },
-    }
-  );
+  const { mutate } = useChangePlanCardTitle();
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();

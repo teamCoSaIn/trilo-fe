@@ -27,7 +27,7 @@ const Layout = styled.div`
   height: 100%;
   width: 100%;
   padding: 104px 150px 0 150px;
-  // TODO: padding * 2 + TripCardWidth * 4 + TripCardBoxGap * 3
+  // TODO: padding * 2 + TripPlanCardWidth * 4 + TripPlanCardBoxGap * 3
   min-width: 1364px;
 `;
 

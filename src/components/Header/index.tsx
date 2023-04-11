@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import Flex from '@/components/common/Flex';
 import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
-import MyProfileBtn from '@/components/MyProfileBtn';
+import MyProfileBtn from '@/components/Header/MyProfileBtn';
 import { HEADER_HEIGHT } from '@/constants/size';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 

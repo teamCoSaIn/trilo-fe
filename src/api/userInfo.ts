@@ -7,7 +7,7 @@ interface UserProfile {
 
 interface UserInfo {
   totalDistanceOfPastTrip: number;
-  totalNumOfTrip: number;
+  totalNumOfTripPlan: number;
   badgeImgUrl: string;
 }
 

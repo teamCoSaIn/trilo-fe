@@ -10,7 +10,7 @@ interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthProvider = ({ children }: AuthProviderProps) => {
+const AuthChecker = ({ children }: AuthProviderProps) => {
   const setUserStatus = useSetRecoilState(UserStatus);
   const setUserProfileNickname = useSetRecoilState(UserProfileNickname);
   const setUserProfileImgUrl = useSetRecoilState(UserProfileImgUrl);
@@ -52,4 +52,4 @@ const AuthProvider = ({ children }: AuthProviderProps) => {
   return <>{children}</>;
 };
 
-export default AuthProvider;
+export default AuthChecker;

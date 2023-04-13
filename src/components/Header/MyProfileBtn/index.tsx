@@ -84,55 +84,53 @@ const MyProfileBtn = () => {
 
   return (
     <Stack direction="row" spacing={2}>
-      <div>
-        <MuiButton
-          width={92}
-          ref={anchorRef}
-          id="composition-button"
-          aria-controls={open ? 'composition-menu' : undefined}
-          aria-expanded={open ? 'true' : undefined}
-          aria-haspopup="true"
-          onClick={handleToggle}
-        >
-          <UserProfileImg profileImgUrl={userProfileImgUrl} />
-        </MuiButton>
-        <Popper
-          open={open}
-          anchorEl={anchorRef.current}
-          role={undefined}
-          placement="bottom-start"
-          transition
-          disablePortal
-        >
-          {({ TransitionProps, placement }) => (
-            <Grow
-              {...TransitionProps}
-              style={{
-                transformOrigin:
-                  placement === 'bottom-start' ? 'left top' : 'left bottom',
-              }}
-            >
-              <Paper>
-                <ClickAwayListener onClickAway={handleClose}>
-                  <DropDownMenuList
-                    autoFocusItem={open}
-                    id="composition-menu"
-                    aria-labelledby="composition-button"
-                    onKeyDown={handleListKeyDown}
-                  >
-                    <DropDownMenuItem onClick={handleClickMyAccount}>
-                      내 정보
-                    </DropDownMenuItem>
-                    <DropDownMenuItem onClick={handleClickLogout}>
-                      로그아웃
-                    </DropDownMenuItem>
-                  </DropDownMenuList>
-                </ClickAwayListener>
-              </Paper>
-            </Grow>
-          )}
-        </Popper>
-      </div>
+      <MuiButton
+        width={92}
+        ref={anchorRef}
+        id="composition-button"
+        aria-controls={open ? 'composition-menu' : undefined}
+        aria-expanded={open ? 'true' : undefined}
+        aria-haspopup="true"
+        onClick={handleToggle}
+      >
+        <UserProfileImg profileImgUrl={userProfileImgUrl} />
+      </MuiButton>
+      <Popper
+        open={open}
+        anchorEl={anchorRef.current}
+        role={undefined}
+        placement="bottom-start"
+        transition
+        disablePortal
+      >
+        {({ TransitionProps, placement }) => (
+          <Grow
+            {...TransitionProps}
+            style={{
+              transformOrigin:
+                placement === 'bottom-start' ? 'left top' : 'left bottom',
+            }}
+          >
+            <Paper>
+              <ClickAwayListener onClickAway={handleClose}>
+                <DropDownMenuList
+                  autoFocusItem={open}
+                  id="composition-menu"
+                  aria-labelledby="composition-button"
+                  onKeyDown={handleListKeyDown}
+                >
+                  <DropDownMenuItem onClick={handleClickMyAccount}>
+                    내 정보
+                  </DropDownMenuItem>
+                  <DropDownMenuItem onClick={handleClickLogout}>
+                    로그아웃
+                  </DropDownMenuItem>
+                </DropDownMenuList>
+              </ClickAwayListener>
+            </Paper>
+          </Grow>
+        )}
+      </Popper>
     </Stack>
   );
 };

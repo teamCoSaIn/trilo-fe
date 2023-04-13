@@ -1,9 +1,14 @@
-import { useParams } from 'react-router-dom';
+import PlanLeftTab from '@/components/PlanLeftTab';
+import PlanRightTab from '@/components/PlanRightTab';
 
 const TripPlan = () => {
-  const { id } = useParams();
-
-  return <div>{id}번 TripPlanCard에 대한 Plan 페이지입니다.</div>;
+  return (
+    <>
+      <PlanLeftTab />
+      <div>GoogleMap</div>
+      <PlanRightTab />
+    </>
+  );
 };
 
 export default TripPlan;

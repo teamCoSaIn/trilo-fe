@@ -12,7 +12,7 @@ const sleep = (ms: number) =>
 let error = false;
 let isLogin = JSON.parse(localStorage.getItem('mockLogin') as string) || false;
 let nickname = 'oliver';
-const tripList = [
+const planCardList = [
   {
     id: 0,
     title: '2023 다낭계획',
@@ -192,24 +192,27 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
   return res(
     ctx.json({
       totalDistanceOfPastTrip: 410,
-      totalNumOfTrip: 10,
+      totalNumOfTripPlan: 10,
       badgeImgUrl:
         'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
     })
   );
 });
 
-const getTripList = rest.get('/api/trip-list', async (req, res, ctx) => {
-  await sleep(2000);
-  return res(ctx.json(tripList));
-});
+const getPlanCardDataList = rest.get(
+  '/api/plancard-list',
+  async (req, res, ctx) => {
+    await sleep(2000);
+    return res(ctx.json(planCardList));
+  }
+);
 
-const changeTripCardTitle = rest.put(
-  '/api/tripcard-title',
+const changePlanCardTitle = rest.put(
+  '/api/plancard-title',
   async (req, res, ctx) => {
     const { title, id } = await req.json();
 
-    tripList.forEach((el, idx, arr) => {
+    planCardList.forEach((el, idx, arr) => {
       if (el.id === id) {
         arr[idx].title = title;
       }
@@ -221,11 +224,11 @@ const changeTripCardTitle = rest.put(
   }
 );
 
-const createTripCard = rest.post('/api/tripcard', async (req, res, ctx) => {
+const createPlanCard = rest.post('/api/plancard', async (req, res, ctx) => {
   const { title } = await req.json();
   await sleep(2000);
 
-  const tripCardData = {
+  const planCardData = {
     id: +new Date(),
     title,
     picUrl: '',
@@ -234,20 +237,20 @@ const createTripCard = rest.post('/api/tripcard', async (req, res, ctx) => {
     endDay: '',
   };
 
-  tripList.unshift(tripCardData);
+  planCardList.unshift(planCardData);
 
   return res(ctx.status(200));
 });
 
-const deleteTripCard = rest.delete(
-  '/api/tripcard/:id',
+const deletePlanCard = rest.delete(
+  '/api/plancard/:id',
   async (req, res, ctx) => {
     await sleep(2000);
 
     const { id } = req.params;
 
-    const idx = tripList.findIndex(el => el.id === +id);
-    tripList.splice(idx, 1);
+    const idx = planCardList.findIndex(el => el.id === +id);
+    planCardList.splice(idx, 1);
 
     return res(ctx.status(200));
   }
@@ -263,10 +266,10 @@ const handlers = [
   getUserProfile,
   changeNickname,
   getUserInfo,
-  getTripList,
-  changeTripCardTitle,
-  createTripCard,
-  deleteTripCard,
+  getPlanCardDataList,
+  changePlanCardTitle,
+  createPlanCard,
+  deletePlanCard,
 ];
 
 export default handlers;

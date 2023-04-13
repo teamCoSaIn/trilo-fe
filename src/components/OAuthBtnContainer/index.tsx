@@ -8,7 +8,7 @@ import { ReactComponent as KakaoLogin } from '@/assets/kakao-login.svg';
 import { ReactComponent as NaverLogin } from '@/assets/naver-login.svg';
 import Error from '@/components/common/Error';
 import CircularLoader from '@/components/common/Loader/index';
-import OAuthBtn from '@/components/OAuthBtn';
+import OAuthBtn from '@/components/OAuthBtnContainer/OAuthBtn';
 
 const OAuthBtnContainer = () => {
   const OAuthList = [

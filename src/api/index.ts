@@ -6,11 +6,11 @@ import {
   checkRefreshToken,
 } from '@/api/oauth';
 import {
-  getTripList,
-  changeTripCardTitle,
-  createTripCard,
-  deleteTripCard,
-} from '@/api/tripList';
+  getPlanCardDataList,
+  changePlanCardTitle,
+  createPlanCard,
+  deletePlanCard,
+} from '@/api/tripPlanList';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
@@ -22,10 +22,10 @@ const HTTP = {
   getUserProfile,
   changeNickname,
   getUserInfo,
-  getTripList,
-  changeTripCardTitle,
-  createTripCard,
-  deleteTripCard,
+  getPlanCardDataList,
+  changePlanCardTitle,
+  createPlanCard,
+  deletePlanCard,
 };
 
 export default HTTP;

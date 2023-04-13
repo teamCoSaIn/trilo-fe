@@ -5,7 +5,7 @@ import HTTP from '@/api';
 import Description from '@/components/common/Description/index';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
-import DynamicUserNickname from '@/components/DynamicUserNickname/index';
+import DynamicUserNickname from '@/components/UserInfo/DynamicUserNickname/index';
 import color from '@/constants/color';
 
 const UserInfo = () => {
@@ -16,7 +16,7 @@ const UserInfo = () => {
 
   return (
     <>
-      <TripBadge src={userInfo?.badgeImgUrl} />
+      <ProfileBadge src={userInfo?.badgeImgUrl} />
       <Spacing height={52} />
       <DynamicUserNickname />
       <Spacing height={45} />
@@ -35,7 +35,7 @@ const UserInfo = () => {
             나의 일정
           </Description>
           <Description color={color.black} fontSize={6}>
-            {`${userInfo?.totalNumOfTrip} 개`}
+            {`${userInfo?.totalNumOfTripPlan} 개`}
           </Description>
         </Flex>
       </Flex>
@@ -43,7 +43,7 @@ const UserInfo = () => {
   );
 };
 
-const TripBadge = styled.img`
+const ProfileBadge = styled.img`
   width: 282px;
   height: 421px;
   border-radius: 36px;

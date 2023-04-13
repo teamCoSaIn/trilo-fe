@@ -1,8 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import HeaderLayout from '@/Layouts/HeaderLayout';
-import { Home, Login, User, Callback, TripList } from '@/pages';
-import TripPlan from '@/pages/TripPlan/index';
+import { Home, Login, User, Callback, TripPlanList } from '@/pages';
+import TripPlan from '@/pages/TripPlan';
 import {
   EveryUser,
   OnlyLoginUser,
@@ -18,11 +18,11 @@ const Router = () => {
           <Route index element={<EveryUser page={<Home />} />} />
           <Route path="/user" element={<OnlyLoginUser page={<User />} />} />
           <Route
-            path="/trip-list"
-            element={<ExceptLogoutUser page={<TripList />} />}
+            path="/tripplan-list"
+            element={<ExceptLogoutUser page={<TripPlanList />} />}
           />
           <Route
-            path="/trip-plan/:id"
+            path="/tripplan/:id"
             element={<ExceptLogoutUser page={<TripPlan />} />}
           />
         </Route>

@@ -1,13 +1,13 @@
 import axios from '@/api/core';
 
-interface UserProfile {
+export interface UserProfile {
   nickname: string;
   imgUrl: string;
 }
 
 interface UserInfo {
   totalDistanceOfPastTrip: number;
-  totalNumOfTrip: number;
+  totalNumOfTripPlan: number;
   badgeImgUrl: string;
 }
 

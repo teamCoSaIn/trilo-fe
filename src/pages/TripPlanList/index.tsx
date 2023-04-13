@@ -1,11 +1,14 @@
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
-import { Suspense } from 'react';
+import React, { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
+import Spacing from '@/components/common/Spacing';
 import PlanCardList from '@/components/PlanCardList';
 import PlanCardListSkeleton from '@/components/PlanCardList/PlanCardListSkeleton';
+import PlanCardListInfo from '@/components/PlanCardListInfo';
+import PlanCardListInfoSkeleton from '@/components/PlanCardListInfo/PlanCardListInfoSkeleton';
 
 const TripPlanList = () => {
   const { reset } = useQueryErrorResetBoundary();
@@ -13,6 +16,10 @@ const TripPlanList = () => {
   return (
     <Layout>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
+        <Suspense fallback={<PlanCardListInfoSkeleton />}>
+          <PlanCardListInfo />
+        </Suspense>
+        <Spacing height={47} />
         <Suspense fallback={<PlanCardListSkeleton />}>
           <PlanCardList />
         </Suspense>

@@ -29,17 +29,7 @@ const PlanCardListSkeleton = ({
     }
   );
 
-  return (
-    <>
-      <Flex column>
-        <Skeleton variant="rounded" width={200} height={23} />
-        <Spacing height={13} />
-        <Skeleton variant="rounded" width={150} height={13} />
-        <Spacing height={47} />
-      </Flex>
-      <PlanCardsBox>{SkeletonList}</PlanCardsBox>
-    </>
-  );
+  return <PlanCardsBox>{SkeletonList}</PlanCardsBox>;
 };
 
 const PlanCardsBox = styled.div`

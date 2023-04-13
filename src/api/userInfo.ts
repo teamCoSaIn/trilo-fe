@@ -1,6 +1,6 @@
 import axios from '@/api/core';
 
-interface UserProfile {
+export interface UserProfile {
   nickname: string;
   imgUrl: string;
 }

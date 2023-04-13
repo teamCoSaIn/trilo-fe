@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -6,6 +7,7 @@ import Flex from '@/components/common/Flex';
 import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/Header/MyProfileBtn';
+import MyProfileBtnSkeleton from '@/components/Header/MyProfileBtnSkeleton';
 import { HEADER_HEIGHT } from '@/constants/size';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
@@ -14,7 +16,9 @@ const Header = () => {
 
   const userStatusBtn =
     userStatus === UserStatusTypes.LOGIN ? (
-      <MyProfileBtn />
+      <Suspense fallback={<MyProfileBtnSkeleton />}>
+        <MyProfileBtn />
+      </Suspense>
     ) : (
       <MuiButton width={92}>
         <HeaderLink to="/login">로그인</HeaderLink>

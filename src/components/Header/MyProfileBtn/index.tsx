@@ -16,12 +16,12 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
 import MuiButton from '@/components/common/MuiButton';
-import { UserProfileImgUrl } from '@/states/userProfile';
+import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const MyProfileBtn = () => {
@@ -29,7 +29,8 @@ const MyProfileBtn = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
-  const userProfileImgUrl = useRecoilValue(UserProfileImgUrl);
+  const { data } = useGetUserProfile({ selectKey: 'imgUrl' });
+  const userProfileImgUrl = data as string;
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);

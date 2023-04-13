@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import { UserProfileImgUrl, UserProfileNickname } from '@/states/userProfile';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 interface AuthProviderProps {
@@ -12,8 +11,6 @@ interface AuthProviderProps {
 
 const AuthChecker = ({ children }: AuthProviderProps) => {
   const setUserStatus = useSetRecoilState(UserStatus);
-  const setUserProfileNickname = useSetRecoilState(UserProfileNickname);
-  const setUserProfileImgUrl = useSetRecoilState(UserProfileImgUrl);
 
   const { data } = useQuery(
     ['checkRefreshToken'],
@@ -33,16 +30,8 @@ const AuthChecker = ({ children }: AuthProviderProps) => {
     }
   );
 
+  // TODO: staleTime 제거 고민해보기
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
-    onSuccess: async () => {
-      const { nickname, imgUrl } = await HTTP.getUserProfile();
-      if (nickname) {
-        setUserProfileNickname(nickname);
-      }
-      if (imgUrl) {
-        setUserProfileImgUrl(imgUrl);
-      }
-    },
     enabled: !!data?.response,
     staleTime: Infinity,
     suspense: true,

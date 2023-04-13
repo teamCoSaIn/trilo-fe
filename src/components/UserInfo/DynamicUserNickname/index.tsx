@@ -1,29 +1,33 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
+import Description from '@/components/common/Description';
 import CircularLoader from '@/components/common/Loader/index';
-import { UserProfileNickname } from '@/states/userProfile';
+import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { nicknameRegExp } from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
-  const [nickname, setNickname] = useRecoilState(UserProfileNickname);
+  // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
+  const { data, isFetching } = useGetUserProfile({ selectKey: 'nickname' });
+  const nickname = data as string;
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
+  const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
     (newNickname: string) => HTTP.changeNickname(newNickname),
     {
-      onSuccess: (data, variables) => {
-        setNickname(variables);
-        setIsEdit(false);
-        setNicknameInputValue('');
+      onSuccess: () => {
+        queryClient.invalidateQueries(['userProfile']);
       },
       onError: () => {
         alert('서버 오류');
+      },
+      onSettled: () => {
         setIsEdit(false);
+        setNicknameInputValue('');
       },
     }
   );
@@ -64,7 +68,20 @@ const DynamicUserNickname = () => {
     setNicknameInputValue(event.target.value);
   };
 
-  const DynamicNickname = isEdit ? (
+  const Nickname = isFetching ? (
+    <div>fetching...</div>
+  ) : (
+    <>
+      <NicknameDescription fontSize={3}>{nickname} 님</NicknameDescription>
+      <NicknameIconBox>
+        <NicknameIconBtn type="button" onClick={handleNicknameEditBtnClick}>
+          수정
+        </NicknameIconBtn>
+      </NicknameIconBox>
+    </>
+  );
+
+  const NicknameOnEdit = (
     <NicknameForm onSubmit={handleSubmit}>
       <NicknameEditInput
         type="text"
@@ -81,16 +98,9 @@ const DynamicUserNickname = () => {
         </NicknameIconBtn>
       </NicknameIconBox>
     </NicknameForm>
-  ) : (
-    <>
-      <Nickname>{`${nickname} 님`}</Nickname>
-      <NicknameIconBox>
-        <NicknameIconBtn type="button" onClick={handleNicknameEditBtnClick}>
-          수정
-        </NicknameIconBtn>
-      </NicknameIconBox>
-    </>
   );
+
+  const DynamicNickname = isEdit ? NicknameOnEdit : Nickname;
 
   return (
     <NicknameBox>
@@ -115,9 +125,8 @@ const NicknameForm = styled.form`
   gap: 17px;
 `;
 
-const Nickname = styled.p`
+const NicknameDescription = styled(Description)`
   height: 30px;
-  font-size: 3rem;
   text-align: end;
   width: 60%;
 `;

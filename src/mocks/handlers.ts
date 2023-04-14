@@ -1,7 +1,6 @@
 import { rest } from 'msw';
 
 type OauthServerKey = 'google' | 'kakao' | 'naver';
-
 const sleep = (ms: number) =>
   new Promise(r => {
     setTimeout(r, ms);
@@ -67,6 +66,65 @@ const planCardList = [
     endDay: '23.03.27',
   },
 ];
+const tripDays = [
+  {
+    dayId: 1,
+    tripId: 1,
+    date: 230215,
+    color: 'blue',
+    schedules: [
+      {
+        scheduleId: 235412,
+        title: '캐널시티 하카타',
+        placeName: '캐널시티 하카타',
+        coordinate: { latitude: 37, longitude: 17 },
+      },
+      {
+        scheduleId: 21423523,
+        title: '쇼핑 리스트',
+        placeName: '',
+        coordinate: { latitude: 36, longitude: 17 },
+      },
+    ],
+  },
+  {
+    dayId: 2,
+    tripId: 1,
+    date: 230216,
+    color: 'blue',
+    schedules: [
+      {
+        scheduleId: 5,
+        title: '캐널시티 하카타',
+        placeName: '캐널시티 하카타',
+        coordinate: { latitude: 37, longitude: 17 },
+      },
+      {
+        scheduleId: 6,
+        title: '쇼핑 리스트',
+        placeName: '',
+        coordinate: { latitude: 36, longitude: 17 },
+      },
+      {
+        scheduleId: 8,
+        title: '관람차',
+        placeName: '놀이공원',
+        coordinate: { latitude: 31, longitude: 15 },
+      },
+    ],
+  },
+  {
+    dayId: 3,
+    tripId: 1,
+    date: 230217,
+    color: 'red',
+    schedules: [],
+  },
+];
+const planCardIds: { [index: string]: typeof tripDays } = {
+  1: tripDays,
+  2: [],
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -256,6 +314,17 @@ const deletePlanCard = rest.delete(
   }
 );
 
+const getPlanDayList = rest.get(
+  '/api/trips/:planId/days',
+  async (req, res, ctx) => {
+    const { planId } = req.params;
+    if (planId && planCardIds[planId as string]) {
+      return res(ctx.json(planCardIds[planId as string]));
+    }
+    return res(ctx.status(400));
+  }
+);
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -270,6 +339,7 @@ const handlers = [
   changePlanCardTitle,
   createPlanCard,
   deletePlanCard,
+  getPlanDayList,
 ];
 
 export default handlers;

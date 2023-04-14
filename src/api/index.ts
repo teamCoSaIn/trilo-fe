@@ -27,6 +27,7 @@ const HTTP = {
   changePlanCardTitle,
   createPlanCard,
   deletePlanCard,
+  getPlanDayList,
 };
 
 export default HTTP;

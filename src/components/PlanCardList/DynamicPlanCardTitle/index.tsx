@@ -2,7 +2,7 @@ import { ClickAwayListener } from '@mui/material';
 import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';

@@ -1,6 +1,7 @@
 import axios from '@/api/core';
 
 export type PlanCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
+
 export interface PlanCardData {
   id: number;
   title: string;
@@ -9,6 +10,7 @@ export interface PlanCardData {
   startDay: string;
   endDay: string;
 }
+
 export interface PlanCardTitleType {
   id: number;
   title: string;

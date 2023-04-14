@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
-import { PlanCardStatus } from '@/api/tripPlanList';
+import { PlanCardStatus } from '@/api/planCard';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as PlaneIcon } from '@/assets/plane.svg';
 import Spacing from '@/components/common/Spacing';

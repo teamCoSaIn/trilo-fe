@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import { UserProfile } from '@/api/userInfo';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';

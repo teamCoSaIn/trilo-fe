@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api';
-import { PlanCardData, PlanCardTitleType } from '@/api/tripPlanList';
+import { PlanCardData, PlanCardTitleType } from '@/api/planCard';
 
 const useChangePlanCardTitle = () => {
   const queryClient = useQueryClient();

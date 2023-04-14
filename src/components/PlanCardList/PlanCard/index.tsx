@@ -1,4 +1,4 @@
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import DynamicPlanCardTitle from '@/components/PlanCardList/DynamicPlanCardTitle';

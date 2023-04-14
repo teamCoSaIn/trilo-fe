@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
 import Button from '@/components/common/Button';

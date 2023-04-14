@@ -10,7 +10,8 @@ import {
   changePlanCardTitle,
   createPlanCard,
   deletePlanCard,
-} from '@/api/tripPlanList';
+} from '@/api/planCard';
+import { getPlanDayList } from '@/api/planDay';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {

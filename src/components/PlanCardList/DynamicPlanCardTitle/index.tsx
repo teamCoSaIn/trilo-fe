@@ -1,5 +1,5 @@
 import { ClickAwayListener } from '@mui/material';
-import React, { SyntheticEvent, useRef, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { PlanCardData } from '@/api/tripPlanList';
@@ -20,13 +20,16 @@ const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
 
   const { mutate } = useChangePlanCardTitle();
 
+  useEffect(() => {
+    setTitleInputValue('');
+    setIsEdit(false);
+  }, [planCardData.title]);
+
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (planCardData.title !== titleInputValue) {
       mutate({ title: titleInputValue, id: planCardData.id });
     }
-    setTitleInputValue('');
-    setIsEdit(false);
   };
 
   const handleTitleInputChange = (

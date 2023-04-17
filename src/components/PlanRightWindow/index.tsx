@@ -2,11 +2,11 @@ import styled from 'styled-components';
 
 import { HEADER_HEIGHT } from '@/constants/size';
 
-const PlanRightTab = () => {
-  return <PlanRightTabBox>오른쪽</PlanRightTabBox>;
+const PlanRightWindow = () => {
+  return <PlanRightWindowBox>오른쪽</PlanRightWindowBox>;
 };
 
-const PlanRightTabBox = styled.div`
+const PlanRightWindowBox = styled.div`
   position: fixed;
   right: 0px;
   top: ${HEADER_HEIGHT};
@@ -15,4 +15,4 @@ const PlanRightTabBox = styled.div`
   background-color: #ddd;
 `;
 
-export default PlanRightTab;
+export default PlanRightWindow;

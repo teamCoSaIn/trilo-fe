@@ -1,9 +1,9 @@
 import axios from '@/api/core';
 
-interface PlanDay {
+export interface PlanDay {
   tripId: number;
   dayId: number;
-  date: number;
+  date: number | 'none';
   color: string;
   schedules: Schedule[];
 }

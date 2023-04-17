@@ -123,7 +123,15 @@ const tripDays = [
 ];
 const planCardIds: { [index: string]: typeof tripDays } = {
   1: tripDays,
-  2: [],
+  2: [
+    {
+      dayId: 3,
+      tripId: 1,
+      date: 'none',
+      color: 'red',
+      schedules: [],
+    },
+  ],
 };
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
@@ -317,6 +325,7 @@ const deletePlanCard = rest.delete(
 const getPlanDayList = rest.get(
   '/api/trips/:planId/days',
   async (req, res, ctx) => {
+    await sleep(2000);
     const { planId } = req.params;
     if (planId && planCardIds[planId as string]) {
       return res(ctx.json(planCardIds[planId as string]));

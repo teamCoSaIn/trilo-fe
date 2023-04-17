@@ -18,7 +18,7 @@ const useGetUserProfile = (param: UseGetUserProfileParam) => {
   const queryClient = useQueryClient();
   return useQuery(['userProfile'], () => HTTP.getUserProfile(), {
     staleTime: Infinity,
-    cacheTime: Infinity,
+    cacheTime: 1000 * 60 * 10,
     select: data => {
       return param.selectKey ? data[param.selectKey] : data;
     },

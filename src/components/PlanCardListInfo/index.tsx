@@ -17,7 +17,7 @@ const PlanCardListInfo = () => {
         queryKey: ['userProfile'],
         queryFn: HTTP.getUserProfile,
         staleTime: Infinity,
-        cacheTime: Infinity,
+        cacheTime: 1000 * 60 * 10,
         suspense: true,
         select: (data: UserProfile) => data.nickname,
       },

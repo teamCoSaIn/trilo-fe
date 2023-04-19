@@ -24,14 +24,59 @@ const DateContainer = ({
   const endMonth = selectedEndDate ? selectedEndDate.getMonth() + 1 : 0;
   const endDate = selectedEndDate ? selectedEndDate.getDate() : 0;
 
+  const isStartSameEnd =
+    !!selectedStartDate &&
+    !!selectedEndDate &&
+    startMonth === endMonth &&
+    startDate === endDate;
   const isStart = startMonth === dateInfo.month && startDate === dateInfo.date;
-  const isStartOnRange = isStart && !!endDate;
-  const isEnd = endMonth === dateInfo.month && endDate === dateInfo.date;
+  const isStartOnRange = isStart && !!endDate && !isStartSameEnd;
+  const isEnd =
+    endMonth === dateInfo.month && endDate === dateInfo.date && !isStartSameEnd;
   const isBetween =
     (startMonth < dateInfo.month ||
       (startMonth === dateInfo.month && startDate < dateInfo.date)) &&
     (endMonth > dateInfo.month ||
       (endMonth === dateInfo.month && endDate > dateInfo.date));
+
+  const isBeforeStart =
+    startMonth > dateInfo.month ||
+    (startMonth === dateInfo.month && startDate > dateInfo.date);
+
+  const handleClickDateBox = () => {
+    if (!selectedStartDate && !selectedEndDate) {
+      setSelectedDates([
+        new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
+        null,
+      ]);
+    }
+    if (selectedStartDate && !selectedEndDate) {
+      if (isBeforeStart) {
+        setSelectedDates([
+          new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
+          null,
+        ]);
+      } else {
+        setSelectedDates(prev => [
+          prev[0],
+          new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
+        ]);
+      }
+    }
+    if (selectedStartDate && selectedEndDate) {
+      if (isBeforeStart) {
+        setSelectedDates([
+          new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
+          null,
+        ]);
+      } else {
+        setSelectedDates(prev => [
+          prev[0],
+          new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
+        ]);
+      }
+    }
+  };
 
   return disabled ? (
     <DisabledDateBox>{dateInfo.date}</DisabledDateBox>
@@ -40,6 +85,7 @@ const DateContainer = ({
       isStartOnRange={isStartOnRange}
       isEnd={isEnd}
       isBetween={isBetween}
+      onClick={handleClickDateBox}
     >
       <DateCircle isSunday={dayIndex === 0} isStart={isStart} isEnd={isEnd}>
         {dateInfo.date}

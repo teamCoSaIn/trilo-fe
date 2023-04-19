@@ -31,3 +31,11 @@ export const getDateInfoArray = (date: Date): DateInfo[][] => {
   }
   return dateInfoArray;
 };
+
+// 형식 변환 : 2021.04.19
+export const transferDateToDotFormat = (date: Date) => {
+  //  2021-04-19T14:02:18.809Z
+  const IsoFormat = date.toISOString();
+  const transferPart = IsoFormat.split('T')[0];
+  return transferPart.replace(/-/g, '.');
+};

@@ -15,7 +15,7 @@ import Calendar from '@/components/PlanLeftWindow/Calendar';
 import color from '@/constants/color';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import SelectedDates from '@/states/calendar';
-import { transferDateToDotFormat } from '@/utils/calendar';
+import { transformDateToDotFormat } from '@/utils/calendar';
 
 const DateTabContainer = () => {
   const { id } = useParams();
@@ -41,10 +41,10 @@ const DateTabContainer = () => {
   };
 
   const startDateString = selectedStartDate
-    ? transferDateToDotFormat(selectedStartDate)
+    ? transformDateToDotFormat(selectedStartDate)
     : '';
   const endDateString = selectedEndDate
-    ? transferDateToDotFormat(selectedEndDate)
+    ? transformDateToDotFormat(selectedEndDate)
     : '';
 
   return (

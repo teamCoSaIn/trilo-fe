@@ -33,9 +33,14 @@ export const getDateInfoArray = (date: Date): DateInfo[][] => {
 };
 
 // 형식 변환 : 2021.04.19
-export const transferDateToDotFormat = (date: Date) => {
-  //  2021-04-19T14:02:18.809Z
-  const IsoFormat = date.toISOString();
-  const transferPart = IsoFormat.split('T')[0];
-  return transferPart.replace(/-/g, '.');
+export const transformDateToDotFormat = (date: Date) => {
+  //  '2021. 4. 19. 오전 12:00:00'
+  const localeStringFormat = date.toLocaleString();
+  const [yearStr, monthStr, dateStr] = localeStringFormat
+    .replace(/\./g, '')
+    .split(' ')
+    .slice(0, 3);
+  return monthStr.length === 1
+    ? `${yearStr}.0${monthStr}.${dateStr}`
+    : `${yearStr}.${monthStr}.${dateStr}`;
 };

@@ -24,20 +24,20 @@ const DateTabContainer = () => {
   });
   // TODO: planDay 객체 date 형식 변경 필요
   const firstDate = data![0].date !== 'none' ? new Date(2023, 3, 22) : null;
-  const [curDate, setCurDate] = useState(firstDate || new Date());
+  const [curDateObj, setCurDateObj] = useState(firstDate || new Date());
+  const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
-  const MILLISECONDS_MONTH = 1000 * 60 * 60 * 24 * 30;
 
   const handleClickRefreshBtn = () => {
     setSelectedDates([null, null]);
   };
   const handleClickPrevMonthBtn = () => {
-    setCurDate(new Date(curDate.getTime() - MILLISECONDS_MONTH));
+    setCurDateObj(new Date(curYear, curMonth - 1));
   };
 
   const handleClickNextMonthBtn = () => {
-    setCurDate(new Date(curDate.getTime() + MILLISECONDS_MONTH));
+    setCurDateObj(new Date(curYear, curMonth + 1));
   };
 
   const startDateString = selectedStartDate
@@ -50,11 +50,11 @@ const DateTabContainer = () => {
   return (
     <Flex column alignCenter justifyCenter>
       <Spacing height={42} />
-      <Calendar date={curDate} />
+      <Calendar date={curDateObj} />
       <Spacing height={10} />
       <Line width={231} />
       <Spacing height={10} />
-      <Calendar date={new Date(curDate.getTime() + MILLISECONDS_MONTH)} />
+      <Calendar date={new Date(curYear, curMonth + 1)} />
       <Spacing height={20} />
       <BtnWrapper>
         <CalendarBtn onClick={handleClickRefreshBtn}>

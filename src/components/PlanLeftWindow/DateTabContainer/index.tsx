@@ -79,15 +79,15 @@ const DateTabContainer = () => {
         >
           <Calendar date={new Date(curYear, curMonth - 1)} />
           <Spacing height={10} />
-          <Line width={231} />
+          <Line width={210} />
           <Spacing height={20} />
           <Calendar date={curDateObj} />
           <Spacing height={10} />
-          <Line width={231} />
+          <Line width={210} />
           <Spacing height={20} />
           <Calendar date={new Date(curYear, curMonth + 1)} />
           <Spacing height={10} />
-          <Line width={231} />
+          <Line width={210} />
           <Spacing height={20} />
           <Calendar date={new Date(curYear, curMonth + 2)} />
         </Slider>
@@ -147,12 +147,12 @@ const Slider = styled.div<{ slidingStatus: SlidingStatus }>`
       case 'UP':
         return css`
           transform: translateY(-${SLIDING_DISTANCE * 2}px);
-          transition: all ease-out 0.5s;
+          transition: all ease-out 0.3s;
         `;
       case 'DOWN':
         return css`
           transform: translateY(0);
-          transition: all ease-out 0.5s;
+          transition: all ease-out 0.3s;
         `;
       default:
         return css`

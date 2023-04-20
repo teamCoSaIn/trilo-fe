@@ -13,6 +13,7 @@ const Calendar = ({ date }: CalendarProps) => {
   const calendarYear = date.getFullYear();
   const calendarMonth = date.getMonth() + 1;
   const curDateObj = new Date();
+  const curYear = curDateObj.getFullYear();
   const curMonth = curDateObj.getMonth() + 1;
   const curDate = curDateObj.getDate();
 
@@ -34,8 +35,11 @@ const Calendar = ({ date }: CalendarProps) => {
     const weekDates = week.map((dateInfo, dayIndex) => {
       const isCalendarMonth = dateInfo.month === calendarMonth;
       const isPast =
-        curMonth > dateInfo.month ||
-        (curMonth === dateInfo.month && dateInfo.date < curDate);
+        curYear > dateInfo.year ||
+        (curYear === dateInfo.year && curMonth > dateInfo.month) ||
+        (curYear === dateInfo.year &&
+          curMonth === dateInfo.month &&
+          dateInfo.date < curDate);
       const disabled = !isCalendarMonth || isPast;
       return (
         <DateContainer

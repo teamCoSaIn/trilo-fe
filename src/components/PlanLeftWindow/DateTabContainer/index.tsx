@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ReactComponent as DownArrow } from '@/assets/downArrow.svg';
 import { ReactComponent as Refresh } from '@/assets/refresh.svg';
@@ -17,6 +17,14 @@ import useGetDayList from '@/queryHooks/useGetDayList';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
+// title + spacing + calendar = 19 + 12 + 210
+const CALENDAR_HEIGHT = 241;
+// calendar + spacing + line + spacing= 241 + 30
+const SLIDING_DISTANCE = CALENDAR_HEIGHT + 30;
+// calendar + spacing + line + spacing + calendar = 241 + 30 + 241
+const TRANSITION_WINDOW_HEIGHT = CALENDAR_HEIGHT * 2 + 30;
+type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
+
 const DateTabContainer = () => {
   const { id } = useParams();
   const { data } = useGetDayList({
@@ -29,15 +37,29 @@ const DateTabContainer = () => {
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
 
+  const [slidingStatus, setSlidingStatus] = useState<SlidingStatus>('STOP');
+
   const handleClickRefreshBtn = () => {
     setSelectedDates([null, null]);
   };
   const handleClickPrevMonthBtn = () => {
-    setCurDateObj(new Date(curYear, curMonth - 1));
+    if (slidingStatus !== 'STOP') return;
+    setSlidingStatus('DOWN');
   };
 
   const handleClickNextMonthBtn = () => {
-    setCurDateObj(new Date(curYear, curMonth + 1));
+    if (slidingStatus !== 'STOP') return;
+    setSlidingStatus('UP');
+  };
+
+  const handleTransitionEndSlidingPart = () => {
+    if (slidingStatus === 'UP') {
+      setCurDateObj(new Date(curYear, curMonth + 1));
+    }
+    if (slidingStatus === 'DOWN') {
+      setCurDateObj(new Date(curYear, curMonth - 1));
+    }
+    setSlidingStatus('STOP');
   };
 
   const startDateString = selectedStartDate
@@ -49,12 +71,27 @@ const DateTabContainer = () => {
 
   return (
     <Flex column alignCenter justifyCenter>
-      <Spacing height={42} />
-      <Calendar date={curDateObj} />
-      <Spacing height={10} />
-      <Line width={231} />
-      <Spacing height={10} />
-      <Calendar date={new Date(curYear, curMonth + 1)} />
+      <Spacing height={30} />
+      <SlidingWindow>
+        <Slider
+          slidingStatus={slidingStatus}
+          onTransitionEnd={handleTransitionEndSlidingPart}
+        >
+          <Calendar date={new Date(curYear, curMonth - 1)} />
+          <Spacing height={10} />
+          <Line width={231} />
+          <Spacing height={20} />
+          <Calendar date={curDateObj} />
+          <Spacing height={10} />
+          <Line width={231} />
+          <Spacing height={20} />
+          <Calendar date={new Date(curYear, curMonth + 1)} />
+          <Spacing height={10} />
+          <Line width={231} />
+          <Spacing height={20} />
+          <Calendar date={new Date(curYear, curMonth + 2)} />
+        </Slider>
+      </SlidingWindow>
       <Spacing height={20} />
       <BtnWrapper>
         <CalendarBtn onClick={handleClickRefreshBtn}>
@@ -70,7 +107,7 @@ const DateTabContainer = () => {
           </CalendarBtn>
         </Flex>
       </BtnWrapper>
-      <Spacing height={57} />
+      <Spacing height={40} />
       <Flex alignCenter>
         <Description fontSize={1.2} color={color.blue3}>
           시작일
@@ -94,9 +131,36 @@ const DateTabContainer = () => {
       >
         확인
       </Button>
+      <Spacing height={40} />
     </Flex>
   );
 };
+
+const SlidingWindow = styled.div`
+  height: ${TRANSITION_WINDOW_HEIGHT}px;
+  overflow-y: hidden;
+`;
+
+const Slider = styled.div<{ slidingStatus: SlidingStatus }>`
+  ${({ slidingStatus }) => {
+    switch (slidingStatus) {
+      case 'UP':
+        return css`
+          transform: translateY(-${SLIDING_DISTANCE * 2}px);
+          transition: all ease-out 0.5s;
+        `;
+      case 'DOWN':
+        return css`
+          transform: translateY(0);
+          transition: all ease-out 0.5s;
+        `;
+      default:
+        return css`
+          transform: translateY(-${SLIDING_DISTANCE}px);
+        `;
+    }
+  }}
+`;
 
 const BtnWrapper = styled.div`
   display: flex;

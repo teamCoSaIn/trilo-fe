@@ -1,3 +1,5 @@
+import { useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
@@ -6,6 +8,8 @@ import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import color from '@/constants/color';
+import { PlacesService, MapInstance } from '@/states/googleMaps';
+
 const placeLabelData = [
   { name: '식당', id: 1 },
   { name: '관광명소', id: 2 },
@@ -14,6 +18,61 @@ const placeLabelData = [
 ];
 
 const PlaceSearchList = () => {
+  const placesService = useRecoilValue(PlacesService);
+  const mapInstance = useRecoilValue(MapInstance);
+  // TODO: recoil로 변경
+  const [placeList, setPlaceList] = useState<
+    google.maps.places.PlaceResult[] | null
+  >(null);
+  const [inputValue, setInputValue] = useState('');
+
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInputValue(event.target.value);
+  };
+
+  const handlePlaceSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    // TODO: 코드 중복 함수로 빼내기
+    if (placesService && inputValue) {
+      const request = {
+        query: `${inputValue}`,
+      };
+      placesService.textSearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setPlaceList(results);
+        } else if (
+          status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS
+        ) {
+          // TODO: 검색 결과 없을 때 UI 만들기
+          setPlaceList([]);
+        }
+      });
+    }
+  };
+
+  const handlePlaceLabelClick = (event: React.MouseEvent) => {
+    const target = event.target as HTMLElement;
+    setInputValue(target.innerText);
+    // TODO: 코드 중복 함수로 빼내기
+    if (placesService && inputValue) {
+      const request = {
+        query: `${inputValue}`,
+      };
+      placesService.textSearch(request, (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+          setPlaceList(results);
+        } else if (
+          status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS
+        ) {
+          // TODO: 검색 결과 없을 때 UI 만들기
+          setPlaceList([]);
+        }
+      });
+    }
+  };
+
   const PlaceLabelList = placeLabelData.map(data => (
     <PlaceLabel key={data.id} btnColor="gray" onClick={handlePlaceLabelClick}>
       {data.name}

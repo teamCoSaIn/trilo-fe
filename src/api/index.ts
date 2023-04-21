@@ -4,6 +4,7 @@ import {
   logout,
   refreshAccessToken,
   checkRefreshToken,
+  resign,
 } from '@/api/oauth';
 import {
   getPlanCardDataList,
@@ -19,6 +20,7 @@ const HTTP = {
   logout,
   refreshAccessToken,
   checkRefreshToken,
+  resign,
   getUserProfile,
   changeNickname,
   getUserInfo,

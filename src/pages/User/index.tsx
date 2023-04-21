@@ -5,6 +5,7 @@ import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
 import CircularLoader from '@/components/common/Loader/index';
+import Spacing from '@/components/common/Spacing';
 import UserInfo from '@/components/UserInfo/index';
 
 const User = () => {
@@ -14,6 +15,7 @@ const User = () => {
     <UserInfoBox>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
         <Suspense fallback={<CircularLoader />}>
+          <Spacing height={99} />
           <UserInfo />
         </Suspense>
       </ErrorBoundary>
@@ -25,10 +27,10 @@ const UserInfoBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding-top: 124px;
+  justify-content: center;
   height: 100%;
-  width: 500px;
-  margin: 0 auto;
+  // TODO: 적절한 min width 정하기
+  min-width: 500px;
 `;
 
 export default User;

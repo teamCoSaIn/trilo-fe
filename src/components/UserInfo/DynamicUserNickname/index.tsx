@@ -1,5 +1,6 @@
+import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
@@ -18,6 +19,7 @@ const DynamicUserNickname = () => {
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
   const queryClient = useQueryClient();
+  const nicknameOnEditRef = useRef<HTMLDivElement>(null);
 
   const { mutate, isLoading } = useMutation(
     (newNickname: string) => HTTP.changeNickname(newNickname),
@@ -39,7 +41,7 @@ const DynamicUserNickname = () => {
     setIsEdit(true);
   };
 
-  const handleNicknameCancelBtnClick = () => {
+  const handleNicknameOnEditClickAway = () => {
     setIsEdit(false);
     setNicknameInputValue('');
   };
@@ -87,24 +89,26 @@ const DynamicUserNickname = () => {
   );
 
   const NicknameOnEdit = (
-    <ProfileBox backgroundColor={color.blue1}>
-      <NicknameForm
-        onSubmit={handleSubmit}
-        inputLength={nicknameInputValue.length}
-      >
-        <NicknameEditInput
-          type="text"
-          placeholder={nickname}
-          value={nicknameInputValue}
-          onChange={handleChangeNicknameInput}
-          autoFocus
-          maxLength={20}
-        />
-        <IconBtn type="submit">
-          <CheckIcon fill={color.blue3} width={17} height={17} />
-        </IconBtn>
-      </NicknameForm>
-    </ProfileBox>
+    <ClickAwayListener onClickAway={handleNicknameOnEditClickAway}>
+      <ProfileBox backgroundColor={color.blue1} ref={nicknameOnEditRef}>
+        <NicknameForm
+          onSubmit={handleSubmit}
+          inputLength={nicknameInputValue.length}
+        >
+          <NicknameEditInput
+            type="text"
+            placeholder={nickname}
+            value={nicknameInputValue}
+            onChange={handleChangeNicknameInput}
+            autoFocus
+            maxLength={20}
+          />
+          <IconBtn type="submit">
+            <CheckIcon fill={color.blue3} width={17} height={17} />
+          </IconBtn>
+        </NicknameForm>
+      </ProfileBox>
+    </ClickAwayListener>
   );
 
   const DynamicNickname = isEdit ? NicknameOnEdit : Nickname;

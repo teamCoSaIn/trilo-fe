@@ -23,6 +23,22 @@ const PlaceCard = ({
   openingHours,
   imgUrl,
 }: PlaceCardProps) => {
+  // 긴 주소 ...처리
+  let newAddress;
+  if (address && address.length >= 15) {
+    newAddress = `${address?.slice(0, 15).trim()}...`;
+  } else {
+    newAddress = address;
+  }
+
+  const handleAddressBtnClick = async () => {
+    if (address) {
+      await navigator.clipboard.writeText(address);
+      // TODO: 구글맵처럼 알림창으로 해야하나?
+      alert('copied!');
+    }
+  };
+
   return (
     <PlaceCardBox>
       <PlaceCardContent>
@@ -32,6 +48,9 @@ const PlaceCard = ({
           <PlaceCardStar rating={rating} />
           <PlaceCardNumOfReviews>({numOfReviews})</PlaceCardNumOfReviews>
         </PlaceCardRatingBox>
+        <PlaceCardAddressBtn onClick={handleAddressBtnClick}>
+          {newAddress} <CopyIcon />
+        </PlaceCardAddressBtn>
         <PlaceCardLinkBtnBox>
           <PlaceCardGoogleLinkBtn
             onClick={() => {

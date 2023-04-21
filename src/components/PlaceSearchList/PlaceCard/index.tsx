@@ -12,6 +12,7 @@ interface PlaceCardProps {
   address: string | undefined;
   numOfReviews: number | undefined;
   openingHours: google.maps.places.PlaceOpeningHours | undefined;
+  googleMapLink: string | undefined;
   imgUrl: string | null;
 }
 
@@ -21,6 +22,7 @@ const PlaceCard = ({
   address,
   numOfReviews,
   openingHours,
+  googleMapLink,
   imgUrl,
 }: PlaceCardProps) => {
   // 긴 주소 ...처리
@@ -65,7 +67,7 @@ const PlaceCard = ({
         <PlaceCardLinkBtnBox>
           <PlaceCardGoogleLinkBtn
             onClick={() => {
-              window.open('https://www.google.com');
+              window.open(googleMapLink);
             }}
           >
             <GoogleIcon />
@@ -73,7 +75,9 @@ const PlaceCard = ({
           </PlaceCardGoogleLinkBtn>
           <PlaceCardGoogleLinkBtn
             onClick={() => {
-              window.open('https://www.naver.com');
+              window.open(
+                `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${name}`
+              );
             }}
           >
             <NaverIcon />

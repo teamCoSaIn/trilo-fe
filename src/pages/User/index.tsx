@@ -17,6 +17,7 @@ const User = () => {
         <Suspense fallback={<CircularLoader />}>
           <Spacing height={99} />
           <UserInfo />
+          <Spacing height={82} />
         </Suspense>
       </ErrorBoundary>
     </UserInfoBox>
@@ -28,7 +29,7 @@ const UserInfoBox = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100%;
+  min-height: 100%;
   // TODO: 적절한 min width 정하기
   min-width: 500px;
 `;

@@ -58,13 +58,42 @@ const PlaceSearchList = () => {
     // TODO: 코드 중복 함수로 빼내기
     if (placesService && inputValue) {
       const request = {
-        query: `${inputValue}`,
+        query: `${target.innerText}`,
       };
-      placesService.textSearch(request, (results, status) => {
-        if (status === google.maps.places.PlacesServiceStatus.OK) {
-          setPlaceList(results);
+      placesService.textSearch(request, (results, textSearchStatus) => {
+        if (textSearchStatus === google.maps.places.PlacesServiceStatus.OK) {
+          // console.log('추가전', results);
+          const placesWithOpeningHours = results.map(place => {
+            return new Promise<google.maps.places.PlaceResult>(
+              (resolve, reject) => {
+                placesService.getDetails(
+                  { placeId: place.place_id, fields: ['opening_hours'] },
+                  (details, status) => {
+                    if (status === google.maps.places.PlacesServiceStatus.OK) {
+                      resolve(details);
+                    } else {
+                      reject(`Failed to get details for place: ${place.name}`);
+                    }
+                  }
+                );
+              }
+            );
+          });
+
+          Promise.all(placesWithOpeningHours)
+            .then(places => {
+              // console.log(places);
+              const resultsWithOpeningHours = results?.map((result, idx) => {
+                // result.opening_hours = places[idx].opening_hours;
+                return { ...result, opening_hours: places[idx].opening_hours };
+              });
+              console.log('추가후', resultsWithOpeningHours);
+              setPlaceList(resultsWithOpeningHours);
+            })
+            .catch(error => console.log(error));
         } else if (
-          status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS
+          textSearchStatus ===
+          google.maps.places.PlacesServiceStatus.ZERO_RESULTS
         ) {
           // TODO: 검색 결과 없을 때 UI 만들기
           setPlaceList([]);

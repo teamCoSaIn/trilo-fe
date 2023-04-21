@@ -31,6 +31,13 @@ const PlaceCard = ({
     newAddress = address;
   }
 
+  // 요일 및 영업 시간 계산
+  const dateObj = new Date();
+  const dayOfToday = dateObj.getDay();
+  const businessHours = openingHours?.weekday_text
+    ? openingHours.weekday_text[dayOfToday].slice(4).trim()
+    : '정보 없음';
+
   const handleAddressBtnClick = async () => {
     if (address) {
       await navigator.clipboard.writeText(address);
@@ -51,6 +58,10 @@ const PlaceCard = ({
         <PlaceCardAddressBtn onClick={handleAddressBtnClick}>
           {newAddress} <CopyIcon />
         </PlaceCardAddressBtn>
+        <PlaceCardBusinessHoursBox>
+          영업시간
+          <PlaceCardBusinessHours>{businessHours}</PlaceCardBusinessHours>
+        </PlaceCardBusinessHoursBox>
         <PlaceCardLinkBtnBox>
           <PlaceCardGoogleLinkBtn
             onClick={() => {

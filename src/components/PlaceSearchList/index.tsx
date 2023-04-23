@@ -9,6 +9,7 @@ import Flex from '@/components/common/Flex';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import color from '@/constants/color';
 import { PlacesService, MapInstance } from '@/states/googleMaps';
+import { placeSearchInputRegExp } from '@/utils/regExp';
 import searchPlacesByText from '@/utils/searchPlacesByText';
 
 const placeLabelData = [
@@ -38,7 +39,9 @@ const PlaceSearchList = () => {
   ) => {
     event.preventDefault();
 
-    if (placesService) {
+    const isInputValid = placeSearchInputRegExp.test(inputValue);
+
+    if (placesService && isInputValid) {
       try {
         const data = await searchPlacesByText(inputValue, placesService);
         setPlaceList(data);

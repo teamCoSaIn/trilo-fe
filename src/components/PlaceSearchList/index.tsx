@@ -13,14 +13,25 @@ import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import { PlacesService, MapInstance } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
 
-const placeLabelDataList = [
-  { name: '식당', id: 1 },
-  { name: '관광명소', id: 2 },
-  { name: '카페', id: 3 },
-  { name: '호텔', id: 4 },
-];
+interface PlaceType {
+  [key: string]: string;
+}
 
 const PlaceSearchList = () => {
+  const placeLabelDataList = [
+    { name: '식당', id: 1 },
+    { name: '관광명소', id: 2 },
+    { name: '카페', id: 3 },
+    { name: '호텔', id: 4 },
+  ];
+
+  const korToEng: PlaceType = {
+    식당: 'restaurant',
+    관광명소: 'attraction',
+    카페: 'cafe',
+    호텔: 'hotel',
+  };
+
   const placesService = useRecoilValue(PlacesService);
   const mapInstance = useRecoilValue(MapInstance);
 
@@ -31,6 +42,7 @@ const PlaceSearchList = () => {
   >([]);
 
   const handleOnSuccess = (data: google.maps.places.PlaceResult[]) => {
+    console.log(data);
     setPlaceList(data);
   };
 
@@ -54,7 +66,7 @@ const PlaceSearchList = () => {
     const target = event.target as HTMLElement;
     if (placesService) {
       setInputValue(target.innerText);
-      setSearchText(target.innerText);
+      setSearchText(korToEng[target.innerText]);
     }
   };
 

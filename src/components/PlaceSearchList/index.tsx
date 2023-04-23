@@ -9,6 +9,7 @@ import Flex from '@/components/common/Flex';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import color from '@/constants/color';
 import { PlacesService, MapInstance } from '@/states/googleMaps';
+import searchPlacesByText from '@/utils/searchPlacesByText';
 
 const placeLabelData = [
   { name: '식당', id: 1 },
@@ -32,111 +33,31 @@ const PlaceSearchList = () => {
     setInputValue(event.target.value);
   };
 
-  const handlePlaceSearchSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+  const handlePlaceSearchSubmit = async (
+    event: React.FormEvent<HTMLFormElement>
+  ) => {
     event.preventDefault();
-    // TODO: 코드 중복 함수로 빼내기
-    if (placesService) {
-      const request = {
-        query: `${inputValue}`,
-      };
-      placesService.textSearch(request, (results, textSearchStatus) => {
-        if (textSearchStatus === google.maps.places.PlacesServiceStatus.OK) {
-          // console.log('추가전', results);
-          const placesWithOpeningHours = results.map(place => {
-            return new Promise<google.maps.places.PlaceResult>(
-              (resolve, reject) => {
-                placesService.getDetails(
-                  { placeId: place.place_id, fields: ['opening_hours', 'url'] },
-                  (details, status) => {
-                    if (status === google.maps.places.PlacesServiceStatus.OK) {
-                      resolve(details);
-                    } else {
-                      // TODO: 불러오기 실패라는 resolve로 변경하기
-                      reject(`Failed to get details for place: ${place.name}`);
-                    }
-                  }
-                );
-              }
-            );
-          });
 
-          Promise.all(placesWithOpeningHours)
-            .then(places => {
-              // console.log(places);
-              const resultsWithOpeningHours = results?.map((result, idx) => {
-                // result.opening_hours = places[idx].opening_hours;
-                return {
-                  ...result,
-                  opening_hours: places[idx].opening_hours,
-                  url: places[idx].url,
-                };
-              });
-              // console.log('추가후', resultsWithOpeningHours);
-              setPlaceList(resultsWithOpeningHours);
-            })
-            .catch(error => console.log(error));
-        } else if (
-          textSearchStatus ===
-          google.maps.places.PlacesServiceStatus.ZERO_RESULTS
-        ) {
-          // TODO: 검색 결과 없을 때 UI 만들기
-          setPlaceList([]);
-        }
-      });
+    if (placesService) {
+      try {
+        const data = await searchPlacesByText(inputValue, placesService);
+        setPlaceList(data);
+      } catch {
+        console.log('Google Maps API Error');
+      }
     }
   };
 
-  const handlePlaceLabelClick = (event: React.MouseEvent) => {
+  const handlePlaceLabelClick = async (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
     setInputValue(target.innerText);
-    // TODO: 코드 중복 함수로 빼내기
     if (placesService) {
-      const request = {
-        query: `${target.innerText}`,
-      };
-      placesService.textSearch(request, (results, textSearchStatus) => {
-        if (textSearchStatus === google.maps.places.PlacesServiceStatus.OK) {
-          // console.log('추가전', results);
-          const placesWithOpeningHours = results.map(place => {
-            return new Promise<google.maps.places.PlaceResult>(
-              (resolve, reject) => {
-                placesService.getDetails(
-                  { placeId: place.place_id, fields: ['opening_hours', 'url'] },
-                  (details, status) => {
-                    if (status === google.maps.places.PlacesServiceStatus.OK) {
-                      resolve(details);
-                    } else {
-                      reject(`Failed to get details for place: ${place.name}`);
-                    }
-                  }
-                );
-              }
-            );
-          });
-
-          Promise.all(placesWithOpeningHours)
-            .then(places => {
-              // console.log(places);
-              const resultsWithOpeningHours = results?.map((result, idx) => {
-                // result.opening_hours = places[idx].opening_hours;
-                return {
-                  ...result,
-                  opening_hours: places[idx].opening_hours,
-                  url: places[idx].url,
-                };
-              });
-              console.log('추가후', resultsWithOpeningHours);
-              setPlaceList(resultsWithOpeningHours);
-            })
-            .catch(error => console.log(error));
-        } else if (
-          textSearchStatus ===
-          google.maps.places.PlacesServiceStatus.ZERO_RESULTS
-        ) {
-          // TODO: 검색 결과 없을 때 UI 만들기
-          setPlaceList([]);
-        }
-      });
+      try {
+        const data = await searchPlacesByText(target.innerText, placesService);
+        setPlaceList(data);
+      } catch {
+        console.log('Google Maps API Error');
+      }
     }
   };
 

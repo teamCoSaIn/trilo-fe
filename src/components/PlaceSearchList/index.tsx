@@ -8,11 +8,11 @@ import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import color from '@/constants/color';
+import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import { PlacesService, MapInstance } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
-import searchPlacesByText from '@/utils/searchPlacesByText';
 
-const placeLabelData = [
+const placeLabelDataList = [
   { name: '식당', id: 1 },
   { name: '관광명소', id: 2 },
   { name: '카페', id: 3 },
@@ -23,10 +23,9 @@ const PlaceSearchList = () => {
   const placesService = useRecoilValue(PlacesService);
   const mapInstance = useRecoilValue(MapInstance);
   // TODO: recoil로 변경
-  const [placeList, setPlaceList] = useState<
-    google.maps.places.PlaceResult[] | null
-  >(null);
+
   const [inputValue, setInputValue] = useState('');
+  const [searchText, setSearchText] = useState('');
 
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -34,33 +33,26 @@ const PlaceSearchList = () => {
     setInputValue(event.target.value);
   };
 
+  const { isLoading, data: placeList } = useSearchPlacesByText(
+    searchText,
+    placesService
+  );
+
   const handlePlaceSearchSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
     event.preventDefault();
-
     const isInputValid = placeSearchInputRegExp.test(inputValue);
-
     if (placesService && isInputValid) {
-      try {
-        const data = await searchPlacesByText(inputValue, placesService);
-        setPlaceList(data);
-      } catch {
-        console.log('Google Maps API Error');
-      }
+      setSearchText(inputValue);
     }
   };
 
   const handlePlaceLabelClick = async (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
-    setInputValue(target.innerText);
     if (placesService) {
-      try {
-        const data = await searchPlacesByText(target.innerText, placesService);
-        setPlaceList(data);
-      } catch {
-        console.log('Google Maps API Error');
-      }
+      setInputValue(target.innerText);
+      setSearchText(target.innerText);
     }
   };
 
@@ -68,9 +60,13 @@ const PlaceSearchList = () => {
     setInputValue('');
   };
 
-  const PlaceLabelList = placeLabelData.map(data => (
-    <PlaceLabel key={data.id} btnColor="gray" onClick={handlePlaceLabelClick}>
-      {data.name}
+  const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
+    <PlaceLabel
+      key={placeLabelData.id}
+      btnColor="gray"
+      onClick={handlePlaceLabelClick}
+    >
+      {placeLabelData.name}
     </PlaceLabel>
   ));
 
@@ -88,6 +84,7 @@ const PlaceSearchList = () => {
       />
     ))
   ) : (
+    // TODO: 디자인 나오면 default UI 화면 구성하기.
     <div>장소를 검색해주세요. ^^</div>
   );
 

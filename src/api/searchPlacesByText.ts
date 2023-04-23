@@ -70,7 +70,7 @@ const searchPlacesByText = (
         }
       };
 
-      placesService?.textSearch(textSearchRequest, textSearchCallback);
+      placesService.textSearch(textSearchRequest, textSearchCallback);
     }
   );
 };

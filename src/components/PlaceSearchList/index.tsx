@@ -6,6 +6,7 @@ import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
 import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
+import CircularLoader from '@/components/common/Loader';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import color from '@/constants/color';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
@@ -22,20 +23,21 @@ const placeLabelDataList = [
 const PlaceSearchList = () => {
   const placesService = useRecoilValue(PlacesService);
   const mapInstance = useRecoilValue(MapInstance);
-  // TODO: recoil로 변경
 
-  const [inputValue, setInputValue] = useState('');
-  const [searchText, setSearchText] = useState('');
+  const [inputValue, setInputValue] = useState<string>('');
+  const [searchText, setSearchText] = useState<string>('');
+  const [placeList, setPlaceList] = useState<
+    google.maps.places.PlaceResult[] | []
+  >([]);
 
-  const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setInputValue(event.target.value);
+  const handleOnSuccess = (data: google.maps.places.PlaceResult[]) => {
+    setPlaceList(data);
   };
 
-  const { isLoading, data: placeList } = useSearchPlacesByText(
+  const { isFetching } = useSearchPlacesByText(
     searchText,
-    placesService
+    placesService,
+    handleOnSuccess
   );
 
   const handlePlaceSearchSubmit = async (
@@ -56,6 +58,12 @@ const PlaceSearchList = () => {
     }
   };
 
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInputValue(event.target.value);
+  };
+
   const handleCancelBtnClick = () => {
     setInputValue('');
   };
@@ -70,7 +78,7 @@ const PlaceSearchList = () => {
     </PlaceLabel>
   ));
 
-  const PlaceCardList = placeList ? (
+  const PlaceCardList = placeList.length ? (
     placeList.map(place => (
       <PlaceCard
         key={place.place_id}
@@ -85,7 +93,7 @@ const PlaceSearchList = () => {
     ))
   ) : (
     // TODO: 디자인 나오면 default UI 화면 구성하기.
-    <div>장소를 검색해주세요. ^^</div>
+    <div>장소 검색 탭 초기 화면</div>
   );
 
   return (
@@ -99,9 +107,15 @@ const PlaceSearchList = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <DeleteIconBtn onClick={handleCancelBtnClick}>
-          <DeleteIcon />
-        </DeleteIconBtn>
+        <DynamicDeleteIconBtnBox>
+          {isFetching ? (
+            <CircularLoader size={20} />
+          ) : (
+            <DeleteIconBtn onClick={handleCancelBtnClick}>
+              <DeleteIcon />
+            </DeleteIconBtn>
+          )}
+        </DynamicDeleteIconBtnBox>
       </PlaceSearchForm>
 
       <LabelBox>{PlaceLabelList}</LabelBox>
@@ -120,15 +134,13 @@ const PlaceSearchForm = styled.form`
   align-items: center;
   height: 40px;
   width: 334px;
-  padding: 0 16px;
   margin: 15px 2px;
   border-radius: 30px;
   background-color: #ecf0ff;
 `;
 
 const PlaceSearchInput = styled.input`
-  width: 300px;
-  margin: 0 11px;
+  width: 242px;
   font-size: 16px;
   font-weight: 400;
   line-height: 16px;
@@ -137,6 +149,16 @@ const PlaceSearchInput = styled.input`
 const SearchIconBtn = styled.button`
   display: flex;
   align-items: center;
+  width: 46px;
+  padding: 0 14px;
+`;
+
+const DynamicDeleteIconBtnBox = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  padding: 0 14px;
 `;
 
 const DeleteIconBtn = styled.button`

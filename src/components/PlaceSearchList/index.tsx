@@ -64,6 +64,10 @@ const PlaceSearchList = () => {
     }
   };
 
+  const handleCancelBtnClick = () => {
+    setInputValue('');
+  };
+
   const PlaceLabelList = placeLabelData.map(data => (
     <PlaceLabel key={data.id} btnColor="gray" onClick={handlePlaceLabelClick}>
       {data.name}
@@ -98,7 +102,7 @@ const PlaceSearchList = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <DeleteIconBtn>
+        <DeleteIconBtn onClick={handleCancelBtnClick}>
           <DeleteIcon />
         </DeleteIconBtn>
       </PlaceSearchForm>

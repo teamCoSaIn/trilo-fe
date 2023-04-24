@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -16,9 +17,14 @@ const UserInfo = () => {
     suspense: true,
   });
   const setUserStatus = useSetRecoilState(UserStatus);
+  const navigate = useNavigate();
   const { isLoading, mutate } = useMutation(['resign'], () => HTTP.resign(), {
     onSuccess: () => {
-      setUserStatus(UserStatusTypes.LOGOUT);
+      navigate('/');
+      // navigate 동작을 위해 setTimeout 으로 userStatus 변경 시점을 늦춤
+      setTimeout(() => {
+        setUserStatus(UserStatusTypes.LOGOUT);
+      });
     },
     onError: () => {
       alert('탈퇴 실패');

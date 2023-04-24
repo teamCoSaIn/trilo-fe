@@ -41,7 +41,7 @@ const PlanCardListInfo = () => {
         <Spacing width={14} />
         <Label>{numOfPlanCards}개</Label>
       </Flex>
-      <Spacing height={13} />
+      <Spacing height={16} />
       <Description color="#979696" fontSize={1.4}>
         트릴로와 함께 즐거운 여행을 시작해보세요.
       </Description>

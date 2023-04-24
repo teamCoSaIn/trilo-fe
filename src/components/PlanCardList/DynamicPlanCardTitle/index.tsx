@@ -1,45 +1,45 @@
 import { ClickAwayListener } from '@mui/material';
-import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
+import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import { PlanCardData } from '@/api/planCard';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import useChangePlanCardTitle from '@/queryHooks/useChangePlanCardTitle';
+import IsTitleEditFamily from '@/states/planCard';
 
 interface PlanCardTitleProps {
-  planCardData: PlanCardData;
+  planCardTitle: string;
+  planCardId: number;
 }
 
-const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
-  const [isEdit, setIsEdit] = useState(false);
+const DynamicPlanCardTitle = ({
+  planCardId,
+  planCardTitle,
+}: PlanCardTitleProps) => {
+  const [isTitleEdit, setIsTitleEdit] = useRecoilState(
+    IsTitleEditFamily(planCardId)
+  );
   const [titleInputValue, setTitleInputValue] = useState('');
 
   const titleFormRef = useRef<HTMLFormElement>(null);
 
   const { mutate } = useChangePlanCardTitle();
 
-  useEffect(() => {
-    setTitleInputValue('');
-    setIsEdit(false);
-  }, [planCardData.title]);
-
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (planCardData.title !== titleInputValue) {
-      mutate({ title: titleInputValue, id: planCardData.id });
+    if (planCardTitle !== titleInputValue) {
+      mutate({ title: titleInputValue, id: planCardId });
     }
+    setTitleInputValue('');
+    setIsTitleEdit(false);
   };
 
   const handleTitleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setTitleInputValue(event.target.value);
-  };
-
-  const handleTitleClick = () => {
-    setIsEdit(true);
   };
 
   const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
@@ -49,17 +49,17 @@ const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
     ) {
       return;
     }
-    setIsEdit(false);
+    setIsTitleEdit(false);
     setTitleInputValue('');
   };
 
-  const DynamicTitle = isEdit ? (
+  const DynamicTitle = isTitleEdit ? (
     <ClickAwayListener onClickAway={handleTitleFormClickAway}>
       <TitleForm onSubmit={handleTitleSubmit} ref={titleFormRef}>
         <TitleEditInput
           type="text"
           value={titleInputValue}
-          placeholder={planCardData.title}
+          placeholder={planCardTitle}
           onChange={handleTitleInputChange}
           autoFocus
           maxLength={20}
@@ -70,9 +70,9 @@ const DynamicPlanCardTitle = ({ planCardData }: PlanCardTitleProps) => {
       </TitleForm>
     </ClickAwayListener>
   ) : (
-    <Box onClick={handleTitleClick}>
-      <Description color={color.gray3} fontSize={2}>
-        {planCardData.title}
+    <Box>
+      <Description color={color.gray3} fontSize={1.6}>
+        {planCardTitle}
       </Description>
     </Box>
   );
@@ -85,15 +85,14 @@ const TitleForm = styled.form`
   align-items: center;
   justify-content: space-between;
   background-color: #eaefff;
-  border-radius: 18px;
-  height: 36px;
-  padding: 3px 15px;
-  width: 230px;
+  height: 28px;
+  width: 220px;
+  padding: 2px 8px;
   box-sizing: border-box;
 `;
 
 const TitleEditInput = styled.input`
-  font-size: 2rem;
+  font-size: 1.6rem;
   color: #b8b8b8;
   width: 100%;
 `;
@@ -101,8 +100,9 @@ const TitleEditInput = styled.input`
 const Box = styled.div`
   display: flex;
   align-items: center;
-  height: 36px;
-  padding: 3px 15px;
+  height: 28px;
+  width: 220px;
+  padding: 2px 8px;
 `;
 
 const TitleConfirmBtn = styled.button`

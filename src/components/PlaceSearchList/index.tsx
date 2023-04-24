@@ -8,9 +8,10 @@ import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
+import PlaceCardSkeleton from '@/components/PlaceSearchList/PlaceCardSkeleton';
 import color from '@/constants/color';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
-import { PlacesService, MapInstance } from '@/states/googleMaps';
+import { PlacesService } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
 
 interface PlaceType {
@@ -33,23 +34,14 @@ const PlaceSearchList = () => {
   };
 
   const placesService = useRecoilValue(PlacesService);
-  const mapInstance = useRecoilValue(MapInstance);
-
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
-  const [placeList, setPlaceList] = useState<
-    google.maps.places.PlaceResult[] | []
-  >([]);
+  const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
 
-  const handleOnSuccess = (data: google.maps.places.PlaceResult[]) => {
-    console.log(data);
-    setPlaceList(data);
-  };
-
-  const { isFetching } = useSearchPlacesByText(
+  const { isLoading, data: placeList } = useSearchPlacesByText(
     searchText,
     placesService,
-    handleOnSuccess
+    isFirstRender
   );
 
   const handlePlaceSearchSubmit = async (
@@ -59,6 +51,7 @@ const PlaceSearchList = () => {
     const isInputValid = placeSearchInputRegExp.test(inputValue);
     if (placesService && isInputValid) {
       setSearchText(inputValue);
+      setIsFirstRender(false);
     }
   };
 
@@ -67,6 +60,7 @@ const PlaceSearchList = () => {
     if (placesService) {
       setInputValue(target.innerText);
       setSearchText(korToEng[target.innerText]);
+      setIsFirstRender(false);
     }
   };
 
@@ -90,22 +84,35 @@ const PlaceSearchList = () => {
     </PlaceLabel>
   ));
 
-  const PlaceCardList = placeList.length ? (
-    placeList.map(place => (
-      <PlaceCard
-        key={place.place_id}
-        name={place.name}
-        rating={place.rating}
-        address={place.formatted_address}
-        numOfReviews={place.user_ratings_total}
-        openingHours={place.opening_hours}
-        googleMapLink={place.url}
-        imgUrl={place.photos ? place.photos[0].getUrl() : null}
-      />
-    ))
+  const PlaceCardList = isLoading
+    ? Array.from({ length: 8 }).map((_, i) => <PlaceCardSkeleton key={i} />)
+    : placeList?.map(place => (
+        <PlaceCard
+          key={place.place_id}
+          name={place.name}
+          rating={place.rating}
+          address={place.formatted_address}
+          numOfReviews={place.user_ratings_total}
+          openingHours={place.opening_hours}
+          googleMapLink={place.url}
+          imgUrl={place.photos ? place.photos[0].getUrl() : null}
+        />
+      ));
+
+  const DynamicDeleteIconBtn =
+    !isFirstRender && isLoading ? (
+      <CircularLoader size={20} />
+    ) : (
+      <DeleteIconBtn onClick={handleCancelBtnClick}>
+        <DeleteIcon />
+      </DeleteIconBtn>
+    );
+
+  // TODO: 초기화면 구현하기
+  const DynamicPlaceCardList = isFirstRender ? (
+    <div>초기화면</div>
   ) : (
-    // TODO: 디자인 나오면 default UI 화면 구성하기.
-    <div>장소 검색 탭 초기 화면</div>
+    PlaceCardList
   );
 
   return (
@@ -119,20 +126,12 @@ const PlaceSearchList = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <DynamicDeleteIconBtnBox>
-          {isFetching ? (
-            <CircularLoader size={20} />
-          ) : (
-            <DeleteIconBtn onClick={handleCancelBtnClick}>
-              <DeleteIcon />
-            </DeleteIconBtn>
-          )}
-        </DynamicDeleteIconBtnBox>
+        <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>
       </PlaceSearchForm>
 
       <LabelBox>{PlaceLabelList}</LabelBox>
 
-      <PlaceCardContainer>{PlaceCardList}</PlaceCardContainer>
+      <PlaceCardContainer>{DynamicPlaceCardList}</PlaceCardContainer>
     </PlaceSearchListBox>
   );
 };
@@ -165,7 +164,7 @@ const SearchIconBtn = styled.button`
   padding: 0 14px;
 `;
 
-const DynamicDeleteIconBtnBox = styled.div`
+const DeleteIconBtnBox = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;

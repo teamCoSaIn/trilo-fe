@@ -5,7 +5,7 @@ import searchPlacesByText from '@/api/searchPlacesByText';
 const useSearchPlacesByText = (
   searchText: string,
   placesService: google.maps.places.PlacesService | null,
-  onSuccess: (data: google.maps.places.PlaceResult[]) => void
+  isFirstRender: boolean
 ) => {
   return useQuery(
     ['placeList', searchText],
@@ -14,10 +14,12 @@ const useSearchPlacesByText = (
         return searchPlacesByText(searchText, placesService);
       }
       return new Promise<[]>(resolve => {
-        resolve([]);
+        setTimeout(() => {
+          resolve([]);
+        }, 2000);
       });
     },
-    { staleTime: Infinity, cacheTime: Infinity, onSuccess }
+    { staleTime: Infinity, cacheTime: Infinity, enabled: !isFirstRender }
   );
 };
 

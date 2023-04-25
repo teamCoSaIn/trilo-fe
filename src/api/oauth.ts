@@ -17,6 +17,10 @@ interface LogoutResponse {
   response?: boolean;
 }
 
+interface ResignResponse {
+  response?: boolean;
+}
+
 // 백엔드 서버에 OAuth 로그인 url 요청
 export const getLoginUri = async (oauthServer: string) => {
   const res = await axios({
@@ -61,6 +65,16 @@ export const logout = async () => {
     method: 'get',
     url: `/auth/logout`,
     requireAuth: false,
+  });
+  delete axios.defaults.headers.common.Authorization;
+  return res.data;
+};
+
+export const resign = async () => {
+  const res = await axios<ResignResponse>({
+    method: 'get',
+    url: `/auth/resign`,
+    requireAuth: true,
   });
   delete axios.defaults.headers.common.Authorization;
   return res.data;

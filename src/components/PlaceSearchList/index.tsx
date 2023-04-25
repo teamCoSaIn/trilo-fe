@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
-// import usePlacesAutocomplete from 'use-places-autocomplete';
 
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
@@ -11,6 +10,7 @@ import CircularLoader from '@/components/common/Loader';
 import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceSearchList/PlaceCardSkeleton';
 import color from '@/constants/color';
+import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import { PlacesService, AutocompleteService } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
@@ -41,6 +41,9 @@ const PlaceSearchList = () => {
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
+  const [debouncingTimer, setDebouncingTimer] = useState<
+    NodeJS.Timeout | undefined
+  >(undefined);
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
@@ -74,16 +77,6 @@ const PlaceSearchList = () => {
     }
   };
 
-  const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setInputValue(event.target.value);
-  };
-
-  const handleCancelBtnClick = () => {
-    setInputValue('');
-  };
-
   const displaySuggestions = (
     predictions: google.maps.places.QueryAutocompletePrediction[] | null,
     status: google.maps.places.PlacesServiceStatus
@@ -104,12 +97,27 @@ const PlaceSearchList = () => {
     setAutocompleteDataList(filteredPredictions);
   };
 
-  if (autocompleteService && inputValue) {
-    autocompleteService.getQueryPredictions(
-      { input: `${inputValue}` },
-      displaySuggestions
-    );
-  }
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInputValue(event.target.value);
+    if (debouncingTimer) {
+      clearTimeout(debouncingTimer);
+    }
+    const timer = setTimeout(() => {
+      if (autocompleteService && inputValue) {
+        autocompleteService.getQueryPredictions(
+          { input: `${inputValue}` },
+          displaySuggestions
+        );
+      }
+    }, PLACE_SEARCH_DEBOUNCE_TIME);
+    setDebouncingTimer(timer);
+  };
+
+  const handleCancelBtnClick = () => {
+    setInputValue('');
+  };
 
   const autoCompleteList = autocompleteDataList.map(autocompleteData => (
     <li key={autocompleteData.place_id}>{autocompleteData.description}</li>

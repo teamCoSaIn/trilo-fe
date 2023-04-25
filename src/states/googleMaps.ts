@@ -11,3 +11,10 @@ export const MapInstance = atom<google.maps.Map | null>({
   default: null,
   dangerouslyAllowMutability: true,
 });
+
+export const AutocompleteService =
+  atom<google.maps.places.AutocompleteService | null>({
+    key: 'autocompleteService',
+    default: null,
+    dangerouslyAllowMutability: true,
+  });

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
+// import usePlacesAutocomplete from 'use-places-autocomplete';
 
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
@@ -11,11 +12,16 @@ import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceSearchList/PlaceCardSkeleton';
 import color from '@/constants/color';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
-import { PlacesService } from '@/states/googleMaps';
+import { PlacesService, AutocompleteService } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
 
 interface PlaceType {
   [key: string]: string;
+}
+
+interface AutoCompleteType {
+  place_id: string | undefined;
+  description: string;
 }
 
 const PlaceSearchList = () => {
@@ -34,9 +40,13 @@ const PlaceSearchList = () => {
   };
 
   const placesService = useRecoilValue(PlacesService);
+  const autocompleteService = useRecoilValue(AutocompleteService);
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
+  const [autocompleteDataList, setAutocompleteDataList] = useState<
+    AutoCompleteType[]
+  >([]);
 
   const { isLoading, data: placeList } = useSearchPlacesByText(
     searchText,
@@ -73,6 +83,37 @@ const PlaceSearchList = () => {
   const handleCancelBtnClick = () => {
     setInputValue('');
   };
+
+  const displaySuggestions = (
+    predictions: google.maps.places.QueryAutocompletePrediction[] | null,
+    status: google.maps.places.PlacesServiceStatus
+  ) => {
+    if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+      console.log(status);
+      return;
+    }
+    // console.log(predictions);
+
+    const filteredPredictions = predictions.map(prediction => {
+      return {
+        place_id: prediction.place_id,
+        description: prediction.description,
+      };
+    });
+
+    setAutocompleteDataList(filteredPredictions);
+  };
+
+  if (autocompleteService && inputValue) {
+    autocompleteService.getQueryPredictions(
+      { input: `${inputValue}` },
+      displaySuggestions
+    );
+  }
+
+  const autoCompleteList = autocompleteDataList.map(autocompleteData => (
+    <li key={autocompleteData.place_id}>{autocompleteData.description}</li>
+  ));
 
   const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
     <PlaceLabel
@@ -126,6 +167,9 @@ const PlaceSearchList = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
+        <AutoCompleteListBox isHidden={!autoCompleteList.length}>
+          {autoCompleteList}
+        </AutoCompleteListBox>
         <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>
       </PlaceSearchForm>
 
@@ -143,8 +187,9 @@ const PlaceSearchListBox = styled(Flex)`
 const PlaceSearchForm = styled.form`
   display: flex;
   align-items: center;
-  height: 40px;
+  position: relative;
   width: 334px;
+  height: 40px;
   margin: 15px 2px;
   border-radius: 30px;
   background-color: #ecf0ff;
@@ -155,6 +200,26 @@ const PlaceSearchInput = styled.input`
   font-size: 16px;
   font-weight: 400;
   line-height: 16px;
+  z-index: 10;
+`;
+
+const AutoCompleteListBox = styled.div<{ isHidden: boolean }>`
+  ${props => (props.isHidden ? 'visibility: hidden;' : 'visibility: visible;')}
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: absolute;
+  top: 20px;
+  left: 0px;
+  width: 334px;
+  padding: 20px 45px;
+  border-bottom-left-radius: 30px;
+  border-bottom-right-radius: 30px;
+  background-color: #ecf0ff;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+  z-index: 1;
 `;
 
 const SearchIconBtn = styled.button`
@@ -162,6 +227,7 @@ const SearchIconBtn = styled.button`
   align-items: center;
   width: 46px;
   padding: 0 14px;
+  z-index: 10;
 `;
 
 const DeleteIconBtnBox = styled.div`
@@ -170,6 +236,7 @@ const DeleteIconBtnBox = styled.div`
   justify-content: center;
   width: 46px;
   padding: 0 14px;
+  z-index: 10;
 `;
 
 const DeleteIconBtn = styled.button`

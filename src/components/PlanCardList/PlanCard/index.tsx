@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import Flex from '@/components/common/Flex';
 import PlanCardBottom from '@/components/PlanCardList/PlanCardBottom';
 import PlanCardContent from '@/components/PlanCardList/PlanCardContent';

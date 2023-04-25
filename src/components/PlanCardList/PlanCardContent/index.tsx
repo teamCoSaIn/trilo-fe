@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
 import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
 import color from '@/constants/color';

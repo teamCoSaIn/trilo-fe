@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -77,6 +77,16 @@ const PlaceSearchList = () => {
     }
   };
 
+  const handleSearchInputChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setInputValue(event.target.value);
+  };
+
+  const handleCancelBtnClick = () => {
+    setInputValue('');
+  };
+
   const displaySuggestions = (
     predictions: google.maps.places.QueryAutocompletePrediction[] | null,
     status: google.maps.places.PlacesServiceStatus
@@ -85,7 +95,6 @@ const PlaceSearchList = () => {
       console.log(status);
       return;
     }
-    // console.log(predictions);
 
     const filteredPredictions = predictions.map(prediction => {
       return {
@@ -97,30 +106,36 @@ const PlaceSearchList = () => {
     setAutocompleteDataList(filteredPredictions);
   };
 
-  const handleSearchInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setInputValue(event.target.value);
+  useEffect(() => {
     if (debouncingTimer) {
       clearTimeout(debouncingTimer);
     }
+
     const timer = setTimeout(() => {
       if (autocompleteService && inputValue) {
         autocompleteService.getQueryPredictions(
-          { input: `${inputValue}` },
+          {
+            input: `${inputValue}`,
+            // TODO: 지도 센터 기준으로 설정.
+            location: new google.maps.LatLng(37.56, 127),
+            radius: 1000,
+          },
           displaySuggestions
         );
       }
     }, PLACE_SEARCH_DEBOUNCE_TIME);
-    setDebouncingTimer(timer);
-  };
 
-  const handleCancelBtnClick = () => {
-    setInputValue('');
-  };
+    setDebouncingTimer(timer);
+
+    if (!inputValue) {
+      setAutocompleteDataList([]);
+    }
+  }, [inputValue]);
 
   const autoCompleteList = autocompleteDataList.map(autocompleteData => (
-    <li key={autocompleteData.place_id}>{autocompleteData.description}</li>
+    <li key={autocompleteData.place_id || Date.now()}>
+      {autocompleteData.description}
+    </li>
   ));
 
   const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
@@ -175,9 +190,9 @@ const PlaceSearchList = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <AutoCompleteListBox isHidden={!autoCompleteList.length}>
+        <AutoCompleteBox isHidden={!autoCompleteList.length}>
           {autoCompleteList}
-        </AutoCompleteListBox>
+        </AutoCompleteBox>
         <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>
       </PlaceSearchForm>
 
@@ -208,10 +223,10 @@ const PlaceSearchInput = styled.input`
   font-size: 16px;
   font-weight: 400;
   line-height: 16px;
-  z-index: 10;
+  z-index: 2;
 `;
 
-const AutoCompleteListBox = styled.div<{ isHidden: boolean }>`
+const AutoCompleteBox = styled.div<{ isHidden: boolean }>`
   ${props => (props.isHidden ? 'visibility: hidden;' : 'visibility: visible;')}
   display: flex;
   flex-direction: column;
@@ -230,12 +245,14 @@ const AutoCompleteListBox = styled.div<{ isHidden: boolean }>`
   z-index: 1;
 `;
 
+// TODO: AutoCompleteListBox 만들기
+
 const SearchIconBtn = styled.button`
   display: flex;
   align-items: center;
   width: 46px;
   padding: 0 14px;
-  z-index: 10;
+  z-index: 2;
 `;
 
 const DeleteIconBtnBox = styled.div`
@@ -244,7 +261,7 @@ const DeleteIconBtnBox = styled.div`
   justify-content: center;
   width: 46px;
   padding: 0 14px;
-  z-index: 10;
+  z-index: 2;
 `;
 
 const DeleteIconBtn = styled.button`

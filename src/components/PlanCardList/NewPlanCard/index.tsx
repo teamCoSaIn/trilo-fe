@@ -8,7 +8,6 @@ import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
-import Spacing from '@/components/common/Spacing';
 
 interface NewPlanCardProps {
   handleClose: () => void;
@@ -52,38 +51,53 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
   return (
     <>
       <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-        <Flex column ref={newPlanCardRef}>
+        <PlanCardBox column ref={newPlanCardRef}>
           {isLoading && <DimLoader />}
           <LogoBox>
             <LogoIcon fill="white" />
           </LogoBox>
-          <Spacing height={16} />
-          <TitleForm onSubmit={handleTitleSubmit}>
-            <TitleEditInput
-              type="text"
-              value={titleInputValue}
-              placeholder="계획명을 입력해주세요."
-              onChange={handleTitleInputChange}
-              autoFocus
-              maxLength={20}
-            />
-            <TitleConfirmBtn type="submit">
-              <CheckIcon fill="#4D77FF" width={14} height={14} />
-            </TitleConfirmBtn>
-          </TitleForm>
-        </Flex>
+          <BottomBox>
+            <TitleForm onSubmit={handleTitleSubmit}>
+              <TitleEditInput
+                type="text"
+                value={titleInputValue}
+                placeholder="계획명을 입력해주세요."
+                onChange={handleTitleInputChange}
+                autoFocus
+                maxLength={20}
+              />
+              <TitleConfirmBtn type="submit">
+                <CheckIcon fill="#4D77FF" width={14} height={14} />
+              </TitleConfirmBtn>
+            </TitleForm>
+          </BottomBox>
+        </PlanCardBox>
       </ClickAwayListener>
     </>
   );
 };
 
+const PlanCardBox = styled(Flex)`
+  width: 245px;
+  height: 256px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 2.97356px 20px rgba(0, 0, 0, 0.1);
+`;
+
 const LogoBox = styled.div`
-  width: 230px;
-  height: 230px;
+  width: 100%;
+  height: 176px;
   background-color: #4d77ff;
   display: flex;
   justify-content: center;
   align-items: center;
+`;
+
+const BottomBox = styled(Flex)`
+  width: 100%;
+  height: 80px;
+  padding: 14px 12px;
 `;
 
 const TitleForm = styled.form`
@@ -91,15 +105,14 @@ const TitleForm = styled.form`
   align-items: center;
   justify-content: space-between;
   background-color: #eaefff;
-  border-radius: 18px;
-  height: 36px;
-  padding: 3px 15px;
-  width: 230px;
+  height: 28px;
+  width: 220px;
+  padding: 2px 8px;
   box-sizing: border-box;
 `;
 
 const TitleEditInput = styled.input`
-  font-size: 2rem;
+  font-size: 1.6rem;
   color: #b8b8b8;
   width: 100%;
 `;

@@ -74,7 +74,7 @@ const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
       </IconBtn>
     </OptionBox>
   ) : (
-    <PlanBottomBox column alignCenter justifyCenter>
+    <BottomBox column alignCenter justifyCenter>
       <DynamicPlanCardTitle
         planCardId={planCardData.id}
         planCardTitle={planCardData.title}
@@ -86,13 +86,13 @@ const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
           <EllipsisIcon />
         </OptionOpenBtn>
       </Wrapper>
-    </PlanBottomBox>
+    </BottomBox>
   );
 
   return BottomContent;
 };
 
-const PlanBottomBox = styled(Flex)`
+const BottomBox = styled(Flex)`
   width: 100%;
   height: 80px;
   padding: 14px 12px;

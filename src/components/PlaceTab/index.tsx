@@ -3,6 +3,7 @@ import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
+import { ReactComponent as MarkerIcon } from '@/assets/marker.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
 import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
@@ -19,9 +20,10 @@ interface PlaceType {
   [key: string]: string;
 }
 
-interface AutoCompleteType {
-  place_id: string | undefined;
-  description: string;
+interface AutocompleteType {
+  placeId: string | undefined;
+  mainText: string;
+  address: string;
 }
 
 const PlaceTab = () => {
@@ -48,7 +50,7 @@ const PlaceTab = () => {
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
   const [autocompleteDataList, setAutocompleteDataList] = useState<
-    AutoCompleteType[]
+    AutocompleteType[]
   >([]);
 
   const { isLoading, data: placeList } = useSearchPlacesByText(
@@ -95,11 +97,12 @@ const PlaceTab = () => {
       console.log(status);
       return;
     }
-
+    // console.log(predictions[0].structured_formatting);
     const filteredPredictions = predictions.map(prediction => {
       return {
         place_id: prediction.place_id,
-        description: prediction.description,
+        mainText: prediction.structured_formatting.main_text,
+        address: prediction.description,
       };
     });
 
@@ -132,10 +135,14 @@ const PlaceTab = () => {
     }
   }, [inputValue]);
 
-  const autoCompleteList = autocompleteDataList.map(autocompleteData => (
-    <li key={autocompleteData.place_id || Date.now()}>
-      {autocompleteData.description}
-    </li>
+  const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => (
+    <Autocomplete key={autocompleteData.placeId || idx}>
+      <div>
+        <MarkerIcon width={16} height={16} />
+      </div>
+      <AutocompleteMainText>{autocompleteData.mainText}</AutocompleteMainText>
+      <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
+    </Autocomplete>
   ));
 
   const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
@@ -190,9 +197,9 @@ const PlaceTab = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <AutoCompleteBox isHidden={!autoCompleteList.length}>
-          {autoCompleteList}
-        </AutoCompleteBox>
+        <AutocompleteDropDown isHidden={!autocompleteList.length}>
+          <AutocompleteListBox>{autocompleteList}</AutocompleteListBox>
+        </AutocompleteDropDown>
         <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>
       </PlaceSearchForm>
 
@@ -226,32 +233,53 @@ const PlaceSearchInput = styled.input`
   z-index: 2;
 `;
 
-const AutoCompleteBox = styled.div<{ isHidden: boolean }>`
+const AutocompleteDropDown = styled.div<{ isHidden: boolean }>`
   ${props => (props.isHidden ? 'visibility: hidden;' : 'visibility: visible;')}
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
   position: absolute;
   top: 20px;
   left: 0;
   width: 334px;
-  padding: 20px 45px;
+  padding: 20px 0;
   border-bottom-left-radius: 30px;
   border-bottom-right-radius: 30px;
   background-color: #ecf0ff;
-  font-size: 16px;
-  font-weight: 400;
-  line-height: 16px;
   z-index: 1;
 `;
 
-// TODO: AutoCompleteListBox 만들기
+const AutocompleteListBox = styled.ul`
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 20px 14px 0 14px;
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 16px;
+  border-top: 2px solid #4d77ff;
+`;
+
+const Autocomplete = styled.li`
+  display: flex;
+  gap: 5px;
+  align-items: center;
+`;
+
+const AutocompleteMainText = styled.span`
+  white-space: nowrap;
+`;
+
+const AutocompleteAddress = styled.span`
+  font-size: 10px;
+  font-weight: 200;
+  color: darkgray;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+`;
 
 const SearchIconBtn = styled.button`
   display: flex;
   align-items: center;
-  width: 46px;
-  padding: 0 14px;
+  margin: 0 14px;
   z-index: 2;
 `;
 

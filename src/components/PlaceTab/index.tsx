@@ -197,7 +197,9 @@ const PlaceTab = () => {
           value={inputValue}
           onChange={handleSearchInputChange}
         />
-        <AutocompleteDropDown isHidden={!autocompleteList.length}>
+        <AutocompleteDropDown
+          isVisible={autocompleteList.length !== 0 && !placeList}
+        >
           <AutocompleteListBox>{autocompleteList}</AutocompleteListBox>
         </AutocompleteDropDown>
         <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>
@@ -233,8 +235,8 @@ const PlaceSearchInput = styled.input`
   z-index: 2;
 `;
 
-const AutocompleteDropDown = styled.div<{ isHidden: boolean }>`
-  ${props => (props.isHidden ? 'visibility: hidden;' : 'visibility: visible;')}
+const AutocompleteDropDown = styled.div<{ isVisible: boolean }>`
+  ${props => (props.isVisible ? 'visibility: visible;' : 'visibility: hidden;')}
   position: absolute;
   top: 20px;
   left: 0;

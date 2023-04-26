@@ -4,6 +4,8 @@ import styled, { css } from 'styled-components';
 
 import { ReactComponent as LeftArrowIcon } from '@/assets/LeftArrow.svg';
 import { ReactComponent as RightArrowIcon } from '@/assets/RightArrow.svg';
+import DateTab from '@/components/DateTab';
+import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 import useGetDayList from '@/queryHooks/useGetDayList';
@@ -30,18 +32,21 @@ const PlanLeftWindow = () => {
 
   return (
     <PlanLeftWindowBox isWindowFold={isWindowFold}>
-      <TabBtn
-        isFocused={curFocusedTab === DATE}
-        onClick={event => handleTabClick(event, DATE)}
-      >
-        날짜
-      </TabBtn>
-      <TabBtn
-        isFocused={curFocusedTab === PLACE}
-        onClick={event => handleTabClick(event, PLACE)}
-      >
-        장소
-      </TabBtn>
+      <InnerContents>
+        <TabBtn
+          isFocused={curFocusedTab === DATE}
+          onClick={event => handleTabClick(event, DATE)}
+        >
+          날짜
+        </TabBtn>
+        <TabBtn
+          isFocused={curFocusedTab === PLACE}
+          onClick={event => handleTabClick(event, PLACE)}
+        >
+          장소
+        </TabBtn>
+        {curFocusedTab === DATE ? <DateTab /> : <PlaceTab />}
+      </InnerContents>
       <WindowFoldBtn
         onClick={() => {
           setIsWindowFold(prev => !prev);
@@ -56,11 +61,24 @@ const PlanLeftWindow = () => {
 const PlanLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   position: fixed;
   top: ${HEADER_HEIGHT};
-  left: 0px;
+  left: 0;
   width: 363px;
   height: calc(100% - ${HEADER_HEIGHT});
   ${props => (props.isWindowFold ? 'transform: translate(-363px);' : null)}
   transition: all .5s;
+  background-color: ${color.white};
+  z-index: 4;
+`;
+
+const InnerContents = styled.div`
+  overflow: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
+  }
+  height: 100%;
+  width: 100%;
 `;
 
 const WindowFoldBtn = styled.button`

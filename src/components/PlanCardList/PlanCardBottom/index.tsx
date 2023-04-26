@@ -2,10 +2,11 @@ import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import { PlanCardData } from '@/api/tripPlanList';
+import { PlanCardData } from '@/api/planCard';
 import { ReactComponent as CameraIcon } from '@/assets/camera.svg';
 import { ReactComponent as EllipsisIcon } from '@/assets/ellipsis.svg';
 import { ReactComponent as MultiplyIcon } from '@/assets/multiply.svg';
+import { ReactComponent as PencilIcon } from '@/assets/pencil.svg';
 import { ReactComponent as TrashCanIcon } from '@/assets/trash-can.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
@@ -63,7 +64,9 @@ const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
         사진 변경
       </IconBtn>
       <IconBtn onClick={handleEditTitleBtnClick}>
-        <IconWrapper />
+        <IconWrapper>
+          <PencilIcon />
+        </IconWrapper>
         이름 수정
       </IconBtn>
       <IconBtn onClick={handleDeleteBtnClick}>

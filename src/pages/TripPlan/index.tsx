@@ -6,6 +6,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import Error from '@/components/common/Error';
 import CircularLoader from '@/components/common/Loader';
 import Map from '@/components/Map';
+import PlanHeader from '@/components/PlanHeader';
 import PlanLeftWindow from '@/components/PlanLeftWindow';
 import PlanRightWindow from '@/components/PlanRightWindow';
 
@@ -30,6 +31,7 @@ const TripPlan = () => {
   return (
     <ErrorBoundary FallbackComponent={Error} onReset={reset}>
       <Suspense fallback={<CircularLoader />}>
+        <PlanHeader />
         <PlanLeftWindow />
         {isLoaded ? <Map /> : <div>loading...</div>}
         <PlanRightWindow />

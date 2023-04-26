@@ -7,8 +7,8 @@ import { ReactComponent as SearchIcon } from '@/assets/search.svg';
 import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
-import PlaceCard from '@/components/PlaceSearchList/PlaceCard';
-import PlaceCardSkeleton from '@/components/PlaceSearchList/PlaceCardSkeleton';
+import PlaceCard from '@/components/PlaceTab/PlaceCard';
+import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
 import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
@@ -24,7 +24,7 @@ interface AutoCompleteType {
   description: string;
 }
 
-const PlaceSearchList = () => {
+const PlaceTab = () => {
   const placeLabelDataList = [
     { name: '식당', id: 1 },
     { name: '관광명소', id: 2 },
@@ -233,7 +233,7 @@ const AutoCompleteBox = styled.div<{ isHidden: boolean }>`
   gap: 10px;
   position: absolute;
   top: 20px;
-  left: 0px;
+  left: 0;
   width: 334px;
   padding: 20px 45px;
   border-bottom-left-radius: 30px;
@@ -299,4 +299,4 @@ const PlaceCardContainer = styled.div`
   margin: 20px 0;
 `;
 
-export default PlaceSearchList;
+export default PlaceTab;

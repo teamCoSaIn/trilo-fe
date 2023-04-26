@@ -2,7 +2,7 @@ import styled, { css } from 'styled-components';
 
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
-import DateContainer from '@/components/PlanLeftWindow/DateContainer';
+import DateContainer from '@/components/DateTab/DateContainer';
 import { getDateInfoArray } from '@/utils/calendar';
 
 interface CalendarProps {

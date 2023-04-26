@@ -52,7 +52,7 @@ const PlaceCardSkeletonBox = styled.div`
   width: 337px;
   height: 160px;
   background: #ffffff;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   padding: 20px;
 `;

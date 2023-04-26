@@ -11,7 +11,7 @@ import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
-import Calendar from '@/components/PlanLeftWindow/Calendar';
+import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import SelectedDates from '@/states/calendar';
@@ -25,7 +25,7 @@ const SLIDING_DISTANCE = CALENDAR_HEIGHT + 30;
 const TRANSITION_WINDOW_HEIGHT = CALENDAR_HEIGHT * 2 + 30;
 type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
-const DateTabContainer = () => {
+const DateTab = () => {
   const { id } = useParams();
   const { data } = useGetDayList({
     planId: id as string,
@@ -192,4 +192,4 @@ const DateDescription = styled.p`
   border-radius: 16px;
 `;
 
-export default DateTabContainer;
+export default DateTab;

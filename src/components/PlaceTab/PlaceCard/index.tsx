@@ -4,7 +4,7 @@ import { ReactComponent as CopyIcon } from '@/assets/copy.svg';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import Logo from '@/components/common/Logo';
-import PlaceCardStar from '@/components/PlaceSearchList/PlaceCardStar';
+import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -100,7 +100,7 @@ const PlaceCardBox = styled.div`
   width: 337px;
   height: 160px;
   background: #ffffff;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   padding: 20px;
 `;
@@ -172,7 +172,7 @@ const PlaceCardGoogleLinkBtn = styled.button`
   width: 59px;
   height: 18px;
   background: #fff;
-  box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   font-size: 8px;
   font-weight: 400;

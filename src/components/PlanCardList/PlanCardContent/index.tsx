@@ -3,12 +3,9 @@ import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
 import { PlanCardData } from '@/api/planCard';
-import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
-import Button from '@/components/common/Button';
-import DimLoader from '@/components/common/DimLoader';
 import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
-import useDeletePlanCard from '@/queryHooks/useDeletePlanCard';
+import color from '@/constants/color';
 
 interface PlanCardContentProps {
   planCardData: PlanCardData;
@@ -18,12 +15,6 @@ const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
   const planContentPicUrl = planCardData.picUrl || planCardDefaultPic;
 
-  const { mutate, isLoading } = useDeletePlanCard();
-
-  const planPeriod = planCardData.startDay ? (
-    <PlanPeriod>{`${planCardData.startDay} ~ ${planCardData.endDay}`}</PlanPeriod>
-  ) : null;
-
   const handlePlanCardMouseEnter = () => {
     setIsHover(true);
   };
@@ -32,83 +23,62 @@ const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
     setIsHover(false);
   };
 
-  const handleDeleteBtnClick = () => {
-    if (window.confirm('찐으로 삭제하시렵니까?')) {
-      mutate(planCardData.id);
-    }
-  };
-
   const HoverMask = (
     <DimLayer>
-      <Button type="button" btnSize="medium">
-        <PlanBtnLink to={`/tripplan/${planCardData.id}`}>수정하기</PlanBtnLink>
-      </Button>
-      <DeleteBtn onClick={handleDeleteBtnClick}>
-        <DeleteIcon />
-      </DeleteBtn>
+      <PlanBtn>
+        <PlanBtnLink to={`/tripplan/${planCardData.id}`}>
+          계획 수정하기
+        </PlanBtnLink>
+      </PlanBtn>
     </DimLayer>
   );
 
   return (
-    <>
-      {isLoading && <DimLoader />}
-      <PlanContent
-        picUrl={planContentPicUrl}
-        onMouseEnter={handlePlanCardMouseEnter}
-        onMouseLeave={handlePlanCardMouseLeave}
-      >
-        {isHover && HoverMask}
-        <PlanCardStatusLabel status={planCardData.status} />
-        {planPeriod}
-      </PlanContent>
-    </>
+    <PlanContent
+      picUrl={planContentPicUrl}
+      onMouseEnter={handlePlanCardMouseEnter}
+      onMouseLeave={handlePlanCardMouseLeave}
+    >
+      {isHover && HoverMask}
+      <PlanCardStatusLabel status={planCardData.status} />
+    </PlanContent>
   );
 };
 
 const PlanContent = styled.div<{ picUrl: string }>`
   position: relative;
-  width: 230px;
-  height: 230px;
+  width: 100%;
+  height: 176px;
   ${({ picUrl }) => css`
     ${picUrl && { backgroundImage: `url(${picUrl})` }};
   `}
   background-size: cover;
 `;
 
-const PlanPeriod = styled.p`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 144px;
-  height: 24px;
-  border-radius: 16px;
-  background-color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #4f4f4f;
-  font-size: 1.4rem;
-`;
-
 const DimLayer = styled.div`
   position: relative;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0.5125) 47.92%,
+    rgba(0, 0, 0, 0) 100%
+  );
   z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
 `;
 
-const DeleteBtn = styled.button`
-  position: absolute;
-  top: 8px;
-  right: 8px;
+const PlanBtn = styled.button`
+  width: 133px;
+  height: 36px;
+  border: 0.8px solid ${color.white};
+  border-radius: 24px;
+  color: ${color.white};
   &:hover {
-    > svg {
-      fill: #b8b8b8;
-    }
+    background-color: rgba(24, 23, 23, 0.6);
   }
 `;
 
@@ -118,6 +88,7 @@ const PlanBtnLink = styled(Link)`
   display: flex;
   align-items: center;
   justify-content: center;
+  font-size: 1.6rem;
 `;
 
 export default PlanCardContent;

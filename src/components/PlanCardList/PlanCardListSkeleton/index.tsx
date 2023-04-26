@@ -3,7 +3,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import Flex from '@/components/common/Flex';
-import Spacing from '@/components/common/Spacing';
 
 interface PlanCardListSkeletonProps {
   numOfPlanCard?: number;
@@ -21,9 +20,7 @@ const PlanCardListSkeleton = ({
       const id = Date.now() + idx;
       return (
         <Flex column key={id}>
-          <Skeleton variant="rounded" width={230} height={230} />
-          <Spacing height={16} />
-          <Skeleton variant="rounded" width={230} height={36} />
+          <Skeleton variant="rounded" width={245} height={256} />
         </Flex>
       );
     }
@@ -35,7 +32,7 @@ const PlanCardListSkeleton = ({
 const PlanCardsBox = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 48px;
+  gap: 28px;
 `;
 
 export default PlanCardListSkeleton;

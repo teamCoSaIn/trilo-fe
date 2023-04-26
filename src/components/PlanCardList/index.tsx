@@ -37,7 +37,7 @@ const PlanCardList = () => {
 const PlanCardsBox = styled.div`
   display: flex;
   flex-wrap: wrap;
-  gap: 48px;
+  gap: 28px;
 `;
 
 export default PlanCardList;

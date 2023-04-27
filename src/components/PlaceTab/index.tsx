@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -46,9 +46,13 @@ const PlaceTab = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
+  const [isAutocompleteVisible, setIsAutocompleteVisible] =
+    useState<boolean>(false);
   const [autocompleteDataList, setAutocompleteDataList] = useState<
     AutocompleteType[]
   >([]);
+
+  const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { isLoading, data: placeList } = useSearchPlacesByText(
     searchText,
@@ -64,6 +68,7 @@ const PlaceTab = () => {
     if (placesService && isInputValid) {
       setSearchText(inputValue);
       setIsFirstRender(false);
+      inputRef.current?.blur();
     }
   };
 
@@ -84,6 +89,17 @@ const PlaceTab = () => {
 
   const handleCancelBtnClick = () => {
     setInputValue('');
+  };
+
+  const handleSearchInputOnFocus = () => {
+    if (!autocompleteList.length) {
+      return;
+    }
+    setIsAutocompleteVisible(true);
+  };
+
+  const handleSearchInputOnBlur = () => {
+    setIsAutocompleteVisible(false);
   };
 
   const displaySuggestions = (
@@ -131,6 +147,17 @@ const PlaceTab = () => {
       }
     };
   }, [inputValue]);
+
+  useEffect(() => {
+    if (
+      autocompleteDataList.length &&
+      inputRef.current === document.activeElement
+    ) {
+      setIsAutocompleteVisible(true);
+    } else {
+      setIsAutocompleteVisible(false);
+    }
+  }, [autocompleteDataList]);
 
   const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => (
     <Autocomplete key={autocompleteData.placeId || idx}>
@@ -190,13 +217,14 @@ const PlaceTab = () => {
           <SearchIcon />
         </SearchIconBtn>
         <PlaceSearchInput
+          ref={inputRef}
           placeholder="어디로 떠나볼까요?"
           value={inputValue}
           onChange={handleSearchInputChange}
+          onFocus={handleSearchInputOnFocus}
+          onBlur={handleSearchInputOnBlur}
         />
-        <AutocompleteDropDown
-          isVisible={autocompleteList.length !== 0 && !placeList}
-        >
+        <AutocompleteDropDown isVisible={isAutocompleteVisible}>
           <AutocompleteListBox>{autocompleteList}</AutocompleteListBox>
         </AutocompleteDropDown>
         <DeleteIconBtnBox>{DynamicDeleteIconBtn}</DeleteIconBtnBox>

@@ -70,6 +70,12 @@ const PlaceTab = () => {
       setIsFirstRender(false);
       inputRef.current?.blur();
     }
+    // TODO: 올바른 입력이 아닌 경우
+    else if (inputValue === '') {
+      alert('값을 입력해주세요.');
+    } else {
+      alert('특수문자를 제외한 영문, 한글, 숫자만 입력이 가능합니다.');
+    }
   };
 
   const handlePlaceLabelClick = async (event: React.MouseEvent) => {
@@ -103,17 +109,23 @@ const PlaceTab = () => {
   };
 
   const displaySuggestions = (
-    predictions: google.maps.places.QueryAutocompletePrediction[] | null,
+    queryPredictions: google.maps.places.QueryAutocompletePrediction[] | null,
     status: google.maps.places.PlacesServiceStatus
   ) => {
-    if (status !== google.maps.places.PlacesServiceStatus.OK || !predictions) {
+    if (
+      status !== google.maps.places.PlacesServiceStatus.OK ||
+      !queryPredictions
+    ) {
       console.log(status);
+      // TODO: ZERO_RESULTS 일 때 알려주기
       return;
     }
 
-    const filteredPredictions = predictions.map(prediction => {
+    const filteredPredictions = queryPredictions.map(queryPrediction => {
+      const prediction =
+        queryPrediction as google.maps.places.AutocompletePrediction;
       return {
-        place_id: prediction.place_id,
+        placeId: prediction.place_id,
         mainText: prediction.structured_formatting.main_text,
         address: prediction.description,
       };
@@ -198,7 +210,7 @@ const PlaceTab = () => {
     !isFirstRender && isLoading ? (
       <CircularLoader size={20} />
     ) : (
-      <DeleteIconBtn onClick={handleCancelBtnClick}>
+      <DeleteIconBtn type="button" onClick={handleCancelBtnClick}>
         <DeleteIcon />
       </DeleteIconBtn>
     );

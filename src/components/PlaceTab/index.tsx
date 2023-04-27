@@ -43,9 +43,6 @@ const PlaceTab = () => {
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
-  const [debouncingTimer, setDebouncingTimer] = useState<
-    NodeJS.Timeout | undefined
-  >(undefined);
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
@@ -97,7 +94,7 @@ const PlaceTab = () => {
       console.log(status);
       return;
     }
-    // console.log(predictions[0].structured_formatting);
+
     const filteredPredictions = predictions.map(prediction => {
       return {
         place_id: prediction.place_id,
@@ -110,12 +107,10 @@ const PlaceTab = () => {
   };
 
   useEffect(() => {
-    if (debouncingTimer) {
-      clearTimeout(debouncingTimer);
-    }
+    let debouncingTimer: NodeJS.Timeout | null = null;
 
-    const timer = setTimeout(() => {
-      if (autocompleteService && inputValue) {
+    if (autocompleteService && inputValue) {
+      debouncingTimer = setTimeout(() => {
         autocompleteService.getQueryPredictions(
           {
             input: `${inputValue}`,
@@ -125,14 +120,16 @@ const PlaceTab = () => {
           },
           displaySuggestions
         );
-      }
-    }, PLACE_SEARCH_DEBOUNCE_TIME);
-
-    setDebouncingTimer(timer);
-
-    if (!inputValue) {
+      }, PLACE_SEARCH_DEBOUNCE_TIME);
+    } else {
       setAutocompleteDataList([]);
     }
+
+    return () => {
+      if (debouncingTimer) {
+        clearTimeout(debouncingTimer);
+      }
+    };
   }, [inputValue]);
 
   const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => (

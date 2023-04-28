@@ -135,17 +135,23 @@ const PlaceTab = () => {
     setAutocompleteDataList(filteredPredictions);
   };
 
+  let throttlingTimer: NodeJS.Timeout | null = null;
   const handleSearchInputKeyDown = (
     event: React.KeyboardEvent<HTMLElement>
   ) => {
-    if (event.key === 'ArrowDown') {
-      setCurrAutocompleteIdx(
-        prev => (prev + 1) % (autocompleteDataList.length + 1)
-      );
-    } else if (event.key === 'ArrowUp') {
-      setCurrAutocompleteIdx(prev =>
-        prev === 0 ? autocompleteDataList.length : prev - 1
-      );
+    if (!throttlingTimer) {
+      throttlingTimer = setTimeout(() => {
+        throttlingTimer = null;
+        if (event.key === 'ArrowDown') {
+          setCurrAutocompleteIdx(
+            prev => (prev + 1) % (autocompleteDataList.length + 1)
+          );
+        } else if (event.key === 'ArrowUp') {
+          setCurrAutocompleteIdx(prev =>
+            prev === 0 ? autocompleteDataList.length : prev - 1
+          );
+        }
+      }, 0);
     }
   };
 

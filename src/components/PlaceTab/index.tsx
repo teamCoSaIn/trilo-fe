@@ -105,7 +105,8 @@ const PlaceTab = () => {
   };
 
   const handleSearchInputOnBlur = () => {
-    setIsAutocompleteVisible(false);
+    // TODO: false
+    setIsAutocompleteVisible(true);
   };
 
   const displaySuggestions = (
@@ -167,7 +168,8 @@ const PlaceTab = () => {
     ) {
       setIsAutocompleteVisible(true);
     } else {
-      setIsAutocompleteVisible(false);
+      // TODO: false
+      setIsAutocompleteVisible(true);
     }
   }, [autocompleteDataList]);
 
@@ -260,7 +262,7 @@ const PlaceSearchForm = styled.form`
   width: 334px;
   height: 40px;
   margin: 15px 2px;
-  border-radius: 30px;
+  border-radius: 15px;
   background-color: #ecf0ff;
 `;
 
@@ -278,9 +280,9 @@ const AutocompleteDropDown = styled.div<{ isVisible: boolean }>`
   top: 20px;
   left: 0;
   width: 334px;
-  padding: 20px 0;
-  border-bottom-left-radius: 30px;
-  border-bottom-right-radius: 30px;
+  padding-top: 20px;
+  border-bottom-left-radius: 15px;
+  border-bottom-right-radius: 15px;
   background-color: #ecf0ff;
   z-index: 1;
 `;
@@ -288,18 +290,21 @@ const AutocompleteDropDown = styled.div<{ isVisible: boolean }>`
 const AutocompleteListBox = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 20px;
-  padding: 20px 14px 0 14px;
+  padding: 10px 0 15px 0;
   font-size: 16px;
   font-weight: 400;
   line-height: 16px;
-  border-top: 2px solid #4d77ff;
+  border-top: 1.5px solid #ccc;
 `;
 
 const Autocomplete = styled.li`
   display: flex;
   gap: 5px;
   align-items: center;
+  padding: 10px 14px;
+  &:hover {
+    background-color: #ddd;
+  }
 `;
 
 const AutocompleteMainText = styled.span`
@@ -309,7 +314,7 @@ const AutocompleteMainText = styled.span`
 const AutocompleteAddress = styled.span`
   font-size: 10px;
   font-weight: 200;
-  color: darkgray;
+  color: #777;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

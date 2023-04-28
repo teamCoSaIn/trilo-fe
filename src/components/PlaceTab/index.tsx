@@ -43,6 +43,7 @@ const PlaceTab = () => {
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
+
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
@@ -55,7 +56,7 @@ const PlaceTab = () => {
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
-  const { isLoading, data: placeList } = useSearchPlacesByText(
+  const { isLoading, data: placeSearchData } = useSearchPlacesByText(
     searchText,
     placesService,
     isFirstRender
@@ -236,20 +237,26 @@ const PlaceTab = () => {
     </PlaceLabel>
   ));
 
+  const PlacesSearchResult = placeSearchData?.length ? (
+    placeSearchData?.map(place => (
+      <PlaceCard
+        key={place.place_id}
+        name={place.name}
+        rating={place.rating}
+        address={place.formatted_address}
+        numOfReviews={place.user_ratings_total}
+        openingHours={place.opening_hours}
+        googleMapLink={place.url}
+        imgUrl={place.photos ? place.photos[0].getUrl() : null}
+      />
+    ))
+  ) : (
+    <NoticeMessageBox>검색 결과 없음</NoticeMessageBox>
+  );
+
   const PlaceCardList = isLoading
     ? Array.from({ length: 8 }).map((_, i) => <PlaceCardSkeleton key={i} />)
-    : placeList?.map(place => (
-        <PlaceCard
-          key={place.place_id}
-          name={place.name}
-          rating={place.rating}
-          address={place.formatted_address}
-          numOfReviews={place.user_ratings_total}
-          openingHours={place.opening_hours}
-          googleMapLink={place.url}
-          imgUrl={place.photos ? place.photos[0].getUrl() : null}
-        />
-      ));
+    : PlacesSearchResult;
 
   const DynamicDeleteIconBtn =
     !isFirstRender && isLoading ? (
@@ -262,7 +269,7 @@ const PlaceTab = () => {
 
   // TODO: 초기화면 구현하기
   const DynamicPlaceCardList = isFirstRender ? (
-    <div>초기화면</div>
+    <NoticeMessageBox>장소를 검색해주세요.</NoticeMessageBox>
   ) : (
     PlaceCardList
   );
@@ -415,6 +422,14 @@ const PlaceCardContainer = styled.div`
   flex-direction: column;
   gap: 10px;
   margin: 20px 0;
+  height: 100%;
+`;
+
+const NoticeMessageBox = styled.div`
+  margin-top: 200px;
+  color: #b6b6b6;
+  font-size: 20px;
+  font-weight: 700;
 `;
 
 export default PlaceTab;

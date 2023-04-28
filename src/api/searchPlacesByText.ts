@@ -64,7 +64,6 @@ const searchPlacesByText = (
           textSearchStatus ===
           google.maps.places.PlacesServiceStatus.ZERO_RESULTS
         ) {
-          // TODO: 검색 결과 없을 때 UI 만들기
           textSearchResolve([]);
         } else {
           textSearchReject(textSearchStatus);

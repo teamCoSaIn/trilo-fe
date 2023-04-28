@@ -46,6 +46,7 @@ const PlaceTab = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
   const [isFirstRender, setIsFirstRender] = useState<boolean>(true);
+  const [currAutocompleteIdx, setCurrAutocompleteIdx] = useState<number>(0);
   const [isAutocompleteVisible, setIsAutocompleteVisible] =
     useState<boolean>(false);
   const [autocompleteDataList, setAutocompleteDataList] = useState<
@@ -105,8 +106,7 @@ const PlaceTab = () => {
   };
 
   const handleSearchInputOnBlur = () => {
-    // TODO: false
-    setIsAutocompleteVisible(true);
+    setIsAutocompleteVisible(false);
   };
 
   const displaySuggestions = (
@@ -135,7 +135,23 @@ const PlaceTab = () => {
     setAutocompleteDataList(filteredPredictions);
   };
 
+  const handleSearchInputKeyDown = (
+    event: React.KeyboardEvent<HTMLElement>
+  ) => {
+    if (event.key === 'ArrowDown') {
+      setCurrAutocompleteIdx(
+        prev => (prev + 1) % (autocompleteDataList.length + 1)
+      );
+    } else if (event.key === 'ArrowUp') {
+      setCurrAutocompleteIdx(prev =>
+        prev === 0 ? autocompleteDataList.length : prev - 1
+      );
+    }
+  };
+
   useEffect(() => {
+    setCurrAutocompleteIdx(0);
+
     let debouncingTimer: NodeJS.Timeout | null = null;
 
     if (autocompleteService && inputValue) {
@@ -168,20 +184,28 @@ const PlaceTab = () => {
     ) {
       setIsAutocompleteVisible(true);
     } else {
-      // TODO: false
-      setIsAutocompleteVisible(true);
+      setIsAutocompleteVisible(false);
     }
   }, [autocompleteDataList]);
 
-  const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => (
-    <Autocomplete key={autocompleteData.placeId || idx}>
-      <div>
-        <MarkerIcon width={16} height={16} />
-      </div>
-      <AutocompleteMainText>{autocompleteData.mainText}</AutocompleteMainText>
-      <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
-    </Autocomplete>
-  ));
+  const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => {
+    let isSelected = false;
+    if (currAutocompleteIdx === idx + 1) {
+      isSelected = true;
+    }
+    return (
+      <Autocomplete
+        key={autocompleteData.placeId || idx}
+        isSelected={isSelected}
+      >
+        <div>
+          <MarkerIcon width={16} height={16} />
+        </div>
+        <AutocompleteMainText>{autocompleteData.mainText}</AutocompleteMainText>
+        <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
+      </Autocomplete>
+    );
+  });
 
   const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
     <PlaceLabel
@@ -237,6 +261,7 @@ const PlaceTab = () => {
           onChange={handleSearchInputChange}
           onFocus={handleSearchInputOnFocus}
           onBlur={handleSearchInputOnBlur}
+          onKeyDown={handleSearchInputKeyDown}
         />
         <AutocompleteDropDown isVisible={isAutocompleteVisible}>
           <AutocompleteListBox>{autocompleteList}</AutocompleteListBox>
@@ -297,7 +322,7 @@ const AutocompleteListBox = styled.ul`
   border-top: 1.5px solid #ccc;
 `;
 
-const Autocomplete = styled.li`
+const Autocomplete = styled.li<{ isSelected: boolean }>`
   display: flex;
   gap: 5px;
   align-items: center;
@@ -305,6 +330,8 @@ const Autocomplete = styled.li`
   &:hover {
     background-color: #ddd;
   }
+  ${props =>
+    props.isSelected ? 'background-color: #ddd;' : 'background-color: none;'};
 `;
 
 const AutocompleteMainText = styled.span`

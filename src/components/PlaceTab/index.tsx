@@ -67,7 +67,16 @@ const PlaceTab = () => {
     event.preventDefault();
     const isInputValid = placeSearchInputRegExp.test(inputValue);
     if (placesService && isInputValid) {
-      setSearchText(inputValue);
+      if (currAutocompleteIdx === 0) {
+        // 그대로 검색
+        setSearchText(inputValue);
+      } else {
+        // 현재 인덱스에 있는 값으로 검색
+        const selectedAutocomplete =
+          autocompleteDataList[currAutocompleteIdx - 1].mainText;
+        setInputValue(selectedAutocomplete);
+        setSearchText(selectedAutocomplete);
+      }
       setIsFirstRender(false);
       inputRef.current?.blur();
     }

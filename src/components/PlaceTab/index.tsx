@@ -51,8 +51,8 @@ const PlaceTab = () => {
   const [isAutocompleteVisible, setIsAutocompleteVisible] =
     useState<boolean>(false);
   const [autocompleteDataList, setAutocompleteDataList] = useState<
-    AutocompleteType[]
-  >([]);
+    AutocompleteType[] | undefined
+  >(undefined);
 
   const inputRef = useRef<HTMLInputElement | null>(null);
 
@@ -71,7 +71,7 @@ const PlaceTab = () => {
       if (currAutocompleteIdx === 0) {
         // 그대로 검색
         setSearchText(inputValue);
-      } else {
+      } else if (currAutocompleteIdx !== 0 && autocompleteDataList) {
         // 현재 인덱스에 있는 값으로 검색
         const selectedAutocomplete =
           autocompleteDataList[currAutocompleteIdx - 1].mainText;
@@ -124,25 +124,24 @@ const PlaceTab = () => {
     status: google.maps.places.PlacesServiceStatus
   ) => {
     if (
-      status !== google.maps.places.PlacesServiceStatus.OK ||
-      !queryPredictions
+      status === google.maps.places.PlacesServiceStatus.OK &&
+      queryPredictions
     ) {
+      const filteredPredictions = queryPredictions.map(queryPrediction => {
+        const prediction =
+          queryPrediction as google.maps.places.AutocompletePrediction;
+        return {
+          placeId: prediction.place_id,
+          mainText: prediction.structured_formatting.main_text,
+          address: prediction.description,
+        };
+      });
+      setAutocompleteDataList(filteredPredictions);
+    } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+      setAutocompleteDataList([]);
+    } else {
       console.log(status);
-      // TODO: ZERO_RESULTS 일 때 알려주기
-      return;
     }
-
-    const filteredPredictions = queryPredictions.map(queryPrediction => {
-      const prediction =
-        queryPrediction as google.maps.places.AutocompletePrediction;
-      return {
-        placeId: prediction.place_id,
-        mainText: prediction.structured_formatting.main_text,
-        address: prediction.description,
-      };
-    });
-
-    setAutocompleteDataList(filteredPredictions);
   };
 
   let throttlingTimer: NodeJS.Timeout | null = null;
@@ -154,11 +153,11 @@ const PlaceTab = () => {
         throttlingTimer = null;
         if (event.key === 'ArrowDown') {
           setCurrAutocompleteIdx(
-            prev => (prev + 1) % (autocompleteDataList.length + 1)
+            prev => (prev + 1) % ((autocompleteDataList || []).length + 1)
           );
         } else if (event.key === 'ArrowUp') {
           setCurrAutocompleteIdx(prev =>
-            prev === 0 ? autocompleteDataList.length : prev - 1
+            prev === 0 ? (autocompleteDataList || []).length : prev - 1
           );
         }
       }, 0);
@@ -183,7 +182,7 @@ const PlaceTab = () => {
         );
       }, PLACE_SEARCH_DEBOUNCE_TIME);
     } else {
-      setAutocompleteDataList([]);
+      setAutocompleteDataList(undefined);
     }
 
     return () => {
@@ -194,38 +193,43 @@ const PlaceTab = () => {
   }, [inputValue]);
 
   useEffect(() => {
-    if (
-      autocompleteDataList.length &&
-      inputRef.current === document.activeElement
-    ) {
+    if (autocompleteDataList && inputRef.current === document.activeElement) {
       setIsAutocompleteVisible(true);
     } else {
       setIsAutocompleteVisible(false);
     }
   }, [autocompleteDataList]);
 
-  const autocompleteList = autocompleteDataList.map((autocompleteData, idx) => {
-    let isSelected = false;
-    if (currAutocompleteIdx === idx + 1) {
-      isSelected = true;
-    }
-    return (
-      <Autocomplete
-        key={autocompleteData.placeId || idx}
-        isSelected={isSelected}
-      >
-        <div>
-          {autocompleteData.placeId ? (
-            <MarkerIcon width={16} height={16} />
-          ) : (
-            <SearchIcon width={16} height={16} />
-          )}
-        </div>
-        <AutocompleteMainText>{autocompleteData.mainText}</AutocompleteMainText>
-        <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
-      </Autocomplete>
-    );
-  });
+  const autocompleteList = autocompleteDataList?.length ? (
+    autocompleteDataList?.map((autocompleteData, idx) => {
+      let isSelected = false;
+      if (currAutocompleteIdx === idx + 1) {
+        isSelected = true;
+      }
+      return (
+        <Autocomplete
+          key={autocompleteData.placeId || idx}
+          isSelected={isSelected}
+        >
+          <div>
+            {autocompleteData.placeId ? (
+              <MarkerIcon width={16} height={16} />
+            ) : (
+              <SearchIcon width={16} height={16} />
+            )}
+          </div>
+          <AutocompleteMainText>
+            {autocompleteData.mainText}
+          </AutocompleteMainText>
+          <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
+        </Autocomplete>
+      );
+    })
+  ) : (
+    <AutocompleteMessageBox>
+      일치하는 추천 검색어가 없습니다.
+    </AutocompleteMessageBox>
+  );
 
   const PlaceLabelList = placeLabelDataList.map(placeLabelData => (
     <PlaceLabel
@@ -267,7 +271,6 @@ const PlaceTab = () => {
       </DeleteIconBtn>
     );
 
-  // TODO: 초기화면 구현하기
   const DynamicPlaceCardList = isFirstRender ? (
     <NoticeMessageBox>장소를 검색해주세요.</NoticeMessageBox>
   ) : (
@@ -371,6 +374,12 @@ const AutocompleteAddress = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+`;
+
+const AutocompleteMessageBox = styled.div`
+  padding: 10px 14px;
+  color: #b6b6b6;
+  text-align: center;
 `;
 
 const SearchIconBtn = styled.button`

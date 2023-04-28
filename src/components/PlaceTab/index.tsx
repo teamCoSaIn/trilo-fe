@@ -205,7 +205,11 @@ const PlaceTab = () => {
         isSelected={isSelected}
       >
         <div>
-          <MarkerIcon width={16} height={16} />
+          {autocompleteData.placeId ? (
+            <MarkerIcon width={16} height={16} />
+          ) : (
+            <SearchIcon width={16} height={16} />
+          )}
         </div>
         <AutocompleteMainText>{autocompleteData.mainText}</AutocompleteMainText>
         <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>

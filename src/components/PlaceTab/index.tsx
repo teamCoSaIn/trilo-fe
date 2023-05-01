@@ -254,6 +254,10 @@ const PlaceTab = () => {
         openingHours={place.opening_hours}
         googleMapLink={place.url}
         imgUrl={place.photos ? place.photos[0].getUrl() : null}
+        location={{
+          lat: place.geometry?.location?.lat(),
+          lng: place.geometry?.location?.lng(),
+        }}
       />
     ))
   ) : (

@@ -14,6 +14,7 @@ interface PlaceCardProps {
   openingHours: google.maps.places.PlaceOpeningHours | undefined;
   googleMapLink: string | undefined;
   imgUrl: string | null;
+  location: PlaceCardLocation;
 }
 
 const PlaceCard = ({
@@ -24,7 +25,9 @@ const PlaceCard = ({
   openingHours,
   googleMapLink,
   imgUrl,
+  location,
 }: PlaceCardProps) => {
+
   // 긴 주소 ...처리
   let newAddress;
   if (address && address.length >= 15) {
@@ -43,13 +46,21 @@ const PlaceCard = ({
   const handleAddressBtnClick = async () => {
     if (address) {
       await navigator.clipboard.writeText(address);
-      // TODO: 구글맵처럼 알림창으로 해야하나?
       alert('copied!');
     }
   };
 
+  // FIXME:
+  const handlePlaceCardClick = () => {
+    // if (window.google && location.lat && location.lng) {
+    if (location.lat && location.lng) {
+      const selectedLocation = { lat: location.lat, lng: location.lng };
+      mapInstance?.setCenter(selectedLocation);
+    }
+  };
+
   return (
-    <PlaceCardBox>
+    <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
         <PlaceCardTitle>{name}</PlaceCardTitle>
         <PlaceCardRatingBox>
@@ -101,8 +112,13 @@ const PlaceCardBox = styled.div`
   height: 160px;
   background: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid white;
   border-radius: 7px;
   padding: 20px;
+  cursor: pointer;
+  &:hover {
+    border: 1px solid rgba(77, 119, 255, 1);
+  }
 `;
 
 const PlaceCardContent = styled.div`

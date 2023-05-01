@@ -35,9 +35,9 @@ const Map = () => {
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
     const service2 = new google.maps.places.AutocompleteService();
-    if (mapInstance || placesService || autocompleteService) {
-      return;
-    }
+    // if (mapInstance || placesService || autocompleteService) {
+    //   return;
+    // }
     setMapInstance(map);
     setPlacesService(service);
     setAutocompleteService(service2);

@@ -59,6 +59,18 @@ const PlaceCard = ({
     }
   };
 
+  const handleClickGoogleLink = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    window.open(googleMapLink || 'https://www.google.com/maps');
+  };
+
+  const handleClickNaverLink = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    window.open(
+      `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${name}`
+    );
+  };
+
   return (
     <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
@@ -76,21 +88,11 @@ const PlaceCard = ({
           <PlaceCardBusinessHours>{businessHours}</PlaceCardBusinessHours>
         </PlaceCardBusinessHoursBox>
         <PlaceCardLinkBtnBox>
-          <PlaceCardGoogleLinkBtn
-            onClick={() => {
-              window.open(googleMapLink);
-            }}
-          >
+          <PlaceCardGoogleLinkBtn onClick={handleClickGoogleLink}>
             <GoogleIcon />
             구글 맵
           </PlaceCardGoogleLinkBtn>
-          <PlaceCardGoogleLinkBtn
-            onClick={() => {
-              window.open(
-                `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${name}`
-              );
-            }}
-          >
+          <PlaceCardGoogleLinkBtn onClick={handleClickNaverLink}>
             <NaverIcon />
             네이버
           </PlaceCardGoogleLinkBtn>

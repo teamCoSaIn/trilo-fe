@@ -70,7 +70,7 @@ const tripDays = [
   {
     dayId: 1,
     tripId: 1,
-    date: 230215,
+    date: '2023-02-15',
     color: 'blue',
     schedules: [
       {
@@ -90,7 +90,7 @@ const tripDays = [
   {
     dayId: 2,
     tripId: 1,
-    date: 230216,
+    date: '2023-02-16',
     color: 'blue',
     schedules: [
       {
@@ -116,8 +116,15 @@ const tripDays = [
   {
     dayId: 3,
     tripId: 1,
-    date: 230217,
+    date: '2023-02-17',
     color: 'red',
+    schedules: [],
+  },
+  {
+    dayId: 4,
+    tripId: 1,
+    date: null,
+    color: 'gray',
     schedules: [],
   },
 ];
@@ -127,7 +134,7 @@ const planCardIds: { [index: string]: typeof tripDays } = {
     {
       dayId: 3,
       tripId: 1,
-      date: 'none',
+      date: null,
       color: 'red',
       schedules: [],
     },

@@ -3,7 +3,7 @@ import axios from '@/api/core';
 export interface PlanDay {
   tripId: number;
   dayId: number;
-  date: number | 'none';
+  date: number | null;
   color: string;
   schedules: Schedule[];
 }

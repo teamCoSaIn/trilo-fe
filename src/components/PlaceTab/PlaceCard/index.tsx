@@ -3,8 +3,8 @@ import styled from 'styled-components';
 
 import { ReactComponent as CopyIcon } from '@/assets/copy.svg';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
+import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
-import Logo from '@/components/common/Logo';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import {
   MapInstance,
@@ -108,7 +108,7 @@ const PlaceCard = ({
       {imgUrl ? (
         <PlaceCardImg src={imgUrl} />
       ) : (
-        <Logo width={120} height={120} />
+        <LogoIcon width={120} height={120} />
       )}
     </PlaceCardBox>
   );

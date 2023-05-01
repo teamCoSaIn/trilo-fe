@@ -109,7 +109,7 @@ const PlaceTab = () => {
   };
 
   const handleSearchInputOnFocus = () => {
-    if (!autocompleteList.length) {
+    if (!autocompleteDataList) {
       return;
     }
     setIsAutocompleteVisible(true);
@@ -148,16 +148,18 @@ const PlaceTab = () => {
   const handleSearchInputKeyDown = (
     event: React.KeyboardEvent<HTMLElement>
   ) => {
+    if (!autocompleteDataList || !autocompleteDataList.length) {
+      return;
+    }
     if (!throttlingTimer) {
       throttlingTimer = setTimeout(() => {
-        throttlingTimer = null;
         if (event.key === 'ArrowDown') {
           setCurrAutocompleteIdx(
-            prev => (prev + 1) % ((autocompleteDataList || []).length + 1)
+            prev => (prev + 1) % (autocompleteDataList.length + 1)
           );
         } else if (event.key === 'ArrowUp') {
           setCurrAutocompleteIdx(prev =>
-            prev === 0 ? (autocompleteDataList || []).length : prev - 1
+            prev === 0 ? autocompleteDataList.length : prev - 1
           );
         }
       }, 0);

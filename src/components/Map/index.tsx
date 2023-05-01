@@ -1,4 +1,4 @@
-import { GoogleMap } from '@react-google-maps/api';
+import { GoogleMap, MarkerF } from '@react-google-maps/api';
 import { useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 
@@ -7,6 +7,7 @@ import {
   PlacesService,
   MapInstance,
   AutocompleteService,
+  SelectedMarker,
 } from '@/states/googleMaps';
 
 const Map = () => {
@@ -31,16 +32,22 @@ const Map = () => {
     useRecoilState<google.maps.places.AutocompleteService | null>(
       AutocompleteService
     );
+  const [selectedMarker, setSelectedMarker] = useRecoilState(SelectedMarker);
 
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
     const service2 = new google.maps.places.AutocompleteService();
-    // if (mapInstance || placesService || autocompleteService) {
-    //   return;
-    // }
     setMapInstance(map);
     setPlacesService(service);
     setAutocompleteService(service2);
+  };
+
+  const handleClickGoogleMap = (event: google.maps.MapMouseEvent) => {
+    const selectedLocation = {
+      lat: event.latLng?.lat(),
+      lng: event.latLng?.lng(),
+    };
+    setSelectedMarker(selectedLocation);
   };
 
   return (
@@ -51,7 +58,15 @@ const Map = () => {
         mapContainerStyle={googleMapStyle}
         options={googleMapOptions}
         onLoad={handleOnMapLoad}
+        onClick={handleClickGoogleMap}
+      >
+        {selectedMarker?.lat && selectedMarker?.lng && (
+          <MarkerF
+            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
       />
+          />
+        )}
+      </GoogleMap>
     </>
   );
 };

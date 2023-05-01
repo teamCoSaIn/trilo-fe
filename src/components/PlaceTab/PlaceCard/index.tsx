@@ -1,3 +1,4 @@
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as CopyIcon } from '@/assets/copy.svg';
@@ -5,6 +6,11 @@ import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import Logo from '@/components/common/Logo';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
+import {
+  MapInstance,
+  PlaceCardLocation,
+  SelectedMarker,
+} from '@/states/googleMaps';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -27,6 +33,8 @@ const PlaceCard = ({
   imgUrl,
   location,
 }: PlaceCardProps) => {
+  const mapInstance = useRecoilValue(MapInstance);
+  const setSelectedMarker = useSetRecoilState(SelectedMarker);
 
   // 긴 주소 ...처리
   let newAddress;
@@ -50,12 +58,11 @@ const PlaceCard = ({
     }
   };
 
-  // FIXME:
   const handlePlaceCardClick = () => {
-    // if (window.google && location.lat && location.lng) {
     if (location.lat && location.lng) {
       const selectedLocation = { lat: location.lat, lng: location.lng };
       mapInstance?.setCenter(selectedLocation);
+      setSelectedMarker(selectedLocation);
     }
   };
 

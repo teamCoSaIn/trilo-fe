@@ -1,4 +1,6 @@
+import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Description from '@/components/common/Description';
@@ -7,6 +9,7 @@ import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
+import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
 const PlanHeader = () => {
@@ -16,21 +19,23 @@ const PlanHeader = () => {
   const { data: dayList } = useGetDayList({
     planId: id as string,
   });
+  const setSelectedDates = useSetRecoilState(SelectedDates);
 
-  // TODO: planDay date 형식 변경되면 수정 필요한 부분
-  const startDate =
-    dayList && dayList.length > 1 && dayList[0].date && new Date(2023, 3, 22);
-  const endDate =
-    dayList &&
-    dayList.length > 1 &&
-    dayList[dayList.length - 2] &&
-    new Date(2023, 4, 12);
+  const startDate = dayList && dayList[0]?.date && new Date(dayList[0].date);
+  const endDateData = dayList && dayList[dayList.length - 2]?.date;
+  const endDate = endDateData && new Date(endDateData);
 
   const disabled = !startDate || !endDate;
   const transformedStartDate = disabled
     ? ''
     : transformDateToDotFormat(startDate);
   const transformedEndDate = disabled ? '' : transformDateToDotFormat(endDate);
+
+  useEffect(() => {
+    if (startDate && endDate) {
+      setSelectedDates([startDate, endDate]);
+    }
+  }, [startDate, endDate]);
 
   return (
     <Box>

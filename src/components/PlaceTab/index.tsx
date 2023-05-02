@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
@@ -13,7 +13,11 @@ import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
 import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
-import { PlacesService, AutocompleteService } from '@/states/googleMaps';
+import {
+  PlacesService,
+  AutocompleteService,
+  SelectedMarker,
+} from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
 
 interface PlaceType {
@@ -165,6 +169,13 @@ const PlaceTab = () => {
       }, 0);
     }
   };
+
+  const resetSelectedMarker = useResetRecoilState(SelectedMarker);
+  useEffect(() => {
+    return () => {
+      resetSelectedMarker();
+    };
+  }, []);
 
   useEffect(() => {
     setCurrAutocompleteIdx(0);

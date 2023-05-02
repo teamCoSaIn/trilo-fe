@@ -53,7 +53,7 @@ const PlaceTab = () => {
   const [autocompleteDataList, setAutocompleteDataList] = useState<
     AutocompleteType[] | undefined
   >(undefined);
-
+  const throttlingTimer = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { isLoading, data: placeSearchData } = useSearchPlacesByText(
@@ -144,24 +144,24 @@ const PlaceTab = () => {
     }
   };
 
-  let throttlingTimer: NodeJS.Timeout | null = null;
   const handleSearchInputKeyDown = (
     event: React.KeyboardEvent<HTMLElement>
   ) => {
     if (!autocompleteDataList || !autocompleteDataList.length) {
       return;
     }
-    if (!throttlingTimer) {
-      throttlingTimer = setTimeout(() => {
-        if (event.key === 'ArrowDown') {
-          setCurrAutocompleteIdx(
-            prev => (prev + 1) % (autocompleteDataList.length + 1)
-          );
-        } else if (event.key === 'ArrowUp') {
-          setCurrAutocompleteIdx(prev =>
-            prev === 0 ? autocompleteDataList.length : prev - 1
-          );
-        }
+    if (!throttlingTimer.current) {
+      if (event.key === 'ArrowDown') {
+        setCurrAutocompleteIdx(
+          prev => (prev + 1) % (autocompleteDataList.length + 1)
+        );
+      } else if (event.key === 'ArrowUp') {
+        setCurrAutocompleteIdx(prev =>
+          prev === 0 ? autocompleteDataList.length : prev - 1
+        );
+      }
+      throttlingTimer.current = setTimeout(() => {
+        throttlingTimer.current = null;
       }, 0);
     }
   };

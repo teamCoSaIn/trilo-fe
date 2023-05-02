@@ -12,7 +12,7 @@ const searchPlacesByText = (
     (textSearchResolve, textSearchReject) => {
       const textSearchRequest: google.maps.places.TextSearchRequest = {
         query: `${searchText}`,
-        location: { lat: latlng.lat, lng: latlng.lng },
+        location: { lat: +latlng.lat.toFixed(2), lng: +latlng.lng.toFixed(2) },
       };
 
       const textSearchCallback = (

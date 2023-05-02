@@ -1,18 +1,33 @@
-import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import styled from 'styled-components';
 
-import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
-import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
-import Description from '@/components/common/Description';
+import { PlanDay } from '@/api/planDay';
 import Flex from '@/components/common/Flex';
+import Spacing from '@/components/common/Spacing';
+import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
 import color from '@/constants/color';
 import useGetDayList from '@/queryHooks/useGetDayList';
+import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
 const ScheduleTab = () => {
-  const { id } = useParams();
+  const { id: tripId } = useParams();
+  const [dropdownMenu, setDropdownMenu] = useRecoilState(
+    DropdownMenuFamily(tripId as string)
+  );
+  const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
+
+  const onSuccessCallback = (data: PlanDay[]) => {
+    const dayList = data
+      .filter(day => day.date)
+      .map((day, idx) => `Day${idx + 1} - ${day.date?.replace(/-/g, '.')}`);
+
+    setDropdownMenu(['전체일정', ...dayList]);
+  };
+
   const { data: dayList } = useGetDayList({
-    planId: id as string,
+    planId: tripId as string,
+    onSuccess: onSuccessCallback,
   });
   const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
   const [dropdownMenuIdx, setDropdownMenuIdx] = useState<number>(0);

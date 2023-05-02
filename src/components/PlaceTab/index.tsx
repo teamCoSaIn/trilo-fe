@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { LatLng } from '@/api/searchPlacesByText';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as MarkerIcon } from '@/assets/marker.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
@@ -12,11 +13,13 @@ import PlaceCard from '@/components/PlaceTab/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
 import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
+import LAT_LNG_SEOUL from '@/constants/latlng';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import {
   PlacesService,
   AutocompleteService,
   SelectedMarker,
+  MapInstance,
 } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
 
@@ -47,6 +50,8 @@ const PlaceTab = () => {
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
+  const mapInstance = useRecoilValue(MapInstance);
+  const resetSelectedMarker = useResetRecoilState(SelectedMarker);
 
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
@@ -57,13 +62,19 @@ const PlaceTab = () => {
   const [autocompleteDataList, setAutocompleteDataList] = useState<
     AutocompleteType[] | undefined
   >(undefined);
+  const [curLocation, setCurLocation] = useState<LatLng>({
+    lat: LAT_LNG_SEOUL.lat,
+    lng: LAT_LNG_SEOUL.lng,
+  });
+
   const throttlingTimer = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { isLoading, data: placeSearchData } = useSearchPlacesByText(
     searchText,
     placesService,
-    isFirstRender
+    isFirstRender,
+    curLocation
   );
 
   const handlePlaceSearchSubmit = async (
@@ -71,12 +82,14 @@ const PlaceTab = () => {
   ) => {
     event.preventDefault();
     const isInputValid = placeSearchInputRegExp.test(inputValue);
-    if (placesService && isInputValid) {
+    if (placesService && isInputValid && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
       if (currAutocompleteIdx === 0) {
-        // 그대로 검색
         setSearchText(inputValue);
       } else if (currAutocompleteIdx !== 0 && autocompleteDataList) {
-        // 현재 인덱스에 있는 값으로 검색
         const selectedAutocomplete =
           autocompleteDataList[currAutocompleteIdx - 1].mainText;
         setInputValue(selectedAutocomplete);
@@ -95,7 +108,11 @@ const PlaceTab = () => {
 
   const handlePlaceLabelClick = async (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (placesService) {
+    if (placesService && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
       setInputValue(target.innerText);
       setSearchText(korToEng[target.innerText]);
       setIsFirstRender(false);
@@ -170,7 +187,6 @@ const PlaceTab = () => {
     }
   };
 
-  const resetSelectedMarker = useResetRecoilState(SelectedMarker);
   useEffect(() => {
     return () => {
       resetSelectedMarker();

@@ -1,11 +1,18 @@
+export interface LatLng {
+  lat: number;
+  lng: number;
+}
+
 const searchPlacesByText = (
   searchText: string,
-  placesService: google.maps.places.PlacesService
+  placesService: google.maps.places.PlacesService,
+  latlng: LatLng
 ) => {
   return new Promise<google.maps.places.PlaceResult[]>(
     (textSearchResolve, textSearchReject) => {
       const textSearchRequest: google.maps.places.TextSearchRequest = {
         query: `${searchText}`,
+        location: { lat: latlng.lat, lng: latlng.lng },
       };
 
       const textSearchCallback = (

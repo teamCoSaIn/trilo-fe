@@ -98,12 +98,12 @@ const PlaceTab = () => {
       }
       setIsFirstRender(false);
       inputRef.current?.blur();
-    }
-    // TODO: 올바른 입력이 아닌 경우
-    else if (inputValue === '') {
+    } else if (inputValue === '') {
       alert('값을 입력해주세요.');
+    } else if (inputValue.length > 85) {
+      alert('85자 이하의 글자만 검색할 수 있습니다.');
     } else {
-      alert('특수문자를 제외한 영문, 한글, 숫자만 입력이 가능합니다.');
+      alert('<, > 는 검색어에 포함할 수 없습니다.');
     }
   };
 

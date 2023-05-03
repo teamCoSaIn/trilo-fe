@@ -45,9 +45,10 @@ const useChangeSchedule = () => {
               if (sourceDayId === destinationDayId) {
                 const newDayList = [...prevDayList];
                 const targetDayIdx = newDayList.findIndex(
-                  x => x.dayId === +sourceDayId
+                  day => day.dayId === +sourceDayId
                 );
                 if (targetDayIdx === -1) return prevDayList;
+
                 const newSchedules = [...newDayList[targetDayIdx].schedules];
                 const [reorderedSchedule] = newSchedules.splice(
                   sourceDayScheduleIdx,
@@ -59,6 +60,41 @@ const useChangeSchedule = () => {
                   reorderedSchedule
                 );
                 newDayList[targetDayIdx].schedules = newSchedules;
+
+                return newDayList;
+              }
+
+              // 2. Day 간 이동
+              if (sourceDayId !== destinationDayId) {
+                const newDayList = [...prevDayList];
+                const sourceDayIdx = newDayList.findIndex(
+                  day => day.dayId === +sourceDayId
+                );
+                const destinationDayIdx = newDayList.findIndex(
+                  day => day.dayId === +destinationDayId
+                );
+                if (sourceDayIdx === -1 || destinationDayIdx === -1)
+                  return prevDayList;
+
+                const newSourceSchedules = [
+                  ...newDayList[sourceDayIdx].schedules,
+                ];
+                const newDestinationSchedules = [
+                  ...newDayList[destinationDayIdx].schedules,
+                ];
+                const [reorderedSchedule] = newSourceSchedules.splice(
+                  sourceDayScheduleIdx,
+                  1
+                );
+                newDestinationSchedules.splice(
+                  destinationDayScheduleIdx,
+                  0,
+                  reorderedSchedule
+                );
+                newDayList[sourceDayIdx].schedules = newSourceSchedules;
+                newDayList[destinationDayIdx].schedules =
+                  newDestinationSchedules;
+
                 return newDayList;
               }
 

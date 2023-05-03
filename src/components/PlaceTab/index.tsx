@@ -120,6 +120,18 @@ const PlaceTab = () => {
     }
   };
 
+  const handleAutoCompleteClick = (mainText: string) => {
+    if (placesService && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
+      setInputValue(mainText);
+      setSearchText(mainText);
+      setIsFirstRender(false);
+    }
+  };
+
   const handleSearchInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -138,7 +150,9 @@ const PlaceTab = () => {
   };
 
   const handleSearchInputOnBlur = () => {
-    setIsAutocompleteVisible(false);
+    setTimeout(() => {
+      setIsAutocompleteVisible(false);
+    }, 100);
   };
 
   const displaySuggestions = (
@@ -229,15 +243,18 @@ const PlaceTab = () => {
 
   const autocompleteList = autocompleteDataList?.length ? (
     autocompleteDataList?.map((autocompleteData, idx) => {
-      let isSelected = false;
-      if (currAutocompleteIdx === idx + 1) {
-        isSelected = true;
-      }
+      const isSelected = currAutocompleteIdx === idx + 1;
+      // if (currAutocompleteIdx === idx + 1) {
+      //   isSelected = true;
+      // }
       const newMainText = truncate(autocompleteData.mainText, 25);
       return (
         <Autocomplete
           key={autocompleteData.placeId || idx}
           isSelected={isSelected}
+          onClick={() => {
+            handleAutoCompleteClick(autocompleteData.mainText);
+          }}
         >
           <div>
             {autocompleteData.placeId ? (

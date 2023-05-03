@@ -14,7 +14,7 @@ import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
 import color from '@/constants/color';
-import useChangeSchedule from '@/queryHooks/useChangeSchedule';
+import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
@@ -44,7 +44,7 @@ const ScheduleTab = () => {
     onSuccess: onSuccessCallback,
   });
 
-  const { mutate } = useChangeSchedule();
+  const { mutate } = useChangeScheduleOrder();
 
   const selectedDayList =
     dropdownMenuIdx === 0

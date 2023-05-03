@@ -3,7 +3,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import HTTP from '@/api';
 import { PlanDay } from '@/api/planDay';
 
-interface ChangeScheduleMutationParams {
+interface MutateParams {
   tripId: string;
   scheduleId: string;
   sourceDayId: string;
@@ -11,12 +11,12 @@ interface ChangeScheduleMutationParams {
   destinationDayId: string;
   destinationDayScheduleIdx: number;
 }
-const useChangeSchedule = () => {
+const useChangeScheduleOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    (params: ChangeScheduleMutationParams) =>
-      HTTP.changeSchedule({
+    (params: MutateParams) =>
+      HTTP.changeScheduleOrder({
         scheduleId: params.scheduleId,
         destinationDayId: params.destinationDayId,
         destinationDayIdx: params.destinationDayScheduleIdx,
@@ -28,7 +28,7 @@ const useChangeSchedule = () => {
         sourceDayScheduleIdx,
         destinationDayId,
         destinationDayScheduleIdx,
-      }: ChangeScheduleMutationParams) => {
+      }: MutateParams) => {
         await queryClient.cancelQueries([`dayList${tripId}`]);
 
         const previousDayList = queryClient.getQueryData<PlanDay[]>([
@@ -121,4 +121,4 @@ const useChangeSchedule = () => {
   );
 };
 
-export default useChangeSchedule;
+export default useChangeScheduleOrder;

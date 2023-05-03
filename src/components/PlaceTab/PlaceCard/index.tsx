@@ -11,6 +11,7 @@ import {
   PlaceCardLocation,
   SelectedMarker,
 } from '@/states/googleMaps';
+import truncate from '@/utils/truncate';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -36,13 +37,8 @@ const PlaceCard = ({
   const mapInstance = useRecoilValue(MapInstance);
   const setSelectedMarker = useSetRecoilState(SelectedMarker);
 
-  // 긴 주소 ...처리
-  let newAddress;
-  if (address && address.length >= 15) {
-    newAddress = `${address?.slice(0, 15).trim()}...`;
-  } else {
-    newAddress = address;
-  }
+  const newAddress = address && truncate(address, 15);
+  const newName = name && truncate(name, 15);
 
   // 요일 및 영업 시간 계산
   const dateObj = new Date();
@@ -51,7 +47,8 @@ const PlaceCard = ({
     ? openingHours.weekday_text[dayOfToday].slice(4).trim()
     : '정보 없음';
 
-  const handleAddressBtnClick = async () => {
+  const handleAddressBtnClick = async (event: React.MouseEvent) => {
+    event.stopPropagation();
     if (address) {
       await navigator.clipboard.writeText(address);
       alert('copied!');
@@ -81,7 +78,7 @@ const PlaceCard = ({
   return (
     <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
-        <PlaceCardTitle>{name}</PlaceCardTitle>
+        <PlaceCardTitle>{newName}</PlaceCardTitle>
         <PlaceCardRatingBox>
           <PlaceCardRating>{rating?.toFixed(1)}</PlaceCardRating>
           <PlaceCardStar rating={rating} />

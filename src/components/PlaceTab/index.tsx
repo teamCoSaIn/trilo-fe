@@ -22,6 +22,7 @@ import {
   MapInstance,
 } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
+import truncate from '@/utils/truncate';
 
 interface PlaceType {
   [key: string]: string;
@@ -203,9 +204,6 @@ const PlaceTab = () => {
         autocompleteService.getQueryPredictions(
           {
             input: `${inputValue}`,
-            // TODO: 지도 센터 기준으로 설정.
-            location: new google.maps.LatLng(37.56, 127),
-            radius: 1000,
           },
           displaySuggestions
         );
@@ -235,6 +233,7 @@ const PlaceTab = () => {
       if (currAutocompleteIdx === idx + 1) {
         isSelected = true;
       }
+      const newMainText = truncate(autocompleteData.mainText, 25);
       return (
         <Autocomplete
           key={autocompleteData.placeId || idx}
@@ -247,9 +246,7 @@ const PlaceTab = () => {
               <SearchIcon width={16} height={16} />
             )}
           </div>
-          <AutocompleteMainText>
-            {autocompleteData.mainText}
-          </AutocompleteMainText>
+          <AutocompleteMainText>{newMainText}</AutocompleteMainText>
           <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
         </Autocomplete>
       );
@@ -378,7 +375,7 @@ const AutocompleteListBox = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 10px 0 15px 0;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 16px;
   border-top: 1.5px solid #ccc;

@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
+  DragStart,
+  DragUpdate,
   Droppable,
   DropResult,
 } from 'react-beautiful-dnd';
@@ -26,10 +28,15 @@ const ScheduleTab = () => {
   }, []);
 
   const { id: tripId } = useParams();
+
   const [dropdownMenu, setDropdownMenu] = useRecoilState(
     DropdownMenuFamily(tripId as string)
   );
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
+
+  const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
+    null
+  );
 
   const onSuccessCallback = (data: PlanDay[]) => {
     const dayList = data
@@ -46,6 +53,7 @@ const ScheduleTab = () => {
 
   const { mutate } = useChangeScheduleOrder();
 
+  // TODO: 전역으로 필요함.
   const selectedDayList =
     dropdownMenuIdx === 0
       ? dayList?.slice(0, dayList.length - 1)
@@ -76,8 +84,31 @@ const ScheduleTab = () => {
     });
   };
 
+  const handleDragStart = (start: DragStart) => {
+    const draggableHeight = 37 + 10;
+
+    const clientY = start.source.index * draggableHeight;
+
+    setPlaceholderClientY(clientY);
+  };
+
+  const handleDragUpdate = (update: DragUpdate) => {
+    if (!update.destination) {
+      return;
+    }
+    const draggableHeight = 37 + 10;
+
+    const clientY = update.destination.index * draggableHeight;
+
+    setPlaceholderClientY(clientY);
+  };
+
   return (
-    <DragDropContext onDragEnd={handleDragEnd}>
+    <DragDropContext
+      onDragEnd={handleDragEnd}
+      onDragStart={handleDragStart}
+      onDragUpdate={handleDragUpdate}
+    >
       {isMounted ? (
         <Box>
           <ScheduleDropdown tripId={tripId as string} />
@@ -95,7 +126,7 @@ const ScheduleTab = () => {
                   </Flex>
                   <Spacing height={10} />
                   <Droppable droppableId={String(day.dayId)}>
-                    {droppableProvided => (
+                    {(droppableProvided, droppableSnapshot) => (
                       <ScheduleArea
                         column
                         {...droppableProvided.droppableProps}
@@ -130,6 +161,14 @@ const ScheduleTab = () => {
                           </NoScheduleMessage>
                         )}
                         {droppableProvided.placeholder}
+                        {placeholderClientY !== null &&
+                          droppableSnapshot.isDraggingOver && (
+                            <Ghost
+                              style={{
+                                top: placeholderClientY,
+                              }}
+                            />
+                          )}
                       </ScheduleArea>
                     )}
                   </Droppable>
@@ -151,6 +190,7 @@ const Box = styled.div`
 `;
 
 const DayList = styled(Flex)`
+  max-height: 500px;
   gap: 20px;
   width: 364px;
   margin-top: 23px;
@@ -165,15 +205,7 @@ const DayList = styled(Flex)`
   }
 `;
 
-const Day = styled(Flex)`
-  max-height: 200px;
-  overflow: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none;
-  ::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera*/
-  }
-`;
+const Day = styled(Flex)``;
 
 const DayIndex = styled.h3`
   font-weight: 700;
@@ -188,11 +220,11 @@ const DayDate = styled.span`
   color: ${color.gray2};
 `;
 
-const ScheduleArea = styled(Flex)``;
-
-const ScheduleList = styled(Flex)`
-  gap: 10px;
+const ScheduleArea = styled(Flex)`
+  position: relative;
 `;
+
+const ScheduleList = styled(Flex)``;
 
 const Schedule = styled(Flex)`
   width: 100%;
@@ -202,6 +234,10 @@ const Schedule = styled(Flex)`
   border-radius: 7px;
   padding: 0 17px;
   color: ${color.gray3};
+  margin-bottom: 10px;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 `;
 
 const ScheduleTitle = styled.span`
@@ -221,6 +257,15 @@ const NoScheduleMessage = styled(Flex)`
   font-weight: 400;
   font-size: 12px;
   color: #b6b6b6;
+`;
+
+const Ghost = styled.div`
+  position: absolute;
+  width: 100%;
+  height: 37px;
+  background-color: lightgoldenrodyellow;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
 `;
 
 export default ScheduleTab;

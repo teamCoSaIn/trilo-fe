@@ -31,7 +31,7 @@ interface PlaceType {
 interface AutocompleteType {
   placeId: string | undefined;
   mainText: string;
-  address: string;
+  description: string;
 }
 
 const PlaceTab = () => {
@@ -120,14 +120,14 @@ const PlaceTab = () => {
     }
   };
 
-  const handleAutoCompleteClick = (mainText: string) => {
+  const handleAutoCompleteClick = (description: string) => {
     if (placesService && mapInstance) {
       setCurLocation({
         lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
         lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
       });
-      setInputValue(mainText);
-      setSearchText(mainText);
+      setInputValue(description);
+      setSearchText(description);
       setIsFirstRender(false);
     }
   };
@@ -169,7 +169,7 @@ const PlaceTab = () => {
         return {
           placeId: prediction.place_id,
           mainText: prediction.structured_formatting.main_text,
-          address: prediction.description,
+          description: prediction.description,
         };
       });
       setAutocompleteDataList(filteredPredictions);
@@ -244,16 +244,13 @@ const PlaceTab = () => {
   const autocompleteList = autocompleteDataList?.length ? (
     autocompleteDataList?.map((autocompleteData, idx) => {
       const isSelected = currAutocompleteIdx === idx + 1;
-      // if (currAutocompleteIdx === idx + 1) {
-      //   isSelected = true;
-      // }
       const newMainText = truncate(autocompleteData.mainText, 25);
       return (
         <Autocomplete
           key={autocompleteData.placeId || idx}
           isSelected={isSelected}
           onClick={() => {
-            handleAutoCompleteClick(autocompleteData.mainText);
+            handleAutoCompleteClick(autocompleteData.description);
           }}
         >
           <div>
@@ -264,7 +261,9 @@ const PlaceTab = () => {
             )}
           </div>
           <AutocompleteMainText>{newMainText}</AutocompleteMainText>
-          <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
+          <AutocompleteDescription>
+            {autocompleteData.description}
+          </AutocompleteDescription>
         </Autocomplete>
       );
     })
@@ -414,7 +413,7 @@ const AutocompleteMainText = styled.span`
   white-space: nowrap;
 `;
 
-const AutocompleteAddress = styled.span`
+const AutocompleteDescription = styled.span`
   font-size: 10px;
   font-weight: 200;
   color: #777;

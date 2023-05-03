@@ -9,7 +9,7 @@ import {
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { PlanDay } from '@/api/planDay';
 import Flex from '@/components/common/Flex';
@@ -112,14 +112,14 @@ const ScheduleTab = () => {
       {isMounted ? (
         <Box>
           <ScheduleDropdown tripId={tripId as string} />
-          <DayList column>
+          <DayList>
             {selectedDayList?.map((day, dayIdx) => {
               const [dayString, dateString] =
                 dropdownMenuIdx === 0
                   ? dropdownMenu[dayIdx + 1].split('-')
                   : dropdownMenu[dropdownMenuIdx].split('-');
               return (
-                <Day key={day.dayId} column>
+                <Day key={day.dayId}>
                   <Flex alignCenter>
                     <DayIndex>{dayString}</DayIndex>
                     <DayDate>{dateString}</DayDate>
@@ -127,37 +127,36 @@ const ScheduleTab = () => {
                   <Spacing height={10} />
                   <Droppable droppableId={String(day.dayId)}>
                     {(droppableProvided, droppableSnapshot) => (
-                      <ScheduleArea
-                        column
+                      <ScheduleList
                         {...droppableProvided.droppableProps}
                         ref={droppableProvided.innerRef}
+                        isEmpty={!day.schedules.length}
                       >
                         {day.schedules.length ? (
-                          <ScheduleList column>
-                            {day.schedules.map((schedule, scheduleIdx) => (
-                              <Draggable
-                                key={schedule.scheduleId}
-                                draggableId={String(schedule.scheduleId)}
-                                index={scheduleIdx}
-                              >
-                                {draggableProvided => (
-                                  <Schedule
-                                    alignCenter
-                                    ref={draggableProvided.innerRef}
-                                    {...draggableProvided.dragHandleProps}
-                                    {...draggableProvided.draggableProps}
-                                  >
-                                    <ScheduleTitle>
-                                      {schedule.title}
-                                    </ScheduleTitle>
-                                  </Schedule>
-                                )}
-                              </Draggable>
-                            ))}
-                          </ScheduleList>
+                          day.schedules.map((schedule, scheduleIdx) => (
+                            <Draggable
+                              key={schedule.scheduleId}
+                              draggableId={String(schedule.scheduleId)}
+                              index={scheduleIdx}
+                            >
+                              {draggableProvided => (
+                                <Schedule
+                                  ref={draggableProvided.innerRef}
+                                  {...draggableProvided.dragHandleProps}
+                                  {...draggableProvided.draggableProps}
+                                >
+                                  <ScheduleTitle>
+                                    {schedule.title}
+                                  </ScheduleTitle>
+                                </Schedule>
+                              )}
+                            </Draggable>
+                          ))
                         ) : (
-                          <NoScheduleMessage alignCenter justifyCenter>
-                            일정이 없습니다.
+                          <NoScheduleMessage>
+                            {droppableSnapshot.isDraggingOver
+                              ? ''
+                              : '일정이 없습니다.'}
                           </NoScheduleMessage>
                         )}
                         {droppableProvided.placeholder}
@@ -169,7 +168,7 @@ const ScheduleTab = () => {
                               }}
                             />
                           )}
-                      </ScheduleArea>
+                      </ScheduleList>
                     )}
                   </Droppable>
                 </Day>
@@ -189,7 +188,9 @@ const Box = styled.div`
   background-color: ${color.gray1};
 `;
 
-const DayList = styled(Flex)`
+const DayList = styled.ul`
+  display: flex;
+  flex-direction: column;
   max-height: 500px;
   gap: 20px;
   width: 364px;
@@ -205,7 +206,13 @@ const DayList = styled(Flex)`
   }
 `;
 
-const Day = styled(Flex)``;
+const Day = styled.li`
+  display: flex;
+  flex-direction: column;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
+`;
 
 const DayIndex = styled.h3`
   font-weight: 700;
@@ -220,13 +227,34 @@ const DayDate = styled.span`
   color: ${color.gray2};
 `;
 
-const ScheduleArea = styled(Flex)`
+const ScheduleList = styled.ul<{ isEmpty: boolean }>`
+  display: flex;
+  flex-direction: column;
   position: relative;
+  min-height: 47px;
+  ${({ isEmpty }) => {
+    if (isEmpty) {
+      return css`
+        justify-content: center;
+        align-items: center;
+        max-height: 47px;
+        background-color: #f2f2f2;
+        box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+        border-radius: 7px;
+        font-weight: 400;
+        font-size: 12px;
+        color: #b6b6b6;
+      `;
+    }
+    return css`
+      max-height: 100vh;
+    `;
+  }};
 `;
 
-const ScheduleList = styled(Flex)``;
-
-const Schedule = styled(Flex)`
+const Schedule = styled.li`
+  display: flex;
+  align-items: center;
   width: 100%;
   height: 37px;
   background-color: ${color.white};
@@ -235,9 +263,6 @@ const Schedule = styled(Flex)`
   padding: 0 17px;
   color: ${color.gray3};
   margin-bottom: 10px;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
 `;
 
 const ScheduleTitle = styled.span`
@@ -248,16 +273,7 @@ const ScheduleTitle = styled.span`
   white-space: nowrap;
 `;
 
-const NoScheduleMessage = styled(Flex)`
-  width: 330px;
-  height: 65px;
-  background-color: #f2f2f2;
-  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
-  border-radius: 7px;
-  font-weight: 400;
-  font-size: 12px;
-  color: #b6b6b6;
-`;
+const NoScheduleMessage = styled.span``;
 
 const Ghost = styled.div`
   position: absolute;

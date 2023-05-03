@@ -29,119 +29,115 @@ const ScheduleTab = () => {
     planId: tripId as string,
     onSuccess: onSuccessCallback,
   });
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownMenuIdx, setDropdownMenuIdx] = useState<number>(0);
 
-  const dayMenus =
-    dayList
-      ?.filter(dayData => dayData.date)
-      .map(
-        (dayData, idx) => `Day${idx + 1} - ${dayData.date?.replace(/-/g, '.')}`
-      ) || [];
-  const dropdownMenus = ['전체일정', ...dayMenus];
-
-  const handleClickDropdownBtn = () => setIsDropdownOpen(prev => !prev);
-
-  const handleClickDropdownItem = (idx: number) => {
-    setDropdownMenuIdx(idx);
-    setIsDropdownOpen(false);
-  };
+  const selectedDayList =
+    dropdownMenuIdx === 0
+      ? dayList?.slice(0, dayList.length - 1)
+      : dayList?.slice(dropdownMenuIdx - 1, dropdownMenuIdx);
 
   return (
-    <>
-      <DropdownBox>
-        <DropdownMenu alignCenter>
-          <SelectedMenu fontSize={1.6} color={color.black}>
-            {dropdownMenus[dropdownMenuIdx]}
-          </SelectedMenu>
-          <DropdownBtn type="button" onClick={handleClickDropdownBtn}>
-            {isDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
-          </DropdownBtn>
-        </DropdownMenu>
-        <DropdownPopper isDropdownOpen={isDropdownOpen}>
-          {dayMenus.map((menu, idx) => (
-            <DropdownItem
-              key={idx}
-              onClick={() => handleClickDropdownItem(idx + 1)}
-            >
-              {menu}
-            </DropdownItem>
-          ))}
-          <DropdownItem onClick={() => handleClickDropdownItem(0)}>
-            {dropdownMenus[0]}
-          </DropdownItem>
-        </DropdownPopper>
-      </DropdownBox>
-    </>
+    <Box>
+      <ScheduleDropdown tripId={tripId as string} />
+      <DayList column>
+        {selectedDayList?.map((day, idx) => {
+          const [dayString, dateString] =
+            dropdownMenuIdx === 0
+              ? dropdownMenu[idx + 1].split('-')
+              : dropdownMenu[dropdownMenuIdx].split('-');
+          return (
+            <Day key={day.dayId} column>
+              <Flex alignCenter>
+                <DayIndex>{dayString}</DayIndex>
+                <DayDate>{dateString}</DayDate>
+              </Flex>
+              <Spacing height={10} />
+              <ScheduleList column>
+                <ScheduleArea column>
+                  {day.schedules.length ? (
+                    day.schedules.map(schedule => (
+                      <Schedule key={schedule.scheduleId} alignCenter>
+                        {schedule.title}
+                      </Schedule>
+                    ))
+                  ) : (
+                    <NoScheduleArea alignCenter justifyCenter>
+                      일정이 없습니다.
+                    </NoScheduleArea>
+                  )}
+                </ScheduleArea>
+              </ScheduleList>
+            </Day>
+          );
+        })}
+      </DayList>
+    </Box>
   );
 };
 
-const DropdownBox = styled.div`
-  position: relative;
-`;
-
-const DropdownMenu = styled(Flex)`
-  position: absolute;
-  height: 46px;
-  width: 364px;
-  justify-content: space-between;
-  color: ${color.gray3};
-  background: #ffffff;
-  border: 0.5px solid #4d77ff;
-  border-radius: 23px;
-  padding: 0 27px;
-  z-index: 1;
-`;
-
-const SelectedMenu = styled(Description)`
-  font-weight: 700;
-`;
-
-const DropdownPopper = styled.ul<{ isDropdownOpen: boolean }>`
-  position: absolute;
-  top: 23px;
-  width: 364px;
-  background: #ffffff;
-  border: 0.5px solid #4d77ff;
-  border-bottom-left-radius: 23px;
-  border-bottom-right-radius: 23px;
-  overflow: hidden;
-  transition: all 0.1s ease;
-  ${({ isDropdownOpen }) => {
-    if (isDropdownOpen) {
-      return css`
-        max-height: 100vh;
-        padding-top: 23px;
-      `;
-    }
-    return css`
-      max-height: 0;
-      padding-top: 0;
-    `;
-  }};
-`;
-
-const DropdownItem = styled.li`
+const Box = styled.div`
+  height: 100%;
   width: 100%;
-  height: 46px;
-  display: flex;
-  align-items: center;
-  font-weight: 700;
-  font-size: 16px;
-  color: ${color.gray3};
-  padding-left: 34px;
-  cursor: pointer;
-  &:hover {
-    color: #456ceb;
-    background-color: #ecf0ff;
+  padding: 12px 17px;
+  background-color: ${color.gray1};
+`;
+
+const DayList = styled(Flex)`
+  gap: 20px;
+  width: 364px;
+  margin-top: 23px;
+  padding: 46px 17px;
+  background-color: #f6f6f6;
+  border: 1px solid #d9d9d9;
+  overflow: scroll;
+  -ms-overflow-style: none; /* IE and Edge */
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera*/
   }
 `;
 
-const DropdownBtn = styled.button`
-  &:hover {
-    path {
-      stroke: ${color.blue3};
-    }
-  }
+const Day = styled(Flex)``;
+
+const DayIndex = styled.h3`
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: ${color.gray3};
+  margin-right: 8px;
 `;
+
+const DayDate = styled.span`
+  font-weight: 400;
+  font-size: 1.2rem;
+  color: ${color.gray2};
+`;
+
+const ScheduleList = styled(Flex)``;
+
+const Schedule = styled(Flex)`
+  width: 330px;
+  height: 37px;
+  background-color: ${color.white};
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 7px;
+  padding: 0 17px;
+  font-weight: 700;
+  font-size: 1.4rem;
+  color: ${color.gray3};
+`;
+
+const ScheduleArea = styled(Flex)`
+  gap: 10px;
+`;
+
+const NoScheduleArea = styled(Flex)`
+  width: 330px;
+  height: 65px;
+  background-color: #f2f2f2;
+  box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
+  border-radius: 7px;
+  font-weight: 400;
+  font-size: 12px;
+  color: #b6b6b6;
+`;
+
 export default ScheduleTab;

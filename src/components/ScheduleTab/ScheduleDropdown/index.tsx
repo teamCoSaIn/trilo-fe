@@ -64,6 +64,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
 
 const DropdownBox = styled.div`
   position: relative;
+  z-index: 1;
 `;
 
 const DropdownMenu = styled(Flex)`

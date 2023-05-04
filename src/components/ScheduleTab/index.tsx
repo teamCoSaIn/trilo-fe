@@ -139,11 +139,12 @@ const ScheduleTab = () => {
                               draggableId={String(schedule.scheduleId)}
                               index={scheduleIdx}
                             >
-                              {draggableProvided => (
+                              {(draggableProvided, draggableSnapshot) => (
                                 <Schedule
                                   ref={draggableProvided.innerRef}
                                   {...draggableProvided.dragHandleProps}
                                   {...draggableProvided.draggableProps}
+                                  isDragging={draggableSnapshot.isDragging}
                                 >
                                   <ScheduleTitle>
                                     {schedule.title}
@@ -252,7 +253,7 @@ const ScheduleList = styled.ul<{ isEmpty: boolean }>`
   }};
 `;
 
-const Schedule = styled.li`
+const Schedule = styled.li<{ isDragging: boolean }>`
   display: flex;
   align-items: center;
   width: 100%;
@@ -263,6 +264,13 @@ const Schedule = styled.li`
   padding: 0 17px;
   color: ${color.gray3};
   margin-bottom: 10px;
+  ${({ isDragging }) => {
+    if (isDragging) {
+      return css`
+        border: 0.5px solid ${color.blue3};
+      `;
+    }
+  }};
 `;
 
 const ScheduleTitle = styled.span`
@@ -279,9 +287,11 @@ const Ghost = styled.div`
   position: absolute;
   width: 100%;
   height: 37px;
-  background-color: lightgoldenrodyellow;
+  background-color: ${color.white};
+  border: 0.5px dashed ${color.blue3};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
+  opacity: 80%;
 `;
 
 export default ScheduleTab;

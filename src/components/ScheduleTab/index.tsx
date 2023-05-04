@@ -12,6 +12,8 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { PlanDay } from '@/api/planDay';
+import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
+import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
@@ -38,6 +40,8 @@ const ScheduleTab = () => {
     null
   );
 
+  const [isTemporaryBoxPopUp, setIsTemporaryBoxPopUp] = useState(false);
+
   const onSuccessCallback = (data: PlanDay[]) => {
     const dayList = data
       .filter(day => day.date)
@@ -58,6 +62,8 @@ const ScheduleTab = () => {
     dropdownMenuIdx === 0
       ? dayList?.slice(0, dayList.length - 1)
       : dayList?.slice(dropdownMenuIdx - 1, dropdownMenuIdx);
+
+  const temporaryDay = dayList ? dayList[dayList.length - 1] : null;
 
   const handleDragEnd = (result: DropResult) => {
     if (!tripId) return;
@@ -103,6 +109,10 @@ const ScheduleTab = () => {
     setPlaceholderClientY(clientY);
   };
 
+  const handleTemporaryPopUpBtnClick = () => {
+    setIsTemporaryBoxPopUp(prev => !prev);
+  };
+
   return (
     <DragDropContext
       onDragEnd={handleDragEnd}
@@ -110,109 +120,170 @@ const ScheduleTab = () => {
       onDragUpdate={handleDragUpdate}
     >
       {isMounted ? (
-        <Box>
+        <Box column>
           <ScheduleDropdown tripId={tripId as string} />
-          <DayList>
-            {selectedDayList?.map((day, dayIdx) => {
-              const [dayString, dateString] =
-                dropdownMenuIdx === 0
-                  ? dropdownMenu[dayIdx + 1].split('-')
-                  : dropdownMenu[dropdownMenuIdx].split('-');
-              return (
-                <Day key={day.dayId}>
-                  <Flex alignCenter>
-                    <DayIndex>{dayString}</DayIndex>
-                    <DayDate>{dateString}</DayDate>
-                  </Flex>
-                  <Spacing height={10} />
-                  <Droppable droppableId={String(day.dayId)}>
-                    {(droppableProvided, droppableSnapshot) => (
-                      <ScheduleList
-                        {...droppableProvided.droppableProps}
-                        ref={droppableProvided.innerRef}
-                        isEmpty={!day.schedules.length}
-                      >
-                        {day.schedules.length ? (
-                          day.schedules.map((schedule, scheduleIdx) => (
-                            <Draggable
-                              key={schedule.scheduleId}
-                              draggableId={String(schedule.scheduleId)}
-                              index={scheduleIdx}
-                            >
-                              {(draggableProvided, draggableSnapshot) => (
-                                <Schedule
-                                  ref={draggableProvided.innerRef}
-                                  {...draggableProvided.dragHandleProps}
-                                  {...draggableProvided.draggableProps}
-                                  isDragging={draggableSnapshot.isDragging}
-                                >
-                                  <ScheduleTitle>
-                                    {schedule.title}
-                                  </ScheduleTitle>
-                                </Schedule>
-                              )}
-                            </Draggable>
-                          ))
-                        ) : (
-                          <NoScheduleMessage>
-                            {droppableSnapshot.isDraggingOver
-                              ? ''
-                              : '일정이 없습니다.'}
-                          </NoScheduleMessage>
-                        )}
-                        {droppableProvided.placeholder}
-                        {placeholderClientY !== null &&
-                          droppableSnapshot.isDraggingOver && (
-                            <Ghost
-                              style={{
-                                top: placeholderClientY,
-                              }}
-                            />
+          <DNDBox>
+            <DayList>
+              {selectedDayList?.map((day, dayIdx) => {
+                const [dayString, dateString] =
+                  dropdownMenuIdx === 0
+                    ? dropdownMenu[dayIdx + 1].split('-')
+                    : dropdownMenu[dropdownMenuIdx].split('-');
+                return (
+                  <Day key={day.dayId}>
+                    <Flex alignCenter>
+                      <DayIndex>{dayString}</DayIndex>
+                      <DayDate>{dateString}</DayDate>
+                    </Flex>
+                    <Spacing height={10} />
+                    <Droppable droppableId={String(day.dayId)}>
+                      {(droppableProvided, droppableSnapshot) => (
+                        <ScheduleList
+                          {...droppableProvided.droppableProps}
+                          ref={droppableProvided.innerRef}
+                          isEmpty={!day.schedules.length}
+                        >
+                          {day.schedules.length ? (
+                            day.schedules.map((schedule, scheduleIdx) => (
+                              <Draggable
+                                key={schedule.scheduleId}
+                                draggableId={String(schedule.scheduleId)}
+                                index={scheduleIdx}
+                              >
+                                {(draggableProvided, draggableSnapshot) => (
+                                  <Schedule
+                                    ref={draggableProvided.innerRef}
+                                    {...draggableProvided.dragHandleProps}
+                                    {...draggableProvided.draggableProps}
+                                    isDragging={draggableSnapshot.isDragging}
+                                  >
+                                    <ScheduleTitle>
+                                      {schedule.title}
+                                    </ScheduleTitle>
+                                  </Schedule>
+                                )}
+                              </Draggable>
+                            ))
+                          ) : (
+                            <NoScheduleMessage>
+                              {droppableSnapshot.isDraggingOver
+                                ? ''
+                                : '일정이 없습니다.'}
+                            </NoScheduleMessage>
                           )}
-                      </ScheduleList>
-                    )}
-                  </Droppable>
-                </Day>
-              );
-            })}
-          </DayList>
+                          {droppableProvided.placeholder}
+                          {placeholderClientY !== null &&
+                            droppableSnapshot.isDraggingOver && (
+                              <Ghost
+                                style={{
+                                  top: placeholderClientY,
+                                }}
+                              />
+                            )}
+                        </ScheduleList>
+                      )}
+                    </Droppable>
+                  </Day>
+                );
+              })}
+            </DayList>
+            <TemporaryBox>
+              <TemporaryPopUpBtn
+                type="button"
+                onClick={handleTemporaryPopUpBtnClick}
+              >
+                {isTemporaryBoxPopUp ? (
+                  <DownArrowIcon width={27} height={15} stroke-width={2} />
+                ) : (
+                  <UpArrowIcon width={27} height={15} stroke-width={2} />
+                )}
+              </TemporaryPopUpBtn>
+              <TemporaryTitle>임시보관함</TemporaryTitle>
+              {temporaryDay ? (
+                <Droppable droppableId={String(temporaryDay.dayId)}>
+                  {(droppableProvided, droppableSnapshot) => (
+                    <TemporaryList
+                      {...droppableProvided.droppableProps}
+                      ref={droppableProvided.innerRef}
+                      isPopUpOpen={isTemporaryBoxPopUp}
+                    >
+                      {temporaryDay.schedules.map((schedule, scheduleIdx) => (
+                        <Draggable
+                          key={schedule.scheduleId}
+                          draggableId={String(schedule.scheduleId)}
+                          index={scheduleIdx}
+                        >
+                          {(draggableProvided, draggableSnapshot) => (
+                            <Schedule
+                              ref={draggableProvided.innerRef}
+                              {...draggableProvided.dragHandleProps}
+                              {...draggableProvided.draggableProps}
+                              isDragging={draggableSnapshot.isDragging}
+                            >
+                              <ScheduleTitle>{schedule.title}</ScheduleTitle>
+                            </Schedule>
+                          )}
+                        </Draggable>
+                      ))}
+                      {droppableProvided.placeholder}
+                      {placeholderClientY !== null &&
+                        droppableSnapshot.isDraggingOver && (
+                          <Ghost
+                            style={{
+                              top: placeholderClientY,
+                            }}
+                          />
+                        )}
+                    </TemporaryList>
+                  )}
+                </Droppable>
+              ) : null}
+            </TemporaryBox>
+          </DNDBox>
         </Box>
       ) : null}
     </DragDropContext>
   );
 };
 
-const Box = styled.div`
+const Box = styled(Flex)`
   height: 100%;
   width: 100%;
-  padding: 12px 17px;
-  background-color: ${color.gray1};
+`;
+
+const DNDBox = styled.div`
+  display: flex;
+  flex-direction: column;
+  height: calc(100% - 23px);
+  width: 100%;
+  margin-top: 23px;
+  border: 1px solid #d9d9d9;
+  background-color: #f6f6f6;
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 `;
 
 const DayList = styled.ul`
+  flex-grow: 1;
+  flex-shrink: 1;
   display: flex;
   flex-direction: column;
-  max-height: 500px;
+  width: 100%;
   gap: 20px;
-  width: 364px;
-  margin-top: 23px;
   padding: 46px 17px;
-  background-color: #f6f6f6;
-  border: 1px solid #d9d9d9;
   overflow: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
+  -ms-overflow-style: none;
   scrollbar-width: none;
   ::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera*/
+    display: none;
   }
 `;
 
 const Day = styled.li`
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
 `;
 
 const DayIndex = styled.h3`
@@ -254,6 +325,7 @@ const ScheduleList = styled.ul<{ isEmpty: boolean }>`
 `;
 
 const Schedule = styled.li<{ isDragging: boolean }>`
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   width: 100%;
@@ -292,6 +364,66 @@ const Ghost = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   opacity: 80%;
+`;
+
+const TemporaryBox = styled.div`
+  flex-shrink: 0;
+  position: relative;
+  width: 100%;
+  min-height: 62px;
+  background: #ffffff;
+  border: 1px solid #d9d9d9;
+  border-radius: 7px 7px 0 0;
+  padding: 20px 12px;
+`;
+
+const TemporaryTitle = styled.h3`
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: ${color.gray3};
+  margin-left: 5px;
+`;
+
+const TemporaryList = styled.ul<{ isPopUpOpen: boolean }>`
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  padding: 5px;
+  transition: all 0.2s ease-out;
+  ${({ isPopUpOpen }) => {
+    if (isPopUpOpen) {
+      return css`
+        height: 312px;
+        margin-top: 10px;
+      `;
+    }
+    return css`
+      height: 0;
+    `;
+  }};
+  overflow: scroll;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  ::-webkit-scrollbar {
+    display: none;
+  }
+`;
+
+const TemporaryPopUpBtn = styled.button`
+  position: absolute;
+  top: -31px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 30px;
+  background-color: #ecf0ff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 3px 3px 0 0;
+  &:hover {
+    path {
+      stroke: ${color.blue3};
+    }
+  }
 `;
 
 export default ScheduleTab;

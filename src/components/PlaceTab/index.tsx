@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import { LatLng } from '@/api/searchPlacesByText';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
-import { ReactComponent as MarkerIcon } from '@/assets/marker.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
+import { ReactComponent as FocusedMarkerIcon } from '@/assets/triloMarker-focused.svg';
 import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
@@ -18,7 +18,7 @@ import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import {
   PlacesService,
   AutocompleteService,
-  SelectedMarker,
+  GoogleMarkerLatLng,
   MapInstance,
 } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
@@ -52,7 +52,7 @@ const PlaceTab = () => {
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
   const mapInstance = useRecoilValue(MapInstance);
-  const resetSelectedMarker = useResetRecoilState(SelectedMarker);
+  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
 
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
@@ -204,7 +204,7 @@ const PlaceTab = () => {
 
   useEffect(() => {
     return () => {
-      resetSelectedMarker();
+      resetGoogleMarkerLatLng();
     };
   }, []);
 
@@ -255,7 +255,7 @@ const PlaceTab = () => {
         >
           <div>
             {autocompleteData.placeId ? (
-              <MarkerIcon width={16} height={16} />
+              <FocusedMarkerIcon width={16} height={16} />
             ) : (
               <SearchIcon width={16} height={16} />
             )}

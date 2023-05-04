@@ -9,10 +9,16 @@ import {
   PlacesService,
   MapInstance,
   AutocompleteService,
-  SelectedMarker,
+  GoogleMarkerLatLng,
 } from '@/states/googleMaps';
 import convertToDataUrl from '@/utils/convertToDataURL';
-import createMarkerSvg from '@/utils/createMarkerSvg';
+import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
+
+/* MEMO:
+- 동그라미 마커 클릭 -> 물방울 마커로 변경 -> 언제 다시 동그라미 마커로 변경?
+- 일정 창이 열리면 해당 일정에 대한 마커를 물방울로 변경
+- 일정 창이 닫히면 해당 일정에 대한 마커를 동그라미로 변경
+*/
 
 const Map = () => {
   const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);
@@ -36,7 +42,8 @@ const Map = () => {
     useRecoilState<google.maps.places.AutocompleteService | null>(
       AutocompleteService
     );
-  const [selectedMarker, setSelectedMarker] = useRecoilState(SelectedMarker);
+  const [googleMarkerLatLng, setGoogleMarkerLatLng] =
+    useRecoilState(GoogleMarkerLatLng);
 
   // TODO: 일정탭에서 설정한 atom으로 변경해야함.
   // 일단 0: 전체일정, 1: 첫날 일정, ...으로 설정
@@ -64,7 +71,7 @@ const Map = () => {
       lat: event.latLng?.lat(),
       lng: event.latLng?.lng(),
     };
-    setSelectedMarker(selectedLocation);
+    setGoogleMarkerLatLng(selectedLocation);
   };
 
   const handleClickMarker = (event: google.maps.MapMouseEvent) => {
@@ -76,7 +83,7 @@ const Map = () => {
     .map(tripDayData =>
       tripDayData.schedules.map((scheduleData, idx) => {
         const triloMarkerDataUrl = convertToDataUrl(
-          createMarkerSvg(idx + 1, tripDayData.color)
+          createTriloMarkerSvg(idx + 1, tripDayData.color)
         );
         return (
           <MarkerF
@@ -85,10 +92,10 @@ const Map = () => {
               lat: scheduleData.coordinate.latitude,
               lng: scheduleData.coordinate.longitude,
             }}
-            onClick={handleClickMarker}
             icon={{
               url: triloMarkerDataUrl,
             }}
+            onClick={handleClickMarker}
           />
         );
       })
@@ -143,9 +150,12 @@ const Map = () => {
         onLoad={handleOnMapLoad}
         onClick={handleClickGoogleMap}
       >
-        {selectedMarker?.lat && selectedMarker?.lng && (
+        {googleMarkerLatLng?.lat && googleMarkerLatLng?.lng && (
           <MarkerF
-            position={{ lat: selectedMarker.lat, lng: selectedMarker.lng }}
+            position={{
+              lat: googleMarkerLatLng.lat,
+              lng: googleMarkerLatLng.lng,
+            }}
             onClick={handleClickMarker}
           />
         )}

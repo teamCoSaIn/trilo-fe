@@ -9,7 +9,7 @@ import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import {
   MapInstance,
   PlaceCardLocation,
-  SelectedMarker,
+  GoogleMarkerLatLng,
 } from '@/states/googleMaps';
 import truncate from '@/utils/truncate';
 
@@ -35,7 +35,7 @@ const PlaceCard = ({
   location,
 }: PlaceCardProps) => {
   const mapInstance = useRecoilValue(MapInstance);
-  const setSelectedMarker = useSetRecoilState(SelectedMarker);
+  const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
 
   const newAddress = address && truncate(address, 15);
   const newName = name && truncate(name, 15);
@@ -59,7 +59,7 @@ const PlaceCard = ({
     if (location.lat && location.lng) {
       const selectedLocation = { lat: location.lat, lng: location.lng };
       mapInstance?.setCenter(selectedLocation);
-      setSelectedMarker(selectedLocation);
+      setGoogleMarkerLatLng(selectedLocation);
     }
   };
 

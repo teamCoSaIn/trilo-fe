@@ -24,7 +24,7 @@ export const AutocompleteService =
     dangerouslyAllowMutability: true,
   });
 
-export const SelectedMarker = atom<PlaceCardLocation>({
-  key: 'selectedMarker',
+export const GoogleMarkerLatLng = atom<PlaceCardLocation>({
+  key: 'googleMarkerLatLng',
   default: undefined,
 });

@@ -70,7 +70,7 @@ const DropdownBox = styled.div`
 const DropdownMenu = styled(Flex)`
   position: absolute;
   height: 46px;
-  width: 364px;
+  width: 100%;
   justify-content: space-between;
   color: ${color.gray3};
   background: #ffffff;

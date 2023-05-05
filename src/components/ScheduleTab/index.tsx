@@ -13,6 +13,8 @@ import styled, { css } from 'styled-components';
 
 import { PlanDay } from '@/api/planDay';
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
+import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
+import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
 import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
@@ -160,6 +162,21 @@ const ScheduleTab = () => {
                                     <ScheduleTitle>
                                       {schedule.title}
                                     </ScheduleTitle>
+                                    {schedule.placeName && (
+                                      <Place>
+                                        <PlaceIcon />
+                                        <PlaceName>
+                                          {schedule.placeName}
+                                        </PlaceName>
+                                      </Place>
+                                    )}
+                                    <ScheduleDeleteBtn>
+                                      <DeleteIcon
+                                        width={7}
+                                        height={7}
+                                        fill={color.gray2}
+                                      />
+                                    </ScheduleDeleteBtn>
                                   </Schedule>
                                 )}
                               </Draggable>
@@ -221,6 +238,19 @@ const ScheduleTab = () => {
                               isDragging={draggableSnapshot.isDragging}
                             >
                               <ScheduleTitle>{schedule.title}</ScheduleTitle>
+                              {schedule.placeName && (
+                                <Place>
+                                  <PlaceIcon />
+                                  <PlaceName>{schedule.placeName}</PlaceName>
+                                </Place>
+                              )}
+                              <ScheduleDeleteBtn>
+                                <DeleteIcon
+                                  width={7}
+                                  height={7}
+                                  fill={color.gray2}
+                                />
+                              </ScheduleDeleteBtn>
                             </Schedule>
                           )}
                         </Draggable>
@@ -346,11 +376,33 @@ const Schedule = styled.li<{ isDragging: boolean }>`
 `;
 
 const ScheduleTitle = styled.span`
+  flex-grow: 1;
   font-weight: 700;
   font-size: 1.4rem;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+`;
+
+const Place = styled(Flex)`
+  flex-shrink: 0;
+  gap: 5px;
+  margin-left: 5px;
+  margin-right: 13px;
+`;
+
+const PlaceName = styled.span`
+  max-width: 100px;
+  font-weight: 500;
+  color: ${color.gray2};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const ScheduleDeleteBtn = styled.button`
+  display: flex;
+  align-items: center;
 `;
 
 const NoScheduleMessage = styled.span``;

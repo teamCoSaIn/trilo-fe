@@ -24,6 +24,12 @@ import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
+const SCHEDULE_HEIGHT = 37;
+const SCHEDULE_WIDTH = 320;
+const SCHEDULE_MARGIN_TOP = 5;
+const SCHEDULE_MARGIN_BOTTOM = 5;
+const SCHEDULE_MARGIN_LEFT = 5;
+
 const ScheduleTab = () => {
   const [isMounted, setIsMounted] = useState(false);
 
@@ -93,9 +99,10 @@ const ScheduleTab = () => {
   };
 
   const handleDragStart = (start: DragStart) => {
-    const draggableHeight = 37 + 10;
+    const draggableHeight =
+      SCHEDULE_HEIGHT + SCHEDULE_MARGIN_TOP + SCHEDULE_MARGIN_BOTTOM;
 
-    const clientY = start.source.index * draggableHeight;
+    const clientY = SCHEDULE_MARGIN_TOP + start.source.index * draggableHeight;
 
     setPlaceholderClientY(clientY);
   };
@@ -104,9 +111,11 @@ const ScheduleTab = () => {
     if (!update.destination) {
       return;
     }
-    const draggableHeight = 37 + 10;
+    const draggableHeight =
+      SCHEDULE_HEIGHT + SCHEDULE_MARGIN_TOP + SCHEDULE_MARGIN_BOTTOM;
 
-    const clientY = update.destination.index * draggableHeight;
+    const clientY =
+      SCHEDULE_MARGIN_TOP + update.destination.index * draggableHeight;
 
     setPlaceholderClientY(clientY);
   };
@@ -194,6 +203,7 @@ const ScheduleTab = () => {
                               <Ghost
                                 style={{
                                   top: placeholderClientY,
+                                  left: SCHEDULE_MARGIN_LEFT,
                                 }}
                               />
                             )}
@@ -261,6 +271,7 @@ const ScheduleTab = () => {
                           <Ghost
                             style={{
                               top: placeholderClientY,
+                              left: SCHEDULE_MARGIN_LEFT,
                             }}
                           />
                         )}
@@ -279,6 +290,7 @@ const ScheduleTab = () => {
 const Box = styled(Flex)`
   height: 100%;
   width: 100%;
+  min-width: ${SCHEDULE_WIDTH};
 `;
 
 const DNDBox = styled.div`
@@ -358,14 +370,17 @@ const Schedule = styled.li<{ isDragging: boolean }>`
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  width: 100%;
-  height: 37px;
+  width: ${SCHEDULE_WIDTH}px;
+  height: ${SCHEDULE_HEIGHT}px;
   background-color: ${color.white};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   padding: 0 17px;
   color: ${color.gray3};
-  margin-bottom: 10px;
+  margin-top: ${SCHEDULE_MARGIN_TOP}px;
+  margin-left: ${SCHEDULE_MARGIN_LEFT}px;
+  margin-right: 5px;
+  margin-bottom: ${SCHEDULE_MARGIN_BOTTOM}px;
   ${({ isDragging }) => {
     if (isDragging) {
       return css`
@@ -409,8 +424,8 @@ const NoScheduleMessage = styled.span``;
 
 const Ghost = styled.div`
   position: absolute;
-  width: 100%;
-  height: 37px;
+  width: ${SCHEDULE_WIDTH}px;
+  height: ${SCHEDULE_HEIGHT}px;
   background-color: ${color.white};
   border: 0.5px dashed ${color.blue3};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -426,21 +441,19 @@ const TemporaryBox = styled.div`
   background: #ffffff;
   border: 1px solid #d9d9d9;
   border-radius: 7px 7px 0 0;
-  padding: 20px 12px;
+  padding: 20px 16px;
 `;
 
 const TemporaryTitle = styled.h3`
   font-weight: 700;
   font-size: 1.6rem;
   color: ${color.gray3};
-  margin-left: 5px;
 `;
 
 const TemporaryList = styled.ul<{ isPopUpOpen: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
-  padding: 5px;
   transition: all 0.2s ease-out;
   ${({ isPopUpOpen }) => {
     if (isPopUpOpen) {

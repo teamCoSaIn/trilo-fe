@@ -1,7 +1,13 @@
-import { GoogleMap, MarkerF, PolylineF } from '@react-google-maps/api';
+import {
+  GoogleMap,
+  MarkerF,
+  PolylineF,
+  InfoBoxF,
+} from '@react-google-maps/api';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import styled from 'styled-components';
 
 import { HEADER_HEIGHT } from '@/constants/size';
 import useGetDayList from '@/queryHooks/useGetDayList';
@@ -14,25 +20,12 @@ import {
 import convertToDataUrl from '@/utils/convertToDataURL';
 import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 
-/* MEMO:
-- 동그라미 마커 클릭 -> 물방울 마커로 변경 -> 언제 다시 동그라미 마커로 변경?
+/* TODO:
 - 일정 창이 열리면 해당 일정에 대한 마커를 물방울로 변경
 - 일정 창이 닫히면 해당 일정에 대한 마커를 동그라미로 변경
 */
 
 const Map = () => {
-  const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);
-  const googleMapStyle = {
-    width: '100%',
-    height: `calc(100vh - ${HEADER_HEIGHT})`,
-  };
-  const googleMapOptions = {
-    streetViewControl: false,
-    fullscreenControl: false,
-    mapTypeControl: false,
-  };
-  const googleMapZoomLevel = 14;
-
   const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
     MapInstance
   );
@@ -50,9 +43,31 @@ const Map = () => {
   const [selectedDateIdx, _] = useState<number>(0);
 
   const { id } = useParams();
+
   const { data: tripDaysData } = useGetDayList({
     planId: id as string,
   });
+
+  const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);
+
+  const googleMapStyle = {
+    width: '100%',
+    height: `calc(100vh - ${HEADER_HEIGHT})`,
+  };
+
+  const googleMapOptions = {
+    streetViewControl: false,
+    fullscreenControl: false,
+    mapTypeControl: false,
+  };
+
+  const googleMapZoomLevel = 14;
+
+  const infoBoxOptions = {
+    closeBoxURL: '',
+    enableEventPropagation: false,
+    pixelOffset: new window.google.maps.Size(25, -35),
+  };
 
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
@@ -74,8 +89,28 @@ const Map = () => {
     setGoogleMarkerLatLng(selectedLocation);
   };
 
-  const handleClickMarker = (event: google.maps.MapMouseEvent) => {
+  const handleClickGoogleMarker = (event: google.maps.MapMouseEvent) => {
     console.log('marker clicked', event);
+    // TODO: body에 이벤트를 걸고 click away listener로 dateSelector 끄기
+  };
+
+  const handleClickTriloMarker = (
+    event: google.maps.MapMouseEvent,
+    scheduleId: number
+  ) => {
+    console.log('trilo marker clicked.', scheduleId);
+  };
+
+  const handleClickInfoBox = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
+  const handleWheelInfoBox = (event: React.WheelEvent) => {
+    event.stopPropagation();
+  };
+
+  const handleMouseDownInfoBox = (event: React.MouseEvent) => {
+    event.stopPropagation();
   };
 
   const scheduleMarkers = tripDaysData
@@ -95,7 +130,9 @@ const Map = () => {
             icon={{
               url: triloMarkerDataUrl,
             }}
-            onClick={handleClickMarker}
+            onClick={event => {
+              handleClickTriloMarker(event, scheduleData.scheduleId);
+            }}
           />
         );
       })
@@ -151,13 +188,60 @@ const Map = () => {
         onClick={handleClickGoogleMap}
       >
         {googleMarkerLatLng?.lat && googleMarkerLatLng?.lng && (
-          <MarkerF
-            position={{
-              lat: googleMarkerLatLng.lat,
-              lng: googleMarkerLatLng.lng,
-            }}
-            onClick={handleClickMarker}
-          />
+          <>
+            <MarkerF
+              position={{
+                lat: googleMarkerLatLng.lat,
+                lng: googleMarkerLatLng.lng,
+              }}
+              onClick={handleClickGoogleMarker}
+            >
+              <InfoBoxF options={infoBoxOptions}>
+                <DateSelectorBox
+                  onClick={handleClickInfoBox}
+                  onWheel={handleWheelInfoBox}
+                  onMouseDown={handleMouseDownInfoBox}
+                >
+                  <DateSelctorHeader>일정 추가하기</DateSelctorHeader>
+                  <DateSelectorDateListBox>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 1 - 23.02.16
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 2 - 23.02.17
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 3 - 23.02.18
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 4 - 23.02.18
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 5 - 23.02.18
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                    <DateSelectorDateList>
+                      <DateSelectorDateBtn>
+                        Day 6 - 23.02.18
+                      </DateSelectorDateBtn>
+                    </DateSelectorDateList>
+                  </DateSelectorDateListBox>
+                  <DateSelectorTempStorageBox>
+                    <DateSelectorDateBtn>임시 보관함</DateSelectorDateBtn>
+                  </DateSelectorTempStorageBox>
+                </DateSelectorBox>
+              </InfoBoxF>
+            </MarkerF>
+          </>
         )}
         {tripDaysData && scheduleMarkers}
         {tripDaysData && schedulePolyLines}
@@ -165,5 +249,72 @@ const Map = () => {
     </>
   );
 };
+
+const DateSelectorBox = styled.div`
+  width: 140px;
+  background-color: #f6f6f6;
+  border-radius: 5px;
+`;
+
+const DateSelctorHeader = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  padding: 8px 30px;
+  font-size: 14px;
+  font-weight: 400;
+  color: #fff;
+  background-color: #456ceb;
+  border-radius: 5px 5px 0 0;
+`;
+
+const DateSelectorDateListBox = styled.ul`
+  padding: 5px 11px;
+  max-height: 126px;
+  overflow-y: overlay;
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #bbb;
+    border-radius: 20px;
+  }
+`;
+
+const DateSelectorDateList = styled.li`
+  width: 118px;
+  height: 25px;
+  text-align: center;
+  font-weight: 400;
+  font-size: 12px;
+  font-family: 'Noto Sans KR';
+  color: #4f4f4f;
+  &:hover {
+    background: #ecf0ff;
+    border-radius: 11.5px;
+  }
+`;
+
+const DateSelectorDateBtn = styled.button`
+  font-size: inherit;
+  font-weight: inherit;
+  font-family: inherit;
+  color: inherit;
+  width: 100%;
+  height: 100%;
+`;
+
+const DateSelectorTempStorageBox = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 36px;
+  font-size: 12px;
+  font-weight: 500;
+  color: #4d77ff;
+  background-color: #ecf0ff;
+  border-radius: 0px 0px 5px 5px;
+`;
 
 export default Map;

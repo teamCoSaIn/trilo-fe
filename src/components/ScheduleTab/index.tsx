@@ -53,9 +53,15 @@ const ScheduleTab = () => {
   const onSuccessCallback = (data: PlanDay[]) => {
     const dayList = data
       .filter(day => day.date)
-      .map((day, idx) => `Day${idx + 1} - ${day.date?.replace(/-/g, '.')}`);
-
-    setDropdownMenu(['전체일정', ...dayList]);
+      .map((day, idx) => {
+        return {
+          dayId: day.dayId,
+          name: `Day${idx + 1}`,
+          date: `${day.date?.replace(/-/g, '.')}`,
+          color: day.color,
+        };
+      });
+    setDropdownMenu(dayList);
   };
 
   const { data: dayList } = useGetDayList({
@@ -67,9 +73,9 @@ const ScheduleTab = () => {
 
   // TODO: 전역으로 필요함.
   const selectedDayList =
-    dropdownMenuIdx === 0
+    dropdownMenuIdx === -1
       ? dayList?.slice(0, dayList.length - 1)
-      : dayList?.slice(dropdownMenuIdx - 1, dropdownMenuIdx);
+      : dayList?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
   const temporaryDay = dayList ? dayList[dayList.length - 1] : null;
 
@@ -137,14 +143,18 @@ const ScheduleTab = () => {
             <DayList>
               {selectedDayList?.map((day, dayIdx) => {
                 const [dayString, dateString] =
-                  dropdownMenuIdx === 0
-                    ? dropdownMenu[dayIdx + 1].split('-')
-                    : dropdownMenu[dropdownMenuIdx].split('-');
+                  dropdownMenuIdx === -1
+                    ? [dropdownMenu[dayIdx].name, dropdownMenu[dayIdx].date]
+                    : [
+                        dropdownMenu[dropdownMenuIdx].name,
+                        dropdownMenu[dropdownMenuIdx].date,
+                      ];
                 return (
                   <Day key={day.dayId}>
                     <Flex alignCenter>
                       <DayIndex>{dayString}</DayIndex>
                       <DayDate>{dateString}</DayDate>
+                      <DayColor dayColor={day.color} />
                     </Flex>
                     <Spacing height={10} />
                     <Droppable droppableId={String(day.dayId)}>
@@ -339,6 +349,17 @@ const DayDate = styled.span`
   font-weight: 400;
   font-size: 1.2rem;
   color: ${color.gray2};
+  margin-right: 10px;
+`;
+
+const DayColor = styled.div<{ dayColor: string }>`
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-bottom: 2px;
+  ${({ dayColor }) => css`
+    ${dayColor && { backgroundColor: dayColor }}
+  `};
 `;
 
 const ScheduleList = styled.ul<{ isEmpty: boolean }>`

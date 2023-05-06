@@ -1,11 +1,18 @@
 import { atomFamily } from 'recoil';
 
-export const DropdownMenuFamily = atomFamily<string[], string>({
+interface Menu {
+  dayId: number;
+  name: string;
+  date: string;
+  color: string;
+}
+
+export const DropdownMenuFamily = atomFamily<Menu[], string>({
   key: 'dropdownMenu',
-  default: ['전체일정'],
+  default: [],
 });
 
 export const DropdownIndexFamily = atomFamily<number, string>({
   key: 'dropdownIndex',
-  default: 0,
+  default: -1,
 });

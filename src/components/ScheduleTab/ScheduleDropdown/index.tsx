@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components';
 
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
+import { ReactComponent as WhiteCheckIcon } from '@/assets/whiteCheck.svg';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
 import color from '@/constants/color';
@@ -12,51 +13,100 @@ import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
 interface ScheduleDropdownProps {
   tripId: string;
 }
+
+const ColorDropdownMenu = [
+  '#D14081',
+  '#EF798A',
+  '#F9F5E3',
+  '#EBFFDB',
+  '#CCF5AC',
+  '#B6C7FF',
+  '#456CEB',
+];
+
 const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
-  const dropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
-  const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
-  const [dropdownMenuIdx, setDropdownMenuIdx] = useRecoilState(
+  const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
+  const [isDayDropdownOpen, setIsDayDropdownOpen] = useState<boolean>(false);
+  const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
+  const [isColorDropdownOpen, setIsColorDropdownOpen] =
+    useState<boolean>(false);
 
-  const handleClickDropdownBtn = () => setIsDropdownOpen(prev => !prev);
+  const handleDayDropdownBtnClick = () => {
+    setIsColorDropdownOpen(false);
+    setIsDayDropdownOpen(prev => !prev);
+  };
 
-  const handleClickDropdownItem = (idx: number) => {
-    setDropdownMenuIdx(idx);
-    setIsDropdownOpen(false);
+  const handleColorDropdownBtnClick = () => {
+    setIsDayDropdownOpen(false);
+    setIsColorDropdownOpen(prev => !prev);
+  };
+
+  const handleDropdownItemClick = (idx: number) => {
+    setDayDropdownIdx(idx);
+    setIsDayDropdownOpen(false);
   };
 
   useEffect(() => {
     return () => {
-      setDropdownMenuIdx(0);
+      setDayDropdownIdx(-1);
     };
   }, []);
+
+  const selectedMenu =
+    dayDropdownIdx === -1 ? null : dayDropdownMenu[dayDropdownIdx];
+
+  const handleColorBtnClick = (selectedColor: string) => {
+    console.log('dayId', selectedMenu?.dayId, 'color', selectedColor, '변경');
+  };
 
   return (
     <DropdownBox>
       <DropdownMenu alignCenter>
-        <SelectedMenu fontSize={1.6} color={color.black}>
-          {dropdownMenu[dropdownMenuIdx]}
-        </SelectedMenu>
-        <DropdownBtn type="button" onClick={handleClickDropdownBtn}>
-          {isDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
-        </DropdownBtn>
+        <SelectedDay fontSize={1.6} color={color.black}>
+          {selectedMenu
+            ? `${selectedMenu.name} - ${selectedMenu.date}`
+            : '전체일정'}
+        </SelectedDay>
+        {selectedMenu && (
+          <ColorDropdownBtn
+            type="button"
+            onClick={handleColorDropdownBtnClick}
+          />
+        )}
+        <DayDropdownBtn type="button" onClick={handleDayDropdownBtnClick}>
+          {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
+        </DayDropdownBtn>
       </DropdownMenu>
-      <DropdownPopper isDropdownOpen={isDropdownOpen}>
-        {dropdownMenu.map((menu, idx) => {
-          if (idx === 0) return null;
-          return (
-            <DropdownItem
-              key={menu}
-              onClick={() => handleClickDropdownItem(idx)}
+      <DropdownPopper isDropdownOpen={isDayDropdownOpen}>
+        <DayBox>
+          {dayDropdownMenu.map((menu, idx) => (
+            <DayMenu
+              key={menu.dayId}
+              onClick={() => handleDropdownItemClick(idx)}
             >
-              {menu}
-            </DropdownItem>
-          );
-        })}
-        <DropdownItem onClick={() => handleClickDropdownItem(0)}>
-          {dropdownMenu[0]}
-        </DropdownItem>
+              {`${menu.name} - ${menu.date}`}
+            </DayMenu>
+          ))}
+          <DayMenu onClick={() => handleDropdownItemClick(-1)}>
+            전체일정
+          </DayMenu>
+        </DayBox>
+      </DropdownPopper>
+      <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
+        <ColorBox>
+          {ColorDropdownMenu.map(colorMenu => (
+            <ColorMenu>
+              <ColorBtn
+                dayColor={colorMenu}
+                onClick={() => handleColorBtnClick(colorMenu)}
+              >
+                {colorMenu === selectedMenu?.color && <WhiteCheckIcon />}
+              </ColorBtn>
+            </ColorMenu>
+          ))}
+        </ColorBox>
       </DropdownPopper>
     </DropdownBox>
   );
@@ -71,7 +121,6 @@ const DropdownMenu = styled(Flex)`
   position: absolute;
   height: 46px;
   width: 100%;
-  justify-content: space-between;
   color: ${color.gray3};
   background: #ffffff;
   border: 0.5px solid #4d77ff;
@@ -80,11 +129,12 @@ const DropdownMenu = styled(Flex)`
   z-index: 1;
 `;
 
-const SelectedMenu = styled(Description)`
+const SelectedDay = styled(Description)`
+  flex-grow: 1;
   font-weight: 700;
 `;
 
-const DropdownPopper = styled.ul<{ isDropdownOpen: boolean }>`
+const DropdownPopper = styled.div<{ isDropdownOpen: boolean }>`
   position: absolute;
   top: 23px;
   width: 364px;
@@ -108,7 +158,9 @@ const DropdownPopper = styled.ul<{ isDropdownOpen: boolean }>`
   }};
 `;
 
-const DropdownItem = styled.li`
+const DayBox = styled.ul``;
+
+const DayMenu = styled.li`
   width: 100%;
   height: 46px;
   display: flex;
@@ -124,12 +176,42 @@ const DropdownItem = styled.li`
   }
 `;
 
-const DropdownBtn = styled.button`
+const DayDropdownBtn = styled.button`
   &:hover {
     path {
       stroke: ${color.blue3};
     }
   }
+`;
+
+const ColorDropdownBtn = styled.button`
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #10bce4 0%, #7756ed 100%);
+  margin-right: 25px;
+`;
+
+const ColorBox = styled.ul`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  height: 46px;
+`;
+
+const ColorMenu = styled.li``;
+
+const ColorBtn = styled.button<{ dayColor: string }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 31px;
+  height: 31px;
+  border-radius: 50%;
+  ${({ dayColor }) => css`
+    ${dayColor && { backgroundColor: dayColor }}
+  `};
 `;
 
 export default ScheduleDropdown;

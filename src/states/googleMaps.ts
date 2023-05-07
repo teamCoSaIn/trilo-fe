@@ -28,3 +28,8 @@ export const GoogleMarkerLatLng = atom<PlaceCardLocation>({
   key: 'googleMarkerLatLng',
   default: undefined,
 });
+
+export const InfoBoxVisible = atom<boolean>({
+  key: 'infoBoxVisible',
+  default: false,
+});

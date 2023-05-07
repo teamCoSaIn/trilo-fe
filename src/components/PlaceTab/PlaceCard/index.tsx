@@ -11,7 +11,6 @@ import {
   PlaceCardLocation,
   GoogleMarkerLatLng,
 } from '@/states/googleMaps';
-import truncate from '@/utils/truncate';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -37,10 +36,6 @@ const PlaceCard = ({
   const mapInstance = useRecoilValue(MapInstance);
   const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
 
-  const newAddress = address && truncate(address, 15);
-  const newName = name && truncate(name, 15);
-
-  // 요일 및 영업 시간 계산
   const dateObj = new Date();
   const dayOfToday = dateObj.getDay();
   const businessHours = openingHours?.weekday_text
@@ -78,18 +73,21 @@ const PlaceCard = ({
   return (
     <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
-        <PlaceCardTitle>{newName}</PlaceCardTitle>
+        <PlaceCardTitle title={name}>{name}</PlaceCardTitle>
         <PlaceCardRatingBox>
           <PlaceCardRating>{rating?.toFixed(1)}</PlaceCardRating>
           <PlaceCardStar rating={rating} />
           <PlaceCardNumOfReviews>({numOfReviews})</PlaceCardNumOfReviews>
         </PlaceCardRatingBox>
-        <PlaceCardAddressBtn onClick={handleAddressBtnClick}>
-          {newAddress} <CopyIcon />
+        <PlaceCardAddressBtn onClick={handleAddressBtnClick} title={address}>
+          <PlaceCardAddressSpan>{address}</PlaceCardAddressSpan>
+          <CopyIcon />
         </PlaceCardAddressBtn>
         <PlaceCardBusinessHoursBox>
           영업시간
-          <PlaceCardBusinessHours>{businessHours}</PlaceCardBusinessHours>
+          <PlaceCardBusinessHours title={businessHours}>
+            {businessHours}
+          </PlaceCardBusinessHours>
         </PlaceCardBusinessHoursBox>
         <PlaceCardLinkBtnBox>
           <PlaceCardGoogleLinkBtn onClick={handleClickGoogleLink}>
@@ -120,7 +118,7 @@ const PlaceCardBox = styled.div`
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border: 1px solid white;
   border-radius: 7px;
-  padding: 20px;
+  padding: 18px;
   cursor: pointer;
   &:hover {
     border: 1px solid rgba(77, 119, 255, 1);
@@ -134,8 +132,12 @@ const PlaceCardContent = styled.div`
 `;
 
 const PlaceCardTitle = styled.h2`
+  max-width: 160px;
   font-size: 14px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardRatingBox = styled.div`
@@ -160,9 +162,16 @@ const PlaceCardNumOfReviews = styled.span`
 const PlaceCardAddressBtn = styled.button`
   display: flex;
   gap: 5px;
+  margin-top: 13px;
+`;
+
+const PlaceCardAddressSpan = styled.span`
+  max-width: 150px;
   font-size: 12px;
   font-weight: 400;
-  margin-top: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardBusinessHoursBox = styled.div`
@@ -175,9 +184,13 @@ const PlaceCardBusinessHoursBox = styled.div`
 `;
 
 const PlaceCardBusinessHours = styled.span`
-  font-size: 12px;
+  max-width: 125px;
+  font-size: inherit;
   font-weight: 400;
   color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardLinkBtnBox = styled.div`

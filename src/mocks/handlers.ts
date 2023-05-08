@@ -366,6 +366,16 @@ const getPlanDayList = rest.get(
   }
 );
 
+const changeScheduleOrder = rest.patch(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    const { scheduleId } = req.params;
+    // do something
+
+    return res(ctx.status(200));
+  }
+);
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -381,6 +391,7 @@ const handlers = [
   createPlanCard,
   deletePlanCard,
   getPlanDayList,
+  changeScheduleOrder,
 ];
 
 export default handlers;

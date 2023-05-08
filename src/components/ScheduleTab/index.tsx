@@ -230,9 +230,9 @@ const ScheduleTab = () => {
                 onClick={handleTemporaryPopUpBtnClick}
               >
                 {isTemporaryBoxPopUp ? (
-                  <DownArrowIcon width={27} height={15} stroke-width={2} />
+                  <DownArrowIcon width={27} height={15} strokeWidth={2} />
                 ) : (
-                  <UpArrowIcon width={27} height={15} stroke-width={2} />
+                  <UpArrowIcon width={27} height={15} strokeWidth={2} />
                 )}
               </TemporaryPopUpBtn>
               <TemporaryTitle>임시보관함</TemporaryTitle>

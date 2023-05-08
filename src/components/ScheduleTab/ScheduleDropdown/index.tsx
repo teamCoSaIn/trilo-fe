@@ -88,7 +88,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
       <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
         <ColorBox>
           {DailyPlanColor.map(dayColor => (
-            <ColorMenu>
+            <ColorMenu key={dayColor}>
               <ColorBtn
                 dayColor={dayColor}
                 onClick={() => handleColorBtnClick(dayColor)}

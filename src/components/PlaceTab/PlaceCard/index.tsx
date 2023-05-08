@@ -1,10 +1,16 @@
+import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as CopyIcon } from '@/assets/copy.svg';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
+import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
-import Logo from '@/components/common/Logo';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
+import {
+  MapInstance,
+  PlaceCardLocation,
+  GoogleMarkerLatLng,
+} from '@/states/googleMaps';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -14,6 +20,7 @@ interface PlaceCardProps {
   openingHours: google.maps.places.PlaceOpeningHours | undefined;
   googleMapLink: string | undefined;
   imgUrl: string | null;
+  location: PlaceCardLocation;
 }
 
 const PlaceCard = ({
@@ -24,62 +31,70 @@ const PlaceCard = ({
   openingHours,
   googleMapLink,
   imgUrl,
+  location,
 }: PlaceCardProps) => {
-  // 긴 주소 ...처리
-  let newAddress;
-  if (address && address.length >= 15) {
-    newAddress = `${address?.slice(0, 15).trim()}...`;
-  } else {
-    newAddress = address;
-  }
+  const mapInstance = useRecoilValue(MapInstance);
+  const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
 
-  // 요일 및 영업 시간 계산
   const dateObj = new Date();
   const dayOfToday = dateObj.getDay();
   const businessHours = openingHours?.weekday_text
     ? openingHours.weekday_text[dayOfToday].slice(4).trim()
     : '정보 없음';
 
-  const handleAddressBtnClick = async () => {
+  const handleAddressBtnClick = async (event: React.MouseEvent) => {
+    event.stopPropagation();
     if (address) {
       await navigator.clipboard.writeText(address);
-      // TODO: 구글맵처럼 알림창으로 해야하나?
       alert('copied!');
     }
   };
 
+  const handlePlaceCardClick = () => {
+    if (location.lat && location.lng) {
+      const selectedLocation = { lat: location.lat, lng: location.lng };
+      mapInstance?.setCenter(selectedLocation);
+      setGoogleMarkerLatLng(selectedLocation);
+    }
+  };
+
+  const handleClickGoogleLink = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    window.open(googleMapLink || 'https://www.google.com/maps');
+  };
+
+  const handleClickNaverLink = (event: React.MouseEvent) => {
+    event.stopPropagation();
+    window.open(
+      `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${name}`
+    );
+  };
+
   return (
-    <PlaceCardBox>
+    <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
-        <PlaceCardTitle>{name}</PlaceCardTitle>
+        <PlaceCardTitle title={name}>{name}</PlaceCardTitle>
         <PlaceCardRatingBox>
           <PlaceCardRating>{rating?.toFixed(1)}</PlaceCardRating>
           <PlaceCardStar rating={rating} />
           <PlaceCardNumOfReviews>({numOfReviews})</PlaceCardNumOfReviews>
         </PlaceCardRatingBox>
-        <PlaceCardAddressBtn onClick={handleAddressBtnClick}>
-          {newAddress} <CopyIcon />
+        <PlaceCardAddressBtn onClick={handleAddressBtnClick} title={address}>
+          <PlaceCardAddressSpan>{address}</PlaceCardAddressSpan>
+          <CopyIcon />
         </PlaceCardAddressBtn>
         <PlaceCardBusinessHoursBox>
           영업시간
-          <PlaceCardBusinessHours>{businessHours}</PlaceCardBusinessHours>
+          <PlaceCardBusinessHours title={businessHours}>
+            {businessHours}
+          </PlaceCardBusinessHours>
         </PlaceCardBusinessHoursBox>
         <PlaceCardLinkBtnBox>
-          <PlaceCardGoogleLinkBtn
-            onClick={() => {
-              window.open(googleMapLink);
-            }}
-          >
+          <PlaceCardGoogleLinkBtn onClick={handleClickGoogleLink}>
             <GoogleIcon />
             구글 맵
           </PlaceCardGoogleLinkBtn>
-          <PlaceCardGoogleLinkBtn
-            onClick={() => {
-              window.open(
-                `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${name}`
-              );
-            }}
-          >
+          <PlaceCardGoogleLinkBtn onClick={handleClickNaverLink}>
             <NaverIcon />
             네이버
           </PlaceCardGoogleLinkBtn>
@@ -88,7 +103,7 @@ const PlaceCard = ({
       {imgUrl ? (
         <PlaceCardImg src={imgUrl} />
       ) : (
-        <Logo width={120} height={120} />
+        <LogoIcon width={120} height={120} />
       )}
     </PlaceCardBox>
   );
@@ -101,8 +116,13 @@ const PlaceCardBox = styled.div`
   height: 160px;
   background: #ffffff;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  border: 1px solid white;
   border-radius: 7px;
-  padding: 20px;
+  padding: 18px;
+  cursor: pointer;
+  &:hover {
+    border: 1px solid rgba(77, 119, 255, 1);
+  }
 `;
 
 const PlaceCardContent = styled.div`
@@ -112,8 +132,12 @@ const PlaceCardContent = styled.div`
 `;
 
 const PlaceCardTitle = styled.h2`
+  max-width: 160px;
   font-size: 14px;
   font-weight: 700;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardRatingBox = styled.div`
@@ -138,9 +162,16 @@ const PlaceCardNumOfReviews = styled.span`
 const PlaceCardAddressBtn = styled.button`
   display: flex;
   gap: 5px;
+  margin-top: 13px;
+`;
+
+const PlaceCardAddressSpan = styled.span`
+  max-width: 150px;
   font-size: 12px;
   font-weight: 400;
-  margin-top: 15px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardBusinessHoursBox = styled.div`
@@ -153,9 +184,13 @@ const PlaceCardBusinessHoursBox = styled.div`
 `;
 
 const PlaceCardBusinessHours = styled.span`
-  font-size: 12px;
+  max-width: 125px;
+  font-size: inherit;
   font-weight: 400;
   color: inherit;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 const PlaceCardLinkBtnBox = styled.div`

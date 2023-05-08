@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { LatLng } from '@/api/searchPlacesByText';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
-import { ReactComponent as MarkerIcon } from '@/assets/marker.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
+import { ReactComponent as FocusedMarkerIcon } from '@/assets/triloMarker-focused.svg';
 import Button from '@/components/common/Button';
 import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
@@ -12,9 +13,16 @@ import PlaceCard from '@/components/PlaceTab/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
 import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
+import LAT_LNG_SEOUL from '@/constants/latlng';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
-import { PlacesService, AutocompleteService } from '@/states/googleMaps';
+import {
+  PlacesService,
+  AutocompleteService,
+  GoogleMarkerLatLng,
+  MapInstance,
+} from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
+import truncate from '@/utils/truncate';
 
 interface PlaceType {
   [key: string]: string;
@@ -23,7 +31,7 @@ interface PlaceType {
 interface AutocompleteType {
   placeId: string | undefined;
   mainText: string;
-  address: string;
+  description: string;
 }
 
 const PlaceTab = () => {
@@ -43,6 +51,8 @@ const PlaceTab = () => {
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
+  const mapInstance = useRecoilValue(MapInstance);
+  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
 
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
@@ -53,13 +63,19 @@ const PlaceTab = () => {
   const [autocompleteDataList, setAutocompleteDataList] = useState<
     AutocompleteType[] | undefined
   >(undefined);
+  const [curLocation, setCurLocation] = useState<LatLng>({
+    lat: LAT_LNG_SEOUL.lat,
+    lng: LAT_LNG_SEOUL.lng,
+  });
 
+  const throttlingTimer = useRef<NodeJS.Timeout | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
 
   const { isLoading, data: placeSearchData } = useSearchPlacesByText(
     searchText,
     placesService,
-    isFirstRender
+    isFirstRender,
+    curLocation
   );
 
   const handlePlaceSearchSubmit = async (
@@ -67,12 +83,14 @@ const PlaceTab = () => {
   ) => {
     event.preventDefault();
     const isInputValid = placeSearchInputRegExp.test(inputValue);
-    if (placesService && isInputValid) {
+    if (placesService && isInputValid && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
       if (currAutocompleteIdx === 0) {
-        // 그대로 검색
         setSearchText(inputValue);
       } else if (currAutocompleteIdx !== 0 && autocompleteDataList) {
-        // 현재 인덱스에 있는 값으로 검색
         const selectedAutocomplete =
           autocompleteDataList[currAutocompleteIdx - 1].mainText;
         setInputValue(selectedAutocomplete);
@@ -80,20 +98,36 @@ const PlaceTab = () => {
       }
       setIsFirstRender(false);
       inputRef.current?.blur();
-    }
-    // TODO: 올바른 입력이 아닌 경우
-    else if (inputValue === '') {
+    } else if (inputValue === '') {
       alert('값을 입력해주세요.');
+    } else if (inputValue.length > 85) {
+      alert('85자 이하의 글자만 검색할 수 있습니다.');
     } else {
-      alert('특수문자를 제외한 영문, 한글, 숫자만 입력이 가능합니다.');
+      alert('<, > 는 검색어에 포함할 수 없습니다.');
     }
   };
 
   const handlePlaceLabelClick = async (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
-    if (placesService) {
+    if (placesService && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
       setInputValue(target.innerText);
       setSearchText(korToEng[target.innerText]);
+      setIsFirstRender(false);
+    }
+  };
+
+  const handleAutoCompleteClick = (description: string) => {
+    if (placesService && mapInstance) {
+      setCurLocation({
+        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+      });
+      setInputValue(description);
+      setSearchText(description);
       setIsFirstRender(false);
     }
   };
@@ -116,7 +150,9 @@ const PlaceTab = () => {
   };
 
   const handleSearchInputOnBlur = () => {
-    setIsAutocompleteVisible(false);
+    setTimeout(() => {
+      setIsAutocompleteVisible(false);
+    }, 100);
   };
 
   const displaySuggestions = (
@@ -133,7 +169,7 @@ const PlaceTab = () => {
         return {
           placeId: prediction.place_id,
           mainText: prediction.structured_formatting.main_text,
-          address: prediction.description,
+          description: prediction.description,
         };
       });
       setAutocompleteDataList(filteredPredictions);
@@ -144,27 +180,33 @@ const PlaceTab = () => {
     }
   };
 
-  let throttlingTimer: NodeJS.Timeout | null = null;
   const handleSearchInputKeyDown = (
     event: React.KeyboardEvent<HTMLElement>
   ) => {
     if (!autocompleteDataList || !autocompleteDataList.length) {
       return;
     }
-    if (!throttlingTimer) {
-      throttlingTimer = setTimeout(() => {
-        if (event.key === 'ArrowDown') {
-          setCurrAutocompleteIdx(
-            prev => (prev + 1) % (autocompleteDataList.length + 1)
-          );
-        } else if (event.key === 'ArrowUp') {
-          setCurrAutocompleteIdx(prev =>
-            prev === 0 ? autocompleteDataList.length : prev - 1
-          );
-        }
+    if (!throttlingTimer.current) {
+      if (event.key === 'ArrowDown') {
+        setCurrAutocompleteIdx(
+          prev => (prev + 1) % (autocompleteDataList.length + 1)
+        );
+      } else if (event.key === 'ArrowUp') {
+        setCurrAutocompleteIdx(prev =>
+          prev === 0 ? autocompleteDataList.length : prev - 1
+        );
+      }
+      throttlingTimer.current = setTimeout(() => {
+        throttlingTimer.current = null;
       }, 0);
     }
   };
+
+  useEffect(() => {
+    return () => {
+      resetGoogleMarkerLatLng();
+    };
+  }, []);
 
   useEffect(() => {
     setCurrAutocompleteIdx(0);
@@ -176,9 +218,6 @@ const PlaceTab = () => {
         autocompleteService.getQueryPredictions(
           {
             input: `${inputValue}`,
-            // TODO: 지도 센터 기준으로 설정.
-            location: new google.maps.LatLng(37.56, 127),
-            radius: 1000,
           },
           displaySuggestions
         );
@@ -204,26 +243,27 @@ const PlaceTab = () => {
 
   const autocompleteList = autocompleteDataList?.length ? (
     autocompleteDataList?.map((autocompleteData, idx) => {
-      let isSelected = false;
-      if (currAutocompleteIdx === idx + 1) {
-        isSelected = true;
-      }
+      const isSelected = currAutocompleteIdx === idx + 1;
+      const newMainText = truncate(autocompleteData.mainText, 25);
       return (
         <Autocomplete
           key={autocompleteData.placeId || idx}
           isSelected={isSelected}
+          onClick={() => {
+            handleAutoCompleteClick(autocompleteData.description);
+          }}
         >
           <div>
             {autocompleteData.placeId ? (
-              <MarkerIcon width={16} height={16} />
+              <FocusedMarkerIcon width={16} height={16} />
             ) : (
               <SearchIcon width={16} height={16} />
             )}
           </div>
-          <AutocompleteMainText>
-            {autocompleteData.mainText}
-          </AutocompleteMainText>
-          <AutocompleteAddress>{autocompleteData.address}</AutocompleteAddress>
+          <AutocompleteMainText>{newMainText}</AutocompleteMainText>
+          <AutocompleteDescription>
+            {autocompleteData.description}
+          </AutocompleteDescription>
         </Autocomplete>
       );
     })
@@ -254,6 +294,10 @@ const PlaceTab = () => {
         openingHours={place.opening_hours}
         googleMapLink={place.url}
         imgUrl={place.photos ? place.photos[0].getUrl() : null}
+        location={{
+          lat: place.geometry?.location?.lat(),
+          lng: place.geometry?.location?.lng(),
+        }}
       />
     ))
   ) : (
@@ -347,7 +391,7 @@ const AutocompleteListBox = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 10px 0 15px 0;
-  font-size: 16px;
+  font-size: 13px;
   font-weight: 400;
   line-height: 16px;
   border-top: 1.5px solid #ccc;
@@ -369,7 +413,7 @@ const AutocompleteMainText = styled.span`
   white-space: nowrap;
 `;
 
-const AutocompleteAddress = styled.span`
+const AutocompleteDescription = styled.span`
   font-size: 10px;
   font-weight: 200;
   color: #777;

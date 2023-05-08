@@ -1,5 +1,10 @@
 import { atom } from 'recoil';
 
+export interface PlaceCardLocation {
+  lat: number | undefined;
+  lng: number | undefined;
+}
+
 export const PlacesService = atom<google.maps.places.PlacesService | null>({
   key: 'placesService',
   default: null,
@@ -18,3 +23,13 @@ export const AutocompleteService =
     default: null,
     dangerouslyAllowMutability: true,
   });
+
+export const GoogleMarkerLatLng = atom<PlaceCardLocation>({
+  key: 'googleMarkerLatLng',
+  default: undefined,
+});
+
+export const InfoBoxVisible = atom<boolean>({
+  key: 'infoBoxVisible',
+  default: false,
+});

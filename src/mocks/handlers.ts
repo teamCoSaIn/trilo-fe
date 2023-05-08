@@ -71,19 +71,25 @@ const tripDays = [
     dayId: 1,
     tripId: 1,
     date: '2023-02-15',
-    color: 'blue',
+    color: '#FB6C6C',
     schedules: [
       {
         scheduleId: 235412,
         title: '캐널시티 하카타',
         placeName: '캐널시티 하카타',
-        coordinate: { latitude: 37, longitude: 17 },
+        coordinate: {
+          latitude: 21.31032591434633,
+          longitude: -157.80890464782715,
+        },
       },
       {
         scheduleId: 21423523,
         title: '쇼핑 리스트',
         placeName: '',
-        coordinate: { latitude: 36, longitude: 17 },
+        coordinate: {
+          latitude: 21.29985050848401,
+          longitude: -157.81482696533203,
+        },
       },
     ],
   },
@@ -91,25 +97,34 @@ const tripDays = [
     dayId: 2,
     tripId: 1,
     date: '2023-02-16',
-    color: 'blue',
+    color: '#5800FF',
     schedules: [
       {
         scheduleId: 5,
         title: '캐널시티 하카타',
         placeName: '캐널시티 하카타',
-        coordinate: { latitude: 37, longitude: 17 },
+        coordinate: {
+          latitude: 21.303432369155537,
+          longitude: -157.84836605395122,
+        },
       },
       {
         scheduleId: 6,
         title: '쇼핑 리스트',
         placeName: '',
-        coordinate: { latitude: 36, longitude: 17 },
+        coordinate: {
+          latitude: 21.29465251080877,
+          longitude: -157.84246444702148,
+        },
       },
       {
         scheduleId: 8,
         title: '관람차',
         placeName: '놀이공원',
-        coordinate: { latitude: 31, longitude: 15 },
+        coordinate: {
+          latitude: 21.292973118425635,
+          longitude: -157.85164833068848,
+        },
       },
     ],
   },
@@ -117,14 +132,24 @@ const tripDays = [
     dayId: 3,
     tripId: 1,
     date: '2023-02-17',
-    color: 'red',
-    schedules: [],
+    color: '#777',
+    schedules: [
+      {
+        scheduleId: 21423456,
+        title: '포케 먹기',
+        placeName: '',
+        coordinate: {
+          latitude: 21.31,
+          longitude: -157.8282696533203,
+        },
+      },
+    ],
   },
   {
     dayId: 4,
     tripId: 1,
     date: null,
-    color: 'gray',
+    color: '#C5FB6C',
     schedules: [],
   },
 ];
@@ -135,7 +160,7 @@ const planCardIds: { [index: string]: typeof tripDays } = {
       dayId: 3,
       tripId: 1,
       date: null,
-      color: 'red',
+      color: '#ccc',
       schedules: [],
     },
   ],

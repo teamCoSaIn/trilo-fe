@@ -8,21 +8,12 @@ import { ReactComponent as WhiteCheckIcon } from '@/assets/whiteCheck.svg';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
 import color from '@/constants/color';
+import DailyPlanColor from '@/constants/dailyPlanColor';
 import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
 
 interface ScheduleDropdownProps {
   tripId: string;
 }
-
-const ColorDropdownMenu = [
-  '#D14081',
-  '#EF798A',
-  '#F9F5E3',
-  '#EBFFDB',
-  '#CCF5AC',
-  '#B6C7FF',
-  '#456CEB',
-];
 
 const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
   const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
@@ -96,13 +87,13 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
       </DropdownPopper>
       <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
         <ColorBox>
-          {ColorDropdownMenu.map(colorMenu => (
+          {DailyPlanColor.map(dayColor => (
             <ColorMenu>
               <ColorBtn
-                dayColor={colorMenu}
-                onClick={() => handleColorBtnClick(colorMenu)}
+                dayColor={dayColor}
+                onClick={() => handleColorBtnClick(dayColor)}
               >
-                {colorMenu === selectedMenu?.color && <WhiteCheckIcon />}
+                {dayColor === selectedMenu?.color && <WhiteCheckIcon />}
               </ColorBtn>
             </ColorMenu>
           ))}

@@ -20,15 +20,16 @@ import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
 import color from '@/constants/color';
+import {
+  SCHEDULE_HEIGHT,
+  SCHEDULE_WIDTH,
+  SCHEDULE_MARGIN_TOP,
+  SCHEDULE_MARGIN_BOTTOM,
+  SCHEDULE_MARGIN_LEFT,
+} from '@/constants/scheduleDnd';
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
-
-const SCHEDULE_HEIGHT = 37;
-const SCHEDULE_WIDTH = 320;
-const SCHEDULE_MARGIN_TOP = 5;
-const SCHEDULE_MARGIN_BOTTOM = 5;
-const SCHEDULE_MARGIN_LEFT = 5;
 
 const ScheduleTab = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -71,7 +72,6 @@ const ScheduleTab = () => {
 
   const { mutate } = useChangeScheduleOrder();
 
-  // TODO: 전역으로 필요함.
   const selectedDayList =
     dropdownMenuIdx === -1
       ? dayList?.slice(0, dayList.length - 1)

@@ -1,18 +1,25 @@
 import styled from 'styled-components';
 
+import ScheduleTab from '@/components/ScheduleTab';
+import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 
 const PlanRightWindow = () => {
-  return <PlanRightWindowBox>오른쪽</PlanRightWindowBox>;
+  return (
+    <PlanRightWindowBox>
+      <ScheduleTab />
+    </PlanRightWindowBox>
+  );
 };
 
 const PlanRightWindowBox = styled.div`
   position: fixed;
-  right: 0px;
+  right: 0;
   top: ${HEADER_HEIGHT};
   width: 400px;
-  height: 100%;
-  background-color: #ddd;
+  height: calc(100% - ${HEADER_HEIGHT});
+  background-color: ${color.white};
+  padding: 12px 17px;
 `;
 
 export default PlanRightWindow;

@@ -27,12 +27,13 @@ type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
   const { id } = useParams();
-  const { data } = useGetDayList({
+  const { data: dayList } = useGetDayList({
     planId: id as string,
   });
-  // TODO: planDay 객체 date 형식 변경 필요
-  const firstDate = data![0].date !== 'none' ? new Date(2023, 3, 22) : null;
-  const [curDateObj, setCurDateObj] = useState(firstDate || new Date());
+
+  const firstDate =
+    dayList && dayList[0]?.date ? new Date(dayList[0].date) : new Date();
+  const [curDateObj, setCurDateObj] = useState(firstDate);
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);

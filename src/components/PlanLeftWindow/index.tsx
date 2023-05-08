@@ -18,7 +18,7 @@ const PlanLeftWindow = () => {
   const { data: dayList } = useGetDayList({
     planId: id as string,
   });
-  const initFocusedTab = dayList && dayList[0].date === 'none' ? DATE : PLACE;
+  const initFocusedTab = dayList && dayList[0]?.date ? PLACE : DATE;
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);

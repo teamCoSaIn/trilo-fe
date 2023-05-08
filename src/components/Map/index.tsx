@@ -6,7 +6,7 @@ import {
 } from '@react-google-maps/api';
 import { useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import DateSelector from '@/components/Map/DateSelector';
 import { HEADER_HEIGHT } from '@/constants/size';
@@ -27,13 +27,11 @@ import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 */
 
 const Map = () => {
-  const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
-    MapInstance
-  );
-  const [placesService, setPlacesService] =
-    useRecoilState<google.maps.places.PlacesService | null>(PlacesService);
-  const [autocompleteService, setAutocompleteService] =
-    useRecoilState<google.maps.places.AutocompleteService | null>(
+  const setMapInstance = useSetRecoilState<google.maps.Map | null>(MapInstance);
+  const setPlacesService =
+    useSetRecoilState<google.maps.places.PlacesService | null>(PlacesService);
+  const setAutocompleteService =
+    useSetRecoilState<google.maps.places.AutocompleteService | null>(
       AutocompleteService
     );
   const [googleMarkerLatLng, setGoogleMarkerLatLng] =
@@ -75,10 +73,6 @@ const Map = () => {
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
     const service2 = new google.maps.places.AutocompleteService();
-    if (mapInstance || autocompleteService || placesService) {
-      console.log('mapInstance alreay set.');
-      return;
-    }
     setMapInstance(map);
     setPlacesService(service);
     setAutocompleteService(service2);

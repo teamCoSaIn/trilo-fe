@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { produce } from 'immer';
 
 import HTTP from '@/api';
 import { PlanDay } from '@/api/planDay';
@@ -11,6 +12,7 @@ interface MutateParams {
   destinationDayId: string;
   destinationDayScheduleIdx: number;
 }
+
 const useChangeScheduleOrder = () => {
   const queryClient = useQueryClient();
 
@@ -43,44 +45,48 @@ const useChangeScheduleOrder = () => {
 
               // 1. 같은 Day 내에서 옮기는 경우
               if (sourceDayId === destinationDayId) {
-                const newDayList = [...prevDayList];
-                const targetDayIdx = newDayList.findIndex(
-                  day => day.dayId === +sourceDayId
-                );
-                if (targetDayIdx === -1) return prevDayList;
+                const nextState = produce(
+                  prevDayList,
+                  (draftState: PlanDay[]) => {
+                    const targetDayIdx = draftState.findIndex(
+                      day => day.dayId === +sourceDayId
+                    );
+                    if (targetDayIdx === -1) return prevDayList;
 
-                const newSchedules = [...newDayList[targetDayIdx].schedules];
-                const [reorderedSchedule] = newSchedules.splice(
-                  sourceDayScheduleIdx,
-                  1
+                    const newSchedules = [
+                      ...draftState[targetDayIdx].schedules,
+                    ];
+                    const [reorderedSchedule] = newSchedules.splice(
+                      sourceDayScheduleIdx,
+                      1
+                    );
+                    newSchedules.splice(
+                      destinationDayScheduleIdx,
+                      0,
+                      reorderedSchedule
+                    );
+                    draftState[targetDayIdx].schedules = newSchedules;
+                  }
                 );
-                newSchedules.splice(
-                  destinationDayScheduleIdx,
-                  0,
-                  reorderedSchedule
-                );
-                newDayList[targetDayIdx].schedules = newSchedules;
-
-                return newDayList;
+                return nextState;
               }
 
               // 2. Day 간 이동
-              if (sourceDayId !== destinationDayId) {
-                const newDayList = [...prevDayList];
-                const sourceDayIdx = newDayList.findIndex(
+              const nextState = produce(prevDayList, draftState => {
+                const sourceDayIdx = draftState.findIndex(
                   day => day.dayId === +sourceDayId
                 );
-                const destinationDayIdx = newDayList.findIndex(
+                const destinationDayIdx = draftState.findIndex(
                   day => day.dayId === +destinationDayId
                 );
                 if (sourceDayIdx === -1 || destinationDayIdx === -1)
                   return prevDayList;
 
                 const newSourceSchedules = [
-                  ...newDayList[sourceDayIdx].schedules,
+                  ...draftState[sourceDayIdx].schedules,
                 ];
                 const newDestinationSchedules = [
-                  ...newDayList[destinationDayIdx].schedules,
+                  ...draftState[destinationDayIdx].schedules,
                 ];
                 const [reorderedSchedule] = newSourceSchedules.splice(
                   sourceDayScheduleIdx,
@@ -91,14 +97,12 @@ const useChangeScheduleOrder = () => {
                   0,
                   reorderedSchedule
                 );
-                newDayList[sourceDayIdx].schedules = newSourceSchedules;
-                newDayList[destinationDayIdx].schedules =
+                draftState[sourceDayIdx].schedules = newSourceSchedules;
+                draftState[destinationDayIdx].schedules =
                   newDestinationSchedules;
+              });
 
-                return newDayList;
-              }
-
-              return prevDayList;
+              return nextState;
             }
           );
         }

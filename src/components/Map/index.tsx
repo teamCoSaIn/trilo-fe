@@ -99,30 +99,28 @@ const Map = () => {
     console.log('trilo marker clicked.', scheduleId);
   };
 
-  const scheduleMarkers = tripDaysData
-    ?.filter(tripDayData => tripDayData.schedules.length > 0)
-    .map(tripDayData =>
-      tripDayData.schedules.map((scheduleData, idx) => {
-        const triloMarkerDataUrl = convertToDataUrl(
-          createTriloMarkerSvg(idx + 1, tripDayData.color)
-        );
-        return (
-          <MarkerF
-            key={scheduleData.scheduleId}
-            position={{
-              lat: scheduleData.coordinate.latitude,
-              lng: scheduleData.coordinate.longitude,
-            }}
-            icon={{
-              url: triloMarkerDataUrl,
-            }}
-            onClick={event => {
-              handleClickTriloMarker(event, scheduleData.scheduleId);
-            }}
-          />
-        );
-      })
-    );
+  const scheduleMarkers = tripDaysData?.map(tripDayData =>
+    tripDayData.schedules.map((scheduleData, idx) => {
+      const triloMarkerDataUrl = convertToDataUrl(
+        createTriloMarkerSvg(idx + 1, tripDayData.color)
+      );
+      return (
+        <MarkerF
+          key={scheduleData.scheduleId}
+          position={{
+            lat: scheduleData.coordinate.latitude,
+            lng: scheduleData.coordinate.longitude,
+          }}
+          options={{
+            icon: triloMarkerDataUrl,
+          }}
+          onClick={event => {
+            handleClickTriloMarker(event, scheduleData.scheduleId);
+          }}
+        />
+      );
+    })
+  );
 
   const schedulePolyLines = tripDaysData
     ?.filter(tripDayData => tripDayData.schedules.length > 1)

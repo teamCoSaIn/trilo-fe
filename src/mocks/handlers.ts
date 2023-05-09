@@ -74,7 +74,7 @@ const tripDays = [
     color: '#FB6C6C',
     schedules: [
       {
-        scheduleId: 235412,
+        scheduleId: 235410,
         title: '캐널시티 하카타',
         placeName: '캐널시티 하카타',
         coordinate: {
@@ -83,7 +83,7 @@ const tripDays = [
         },
       },
       {
-        scheduleId: 21423523,
+        scheduleId: 235411,
         title: '쇼핑 리스트',
         placeName: '',
         coordinate: {
@@ -100,8 +100,8 @@ const tripDays = [
     color: '#5800FF',
     schedules: [
       {
-        scheduleId: 5,
-        title: '캐널시티 하카타',
+        scheduleId: 235412,
+        title: '동방명주',
         placeName: '캐널시티 하카타',
         coordinate: {
           latitude: 21.303432369155537,
@@ -109,8 +109,8 @@ const tripDays = [
         },
       },
       {
-        scheduleId: 6,
-        title: '쇼핑 리스트',
+        scheduleId: 235413,
+        title: '하노이',
         placeName: '',
         coordinate: {
           latitude: 21.29465251080877,
@@ -118,7 +118,7 @@ const tripDays = [
         },
       },
       {
-        scheduleId: 8,
+        scheduleId: 235414,
         title: '관람차',
         placeName: '놀이공원',
         coordinate: {
@@ -135,7 +135,7 @@ const tripDays = [
     color: '#777',
     schedules: [
       {
-        scheduleId: 21423456,
+        scheduleId: 235415,
         title: '포케 먹기',
         placeName: '',
         coordinate: {
@@ -371,7 +371,7 @@ const changeScheduleOrder = rest.patch(
   async (req, res, ctx) => {
     const { scheduleId } = req.params;
     // do something
-
+    tripDays[0].schedules.length = 1;
     return res(ctx.status(200));
   }
 );

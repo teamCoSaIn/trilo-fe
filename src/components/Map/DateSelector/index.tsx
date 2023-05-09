@@ -96,7 +96,7 @@ const DateSelctorHeader = styled.div`
 const DateSelectorDateListBox = styled.ul`
   padding: 5px 11px;
   max-height: 126px;
-  overflow-y: overlay;
+  overflow-y: scroll;
   ::-webkit-scrollbar {
     width: 6px;
   }

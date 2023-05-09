@@ -32,19 +32,19 @@ const PlanLeftWindow = () => {
 
   return (
     <PlanLeftWindowBox isWindowFold={isWindowFold}>
+      <TabBtn
+        isFocused={curFocusedTab === DATE}
+        onClick={event => handleTabClick(event, DATE)}
+      >
+        날짜
+      </TabBtn>
+      <TabBtn
+        isFocused={curFocusedTab === PLACE}
+        onClick={event => handleTabClick(event, PLACE)}
+      >
+        장소
+      </TabBtn>
       <InnerContents>
-        <TabBtn
-          isFocused={curFocusedTab === DATE}
-          onClick={event => handleTabClick(event, DATE)}
-        >
-          날짜
-        </TabBtn>
-        <TabBtn
-          isFocused={curFocusedTab === PLACE}
-          onClick={event => handleTabClick(event, PLACE)}
-        >
-          장소
-        </TabBtn>
         {curFocusedTab === DATE ? <DateTab /> : <PlaceTab />}
       </InnerContents>
       <WindowFoldBtn
@@ -71,13 +71,15 @@ const PlanLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
 `;
 
 const InnerContents = styled.div`
-  overflow: scroll;
-  -ms-overflow-style: none; /* IE and Edge */
-  scrollbar-width: none;
+  overflow-y: scroll;
   ::-webkit-scrollbar {
-    display: none; /* Chrome, Safari, Opera*/
+    width: 10px;
   }
-  height: 100%;
+  ::-webkit-scrollbar-thumb {
+    background-color: #bbb;
+    border-radius: 20px;
+  }
+  height: calc(100% - 51px);
   width: 100%;
 `;
 

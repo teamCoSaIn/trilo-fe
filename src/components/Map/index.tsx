@@ -9,7 +9,6 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
 import DateSelector from '@/components/Map/DateSelector';
-import { HEADER_HEIGHT } from '@/constants/size';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import {
   PlacesService,
@@ -53,7 +52,7 @@ const Map = () => {
 
   const googleMapStyle = {
     width: '100%',
-    height: `calc(100vh - ${HEADER_HEIGHT})`,
+    height: '100%',
   };
 
   const googleMapOptions = {

@@ -2,8 +2,10 @@ import { useLoadScript } from '@react-google-maps/api';
 import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
+import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
+import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
 import Map from '@/components/Map';
 import PlanHeader from '@/components/PlanHeader';
@@ -33,11 +35,18 @@ const TripPlan = () => {
       <Suspense fallback={<CircularLoader />}>
         <PlanHeader />
         <PlanLeftWindow />
-        {isLoaded ? <Map /> : <div>loading...</div>}
-        <PlanRightWindow />
+        <Box>
+          {isLoaded ? <Map /> : <div>loading...</div>}
+          <PlanRightWindow />
+        </Box>
       </Suspense>
     </ErrorBoundary>
   );
 };
+
+const Box = styled(Flex)`
+  width: 100%;
+  height: 100%;
+`;
 
 export default TripPlan;

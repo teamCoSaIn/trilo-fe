@@ -49,10 +49,10 @@ const ScheduleTab = () => {
     null
   );
 
-  const [isTemporaryBoxPopUp, setIsTemporaryBoxPopUp] = useState(false);
+  const [isTempBoxPopUp, setIsTempBoxPopUp] = useState(false);
 
   const onSuccessCallback = (data: PlanDay[]) => {
-    const dayList = data
+    const tripDaysData = data
       .filter(day => day.date)
       .map((day, idx) => {
         return {
@@ -62,10 +62,10 @@ const ScheduleTab = () => {
           color: day.color,
         };
       });
-    setDropdownMenu(dayList);
+    setDropdownMenu(tripDaysData);
   };
 
-  const { data: dayList } = useGetDayList({
+  const { data: tripDaysData } = useGetDayList({
     planId: tripId as string,
     onSuccess: onSuccessCallback,
   });
@@ -74,10 +74,10 @@ const ScheduleTab = () => {
 
   const selectedDayList =
     dropdownMenuIdx === -1
-      ? dayList?.slice(0, dayList.length - 1)
-      : dayList?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
+      ? tripDaysData?.slice(0, tripDaysData.length - 1)
+      : tripDaysData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
-  const temporaryDay = dayList ? dayList[dayList.length - 1] : null;
+  const tempDay = tripDaysData ? tripDaysData[tripDaysData.length - 1] : null;
 
   const handleDragEnd = (result: DropResult) => {
     if (!tripId) return;
@@ -126,174 +126,171 @@ const ScheduleTab = () => {
     setPlaceholderClientY(clientY);
   };
 
-  const handleTemporaryPopUpBtnClick = () => {
-    setIsTemporaryBoxPopUp(prev => !prev);
+  const handleTempPopUpBtnClick = () => {
+    setIsTempBoxPopUp(prev => !prev);
   };
 
-  return (
-    <DragDropContext
-      onDragEnd={handleDragEnd}
-      onDragStart={handleDragStart}
-      onDragUpdate={handleDragUpdate}
-    >
-      {isMounted ? (
-        <Box column>
-          <ScheduleDropdown tripId={tripId as string} />
-          <DNDBox>
-            <DayList>
-              {selectedDayList?.map((day, dayIdx) => {
-                const [dayString, dateString] =
-                  dropdownMenuIdx === -1
-                    ? [dropdownMenu[dayIdx].name, dropdownMenu[dayIdx].date]
-                    : [
-                        dropdownMenu[dropdownMenuIdx].name,
-                        dropdownMenu[dropdownMenuIdx].date,
-                      ];
-                return (
-                  <Day key={day.dayId}>
-                    <Flex alignCenter>
-                      <DayIndex>{dayString}</DayIndex>
-                      <DayDate>{dateString}</DayDate>
-                      <DayColor dayColor={day.color} />
-                    </Flex>
-                    <Spacing height={10} />
-                    <Droppable droppableId={String(day.dayId)}>
-                      {(droppableProvided, droppableSnapshot) => (
-                        <ScheduleList
-                          {...droppableProvided.droppableProps}
-                          ref={droppableProvided.innerRef}
-                          isEmpty={!day.schedules.length}
-                        >
-                          {day.schedules.length ? (
-                            day.schedules.map((schedule, scheduleIdx) => (
-                              <Draggable
-                                key={schedule.scheduleId}
-                                draggableId={String(schedule.scheduleId)}
-                                index={scheduleIdx}
-                              >
-                                {(draggableProvided, draggableSnapshot) => (
-                                  <Schedule
-                                    ref={draggableProvided.innerRef}
-                                    {...draggableProvided.dragHandleProps}
-                                    {...draggableProvided.draggableProps}
-                                    isDragging={draggableSnapshot.isDragging}
-                                  >
-                                    <ScheduleTitle>
-                                      {schedule.title}
-                                    </ScheduleTitle>
-                                    {schedule.placeName && (
-                                      <Place>
-                                        <PlaceIcon />
-                                        <PlaceName>
-                                          {schedule.placeName}
-                                        </PlaceName>
-                                      </Place>
-                                    )}
-                                    <ScheduleDeleteBtn>
-                                      <DeleteIcon
-                                        width={7}
-                                        height={7}
-                                        fill={color.gray2}
-                                      />
-                                    </ScheduleDeleteBtn>
-                                  </Schedule>
-                                )}
-                              </Draggable>
-                            ))
-                          ) : (
-                            <NoScheduleMessage>
-                              {droppableSnapshot.isDraggingOver
-                                ? ''
-                                : '일정이 없습니다.'}
-                            </NoScheduleMessage>
-                          )}
-                          {droppableProvided.placeholder}
-                          {placeholderClientY !== null &&
-                            droppableSnapshot.isDraggingOver && (
-                              <Ghost
-                                style={{
-                                  top: placeholderClientY,
-                                  left: SCHEDULE_MARGIN_LEFT,
-                                }}
-                              />
+  const dayDragDropBox = (
+    <DayList>
+      {selectedDayList?.map((day, dayIdx) => {
+        const [dayString, dateString] =
+          dropdownMenuIdx === -1
+            ? [dropdownMenu[dayIdx].name, dropdownMenu[dayIdx].date]
+            : [
+                dropdownMenu[dropdownMenuIdx].name,
+                dropdownMenu[dropdownMenuIdx].date,
+              ];
+        return (
+          <Day key={day.dayId}>
+            <Flex alignCenter>
+              <DayIndex>{dayString}</DayIndex>
+              <DayDate>{dateString}</DayDate>
+              <DayColor dayColor={day.color} />
+            </Flex>
+            <Spacing height={10} />
+            <Droppable droppableId={String(day.dayId)}>
+              {(droppableProvided, droppableSnapshot) => (
+                <ScheduleList
+                  {...droppableProvided.droppableProps}
+                  ref={droppableProvided.innerRef}
+                  isEmpty={!day.schedules.length}
+                >
+                  {day.schedules.length ? (
+                    day.schedules.map((schedule, scheduleIdx) => (
+                      <Draggable
+                        key={schedule.scheduleId}
+                        draggableId={String(schedule.scheduleId)}
+                        index={scheduleIdx}
+                      >
+                        {(draggableProvided, draggableSnapshot) => (
+                          <Schedule
+                            ref={draggableProvided.innerRef}
+                            {...draggableProvided.dragHandleProps}
+                            {...draggableProvided.draggableProps}
+                            isDragging={draggableSnapshot.isDragging}
+                          >
+                            <ScheduleTitle>{schedule.title}</ScheduleTitle>
+                            {schedule.placeName && (
+                              <Place>
+                                <PlaceIcon />
+                                <PlaceName>{schedule.placeName}</PlaceName>
+                              </Place>
                             )}
-                        </ScheduleList>
-                      )}
-                    </Droppable>
-                  </Day>
-                );
-              })}
-            </DayList>
-            <TemporaryBox>
-              <TemporaryPopUpBtn
-                type="button"
-                onClick={handleTemporaryPopUpBtnClick}
-              >
-                {isTemporaryBoxPopUp ? (
-                  <DownArrowIcon width={27} height={15} strokeWidth={2} />
-                ) : (
-                  <UpArrowIcon width={27} height={15} strokeWidth={2} />
-                )}
-              </TemporaryPopUpBtn>
-              <TemporaryTitle>임시보관함</TemporaryTitle>
-              {temporaryDay ? (
-                <Droppable droppableId={String(temporaryDay.dayId)}>
-                  {(droppableProvided, droppableSnapshot) => (
-                    <TemporaryList
-                      {...droppableProvided.droppableProps}
-                      ref={droppableProvided.innerRef}
-                      isPopUpOpen={isTemporaryBoxPopUp}
-                    >
-                      {temporaryDay.schedules.map((schedule, scheduleIdx) => (
-                        <Draggable
-                          key={schedule.scheduleId}
-                          draggableId={String(schedule.scheduleId)}
-                          index={scheduleIdx}
-                        >
-                          {(draggableProvided, draggableSnapshot) => (
-                            <Schedule
-                              ref={draggableProvided.innerRef}
-                              {...draggableProvided.dragHandleProps}
-                              {...draggableProvided.draggableProps}
-                              isDragging={draggableSnapshot.isDragging}
-                            >
-                              <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                              {schedule.placeName && (
-                                <Place>
-                                  <PlaceIcon />
-                                  <PlaceName>{schedule.placeName}</PlaceName>
-                                </Place>
-                              )}
-                              <ScheduleDeleteBtn>
-                                <DeleteIcon
-                                  width={7}
-                                  height={7}
-                                  fill={color.gray2}
-                                />
-                              </ScheduleDeleteBtn>
-                            </Schedule>
-                          )}
-                        </Draggable>
-                      ))}
-                      {droppableProvided.placeholder}
-                      {placeholderClientY !== null &&
-                        droppableSnapshot.isDraggingOver && (
-                          <Ghost
-                            style={{
-                              top: placeholderClientY,
-                              left: SCHEDULE_MARGIN_LEFT,
-                            }}
-                          />
+                            <ScheduleDeleteBtn>
+                              <DeleteIcon
+                                width={7}
+                                height={7}
+                                fill={color.gray2}
+                              />
+                            </ScheduleDeleteBtn>
+                          </Schedule>
                         )}
-                    </TemporaryList>
+                      </Draggable>
+                    ))
+                  ) : (
+                    <NoScheduleMessage>
+                      {droppableSnapshot.isDraggingOver
+                        ? ''
+                        : '일정이 없습니다.'}
+                    </NoScheduleMessage>
                   )}
-                </Droppable>
-              ) : null}
-            </TemporaryBox>
-          </DNDBox>
-        </Box>
+                  {droppableProvided.placeholder}
+                  {placeholderClientY !== null &&
+                    droppableSnapshot.isDraggingOver && (
+                      <Ghost
+                        style={{
+                          top: placeholderClientY,
+                          left: SCHEDULE_MARGIN_LEFT,
+                        }}
+                      />
+                    )}
+                </ScheduleList>
+              )}
+            </Droppable>
+          </Day>
+        );
+      })}
+    </DayList>
+  );
+
+  const tempDragDropBox = (
+    <TempBox>
+      <TempPopUpBtn type="button" onClick={handleTempPopUpBtnClick}>
+        {isTempBoxPopUp ? (
+          <DownArrowIcon width={27} height={15} strokeWidth={2} />
+        ) : (
+          <UpArrowIcon width={27} height={15} strokeWidth={2} />
+        )}
+      </TempPopUpBtn>
+      <TempTitle>임시보관함</TempTitle>
+      {tempDay ? (
+        <Droppable droppableId={String(tempDay.dayId)}>
+          {(droppableProvided, droppableSnapshot) => (
+            <TempList
+              {...droppableProvided.droppableProps}
+              ref={droppableProvided.innerRef}
+              isPopUpOpen={isTempBoxPopUp}
+            >
+              {tempDay.schedules.map((schedule, scheduleIdx) => (
+                <Draggable
+                  key={schedule.scheduleId}
+                  draggableId={String(schedule.scheduleId)}
+                  index={scheduleIdx}
+                >
+                  {(draggableProvided, draggableSnapshot) => (
+                    <Schedule
+                      ref={draggableProvided.innerRef}
+                      {...draggableProvided.dragHandleProps}
+                      {...draggableProvided.draggableProps}
+                      isDragging={draggableSnapshot.isDragging}
+                    >
+                      <ScheduleTitle>{schedule.title}</ScheduleTitle>
+                      {schedule.placeName && (
+                        <Place>
+                          <PlaceIcon />
+                          <PlaceName>{schedule.placeName}</PlaceName>
+                        </Place>
+                      )}
+                      <ScheduleDeleteBtn>
+                        <DeleteIcon width={7} height={7} fill={color.gray2} />
+                      </ScheduleDeleteBtn>
+                    </Schedule>
+                  )}
+                </Draggable>
+              ))}
+              {droppableProvided.placeholder}
+              {placeholderClientY !== null &&
+                droppableSnapshot.isDraggingOver && (
+                  <Ghost
+                    style={{
+                      top: placeholderClientY,
+                      left: SCHEDULE_MARGIN_LEFT,
+                    }}
+                  />
+                )}
+            </TempList>
+          )}
+        </Droppable>
       ) : null}
-    </DragDropContext>
+    </TempBox>
+  );
+
+  return (
+    <Box column>
+      <ScheduleDropdown tripId={tripId as string} />
+      <DragDropContext
+        onDragEnd={handleDragEnd}
+        onDragStart={handleDragStart}
+        onDragUpdate={handleDragUpdate}
+      >
+        {isMounted ? (
+          <DragDropBox>
+            {dayDragDropBox}
+            {tempDragDropBox}
+          </DragDropBox>
+        ) : null}
+      </DragDropContext>
+    </Box>
   );
 };
 
@@ -303,7 +300,7 @@ const Box = styled(Flex)`
   min-width: ${SCHEDULE_WIDTH};
 `;
 
-const DNDBox = styled.div`
+const DragDropBox = styled.div`
   display: flex;
   flex-direction: column;
   height: calc(100% - 23px);
@@ -402,6 +399,7 @@ const Schedule = styled.li<{ isDragging: boolean }>`
   margin-left: ${SCHEDULE_MARGIN_LEFT}px;
   margin-right: 5px;
   margin-bottom: ${SCHEDULE_MARGIN_BOTTOM}px;
+  cursor: grab;
   ${({ isDragging }) => {
     if (isDragging) {
       return css`
@@ -454,7 +452,7 @@ const Ghost = styled.div`
   opacity: 80%;
 `;
 
-const TemporaryBox = styled.div`
+const TempBox = styled.div`
   flex-shrink: 0;
   position: relative;
   width: 100%;
@@ -465,13 +463,13 @@ const TemporaryBox = styled.div`
   padding: 20px 16px;
 `;
 
-const TemporaryTitle = styled.h3`
+const TempTitle = styled.h3`
   font-weight: 700;
   font-size: 1.6rem;
   color: ${color.gray3};
 `;
 
-const TemporaryList = styled.ul<{ isPopUpOpen: boolean }>`
+const TempList = styled.ul<{ isPopUpOpen: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
@@ -495,7 +493,7 @@ const TemporaryList = styled.ul<{ isPopUpOpen: boolean }>`
   }
 `;
 
-const TemporaryPopUpBtn = styled.button`
+const TempPopUpBtn = styled.button`
   position: absolute;
   top: -31px;
   left: 50%;

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -29,7 +29,8 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
     setIsDayDropdownOpen(prev => !prev);
   };
 
-  const handleColorDropdownBtnClick = () => {
+  const handleColorDropdownBtnClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
     setIsDayDropdownOpen(false);
     setIsColorDropdownOpen(prev => !prev);
   };
@@ -54,7 +55,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
 
   return (
     <DropdownBox>
-      <DropdownMenu alignCenter>
+      <DropdownMenu type="button" onClick={handleDayDropdownBtnClick}>
         <SelectedDay fontSize={1.6} color={color.black}>
           {selectedMenu
             ? `${selectedMenu.name} - ${selectedMenu.date}`
@@ -66,9 +67,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
             onClick={handleColorDropdownBtnClick}
           />
         )}
-        <DayDropdownBtn type="button" onClick={handleDayDropdownBtnClick}>
-          {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
-        </DayDropdownBtn>
+        {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
       </DropdownMenu>
       <DropdownPopper isDropdownOpen={isDayDropdownOpen}>
         <DayBox>
@@ -108,8 +107,10 @@ const DropdownBox = styled.div`
   z-index: 1;
 `;
 
-const DropdownMenu = styled(Flex)`
+const DropdownMenu = styled.button`
   position: absolute;
+  display: flex;
+  align-items: center;
   height: 46px;
   width: 100%;
   color: ${color.gray3};
@@ -123,12 +124,13 @@ const DropdownMenu = styled(Flex)`
 const SelectedDay = styled(Description)`
   flex-grow: 1;
   font-weight: 700;
+  text-align: left;
 `;
 
 const DropdownPopper = styled.div<{ isDropdownOpen: boolean }>`
   position: absolute;
   top: 23px;
-  width: 364px;
+  width: 100%;
   background: #ffffff;
   border: 0.5px solid #4d77ff;
   border-bottom-left-radius: 23px;
@@ -164,14 +166,6 @@ const DayMenu = styled.li`
   &:hover {
     color: #456ceb;
     background-color: #ecf0ff;
-  }
-`;
-
-const DayDropdownBtn = styled.button`
-  &:hover {
-    path {
-      stroke: ${color.blue3};
-    }
   }
 `;
 

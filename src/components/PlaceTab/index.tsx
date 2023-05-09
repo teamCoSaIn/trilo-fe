@@ -83,27 +83,31 @@ const PlaceTab = () => {
   ) => {
     event.preventDefault();
     const isInputValid = placeSearchInputRegExp.test(inputValue);
-    if (placesService && isInputValid && mapInstance) {
-      setCurLocation({
-        lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
-        lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
-      });
-      if (currAutocompleteIdx === 0) {
-        setSearchText(inputValue);
-      } else if (currAutocompleteIdx !== 0 && autocompleteDataList) {
-        const selectedAutocomplete =
-          autocompleteDataList[currAutocompleteIdx - 1].mainText;
-        setInputValue(selectedAutocomplete);
-        setSearchText(selectedAutocomplete);
+    if (placesService && mapInstance) {
+      if (isInputValid) {
+        setCurLocation({
+          lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
+          lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
+        });
+        if (currAutocompleteIdx === 0) {
+          setSearchText(inputValue);
+        } else if (currAutocompleteIdx !== 0 && autocompleteDataList) {
+          const selectedAutocomplete =
+            autocompleteDataList[currAutocompleteIdx - 1].mainText;
+          setInputValue(selectedAutocomplete);
+          setSearchText(selectedAutocomplete);
+        }
+        setIsFirstRender(false);
+        inputRef.current?.blur();
+      } else if (inputValue === '') {
+        alert('값을 입력해주세요.');
+      } else if (inputValue.length > 85) {
+        alert('85자 이하의 글자만 검색할 수 있습니다.');
+      } else {
+        alert('<, > 는 검색어에 포함할 수 없습니다.');
       }
-      setIsFirstRender(false);
-      inputRef.current?.blur();
-    } else if (inputValue === '') {
-      alert('값을 입력해주세요.');
-    } else if (inputValue.length > 85) {
-      alert('85자 이하의 글자만 검색할 수 있습니다.');
     } else {
-      alert('<, > 는 검색어에 포함할 수 없습니다.');
+      alert('google map api 오류');
     }
   };
 

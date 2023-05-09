@@ -11,13 +11,11 @@ const useSearchPlacesByText = (
   return useQuery(
     ['placeList', searchText, latlng],
     () => {
-      if (placesService && latlng) {
+      if (placesService) {
         return searchPlacesByText(searchText, placesService, latlng);
       }
       return new Promise<[]>(resolve => {
-        setTimeout(() => {
-          resolve([]);
-        }, 2000);
+        resolve([]);
       });
     },
     { staleTime: Infinity, cacheTime: Infinity, enabled: !isFirstRender }

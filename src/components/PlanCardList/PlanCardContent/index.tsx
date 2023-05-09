@@ -6,6 +6,7 @@ import { PlanCardData } from '@/api/planCard';
 import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
 import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
 import color from '@/constants/color';
+import { LOADING_Z_INDEX } from '@/constants/zIndex';
 
 interface PlanCardContentProps {
   planCardData: PlanCardData;
@@ -65,7 +66,7 @@ const DimLayer = styled.div`
     rgba(0, 0, 0, 0.5125) 47.92%,
     rgba(0, 0, 0, 0) 100%
   );
-  z-index: 2;
+  z-index: ${LOADING_Z_INDEX};
   display: flex;
   justify-content: center;
   align-items: center;

@@ -8,7 +8,9 @@ import Logo from '@/components/common/Logo';
 import MuiButton from '@/components/common/MuiButton';
 import MyProfileBtn from '@/components/Header/MyProfileBtn';
 import MyProfileBtnSkeleton from '@/components/Header/MyProfileBtnSkeleton';
+import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
+import { HEADER_Z_INDEX } from '@/constants/zIndex';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Header = () => {
@@ -48,7 +50,9 @@ const HeaderBox = styled.header`
   display: flex;
   align-items: center;
   justify-content: space-between;
+  background-color: ${color.white};
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+  z-index: ${HEADER_Z_INDEX};
 `;
 
 const HeaderLink = styled(Link)`

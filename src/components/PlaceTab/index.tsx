@@ -14,6 +14,7 @@ import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
 import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
 import LAT_LNG_SEOUL from '@/constants/latlng';
+import { PLACE_SEARCH_INPUT_Z_INDEX } from '@/constants/zIndex';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import {
   PlacesService,
@@ -375,7 +376,7 @@ const PlaceSearchInput = styled.input`
   font-size: 16px;
   font-weight: 400;
   line-height: 16px;
-  z-index: 2;
+  z-index: ${PLACE_SEARCH_INPUT_Z_INDEX};
 `;
 
 const AutocompleteDropDown = styled.div<{ isVisible: boolean }>`
@@ -388,7 +389,6 @@ const AutocompleteDropDown = styled.div<{ isVisible: boolean }>`
   border-bottom-left-radius: 15px;
   border-bottom-right-radius: 15px;
   background-color: #ecf0ff;
-  z-index: 1;
 `;
 
 const AutocompleteListBox = styled.ul`
@@ -436,7 +436,7 @@ const SearchIconBtn = styled.button`
   display: flex;
   align-items: center;
   margin: 0 14px;
-  z-index: 2;
+  z-index: ${PLACE_SEARCH_INPUT_Z_INDEX};
 `;
 
 const DeleteIconBtnBox = styled.div`
@@ -445,7 +445,7 @@ const DeleteIconBtnBox = styled.div`
   justify-content: center;
   width: 46px;
   padding: 0 14px;
-  z-index: 2;
+  z-index: ${PLACE_SEARCH_INPUT_Z_INDEX};
 `;
 
 const DeleteIconBtn = styled.button`

@@ -8,6 +8,7 @@ import DateTab from '@/components/DateTab';
 import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
+import { PLAN_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
 import useGetDayList from '@/queryHooks/useGetDayList';
 
 const DATE = 'date';
@@ -67,7 +68,7 @@ const PlanLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   ${props => (props.isWindowFold ? 'transform: translate(-363px);' : null)}
   transition: all .5s;
   background-color: ${color.white};
-  z-index: 4;
+  z-index: ${PLAN_LEFT_WINDOW_Z_INDEX};
 `;
 
 const InnerContents = styled.div`

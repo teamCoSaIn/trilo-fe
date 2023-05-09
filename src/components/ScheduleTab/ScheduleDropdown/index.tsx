@@ -6,9 +6,9 @@ import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import { ReactComponent as WhiteCheckIcon } from '@/assets/whiteCheck.svg';
 import Description from '@/components/common/Description';
-import Flex from '@/components/common/Flex';
 import color from '@/constants/color';
 import DailyPlanColor from '@/constants/dailyPlanColor';
+import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
 
 interface ScheduleDropdownProps {
@@ -104,7 +104,10 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
 
 const DropdownBox = styled.div`
   position: relative;
-  z-index: 1;
+  z-index: ${SCHEDULE_TAB_DROPDOWN_Z_INDEX};
+  -ms-user-select: none;
+  -webkit-user-select: none;
+  user-select: none;
 `;
 
 const DropdownMenu = styled.button`
@@ -118,7 +121,13 @@ const DropdownMenu = styled.button`
   border: 0.5px solid #4d77ff;
   border-radius: 23px;
   padding: 0 27px;
-  z-index: 1;
+  z-index: ${SCHEDULE_TAB_DROPDOWN_Z_INDEX};
+  &:hover {
+    path {
+      stroke: ${color.blue3};
+      stroke-width: 2;
+    }
+  }
 `;
 
 const SelectedDay = styled(Description)`

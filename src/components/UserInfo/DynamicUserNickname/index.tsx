@@ -157,7 +157,6 @@ const ProfileNickname = styled(ProfileValue)<{ nickname: string }>`
       return css`
         &:hover {
           max-width: 100%;
-          z-index: 2;
         }
         &:hover:after {
           content: '${nickname}';

@@ -7,6 +7,7 @@ import Description from '@/components/common/Description';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
+import { PLAN_HEADER_Z_INDEX } from '@/constants/zIndex';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import SelectedDates from '@/states/calendar';
@@ -62,6 +63,7 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  z-index: ${PLAN_HEADER_Z_INDEX};
 `;
 
 const PlanTitle = styled.h2`

@@ -17,11 +17,14 @@ interface ScheduleDropdownProps {
 
 const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
   const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
-  const [isDayDropdownOpen, setIsDayDropdownOpen] = useState<boolean>(false);
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
+
+  const [isDayDropdownOpen, setIsDayDropdownOpen] = useState<boolean>(false);
   const [isColorDropdownOpen, setIsColorDropdownOpen] =
+    useState<boolean>(false);
+  const [isColorDropdownBtnHover, setIsColorDropdownBtnHover] =
     useState<boolean>(false);
 
   const handleDayDropdownBtnClick = () => {
@@ -40,6 +43,14 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
     setIsDayDropdownOpen(false);
   };
 
+  const handleColorDropdownBtnMouseEnter = () => {
+    setIsColorDropdownBtnHover(true);
+  };
+
+  const handleColorDropdownBtnMouseLeave = () => {
+    setIsColorDropdownBtnHover(false);
+  };
+
   useEffect(() => {
     return () => {
       setDayDropdownIdx(-1);
@@ -55,8 +66,11 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
 
   return (
     <DropdownBox>
-      <DropdownMenu type="button" onClick={handleDayDropdownBtnClick}>
-        <SelectedDay fontSize={1.6} color={color.black}>
+      <DropdownMenu
+        onClick={handleDayDropdownBtnClick}
+        isColorDropdownBtnHover={isColorDropdownBtnHover}
+      >
+        <SelectedDay fontSize={1.6}>
           {selectedMenu
             ? `${selectedMenu.name} - ${selectedMenu.date}`
             : '전체일정'}
@@ -65,6 +79,8 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
           <ColorDropdownBtn
             type="button"
             onClick={handleColorDropdownBtnClick}
+            onMouseEnter={handleColorDropdownBtnMouseEnter}
+            onMouseLeave={handleColorDropdownBtnMouseLeave}
           />
         )}
         {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
@@ -110,7 +126,7 @@ const DropdownBox = styled.div`
   user-select: none;
 `;
 
-const DropdownMenu = styled.button`
+const DropdownMenu = styled.div<{ isColorDropdownBtnHover: boolean }>`
   position: absolute;
   display: flex;
   align-items: center;
@@ -122,12 +138,21 @@ const DropdownMenu = styled.button`
   border-radius: 23px;
   padding: 0 27px;
   z-index: ${SCHEDULE_TAB_DROPDOWN_Z_INDEX};
-  &:hover {
-    path {
-      stroke: ${color.blue3};
-      stroke-width: 2;
-    }
-  }
+  cursor: pointer;
+  ${({ isColorDropdownBtnHover }) => {
+    return (
+      !isColorDropdownBtnHover &&
+      css`
+        &:hover {
+          path {
+            stroke: ${color.blue3};
+            stroke-width: 2;
+          }
+          color: #456ceb;
+        }
+      `
+    );
+  }}
 `;
 
 const SelectedDay = styled(Description)`
@@ -184,6 +209,9 @@ const ColorDropdownBtn = styled.button`
   border-radius: 50%;
   background: linear-gradient(180deg, #10bce4 0%, #7756ed 100%);
   margin-right: 25px;
+  &:hover {
+    border: 2px solid #456ceb;
+  }
 `;
 
 const ColorBox = styled.ul`

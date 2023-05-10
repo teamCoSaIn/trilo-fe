@@ -26,6 +26,8 @@ import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 */
 
 const Map = () => {
+  const { id: tripId } = useParams();
+
   const setMapInstance = useSetRecoilState<google.maps.Map | null>(MapInstance);
   const setPlacesService =
     useSetRecoilState<google.maps.places.PlacesService | null>(PlacesService);
@@ -45,7 +47,7 @@ const Map = () => {
   const { id } = useParams();
 
   const { data: tripDaysData } = useGetDayList({
-    planId: id as string,
+    tripId: tripId as string,
   });
 
   const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);

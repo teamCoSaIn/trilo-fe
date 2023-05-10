@@ -66,7 +66,7 @@ const ScheduleTab = () => {
   };
 
   const { data: tripDaysData } = useGetDayList({
-    planId: tripId as string,
+    tripId: tripId as string,
     onSuccess: onSuccessCallback,
   });
 

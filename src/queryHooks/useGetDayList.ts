@@ -4,13 +4,13 @@ import HTTP from '@/api';
 import { PlanDay } from '@/api/planDay';
 
 interface UseGetDayListParam {
-  planId: string;
+  tripId: string;
   onSuccess?: (data: PlanDay[]) => void;
   onError?: () => void;
 }
 
-const useGetDayList = ({ planId, onSuccess, onError }: UseGetDayListParam) => {
-  return useQuery([`dayList${planId}`], () => HTTP.getPlanDayList(planId), {
+const useGetDayList = ({ tripId, onSuccess, onError }: UseGetDayListParam) => {
+  return useQuery([`dayList${tripId}`], () => HTTP.getPlanDayList(tripId), {
     onSuccess,
     onError,
     suspense: true,

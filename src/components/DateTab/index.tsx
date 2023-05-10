@@ -28,7 +28,7 @@ type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
 const DateTab = () => {
   const { id } = useParams();
   const { data: dayList } = useGetDayList({
-    planId: id as string,
+    tripId: id as string,
   });
 
   const firstDate =

@@ -10,7 +10,7 @@ const DateSelector = () => {
   const { id } = useParams();
 
   const { data: tripDaysData } = useGetDayList({
-    planId: id as string,
+    tripId: id as string,
   });
 
   const infoBoxRef = useRef<HTMLDivElement>(null);

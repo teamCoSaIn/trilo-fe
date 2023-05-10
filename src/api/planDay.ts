@@ -20,10 +20,10 @@ interface Coordinate {
   longitude: number;
 }
 
-export const getPlanDayList = async (planId: string) => {
+export const getPlanDayList = async (tripId: string) => {
   const res = await axios<PlanDay[]>({
     method: 'get',
-    url: `/trips/${planId}/days`,
+    url: `/trips/${tripId}/days`,
     requireAuth: true,
   });
   return res.data;

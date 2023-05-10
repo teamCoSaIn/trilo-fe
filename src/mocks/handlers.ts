@@ -355,12 +355,12 @@ const deletePlanCard = rest.delete(
 );
 
 const getPlanDayList = rest.get(
-  '/api/trips/:planId/days',
+  '/api/trips/:tripId/days',
   async (req, res, ctx) => {
     await sleep(2000);
-    const { planId } = req.params;
-    if (planId && planCardIds[planId as string]) {
-      return res(ctx.json(planCardIds[planId as string]));
+    const { tripId } = req.params;
+    if (tripId && planCardIds[tripId as string]) {
+      return res(ctx.json(planCardIds[tripId as string]));
     }
     return res(ctx.status(400));
   }

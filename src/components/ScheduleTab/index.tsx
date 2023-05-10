@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -16,6 +16,7 @@ import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
 import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
+import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
@@ -28,6 +29,7 @@ import {
   SCHEDULE_MARGIN_LEFT,
 } from '@/constants/scheduleDnd';
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
+import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
 import useGetDayList from '@/queryHooks/useGetDayList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
@@ -65,12 +67,15 @@ const ScheduleTab = () => {
     setDropdownMenu(tripDaysData);
   };
 
-  const { data: tripDaysData } = useGetDayList({
+  const { data: tripDaysData, isFetching } = useGetDayList({
     tripId: tripId as string,
     onSuccess: onSuccessCallback,
   });
 
-  const { mutate } = useChangeScheduleOrder();
+  const { mutate: scheduleOrderMutate } = useChangeScheduleOrder();
+
+  const { mutate: deleteMutate, isLoading: isDeleteLoading } =
+    useDeleteSchedule();
 
   const selectedDayList =
     dropdownMenuIdx === -1
@@ -94,7 +99,7 @@ const ScheduleTab = () => {
     )
       return;
 
-    mutate({
+    scheduleOrderMutate({
       tripId,
       scheduleId: draggableId,
       sourceDayId: source.droppableId,
@@ -128,6 +133,18 @@ const ScheduleTab = () => {
 
   const handleTempPopUpBtnClick = () => {
     setIsTempBoxPopUp(prev => !prev);
+  };
+
+  const handleScheduleDeleteBtnClick = (scheduleId: number) => {
+    if (!tripId) {
+      return;
+    }
+    if (window.confirm('찐으로 삭제하시겠습니까?')) {
+      deleteMutate({
+        tripId,
+        scheduleId,
+      });
+    }
   };
 
   const dayDragDropBox = (
@@ -176,7 +193,13 @@ const ScheduleTab = () => {
                                 <PlaceName>{schedule.placeName}</PlaceName>
                               </Place>
                             )}
-                            <ScheduleDeleteBtn>
+                            <ScheduleDeleteBtn
+                              onClick={() =>
+                                handleScheduleDeleteBtnClick(
+                                  schedule.scheduleId
+                                )
+                              }
+                            >
                               <DeleteIcon
                                 width={7}
                                 height={7}
@@ -251,7 +274,11 @@ const ScheduleTab = () => {
                           <PlaceName>{schedule.placeName}</PlaceName>
                         </Place>
                       )}
-                      <ScheduleDeleteBtn>
+                      <ScheduleDeleteBtn
+                        onClick={() =>
+                          handleScheduleDeleteBtnClick(schedule.scheduleId)
+                        }
+                      >
                         <DeleteIcon width={7} height={7} fill={color.gray2} />
                       </ScheduleDeleteBtn>
                     </Schedule>
@@ -290,6 +317,7 @@ const ScheduleTab = () => {
           </DragDropBox>
         ) : null}
       </DragDropContext>
+      {(isDeleteLoading || isFetching) && <DimLoader />}
     </Box>
   );
 };
@@ -437,6 +465,9 @@ const PlaceName = styled.span`
 const ScheduleDeleteBtn = styled.button`
   display: flex;
   align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
 `;
 
 const NoScheduleMessage = styled.span``;

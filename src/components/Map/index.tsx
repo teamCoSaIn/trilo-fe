@@ -4,7 +4,7 @@ import {
   PolylineF,
   InfoBoxF,
 } from '@react-google-maps/api';
-import { useMemo, useState } from 'react';
+import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 
@@ -100,67 +100,75 @@ const Map = () => {
     console.log('trilo marker clicked.', scheduleId);
   };
 
-  const scheduleMarkers = tripDaysData?.map(tripDayData =>
-    tripDayData.schedules.map((scheduleData, idx) => {
-      const triloMarkerDataUrl = convertToDataUrl(
-        createTriloMarkerSvg(idx + 1, tripDayData.color)
-      );
-      return (
-        <MarkerF
-          key={scheduleData.scheduleId}
-          position={{
-            lat: scheduleData.coordinate.latitude,
-            lng: scheduleData.coordinate.longitude,
-          }}
-          options={{
-            icon: triloMarkerDataUrl,
-          }}
-          onClick={event => {
-            handleClickTriloMarker(event, scheduleData.scheduleId);
-          }}
-        />
-      );
-    })
+  const scheduleMarkers = useMemo(
+    () =>
+      tripDaysData?.map(tripDayData =>
+        tripDayData.schedules.map((scheduleData, idx) => {
+          const triloMarkerDataUrl = convertToDataUrl(
+            createTriloMarkerSvg(idx + 1, tripDayData.color)
+          );
+          return (
+            <MarkerF
+              key={scheduleData.scheduleId}
+              position={{
+                lat: scheduleData.coordinate.latitude,
+                lng: scheduleData.coordinate.longitude,
+              }}
+              options={{
+                icon: triloMarkerDataUrl,
+              }}
+              onClick={event => {
+                handleClickTriloMarker(event, scheduleData.scheduleId);
+              }}
+            />
+          );
+        })
+      ),
+    [tripDaysData]
   );
 
-  const schedulePolyLines = tripDaysData
-    ?.filter(tripDayData => tripDayData.schedules.length > 1)
-    .map(tripDayData =>
-      tripDayData.schedules.slice(0, -1).map((scheduleData, idx) => {
-        const path = [
-          {
-            lat: tripDayData.schedules[idx].coordinate.latitude,
-            lng: tripDayData.schedules[idx].coordinate.longitude,
-          },
-          {
-            lat: tripDayData.schedules[idx + 1].coordinate.latitude,
-            lng: tripDayData.schedules[idx + 1].coordinate.longitude,
-          },
-        ];
-        const options = {
-          strokeWeight: 0,
-          icons: [
-            {
-              icon: {
-                path: 'M 0,0 0,2 1,2 1,0 Z',
-                fillColor: tripDayData.color,
-                fillOpacity: 1,
-                scale: 2.8,
-                strokeWeight: 0,
+  const schedulePolyLines = useMemo(
+    () =>
+      tripDaysData
+        ?.filter(tripDayData => tripDayData.schedules.length > 1)
+        .map(tripDayData =>
+          tripDayData.schedules.slice(0, -1).map((scheduleData, idx) => {
+            const path = [
+              {
+                lat: tripDayData.schedules[idx].coordinate.latitude,
+                lng: tripDayData.schedules[idx].coordinate.longitude,
               },
-              repeat: '10px',
-            },
-          ],
-        };
-        return (
-          <PolylineF
-            key={scheduleData.scheduleId}
-            path={path}
-            options={options}
-          />
-        );
-      })
-    );
+              {
+                lat: tripDayData.schedules[idx + 1].coordinate.latitude,
+                lng: tripDayData.schedules[idx + 1].coordinate.longitude,
+              },
+            ];
+            const options = {
+              strokeWeight: 0,
+              icons: [
+                {
+                  icon: {
+                    path: 'M 0,0 0,2 1,2 1,0 Z',
+                    fillColor: tripDayData.color,
+                    fillOpacity: 1,
+                    scale: 2.8,
+                    strokeWeight: 0,
+                  },
+                  repeat: '10px',
+                },
+              ],
+            };
+            return (
+              <PolylineF
+                key={scheduleData.scheduleId}
+                path={path}
+                options={options}
+              />
+            );
+          })
+        ),
+    [tripDaysData]
+  );
 
   return (
     <GoogleMap

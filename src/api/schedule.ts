@@ -22,3 +22,12 @@ export const changeScheduleOrder = async ({
   });
   return res.data;
 };
+
+export const deleteSchedule = async (scheduleId: number) => {
+  const res = await axios({
+    method: 'delete',
+    url: `/schedules/${scheduleId}`,
+    requireAuth: true,
+  });
+  return res.status;
+};

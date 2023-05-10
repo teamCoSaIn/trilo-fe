@@ -376,6 +376,25 @@ const changeScheduleOrder = rest.patch(
   }
 );
 
+const deleteSchedule = rest.delete(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    await sleep(2000);
+
+    const { scheduleId } = req.params;
+    const curTrip = planCardIds['1'];
+    curTrip.forEach(day => {
+      const idx = day.schedules.findIndex(
+        sch => sch.scheduleId === +scheduleId
+      );
+      if (idx !== -1) {
+        day.schedules.splice(idx, 1);
+      }
+    });
+    return res(ctx.status(200));
+  }
+);
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -392,6 +411,7 @@ const handlers = [
   deletePlanCard,
   getPlanDayList,
   changeScheduleOrder,
+  deleteSchedule,
 ];
 
 export default handlers;

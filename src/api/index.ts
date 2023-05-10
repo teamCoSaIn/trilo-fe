@@ -13,7 +13,7 @@ import {
   deletePlanCard,
 } from '@/api/planCard';
 import { getPlanDayList } from '@/api/planDay';
-import { changeScheduleOrder } from '@/api/schedule';
+import { changeScheduleOrder, deleteSchedule } from '@/api/schedule';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
@@ -32,6 +32,7 @@ const HTTP = {
   deletePlanCard,
   getPlanDayList,
   changeScheduleOrder,
+  deleteSchedule,
 };
 
 export default HTTP;

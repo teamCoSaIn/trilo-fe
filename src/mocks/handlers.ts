@@ -149,7 +149,7 @@ const tripDays = [
     dayId: 4,
     tripId: 1,
     date: null,
-    color: '#C5FB6C',
+    color: 'gray',
     schedules: [],
   },
 ];

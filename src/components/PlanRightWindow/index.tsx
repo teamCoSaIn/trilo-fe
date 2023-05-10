@@ -16,6 +16,7 @@ const PlanRightWindowBox = styled.div`
   height: 100%;
   background-color: ${color.white};
   padding: 12px 17px;
+  flex-shrink: 0;
 `;
 
 export default PlanRightWindow;

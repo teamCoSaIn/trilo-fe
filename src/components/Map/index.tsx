@@ -6,7 +6,7 @@ import {
 } from '@react-google-maps/api';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 
 import DateSelector from '@/components/Map/DateSelector';
 import useGetDayList from '@/queryHooks/useGetDayList';
@@ -17,6 +17,7 @@ import {
   GoogleMarkerLatLng,
   InfoBoxVisible,
 } from '@/states/googleMaps';
+import { DropdownIndexFamily } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
 import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 
@@ -37,14 +38,9 @@ const Map = () => {
     );
   const [googleMarkerLatLng, setGoogleMarkerLatLng] =
     useRecoilState(GoogleMarkerLatLng);
-
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
-
-  // TODO: 일정탭에서 설정한 atom으로 변경해야함.
-  const [selectedDateIdx, _] = useState<number>(0);
-
-  const { id } = useParams();
+  const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
 
   const { data: tripDaysData } = useGetDayList({
     tripId: tripId as string,
@@ -100,75 +96,86 @@ const Map = () => {
     console.log('trilo marker clicked.', scheduleId);
   };
 
-  const scheduleMarkers = useMemo(
-    () =>
-      tripDaysData?.map(tripDayData =>
-        tripDayData.schedules.map((scheduleData, idx) => {
-          const triloMarkerDataUrl = convertToDataUrl(
-            createTriloMarkerSvg(idx + 1, tripDayData.color)
-          );
+  const scheduleMarkers = useMemo(() => {
+    if (!tripDaysData) {
+      return [];
+    }
+    return tripDaysData?.map(tripDayData =>
+      tripDayData.schedules.map((scheduleData, idx) => {
+        const triloMarkerDataUrl = convertToDataUrl(
+          createTriloMarkerSvg(idx + 1, tripDayData.color)
+        );
+        return (
+          <MarkerF
+            key={scheduleData.scheduleId}
+            position={{
+              lat: scheduleData.coordinate.latitude,
+              lng: scheduleData.coordinate.longitude,
+            }}
+            options={{
+              icon: triloMarkerDataUrl,
+            }}
+            onClick={event => {
+              handleClickTriloMarker(event, scheduleData.scheduleId);
+            }}
+          />
+        );
+      })
+    );
+  }, [tripDaysData]);
+
+  const schedulePolyLines = useMemo(() => {
+    if (!tripDaysData) {
+      return [];
+    }
+    return tripDaysData
+      .slice(0, -1)
+      ?.filter(tripDayData => tripDayData.schedules.length > 1)
+      .map(tripDayData =>
+        tripDayData.schedules.slice(0, -1).map((scheduleData, idx) => {
+          const path = [
+            {
+              lat: tripDayData.schedules[idx].coordinate.latitude,
+              lng: tripDayData.schedules[idx].coordinate.longitude,
+            },
+            {
+              lat: tripDayData.schedules[idx + 1].coordinate.latitude,
+              lng: tripDayData.schedules[idx + 1].coordinate.longitude,
+            },
+          ];
+          const options = {
+            strokeWeight: 0,
+            icons: [
+              {
+                icon: {
+                  path: 'M 0,0 0,2 1,2 1,0 Z',
+                  fillColor: tripDayData.color,
+                  fillOpacity: 1,
+                  scale: 2.8,
+                  strokeWeight: 0,
+                },
+                repeat: '10px',
+              },
+            ],
+          };
           return (
-            <MarkerF
+            <PolylineF
               key={scheduleData.scheduleId}
-              position={{
-                lat: scheduleData.coordinate.latitude,
-                lng: scheduleData.coordinate.longitude,
-              }}
-              options={{
-                icon: triloMarkerDataUrl,
-              }}
-              onClick={event => {
-                handleClickTriloMarker(event, scheduleData.scheduleId);
-              }}
+              path={path}
+              options={options}
             />
           );
         })
-      ),
-    [tripDaysData]
-  );
+      );
+  }, [tripDaysData]);
 
-  const schedulePolyLines = useMemo(
-    () =>
-      tripDaysData
-        ?.filter(tripDayData => tripDayData.schedules.length > 1)
-        .map(tripDayData =>
-          tripDayData.schedules.slice(0, -1).map((scheduleData, idx) => {
-            const path = [
-              {
-                lat: tripDayData.schedules[idx].coordinate.latitude,
-                lng: tripDayData.schedules[idx].coordinate.longitude,
-              },
-              {
-                lat: tripDayData.schedules[idx + 1].coordinate.latitude,
-                lng: tripDayData.schedules[idx + 1].coordinate.longitude,
-              },
-            ];
-            const options = {
-              strokeWeight: 0,
-              icons: [
-                {
-                  icon: {
-                    path: 'M 0,0 0,2 1,2 1,0 Z',
-                    fillColor: tripDayData.color,
-                    fillOpacity: 1,
-                    scale: 2.8,
-                    strokeWeight: 0,
-                  },
-                  repeat: '10px',
-                },
-              ],
-            };
-            return (
-              <PolylineF
-                key={scheduleData.scheduleId}
-                path={path}
-                options={options}
-              />
-            );
-          })
-        ),
-    [tripDaysData]
-  );
+  const selectedScheduleMarkers =
+    dropdownMenuIdx === -1 ? scheduleMarkers : scheduleMarkers[dropdownMenuIdx];
+
+  const selectedSchedulePolyLines =
+    dropdownMenuIdx === -1
+      ? schedulePolyLines
+      : schedulePolyLines[dropdownMenuIdx];
 
   return (
     <GoogleMap
@@ -194,8 +201,8 @@ const Map = () => {
           )}
         </MarkerF>
       )}
-      {tripDaysData && scheduleMarkers}
-      {tripDaysData && schedulePolyLines}
+      {selectedScheduleMarkers}
+      {selectedSchedulePolyLines}
     </GoogleMap>
   );
 };

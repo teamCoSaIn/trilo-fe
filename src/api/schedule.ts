@@ -6,6 +6,26 @@ interface ChangeScheduleOrderParams {
   destinationDayIdx: number;
 }
 
+export interface Schedule {
+  tripId: number;
+  dayId: number | null;
+  title: string;
+  content: string;
+  placeName: string;
+  lat: number;
+  lng: number;
+}
+
+export const createSchedule = async (schedule: Schedule) => {
+  const res = await axios({
+    method: 'post',
+    url: '/schedules',
+    data: schedule,
+    requireAuth: true,
+  });
+  return res.data;
+};
+
 export const changeScheduleOrder = async ({
   scheduleId,
   destinationDayId,

@@ -66,6 +66,7 @@ const planCardList = [
     endDay: '23.03.27',
   },
 ];
+
 const tripDays = [
   {
     dayId: 1,
@@ -153,6 +154,7 @@ const tripDays = [
     schedules: [],
   },
 ];
+
 const planCardIds: { [index: string]: typeof tripDays } = {
   1: tripDays,
   2: [
@@ -366,6 +368,28 @@ const getPlanDayList = rest.get(
   }
 );
 
+const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
+  const data = await req.json();
+
+  const newSchedule = {
+    scheduleId: Date.now(),
+    title: data.title,
+    placeName: data.placeName,
+    coordinate: {
+      latitude: data.lat,
+      longitude: data.lng,
+    },
+  };
+
+  tripDays.forEach((tripDay, idx, arr) => {
+    if (tripDay.dayId === data.dayId) {
+      arr[idx].schedules.push(newSchedule);
+    }
+  });
+
+  return res(ctx.status(200));
+});
+
 const changeScheduleOrder = rest.patch(
   '/api/schedules/:scheduleId',
   async (req, res, ctx) => {
@@ -410,6 +434,7 @@ const handlers = [
   createPlanCard,
   deletePlanCard,
   getPlanDayList,
+  createSchedule,
   changeScheduleOrder,
   deleteSchedule,
 ];

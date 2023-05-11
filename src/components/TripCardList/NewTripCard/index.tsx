@@ -9,20 +9,20 @@ import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 
-interface NewPlanCardProps {
+interface NewTripCardProps {
   handleClose: () => void;
 }
 
-const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
+const NewTripCard = ({ handleClose }: NewTripCardProps) => {
   const [titleInputValue, setTitleInputValue] = useState('');
-  const newPlanCardRef = useRef<HTMLDivElement>(null);
+  const newTripCardRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    (planCardTitle: string) => HTTP.createPlanCard(planCardTitle),
+    (tripTitle: string) => HTTP.createTrip(tripTitle),
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(['planCardList']);
+        queryClient.invalidateQueries(['tripList']);
       },
     }
   );
@@ -40,8 +40,8 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
 
   const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
     if (
-      newPlanCardRef.current &&
-      newPlanCardRef.current.contains(event.target as HTMLElement)
+      newTripCardRef.current &&
+      newTripCardRef.current.contains(event.target as HTMLElement)
     ) {
       return;
     }
@@ -51,7 +51,7 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
   return (
     <>
       <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-        <PlanCardBox column ref={newPlanCardRef}>
+        <TripCardBox column ref={newTripCardRef}>
           {isLoading && <DimLoader />}
           <LogoBox>
             <LogoIcon fill="white" />
@@ -71,13 +71,13 @@ const NewPlanCard = ({ handleClose }: NewPlanCardProps) => {
               </TitleConfirmBtn>
             </TitleForm>
           </BottomBox>
-        </PlanCardBox>
+        </TripCardBox>
       </ClickAwayListener>
     </>
   );
 };
 
-const PlanCardBox = styled(Flex)`
+const TripCardBox = styled(Flex)`
   width: 245px;
   height: 256px;
   border-radius: 10px;
@@ -122,4 +122,4 @@ const TitleConfirmBtn = styled.button`
   align-items: center;
 `;
 
-export default NewPlanCard;
+export default NewTripCard;

@@ -32,7 +32,7 @@ import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 */
 
 const Map = () => {
-  const { id: tripId } = useParams();
+  const { tripId } = useParams();
 
   const setMapInstance = useSetRecoilState<google.maps.Map | null>(MapInstance);
   const setPlacesService =

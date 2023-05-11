@@ -40,7 +40,7 @@ const ScheduleTab = () => {
     setIsMounted(true);
   }, []);
 
-  const { id: tripId } = useParams();
+  const { tripId } = useParams();
 
   const [dropdownMenu, setDropdownMenu] = useRecoilState(
     DropdownMenuFamily(tripId as string)

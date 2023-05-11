@@ -4,18 +4,18 @@ import styled from 'styled-components';
 
 import Flex from '@/components/common/Flex';
 
-interface PlanCardListSkeletonProps {
-  numOfPlanCard?: number;
+interface TripCardListSkeletonProps {
+  numOfTripCard?: number;
 }
 
 interface DefaultProps {
-  numOfPlanCard: number;
+  numOfTripCard: number;
 }
 
-const PlanCardListSkeleton = ({
-  numOfPlanCard = 7,
-}: PlanCardListSkeletonProps | DefaultProps) => {
-  const SkeletonList = Array.from({ length: numOfPlanCard + 1 }).map(
+const TripCardListSkeleton = ({
+  numOfTripCard = 7,
+}: TripCardListSkeletonProps | DefaultProps) => {
+  const SkeletonList = Array.from({ length: numOfTripCard + 1 }).map(
     (_, idx) => {
       const id = Date.now() + idx;
       return (
@@ -26,13 +26,13 @@ const PlanCardListSkeleton = ({
     }
   );
 
-  return <PlanCardsBox>{SkeletonList}</PlanCardsBox>;
+  return <TripCardListBox>{SkeletonList}</TripCardListBox>;
 };
 
-const PlanCardsBox = styled.div`
+const TripCardListBox = styled.div`
   display: flex;
   flex-wrap: wrap;
   gap: 28px;
 `;
 
-export default PlanCardListSkeleton;
+export default TripCardListSkeleton;

@@ -22,7 +22,7 @@ type Libraries = (
 
 const libraries: Libraries = ['places'];
 
-const TripPlan = () => {
+const Trip = () => {
   const { reset } = useQueryErrorResetBoundary();
 
   const { isLoaded } = useLoadScript({
@@ -49,4 +49,4 @@ const Box = styled(Flex)`
   height: 100%;
 `;
 
-export default TripPlan;
+export default Trip;

@@ -2,10 +2,10 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as PlusIcon } from '@/assets/plus.svg';
-import NewPlanCard from '@/components/PlanCardList/NewPlanCard';
+import NewTripCard from '@/components/TripCardList/NewTripCard';
 import color from '@/constants/color';
 
-const PlanCardAddBtn = () => {
+const TripCardAddBtn = () => {
   const [onCreation, setOnCreation] = useState(false);
 
   const handleAddBtnClick = () => {
@@ -21,7 +21,7 @@ const PlanCardAddBtn = () => {
       <AddBtn onClick={handleAddBtnClick}>
         <PlusIcon width={46} height={46} />
       </AddBtn>
-      {onCreation && <NewPlanCard handleClose={handleClose} />}
+      {onCreation && <NewTripCard handleClose={handleClose} />}
     </>
   );
 };
@@ -39,4 +39,4 @@ const AddBtn = styled.button`
   }
 `;
 
-export default PlanCardAddBtn;
+export default TripCardAddBtn;

@@ -12,10 +12,10 @@ import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
 import { PlaceName } from '@/states/schedule';
 
 const DateSelector = () => {
-  const { id } = useParams();
+  const { tripId } = useParams();
 
   const { data: tripDaysData } = useGetDayList({
-    tripId: id as string,
+    tripId: tripId as string,
   });
 
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
@@ -39,10 +39,10 @@ const DateSelector = () => {
     {
       onSuccess: (_, variables) => {
         if (variables.dayId) {
-          queryClient.invalidateQueries([`dayList${id}`]);
+          queryClient.invalidateQueries([`dayList${tripId}`]);
         } else {
           // TODO: 임시 보관함 쿼리키로 변경
-          queryClient.invalidateQueries([`dayList${id}`]);
+          queryClient.invalidateQueries([`dayList${tripId}`]);
         }
 
         resetGoogleMarkerLatLng();
@@ -76,9 +76,9 @@ const DateSelector = () => {
   };
 
   const handleDateBtnClick = (dayId: number) => {
-    if (id && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
+    if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
       const schedule = {
-        tripId: +id,
+        tripId: +tripId,
         dayId,
         title: placeName || '알 수 없는 장소',
         content: '',
@@ -92,9 +92,9 @@ const DateSelector = () => {
   };
 
   const handleTempBtnClick = () => {
-    if (id && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
+    if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
       const schedule = {
-        tripId: +id,
+        tripId: +tripId,
         dayId: null,
         title: placeName || '알 수 없는 장소',
         content: '',

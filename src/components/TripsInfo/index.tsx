@@ -2,7 +2,7 @@ import React from 'react';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
-import { PlanCardData } from '@/api/planCard';
+import { ITrip } from '@/api/trip';
 import { UserProfile } from '@/api/userInfo';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
@@ -10,8 +10,8 @@ import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
 import useQueries2 from '@/utils/useQueries2';
 
-const PlanCardListInfo = () => {
-  const [{ data: nickname }, { data: numOfPlanCards }] = useQueries2({
+const TripsInfo = () => {
+  const [{ data: nickname }, { data: numOfTrips }] = useQueries2({
     queries: [
       {
         queryKey: ['userProfile'],
@@ -22,12 +22,12 @@ const PlanCardListInfo = () => {
         select: (data: UserProfile) => data.nickname,
       },
       {
-        queryKey: ['planCardList'],
-        queryFn: HTTP.getPlanCardDataList,
+        queryKey: ['tripList'],
+        queryFn: HTTP.getTripList,
         staleTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         suspense: true,
-        select: (data: PlanCardData[]) => data.length,
+        select: (data: ITrip[]) => data.length,
       },
     ],
   });
@@ -39,7 +39,7 @@ const PlanCardListInfo = () => {
           {nickname}님의 여행기록
         </Description>
         <Spacing width={14} />
-        <Label>{numOfPlanCards}개</Label>
+        <Label>{numOfTrips}개</Label>
       </Flex>
       <Spacing height={16} />
       <Description color="#979696" fontSize={1.4}>
@@ -62,4 +62,4 @@ const Label = styled.div`
   font-size: 1.4rem;
 `;
 
-export default PlanCardListInfo;
+export default TripsInfo;

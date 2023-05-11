@@ -1,19 +1,19 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
-import { PlanCardStatus } from '@/api/planCard';
+import { TripCardStatus } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 
-interface PlanCardStatusLabelProps {
-  status: PlanCardStatus;
+interface TripCardStatusLabelProps {
+  status: TripCardStatus;
 }
 
-const PlanCardStatusLabel = ({ status }: PlanCardStatusLabelProps) => {
+const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
   // TODO: 날짜 계산
 
-  const planCardStatusContent = useMemo(() => {
+  const tripCardStatusContent = useMemo(() => {
     switch (status) {
       case 'BEFORE':
         return <>D - 10</>;
@@ -33,11 +33,11 @@ const PlanCardStatusLabel = ({ status }: PlanCardStatusLabelProps) => {
   }, [status]);
 
   return status ? (
-    <PlanStatus status={status}>{planCardStatusContent}</PlanStatus>
+    <PlanStatus status={status}>{tripCardStatusContent}</PlanStatus>
   ) : null;
 };
 
-const PlanStatus = styled.div<{ status: PlanCardStatus }>`
+const PlanStatus = styled.div<{ status: TripCardStatus }>`
   position: absolute;
   top: 16px;
   left: 16px;
@@ -63,4 +63,4 @@ const PlanStatus = styled.div<{ status: PlanCardStatus }>`
   `}
 `;
 
-export default PlanCardStatusLabel;
+export default TripCardStatusLabel;

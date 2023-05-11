@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import { PlanCardData } from '@/api/planCard';
+import { ITrip } from '@/api/trip';
 import { ReactComponent as CameraIcon } from '@/assets/camera.svg';
 import { ReactComponent as EllipsisIcon } from '@/assets/ellipsis.svg';
 import { ReactComponent as MultiplyIcon } from '@/assets/multiply.svg';
@@ -11,24 +11,22 @@ import { ReactComponent as TrashCanIcon } from '@/assets/trash-can.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
-import DynamicPlanCardTitle from '@/components/PlanCardList/DynamicPlanCardTitle';
+import DynamicTripCardTitle from '@/components/TripCardList/DynamicTripCardTitle';
 import color from '@/constants/color';
-import useDeletePlanCard from '@/queryHooks/useDeletePlanCard';
-import IsTitleEditFamily from '@/states/planCard';
+import useDeleteTrip from '@/queryHooks/useDeleteTrip';
+import IsTitleEditFamily from '@/states/trip';
 
-interface PlanCardContentProps {
-  planCardData: PlanCardData;
+interface TripCardContentProps {
+  trip: ITrip;
 }
 
-const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
+const TripCardBottom = ({ trip }: TripCardContentProps) => {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
-  const { mutate, isLoading } = useDeletePlanCard();
-  const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(planCardData.id));
+  const { mutate, isLoading } = useDeleteTrip();
+  const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
   const planPeriod = (
     <PlanPeriod>
-      {planCardData.startDay
-        ? `${planCardData.startDay} ~ ${planCardData.endDay}`
-        : ''}
+      {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : ''}
     </PlanPeriod>
   );
 
@@ -43,7 +41,7 @@ const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
 
   const handleDeleteBtnClick = () => {
     if (window.confirm('찐으로 삭제하시렵니까?')) {
-      mutate(planCardData.id);
+      mutate(trip.tripId);
     }
   };
 
@@ -78,10 +76,7 @@ const PlanCardBottom = ({ planCardData }: PlanCardContentProps) => {
     </OptionBox>
   ) : (
     <BottomBox column alignCenter justifyCenter>
-      <DynamicPlanCardTitle
-        planCardId={planCardData.id}
-        planCardTitle={planCardData.title}
-      />
+      <DynamicTripCardTitle tripCardId={trip.tripId} tripTitle={trip.title} />
       <Spacing height={9} />
       <Wrapper>
         {planPeriod}
@@ -173,4 +168,4 @@ const OptionCloseBtn = styled.button`
   }
 `;
 
-export default PlanCardBottom;
+export default TripCardBottom;

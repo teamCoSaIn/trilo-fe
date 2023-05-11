@@ -2,12 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api/index';
 
-const useDeletePlanCard = () => {
+const useDeleteTrip = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((id: number) => HTTP.deletePlanCard(id), {
+  return useMutation((id: number) => HTTP.deleteTrip(id), {
     onSuccess: () => {
-      queryClient.invalidateQueries(['planCardList']);
+      queryClient.invalidateQueries(['tripList']);
     },
     onError: () => {
       alert('delete failed.');
@@ -15,4 +15,4 @@ const useDeletePlanCard = () => {
   });
 };
 
-export default useDeletePlanCard;
+export default useDeleteTrip;

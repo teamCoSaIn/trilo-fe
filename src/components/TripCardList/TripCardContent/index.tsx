@@ -2,34 +2,32 @@ import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
-import { PlanCardData } from '@/api/planCard';
-import planCardDefaultPic from '@/assets/planCardDefaultPic.png';
-import PlanCardStatusLabel from '@/components/PlanCardList/PlanCardStatusLabel';
+import { ITrip } from '@/api/trip';
+import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
+import TripCardStatusLabel from '@/components/TripCardList/TripCardStatusLabel';
 import color from '@/constants/color';
 import { LOADING_Z_INDEX } from '@/constants/zIndex';
 
-interface PlanCardContentProps {
-  planCardData: PlanCardData;
+interface TripCardContentProps {
+  trip: ITrip;
 }
 
-const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
+const TripCardContent = ({ trip }: TripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
-  const planContentPicUrl = planCardData.picUrl || planCardDefaultPic;
+  const planContentPicUrl = trip.picUrl || tripCardDefaultPic;
 
-  const handlePlanCardMouseEnter = () => {
+  const handleTripCardMouseEnter = () => {
     setIsHover(true);
   };
 
-  const handlePlanCardMouseLeave = () => {
+  const handleTripCardMouseLeave = () => {
     setIsHover(false);
   };
 
   const HoverMask = (
     <DimLayer>
       <PlanBtn>
-        <PlanBtnLink to={`/tripplan/${planCardData.id}`}>
-          계획 수정하기
-        </PlanBtnLink>
+        <PlanBtnLink to={`/triplist/${trip.tripId}`}>계획 수정하기</PlanBtnLink>
       </PlanBtn>
     </DimLayer>
   );
@@ -37,11 +35,11 @@ const PlanCardContent = ({ planCardData }: PlanCardContentProps) => {
   return (
     <PlanContent
       picUrl={planContentPicUrl}
-      onMouseEnter={handlePlanCardMouseEnter}
-      onMouseLeave={handlePlanCardMouseLeave}
+      onMouseEnter={handleTripCardMouseEnter}
+      onMouseLeave={handleTripCardMouseLeave}
     >
       {isHover && HoverMask}
-      <PlanCardStatusLabel status={planCardData.status} />
+      <TripCardStatusLabel status={trip.status} />
     </PlanContent>
   );
 };
@@ -92,4 +90,4 @@ const PlanBtnLink = styled(Link)`
   font-size: 1.6rem;
 `;
 
-export default PlanCardContent;
+export default TripCardContent;

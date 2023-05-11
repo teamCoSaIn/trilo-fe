@@ -14,11 +14,11 @@ import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
 const PlanHeader = () => {
-  const { id } = useParams();
+  const { tripId } = useParams();
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nickname } = useGetUserProfile({ selectKey: 'nickname' });
   const { data: dayList } = useGetDayList({
-    tripId: id as string,
+    tripId: tripId as string,
   });
   const setSelectedDates = useSetRecoilState(SelectedDates);
 

@@ -3,7 +3,7 @@ import Skeleton from '@mui/material/Skeleton';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 
-const PlanCardListInfoSkeleton = () => {
+const TripsInfoSkeleton = () => {
   return (
     <Flex column>
       <Skeleton variant="rounded" width={200} height={23} />
@@ -13,4 +13,4 @@ const PlanCardListInfoSkeleton = () => {
   );
 };
 
-export default PlanCardListInfoSkeleton;
+export default TripsInfoSkeleton;

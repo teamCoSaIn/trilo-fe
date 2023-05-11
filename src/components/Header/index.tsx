@@ -32,7 +32,7 @@ const Header = () => {
       <Logo width={76} height={50} />
       <Flex alignCenter>
         <MuiButton width={124}>
-          <HeaderLink to="/tripplan-list">나의 여행 계획</HeaderLink>
+          <HeaderLink to="/triplist">나의 여행 계획</HeaderLink>
         </MuiButton>
         {userStatusBtn}
       </Flex>

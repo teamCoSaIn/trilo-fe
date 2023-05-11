@@ -15,9 +15,9 @@ const DATE = 'date';
 const PLACE = 'place';
 
 const PlanLeftWindow = () => {
-  const { id } = useParams();
+  const { tripId } = useParams();
   const { data: dayList } = useGetDayList({
-    tripId: id as string,
+    tripId: tripId as string,
   });
   const initFocusedTab = dayList && dayList[0]?.date ? PLACE : DATE;
 

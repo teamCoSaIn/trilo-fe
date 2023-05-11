@@ -26,9 +26,9 @@ const TRANSITION_WINDOW_HEIGHT = CALENDAR_HEIGHT * 2 + 30;
 type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
-  const { id } = useParams();
+  const { tripId } = useParams();
   const { data: dayList } = useGetDayList({
-    tripId: id as string,
+    tripId: tripId as string,
   });
 
   const firstDate =

@@ -6,31 +6,31 @@ import styled from 'styled-components';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
-import useChangePlanCardTitle from '@/queryHooks/useChangePlanCardTitle';
-import IsTitleEditFamily from '@/states/planCard';
+import useChangeTripTitle from '@/queryHooks/useChangeTripTitle';
+import IsTitleEditFamily from '@/states/trip';
 
-interface PlanCardTitleProps {
-  planCardTitle: string;
-  planCardId: number;
+interface TripCardTitleProps {
+  tripTitle: string;
+  tripCardId: number;
 }
 
-const DynamicPlanCardTitle = ({
-  planCardId,
-  planCardTitle,
-}: PlanCardTitleProps) => {
+const DynamicTripCardTitle = ({
+  tripCardId,
+  tripTitle,
+}: TripCardTitleProps) => {
   const [isTitleEdit, setIsTitleEdit] = useRecoilState(
-    IsTitleEditFamily(planCardId)
+    IsTitleEditFamily(tripCardId)
   );
   const [titleInputValue, setTitleInputValue] = useState('');
 
   const titleFormRef = useRef<HTMLFormElement>(null);
 
-  const { mutate } = useChangePlanCardTitle();
+  const { mutate } = useChangeTripTitle();
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (planCardTitle !== titleInputValue) {
-      mutate({ title: titleInputValue, id: planCardId });
+    if (tripTitle !== titleInputValue) {
+      mutate({ title: titleInputValue, id: tripCardId });
     }
     setTitleInputValue('');
     setIsTitleEdit(false);
@@ -59,7 +59,7 @@ const DynamicPlanCardTitle = ({
         <TitleEditInput
           type="text"
           value={titleInputValue}
-          placeholder={planCardTitle}
+          placeholder={tripTitle}
           onChange={handleTitleInputChange}
           autoFocus
           maxLength={20}
@@ -72,7 +72,7 @@ const DynamicPlanCardTitle = ({
   ) : (
     <Box>
       <Description color={color.gray3} fontSize={1.6}>
-        {planCardTitle}
+        {tripTitle}
       </Description>
     </Box>
   );
@@ -110,4 +110,4 @@ const TitleConfirmBtn = styled.button`
   align-items: center;
 `;
 
-export default DynamicPlanCardTitle;
+export default DynamicTripCardTitle;

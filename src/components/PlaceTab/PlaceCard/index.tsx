@@ -11,6 +11,7 @@ import {
   PlaceCardLocation,
   GoogleMarkerLatLng,
 } from '@/states/googleMaps';
+import { PlaceName } from '@/states/schedule';
 
 interface PlaceCardProps {
   name: string | undefined;
@@ -35,6 +36,7 @@ const PlaceCard = ({
 }: PlaceCardProps) => {
   const mapInstance = useRecoilValue(MapInstance);
   const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
+  const setPlaceName = useSetRecoilState(PlaceName);
 
   const dateObj = new Date();
   const dayOfToday = dateObj.getDay();
@@ -55,6 +57,9 @@ const PlaceCard = ({
       const selectedLocation = { lat: location.lat, lng: location.lng };
       mapInstance?.setCenter(selectedLocation);
       setGoogleMarkerLatLng(selectedLocation);
+    }
+    if (name) {
+      setPlaceName(name);
     }
   };
 

@@ -1,4 +1,4 @@
-import { atomFamily } from 'recoil';
+import { atom, atomFamily } from 'recoil';
 
 interface Menu {
   dayId: number;
@@ -15,4 +15,9 @@ export const DropdownMenuFamily = atomFamily<Menu[], string>({
 export const DropdownIndexFamily = atomFamily<number, string>({
   key: 'dropdownIndex',
   default: -1,
+});
+
+export const PlaceName = atom<string>({
+  key: 'placeName',
+  default: '',
 });

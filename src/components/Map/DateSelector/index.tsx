@@ -1,10 +1,15 @@
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import HTTP from '@/api';
+import { Schedule } from '@/api/schedule';
+import DimLoader from '@/components/common/DimLoader';
 import useGetDayList from '@/queryHooks/useGetDayList';
-import { InfoBoxVisible } from '@/states/googleMaps';
+import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
+import { PlaceName } from '@/states/schedule';
 
 const DateSelector = () => {
   const { id } = useParams();
@@ -13,16 +18,37 @@ const DateSelector = () => {
     tripId: id as string,
   });
 
-  const infoBoxRef = useRef<HTMLDivElement>(null);
-
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
+  const googleMarkerLatLng = useRecoilValue(GoogleMarkerLatLng);
+  const placeName = useRecoilValue(PlaceName);
+  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
+
+  const infoBoxRef = useRef<HTMLDivElement>(null);
 
   const handleClickAway = useCallback((event: MouseEvent) => {
     if (isDateSelectorVisible && event.target !== infoBoxRef.current) {
       setIsDateSelectorVisible(false);
     }
   }, []);
+
+  const queryClient = useQueryClient();
+
+  const { mutate, isLoading } = useMutation(
+    (schedule: Schedule) => HTTP.createSchedule(schedule),
+    {
+      onSuccess: (_, variables) => {
+        if (variables.dayId) {
+          queryClient.invalidateQueries([`dayList${id}`]);
+        } else {
+          // TODO: 임시 보관함 쿼리키로 변경
+          queryClient.invalidateQueries([`dayList${id}`]);
+        }
+
+        resetGoogleMarkerLatLng();
+      },
+    }
+  );
 
   useEffect(() => {
     if (isDateSelectorVisible) {
@@ -33,16 +59,52 @@ const DateSelector = () => {
     };
   }, []);
 
-  const handleClickInfoBox = (event: React.MouseEvent) => {
+  const handleInfoBoxClick = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
 
-  const handleWheelInfoBox = (event: React.WheelEvent) => {
+  const handleInfoBoxWheel = (event: React.WheelEvent) => {
     event.stopPropagation();
   };
 
-  const handleMouseDownInfoBox = (event: React.MouseEvent) => {
+  const handleInfoBoxMouseDown = (event: React.MouseEvent) => {
     event.stopPropagation();
+  };
+
+  const handleInfoBoxDoubleClick = (event: React.MouseEvent) => {
+    event.stopPropagation();
+  };
+
+  const handleDateBtnClick = (dayId: number) => {
+    if (id && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
+      const schedule = {
+        tripId: +id,
+        dayId,
+        title: placeName || '알 수 없는 장소',
+        content: '',
+        placeName: placeName || '알 수 없는 장소',
+        lat: googleMarkerLatLng.lat,
+        lng: googleMarkerLatLng.lng,
+      };
+      mutate(schedule);
+      setIsDateSelectorVisible(false);
+    }
+  };
+
+  const handleTempBtnClick = () => {
+    if (id && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
+      const schedule = {
+        tripId: +id,
+        dayId: null,
+        title: placeName || '알 수 없는 장소',
+        content: '',
+        placeName: placeName || '알 수 없는 장소',
+        lat: googleMarkerLatLng.lat,
+        lng: googleMarkerLatLng.lng,
+      };
+      mutate(schedule);
+      setIsDateSelectorVisible(false);
+    }
   };
 
   const dateSelectorDateList = tripDaysData
@@ -51,25 +113,31 @@ const DateSelector = () => {
       const date = tripDayData.date?.split('-').join('.').substring(2);
       return (
         <DateSelectorDateItem key={tripDayData.dayId}>
-          <DateSelectorDateBtn>{`Day ${
-            idx + 1
-          } - ${date}`}</DateSelectorDateBtn>
+          <DateSelectorDateBtn
+            onClick={() => {
+              handleDateBtnClick(tripDayData.dayId);
+            }}
+          >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
         </DateSelectorDateItem>
       );
     });
 
   return (
     <DateSelectorBox
-      onClick={handleClickInfoBox}
-      onWheel={handleWheelInfoBox}
-      onMouseDown={handleMouseDownInfoBox}
+      onClick={handleInfoBoxClick}
+      onWheel={handleInfoBoxWheel}
+      onMouseDown={handleInfoBoxMouseDown}
+      onDoubleClick={handleInfoBoxDoubleClick}
       ref={infoBoxRef}
     >
       <DateSelctorHeader>일정 추가하기</DateSelctorHeader>
       <DateSelectorDateListBox>{dateSelectorDateList}</DateSelectorDateListBox>
       <DateSelectorTempStorageBox>
-        <DateSelectorDateBtn>임시 보관함</DateSelectorDateBtn>
+        <DateSelectorDateBtn onClick={handleTempBtnClick}>
+          임시 보관함
+        </DateSelectorDateBtn>
       </DateSelectorTempStorageBox>
+      {isLoading && <DimLoader />}
     </DateSelectorBox>
   );
 };

@@ -6,7 +6,12 @@ import {
 } from '@react-google-maps/api';
 import { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+  useRecoilState,
+  useRecoilValue,
+  useResetRecoilState,
+  useSetRecoilState,
+} from 'recoil';
 
 import DateSelector from '@/components/Map/DateSelector';
 import useGetDayList from '@/queryHooks/useGetDayList';
@@ -17,7 +22,7 @@ import {
   GoogleMarkerLatLng,
   InfoBoxVisible,
 } from '@/states/googleMaps';
-import { DropdownIndexFamily } from '@/states/schedule';
+import { DropdownIndexFamily, PlaceName } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
 import { createTriloMarkerSvg } from '@/utils/createMarkerSvg';
 
@@ -41,6 +46,7 @@ const Map = () => {
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
+  const resetPlaceName = useResetRecoilState(PlaceName);
 
   const { data: tripDaysData } = useGetDayList({
     tripId: tripId as string,
@@ -83,6 +89,7 @@ const Map = () => {
       };
       setGoogleMarkerLatLng(selectedLocation);
     }
+    resetPlaceName();
   };
 
   const handleClickGoogleMarker = () => {

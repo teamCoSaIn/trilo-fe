@@ -14,7 +14,7 @@ import {
 } from 'recoil';
 
 import DateSelector from '@/components/Map/DateSelector';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import {
   PlacesService,
   MapInstance,
@@ -48,7 +48,7 @@ const Map = () => {
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
   const resetPlaceName = useResetRecoilState(PlaceName);
 
-  const { data: tripDaysData } = useGetDayList({
+  const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: tripId as string,
   });
 
@@ -104,13 +104,13 @@ const Map = () => {
   };
 
   const scheduleMarkers = useMemo(() => {
-    if (!tripDaysData) {
+    if (!dailyPlanListData) {
       return [];
     }
-    return tripDaysData?.map(tripDayData =>
-      tripDayData.schedules.map((scheduleData, idx) => {
+    return dailyPlanListData?.map(dailyPlanData =>
+      dailyPlanData.schedules.map((scheduleData, idx) => {
         const triloMarkerDataUrl = convertToDataUrl(
-          createTriloMarkerSvg(idx + 1, tripDayData.color)
+          createTriloMarkerSvg(idx + 1, dailyPlanData.color)
         );
         return (
           <MarkerF
@@ -129,52 +129,49 @@ const Map = () => {
         );
       })
     );
-  }, [tripDaysData]);
+  }, [dailyPlanListData]);
 
   const schedulePolyLines = useMemo(() => {
-    if (!tripDaysData) {
+    if (!dailyPlanListData) {
       return [];
     }
-    return tripDaysData
-      .slice(0, -1)
-      ?.filter(tripDayData => tripDayData.schedules.length > 1)
-      .map(tripDayData =>
-        tripDayData.schedules.slice(0, -1).map((scheduleData, idx) => {
-          const path = [
+    return dailyPlanListData.slice(0, -1).map(dailyPlanData =>
+      dailyPlanData.schedules.slice(0, -1).map((scheduleData, idx) => {
+        const path = [
+          {
+            lat: dailyPlanData.schedules[idx].coordinate.latitude,
+            lng: dailyPlanData.schedules[idx].coordinate.longitude,
+          },
+          {
+            lat: dailyPlanData.schedules[idx + 1].coordinate.latitude,
+            lng: dailyPlanData.schedules[idx + 1].coordinate.longitude,
+          },
+        ];
+        const options = {
+          strokeWeight: 0,
+          icons: [
             {
-              lat: tripDayData.schedules[idx].coordinate.latitude,
-              lng: tripDayData.schedules[idx].coordinate.longitude,
-            },
-            {
-              lat: tripDayData.schedules[idx + 1].coordinate.latitude,
-              lng: tripDayData.schedules[idx + 1].coordinate.longitude,
-            },
-          ];
-          const options = {
-            strokeWeight: 0,
-            icons: [
-              {
-                icon: {
-                  path: 'M 0,0 0,2 1,2 1,0 Z',
-                  fillColor: tripDayData.color,
-                  fillOpacity: 1,
-                  scale: 2.8,
-                  strokeWeight: 0,
-                },
-                repeat: '10px',
+              icon: {
+                path: 'M 0,0 0,2 1,2 1,0 Z',
+                fillColor: dailyPlanData.color,
+                fillOpacity: 1,
+                scale: 2.8,
+                strokeWeight: 0,
               },
-            ],
-          };
-          return (
-            <PolylineF
-              key={scheduleData.scheduleId}
-              path={path}
-              options={options}
-            />
-          );
-        })
-      );
-  }, [tripDaysData]);
+              repeat: '10px',
+            },
+          ],
+        };
+        return (
+          <PolylineF
+            key={scheduleData.scheduleId}
+            path={path}
+            options={options}
+          />
+        );
+      })
+    );
+  }, [dailyPlanListData]);
 
   const selectedScheduleMarkers =
     dropdownMenuIdx === -1 ? scheduleMarkers : scheduleMarkers[dropdownMenuIdx];

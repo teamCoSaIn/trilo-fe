@@ -29,8 +29,9 @@ const MyProfileBtn = () => {
   const anchorRef = useRef<HTMLButtonElement>(null);
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
-  const { data } = useGetUserProfile({ selectKey: 'imgUrl' });
-  const userProfileImgUrl = data as string;
+  const { data: userProfileImgUrlData } = useGetUserProfile({
+    selectKey: 'imgUrl',
+  });
 
   const handleToggle = () => {
     setOpen(prevOpen => !prevOpen);
@@ -93,7 +94,7 @@ const MyProfileBtn = () => {
         aria-haspopup="true"
         onClick={handleToggle}
       >
-        <UserProfileImg profileImgUrl={userProfileImgUrl} />
+        <UserProfileImg profileImgUrl={userProfileImgUrlData as string} />
       </MuiButton>
       <Popper
         open={open}

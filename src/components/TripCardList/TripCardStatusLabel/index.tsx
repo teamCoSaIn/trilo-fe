@@ -33,11 +33,13 @@ const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
   }, [status]);
 
   return status ? (
-    <PlanStatus status={status}>{tripCardStatusContent}</PlanStatus>
+    <TripCardStatusLabelBox status={status}>
+      {tripCardStatusContent}
+    </TripCardStatusLabelBox>
   ) : null;
 };
 
-const PlanStatus = styled.div<{ status: TripCardStatus }>`
+const TripCardStatusLabelBox = styled.div<{ status: TripCardStatus }>`
   position: absolute;
   top: 16px;
   left: 16px;

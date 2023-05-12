@@ -1,13 +1,13 @@
 import { atom, atomFamily } from 'recoil';
 
-interface Menu {
-  dayId: number;
+interface IMenu {
+  dailyPlanId: number;
   name: string;
   date: string;
   color: string;
 }
 
-export const DropdownMenuFamily = atomFamily<Menu[], string>({
+export const DropdownMenuFamily = atomFamily<IMenu[], string>({
   key: 'dropdownMenu',
   default: [],
 });

@@ -7,23 +7,27 @@ import Description from '@/components/common/Description';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
-import { PLAN_HEADER_Z_INDEX } from '@/constants/zIndex';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import { TRIP_HEADER_Z_INDEX } from '@/constants/zIndex';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
-const PlanHeader = () => {
+const TripHeader = () => {
   const { tripId } = useParams();
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
-  const { data: nickname } = useGetUserProfile({ selectKey: 'nickname' });
-  const { data: dayList } = useGetDayList({
+  const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
+  const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: tripId as string,
   });
   const setSelectedDates = useSetRecoilState(SelectedDates);
 
-  const startDate = dayList && dayList[0]?.date && new Date(dayList[0].date);
-  const endDateData = dayList && dayList[dayList.length - 2]?.date;
+  const startDate =
+    dailyPlanListData &&
+    dailyPlanListData[0]?.date &&
+    new Date(dailyPlanListData[0].date);
+  const endDateData =
+    dailyPlanListData && dailyPlanListData[dailyPlanListData.length - 2]?.date;
   const endDate = endDateData && new Date(endDateData);
 
   const disabled = !startDate || !endDate;
@@ -40,7 +44,7 @@ const PlanHeader = () => {
 
   return (
     <Box>
-      <PlanTitle>{nickname as string}님의 여행</PlanTitle>
+      <TripTitle>{nicknameData as string}님의 여행</TripTitle>
       <Spacing height={10} />
       <Period disabled={disabled}>
         <Description>{transformedStartDate}</Description>
@@ -63,10 +67,10 @@ const Box = styled.div`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  z-index: ${PLAN_HEADER_Z_INDEX};
+  z-index: ${TRIP_HEADER_Z_INDEX};
 `;
 
-const PlanTitle = styled.h2`
+const TripTitle = styled.h2`
   font-size: 1.4rem;
   font-weight: 700;
 `;
@@ -88,4 +92,4 @@ const Period = styled.div<{ disabled: boolean }>`
   color: ${color.gray3};
 `;
 
-export default PlanHeader;
+export default TripHeader;

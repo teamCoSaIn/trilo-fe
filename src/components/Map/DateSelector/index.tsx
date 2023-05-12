@@ -7,14 +7,14 @@ import styled from 'styled-components';
 import HTTP from '@/api';
 import { Schedule } from '@/api/schedule';
 import DimLoader from '@/components/common/DimLoader';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
 import { PlaceName } from '@/states/schedule';
 
 const DateSelector = () => {
   const { tripId } = useParams();
 
-  const { data: tripDaysData } = useGetDayList({
+  const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: tripId as string,
   });
 
@@ -39,10 +39,10 @@ const DateSelector = () => {
     {
       onSuccess: (_, variables) => {
         if (variables.dayId) {
-          queryClient.invalidateQueries([`dayList${tripId}`]);
+          queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
         } else {
           // TODO: 임시 보관함 쿼리키로 변경
-          queryClient.invalidateQueries([`dayList${tripId}`]);
+          queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
         }
 
         resetGoogleMarkerLatLng();
@@ -75,25 +75,25 @@ const DateSelector = () => {
     event.stopPropagation();
   };
 
-  const handleDateBtnClick = (dayId: number) => {
+  const handleDateBtnClick = (dailyPlanId: number) => {
     if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
-      const schedule = {
+      const newSchedule = {
         tripId: +tripId,
-        dayId,
+        dayId: dailyPlanId,
         title: placeName || '알 수 없는 장소',
         content: '',
         placeName: placeName || '알 수 없는 장소',
         lat: googleMarkerLatLng.lat,
         lng: googleMarkerLatLng.lng,
       };
-      mutate(schedule);
+      mutate(newSchedule);
       setIsDateSelectorVisible(false);
     }
   };
 
   const handleTempBtnClick = () => {
     if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
-      const schedule = {
+      const newSchedule = {
         tripId: +tripId,
         dayId: null,
         title: placeName || '알 수 없는 장소',
@@ -102,20 +102,20 @@ const DateSelector = () => {
         lat: googleMarkerLatLng.lat,
         lng: googleMarkerLatLng.lng,
       };
-      mutate(schedule);
+      mutate(newSchedule);
       setIsDateSelectorVisible(false);
     }
   };
 
-  const dateSelectorDateList = tripDaysData
-    ?.filter(tripDayData => tripDayData.date)
-    .map((tripDayData, idx) => {
-      const date = tripDayData.date?.split('-').join('.').substring(2);
+  const dateSelectorDateList = dailyPlanListData
+    ?.filter(dailyPlanData => dailyPlanData.date)
+    .map((dailyPlanData, idx) => {
+      const date = dailyPlanData.date?.split('-').join('.').substring(2);
       return (
-        <DateSelectorDateItem key={tripDayData.dayId}>
+        <DateSelectorDateItem key={dailyPlanData.dayId}>
           <DateSelectorDateBtn
             onClick={() => {
-              handleDateBtnClick(tripDayData.dayId);
+              handleDateBtnClick(dailyPlanData.dayId);
             }}
           >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
         </DateSelectorDateItem>

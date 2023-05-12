@@ -14,7 +14,7 @@ interface TripCardContentProps {
 
 const TripCardContent = ({ trip }: TripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
-  const planContentPicUrl = trip.picUrl || tripCardDefaultPic;
+  const tripContentPicUrl = trip.picUrl || tripCardDefaultPic;
 
   const handleTripCardMouseEnter = () => {
     setIsHover(true);
@@ -26,25 +26,27 @@ const TripCardContent = ({ trip }: TripCardContentProps) => {
 
   const HoverMask = (
     <DimLayer>
-      <PlanBtn>
-        <PlanBtnLink to={`/triplist/${trip.tripId}`}>계획 수정하기</PlanBtnLink>
-      </PlanBtn>
+      <TripEditBtn>
+        <TripEditBtnLink to={`/triplist/${trip.tripId}`}>
+          계획 수정하기
+        </TripEditBtnLink>
+      </TripEditBtn>
     </DimLayer>
   );
 
   return (
-    <PlanContent
-      picUrl={planContentPicUrl}
+    <TripContent
+      picUrl={tripContentPicUrl}
       onMouseEnter={handleTripCardMouseEnter}
       onMouseLeave={handleTripCardMouseLeave}
     >
       {isHover && HoverMask}
       <TripCardStatusLabel status={trip.status} />
-    </PlanContent>
+    </TripContent>
   );
 };
 
-const PlanContent = styled.div<{ picUrl: string }>`
+const TripContent = styled.div<{ picUrl: string }>`
   position: relative;
   width: 100%;
   height: 176px;
@@ -70,7 +72,7 @@ const DimLayer = styled.div`
   align-items: center;
 `;
 
-const PlanBtn = styled.button`
+const TripEditBtn = styled.button`
   width: 133px;
   height: 36px;
   border: 0.8px solid ${color.white};
@@ -81,7 +83,7 @@ const PlanBtn = styled.button`
   }
 `;
 
-const PlanBtnLink = styled(Link)`
+const TripEditBtnLink = styled(Link)`
   width: 100%;
   height: 100%;
   display: flex;

@@ -1,5 +1,7 @@
 import { rest } from 'msw';
 
+import { IScheduleResponse, IDailyPlan } from '@/api/plan';
+
 type OauthServerKey = 'google' | 'kakao' | 'naver';
 const sleep = (ms: number) =>
   new Promise(r => {
@@ -67,7 +69,7 @@ const tripList = [
   },
 ];
 
-const tripDays = [
+const tripDays: IDailyPlan[] = [
   {
     dayId: 1,
     tripId: 1,
@@ -292,7 +294,7 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
   return res(
     ctx.json({
       totalDistanceOfPastTrip: 410,
-      totalNumOfTripPlan: 10,
+      totalNumOfTrip: 10,
       badgeImgUrl:
         'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
     })
@@ -350,7 +352,7 @@ const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
-const getPlanDayList = rest.get(
+const getDailyPlanList = rest.get(
   '/api/trips/:tripId/days',
   async (req, res, ctx) => {
     await sleep(2000);
@@ -365,7 +367,7 @@ const getPlanDayList = rest.get(
 const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
   const data = await req.json();
 
-  const newSchedule = {
+  const newSchedule: IScheduleResponse = {
     scheduleId: Date.now(),
     title: data.title,
     placeName: data.placeName,
@@ -387,8 +389,8 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
 const changeScheduleOrder = rest.patch(
   '/api/schedules/:scheduleId',
   async (req, res, ctx) => {
-    const { scheduleId } = req.params;
     // do something
+    // const { scheduleId } = req.params;
     tripDays[0].schedules.length = 1;
     return res(ctx.status(200));
   }
@@ -427,7 +429,7 @@ const handlers = [
   changeTripTitle,
   createTrip,
   deleteTrip,
-  getPlanDayList,
+  getDailyPlanList,
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,

@@ -13,7 +13,7 @@ import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
@@ -27,12 +27,14 @@ type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
   const { tripId } = useParams();
-  const { data: dayList } = useGetDayList({
+  const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: tripId as string,
   });
 
   const firstDate =
-    dayList && dayList[0]?.date ? new Date(dayList[0].date) : new Date();
+    dailyPlanListData && dailyPlanListData[0]?.date
+      ? new Date(dailyPlanListData[0].date)
+      : new Date();
   const [curDateObj, setCurDateObj] = useState(firstDate);
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =

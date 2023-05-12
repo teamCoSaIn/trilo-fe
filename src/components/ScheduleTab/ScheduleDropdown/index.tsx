@@ -61,7 +61,13 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
     dayDropdownIdx === -1 ? null : dayDropdownMenu[dayDropdownIdx];
 
   const handleColorBtnClick = (selectedColor: string) => {
-    console.log('dayId', selectedMenu?.dayId, 'color', selectedColor, '변경');
+    console.log(
+      'dayId',
+      selectedMenu?.dailyPlanId,
+      'color',
+      selectedColor,
+      '변경'
+    );
   };
 
   return (
@@ -89,7 +95,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
         <DayBox>
           {dayDropdownMenu.map((menu, idx) => (
             <DayMenu
-              key={menu.dayId}
+              key={menu.dailyPlanId}
               onClick={() => handleDropdownItemClick(idx)}
             >
               {`${menu.name} - ${menu.date}`}

@@ -14,8 +14,9 @@ import { nicknameRegExp } from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
   // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
-  const { data, isFetching } = useGetUserProfile({ selectKey: 'nickname' });
-  const nickname = data as string;
+  const { data: nicknameData, isFetching } = useGetUserProfile({
+    selectKey: 'nickname',
+  });
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
   const queryClient = useQueryClient();
@@ -53,7 +54,7 @@ const DynamicUserNickname = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (nickname === nicknameInputValue) {
+    if (nicknameData === nicknameInputValue) {
       setIsEdit(false);
       setNicknameInputValue('');
       return;
@@ -79,8 +80,12 @@ const DynamicUserNickname = () => {
       <ProfileKey color={color.blue3} fontSize={1.6}>
         닉네임
       </ProfileKey>
-      <ProfileNickname nickname={nickname} color={color.gray3} fontSize={1.6}>
-        {nickname}
+      <ProfileNickname
+        nickname={nicknameData as string}
+        color={color.gray3}
+        fontSize={1.6}
+      >
+        {nicknameData as string}
       </ProfileNickname>
       <IconBtn type="button" onClick={handleNicknameEditBtnClick}>
         <EditIcon width={16} height={16} />
@@ -97,7 +102,7 @@ const DynamicUserNickname = () => {
         >
           <NicknameEditInput
             type="text"
-            placeholder={nickname}
+            placeholder={nicknameData as string}
             value={nicknameInputValue}
             onChange={handleChangeNicknameInput}
             autoFocus

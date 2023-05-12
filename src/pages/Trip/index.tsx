@@ -8,9 +8,9 @@ import Error from '@/components/common/Error';
 import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader';
 import Map from '@/components/Map';
-import PlanHeader from '@/components/PlanHeader';
-import PlanLeftWindow from '@/components/PlanLeftWindow';
-import PlanRightWindow from '@/components/PlanRightWindow';
+import TripHeader from '@/components/TripHeader';
+import TripLeftWindow from '@/components/TripLeftWindow';
+import TripRightWindow from '@/components/TripRightWindow';
 
 type Libraries = (
   | 'places'
@@ -33,11 +33,11 @@ const Trip = () => {
   return (
     <ErrorBoundary FallbackComponent={Error} onReset={reset}>
       <Suspense fallback={<CircularLoader />}>
-        <PlanHeader />
-        <PlanLeftWindow />
+        <TripHeader />
+        <TripLeftWindow />
         <Box>
           {isLoaded ? <Map /> : <div>loading...</div>}
-          <PlanRightWindow />
+          <TripRightWindow />
         </Box>
       </Suspense>
     </ErrorBoundary>

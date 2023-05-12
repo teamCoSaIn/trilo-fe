@@ -1,14 +1,14 @@
 import axios from '@/api/core';
 
-export interface PlanDay {
+export interface IDailyPlan {
   tripId: number;
   dayId: number;
   date: string | null;
   color: string;
-  schedules: Schedule[];
+  schedules: IScheduleResponse[];
 }
 
-interface Schedule {
+export interface IScheduleResponse {
   scheduleId: number;
   title: string;
   placeName: string;
@@ -20,8 +20,8 @@ interface Coordinate {
   longitude: number;
 }
 
-export const getPlanDayList = async (tripId: string) => {
-  const res = await axios<PlanDay[]>({
+export const getDailyPlanList = async (tripId: string) => {
+  const res = await axios<IDailyPlan[]>({
     method: 'get',
     url: `/trips/${tripId}/days`,
     requireAuth: true,

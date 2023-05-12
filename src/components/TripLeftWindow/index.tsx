@@ -8,18 +8,19 @@ import DateTab from '@/components/DateTab';
 import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
-import { PLAN_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import { TRIP_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 
 const DATE = 'date';
 const PLACE = 'place';
 
-const PlanLeftWindow = () => {
+const TripLeftWindow = () => {
   const { tripId } = useParams();
-  const { data: dayList } = useGetDayList({
+  const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: tripId as string,
   });
-  const initFocusedTab = dayList && dayList[0]?.date ? PLACE : DATE;
+  const initFocusedTab =
+    dailyPlanListData && dailyPlanListData[0]?.date ? PLACE : DATE;
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);
@@ -32,7 +33,7 @@ const PlanLeftWindow = () => {
   };
 
   return (
-    <PlanLeftWindowBox isWindowFold={isWindowFold}>
+    <TripLeftWindowBox isWindowFold={isWindowFold}>
       <TabBtn
         isFocused={curFocusedTab === DATE}
         onClick={event => handleTabClick(event, DATE)}
@@ -55,11 +56,11 @@ const PlanLeftWindow = () => {
       >
         {isWindowFold ? <RightArrowIcon /> : <LeftArrowIcon />}
       </WindowFoldBtn>
-    </PlanLeftWindowBox>
+    </TripLeftWindowBox>
   );
 };
 
-const PlanLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
+const TripLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   position: fixed;
   top: ${HEADER_HEIGHT};
   left: 0;
@@ -68,7 +69,7 @@ const PlanLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   ${props => (props.isWindowFold ? 'transform: translate(-363px);' : null)}
   transition: all .5s;
   background-color: ${color.white};
-  z-index: ${PLAN_LEFT_WINDOW_Z_INDEX};
+  z-index: ${TRIP_LEFT_WINDOW_Z_INDEX};
 `;
 
 const InnerContents = styled.div`
@@ -115,4 +116,4 @@ const TabBtn = styled.button<{ isFocused: boolean }>`
         `}
 `;
 
-export default PlanLeftWindow;
+export default TripLeftWindow;

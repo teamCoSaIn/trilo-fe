@@ -12,10 +12,14 @@ import color from '@/constants/color';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const UserInfo = () => {
-  const { data: userInfo } = useQuery(['userInfo'], () => HTTP.getUserInfo(), {
-    staleTime: 30 * 60 * 1000,
-    suspense: true,
-  });
+  const { data: userInfoData } = useQuery(
+    ['userInfo'],
+    () => HTTP.getUserInfo(),
+    {
+      staleTime: 30 * 60 * 1000,
+      suspense: true,
+    }
+  );
   const setUserStatus = useSetRecoilState(UserStatus);
   const navigate = useNavigate();
   const { isLoading, mutate } = useMutation(['resign'], () => HTTP.resign(), {
@@ -39,7 +43,7 @@ const UserInfo = () => {
 
   return (
     <>
-      <ProfileBadge src={userInfo?.badgeImgUrl} />
+      <ProfileBadge src={userInfoData?.badgeImgUrl} />
       <Spacing height={24} />
       <DynamicUserNickname />
       <Spacing height={12} />
@@ -48,7 +52,7 @@ const UserInfo = () => {
           나의 여정
         </ProfileKey>
         <ProfileValue color={color.gray3} fontSize={1.6}>
-          {`${userInfo?.totalDistanceOfPastTrip} KM`}
+          {`${userInfoData?.totalDistanceOfPastTrip} KM`}
         </ProfileValue>
       </ProfileBox>
       <Spacing height={12} />
@@ -57,7 +61,7 @@ const UserInfo = () => {
           나의 일정
         </ProfileKey>
         <ProfileValue color={color.gray3} fontSize={1.6}>
-          {`${userInfo?.totalNumOfTripPlan} 개`}
+          {`${userInfoData?.totalNumOfTrip} 개`}
         </ProfileValue>
       </ProfileBox>
       <Spacing height={95} />

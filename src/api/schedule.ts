@@ -2,8 +2,8 @@ import axios from '@/api/core';
 
 interface ChangeScheduleOrderParams {
   scheduleId: string;
-  destinationDayId: string;
-  destinationDayIdx: number;
+  destinationDailyPlanId: string;
+  destinationScheduleIdx: number;
 }
 
 export interface Schedule {
@@ -28,15 +28,15 @@ export const createSchedule = async (schedule: Schedule) => {
 
 export const changeScheduleOrder = async ({
   scheduleId,
-  destinationDayId,
-  destinationDayIdx,
+  destinationDailyPlanId,
+  destinationScheduleIdx,
 }: ChangeScheduleOrderParams) => {
   const res = await axios({
     method: 'patch',
     url: `/schedules/${scheduleId}`,
     data: {
-      targetDay: destinationDayId,
-      targetOrder: destinationDayIdx,
+      targetDay: destinationDailyPlanId,
+      targetOrder: destinationScheduleIdx,
     },
     requireAuth: true,
   });

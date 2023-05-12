@@ -3,15 +3,15 @@ import styled from 'styled-components';
 import ScheduleTab from '@/components/ScheduleTab';
 import color from '@/constants/color';
 
-const PlanRightWindow = () => {
+const TripRightWindow = () => {
   return (
-    <PlanRightWindowBox>
+    <TripRightWindowBox>
       <ScheduleTab />
-    </PlanRightWindowBox>
+    </TripRightWindowBox>
   );
 };
 
-const PlanRightWindowBox = styled.div`
+const TripRightWindowBox = styled.div`
   width: 400px;
   height: 100%;
   background-color: ${color.white};
@@ -19,4 +19,4 @@ const PlanRightWindowBox = styled.div`
   flex-shrink: 0;
 `;
 
-export default PlanRightWindow;
+export default TripRightWindow;

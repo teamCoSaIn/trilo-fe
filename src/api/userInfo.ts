@@ -7,7 +7,7 @@ export interface UserProfile {
 
 interface UserInfo {
   totalDistanceOfPastTrip: number;
-  totalNumOfTripPlan: number;
+  totalNumOfTrip: number;
   badgeImgUrl: string;
 }
 

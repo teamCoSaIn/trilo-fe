@@ -24,10 +24,10 @@ const TripCardBottom = ({ trip }: TripCardContentProps) => {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
   const { mutate, isLoading } = useDeleteTrip();
   const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
-  const planPeriod = (
-    <PlanPeriod>
+  const tripPeriod = (
+    <TripPeriod>
       {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : ''}
-    </PlanPeriod>
+    </TripPeriod>
   );
 
   const handleOptionOpenBtnClick = () => {
@@ -79,7 +79,7 @@ const TripCardBottom = ({ trip }: TripCardContentProps) => {
       <DynamicTripCardTitle tripCardId={trip.tripId} tripTitle={trip.title} />
       <Spacing height={9} />
       <Wrapper>
-        {planPeriod}
+        {tripPeriod}
         <OptionOpenBtn onClick={handleOptionOpenBtnClick}>
           <EllipsisIcon />
         </OptionOpenBtn>
@@ -103,7 +103,7 @@ const Wrapper = styled(Flex)`
   padding: 0 8px;
 `;
 
-const PlanPeriod = styled.p`
+const TripPeriod = styled.p`
   display: flex;
   align-items: center;
   color: ${color.gray2};

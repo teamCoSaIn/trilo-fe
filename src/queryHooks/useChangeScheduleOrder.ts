@@ -2,15 +2,15 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
 
 import HTTP from '@/api';
-import { PlanDay } from '@/api/planDay';
+import { IDailyPlan } from '@/api/plan';
 
 interface MutateParams {
   tripId: string;
   scheduleId: string;
-  sourceDayId: string;
-  sourceDayScheduleIdx: number;
-  destinationDayId: string;
-  destinationDayScheduleIdx: number;
+  sourceDailyPlanId: string;
+  sourceScheduleIdx: number;
+  destinationDailyPlanId: string;
+  destinationScheduleIdx: number;
 }
 
 const useChangeScheduleOrder = () => {
@@ -20,104 +20,115 @@ const useChangeScheduleOrder = () => {
     (params: MutateParams) =>
       HTTP.changeScheduleOrder({
         scheduleId: params.scheduleId,
-        destinationDayId: params.destinationDayId,
-        destinationDayIdx: params.destinationDayScheduleIdx,
+        destinationDailyPlanId: params.destinationDailyPlanId,
+        destinationScheduleIdx: params.destinationScheduleIdx,
       }),
     {
       onMutate: async ({
         tripId,
-        sourceDayId,
-        sourceDayScheduleIdx,
-        destinationDayId,
-        destinationDayScheduleIdx,
+        sourceDailyPlanId,
+        sourceScheduleIdx,
+        destinationDailyPlanId,
+        destinationScheduleIdx,
       }: MutateParams) => {
-        await queryClient.cancelQueries([`dayList${tripId}`]);
+        await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
 
-        const previousDayList = queryClient.getQueryData<PlanDay[]>([
-          `dayList${tripId}`,
-        ]);
+        const previousDailyPlanListList = queryClient.getQueryData<
+          IDailyPlan[]
+        >([`dailyPlanList${tripId}`]);
 
-        if (previousDayList) {
-          queryClient.setQueryData<PlanDay[]>(
-            [`dayList${tripId}`],
-            prevDayList => {
-              if (!prevDayList) return prevDayList;
+        if (previousDailyPlanListList) {
+          queryClient.setQueryData<IDailyPlan[]>(
+            [`dailyPlanList${tripId}`],
+            prevDailyPlanList => {
+              if (!prevDailyPlanList) return prevDailyPlanList;
 
               // 1. 같은 Day 내에서 옮기는 경우
-              if (sourceDayId === destinationDayId) {
-                const nextState = produce(
-                  prevDayList,
-                  (draftState: PlanDay[]) => {
-                    const targetDayIdx = draftState.findIndex(
-                      day => day.dayId === +sourceDayId
+              if (sourceDailyPlanId === destinationDailyPlanId) {
+                const nextDailyPlanList = produce(
+                  prevDailyPlanList,
+                  (draftDailyPlanList: IDailyPlan[]) => {
+                    const targetDailyPlanIdx = draftDailyPlanList.findIndex(
+                      dailyPlan => dailyPlan.dayId === +sourceDailyPlanId
                     );
-                    if (targetDayIdx === -1) return prevDayList;
+                    if (targetDailyPlanIdx === -1) return prevDailyPlanList;
 
                     const newSchedules = [
-                      ...draftState[targetDayIdx].schedules,
+                      ...draftDailyPlanList[targetDailyPlanIdx].schedules,
                     ];
                     const [reorderedSchedule] = newSchedules.splice(
-                      sourceDayScheduleIdx,
+                      sourceScheduleIdx,
                       1
                     );
                     newSchedules.splice(
-                      destinationDayScheduleIdx,
+                      destinationScheduleIdx,
                       0,
                       reorderedSchedule
                     );
-                    draftState[targetDayIdx].schedules = newSchedules;
+                    draftDailyPlanList[targetDailyPlanIdx].schedules =
+                      newSchedules;
                   }
                 );
-                return nextState;
+                return nextDailyPlanList;
               }
 
               // 2. Day 간 이동
-              const nextState = produce(prevDayList, draftState => {
-                const sourceDayIdx = draftState.findIndex(
-                  day => day.dayId === +sourceDayId
-                );
-                const destinationDayIdx = draftState.findIndex(
-                  day => day.dayId === +destinationDayId
-                );
-                if (sourceDayIdx === -1 || destinationDayIdx === -1)
-                  return prevDayList;
+              const nextDailyPlanList = produce(
+                prevDailyPlanList,
+                draftDailyPlanList => {
+                  const sourceDailyPlanIdx = draftDailyPlanList.findIndex(
+                    dailyPlan => dailyPlan.dayId === +sourceDailyPlanId
+                  );
+                  const destinationDailyPlanIdx = draftDailyPlanList.findIndex(
+                    dailyPlan => dailyPlan.dayId === +destinationDailyPlanId
+                  );
+                  if (
+                    sourceDailyPlanIdx === -1 ||
+                    destinationDailyPlanIdx === -1
+                  )
+                    return prevDailyPlanList;
 
-                const newSourceSchedules = [
-                  ...draftState[sourceDayIdx].schedules,
-                ];
-                const newDestinationSchedules = [
-                  ...draftState[destinationDayIdx].schedules,
-                ];
-                const [reorderedSchedule] = newSourceSchedules.splice(
-                  sourceDayScheduleIdx,
-                  1
-                );
-                newDestinationSchedules.splice(
-                  destinationDayScheduleIdx,
-                  0,
-                  reorderedSchedule
-                );
-                draftState[sourceDayIdx].schedules = newSourceSchedules;
-                draftState[destinationDayIdx].schedules =
-                  newDestinationSchedules;
-              });
+                  const newSourceSchedules = [
+                    ...draftDailyPlanList[sourceDailyPlanIdx].schedules,
+                  ];
+                  const newDestinationSchedules = [
+                    ...draftDailyPlanList[destinationDailyPlanIdx].schedules,
+                  ];
+                  const [reorderedSchedule] = newSourceSchedules.splice(
+                    sourceScheduleIdx,
+                    1
+                  );
+                  newDestinationSchedules.splice(
+                    destinationScheduleIdx,
+                    0,
+                    reorderedSchedule
+                  );
+                  draftDailyPlanList[sourceDailyPlanIdx].schedules =
+                    newSourceSchedules;
+                  draftDailyPlanList[destinationDailyPlanIdx].schedules =
+                    newDestinationSchedules;
+                }
+              );
 
-              return nextState;
+              return nextDailyPlanList;
             }
           );
         }
 
-        return { previousDayList, tripId };
+        return { previousDailyPlanListList, tripId };
       },
       onError: (
         err,
         variables,
-        context?: { previousDayList: PlanDay[] | undefined; tripId: string }
+        context?: {
+          previousDailyPlanListList: IDailyPlan[] | undefined;
+          tripId: string;
+        }
       ) => {
-        if (context?.previousDayList) {
-          queryClient.setQueryData<PlanDay[]>(
-            [`dayList${context.tripId}`],
-            context.previousDayList
+        if (context?.previousDailyPlanListList) {
+          queryClient.setQueryData<IDailyPlan[]>(
+            [`dailyPlanList${context.tripId}`],
+            context.previousDailyPlanListList
           );
         }
       },

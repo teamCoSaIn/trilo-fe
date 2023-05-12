@@ -9,7 +9,7 @@ interface OAuthBtnProps {
 }
 
 const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
-  const { data: authUrl } = useQuery(
+  const { data: authUrlData } = useQuery(
     [`login-uri-${oauthServerName}`],
     () => HTTP.getLoginUri(oauthServerName),
     {
@@ -19,8 +19,8 @@ const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
   );
 
   const handleOAuthBtnClick = () => {
-    if (authUrl) {
-      window.location.href = authUrl;
+    if (authUrlData) {
+      window.location.href = authUrlData;
     }
   };
 

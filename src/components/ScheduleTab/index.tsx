@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { PlanDay } from '@/api/planDay';
+import { IDailyPlan } from '@/api/plan';
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
@@ -30,7 +30,7 @@ import {
 } from '@/constants/scheduleDnd';
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
 const ScheduleTab = () => {
@@ -53,21 +53,21 @@ const ScheduleTab = () => {
 
   const [isTempBoxPopUp, setIsTempBoxPopUp] = useState(false);
 
-  const onSuccessCallback = (data: PlanDay[]) => {
-    const tripDaysData = data
-      .filter(day => day.date)
-      .map((day, idx) => {
+  const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
+    const newDropdownMenu = dailyPlanListData
+      .filter(dailyPlanData => dailyPlanData.date)
+      .map((dailyPlanData, idx) => {
         return {
-          dayId: day.dayId,
+          dailyPlanId: dailyPlanData.dayId,
           name: `Day${idx + 1}`,
-          date: `${day.date?.replace(/-/g, '.')}`,
-          color: day.color,
+          date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
+          color: dailyPlanData.color,
         };
       });
-    setDropdownMenu(tripDaysData);
+    setDropdownMenu(newDropdownMenu);
   };
 
-  const { data: tripDaysData, isFetching } = useGetDayList({
+  const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
     tripId: tripId as string,
     onSuccess: onSuccessCallback,
   });
@@ -79,10 +79,12 @@ const ScheduleTab = () => {
 
   const selectedDayList =
     dropdownMenuIdx === -1
-      ? tripDaysData?.slice(0, tripDaysData.length - 1)
-      : tripDaysData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
+      ? dailyPlanListData?.slice(0, dailyPlanListData.length - 1)
+      : dailyPlanListData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
-  const tempDay = tripDaysData ? tripDaysData[tripDaysData.length - 1] : null;
+  const tempDay = dailyPlanListData
+    ? dailyPlanListData[dailyPlanListData.length - 1]
+    : null;
 
   const handleDragEnd = (result: DropResult) => {
     if (!tripId) return;
@@ -102,10 +104,10 @@ const ScheduleTab = () => {
     scheduleOrderMutate({
       tripId,
       scheduleId: draggableId,
-      sourceDayId: source.droppableId,
-      sourceDayScheduleIdx: source.index,
-      destinationDayId: destination.droppableId,
-      destinationDayScheduleIdx: destination.index,
+      sourceDailyPlanId: source.droppableId,
+      sourceScheduleIdx: source.index,
+      destinationDailyPlanId: destination.droppableId,
+      destinationScheduleIdx: destination.index,
     });
   };
 
@@ -147,33 +149,33 @@ const ScheduleTab = () => {
     }
   };
 
-  const dayDragDropBox = (
-    <DayList>
-      {selectedDayList?.map((day, dayIdx) => {
+  const dailyPlanDragDropBox = (
+    <DailyPlanList>
+      {selectedDayList?.map((dailyPlan, dailyPlanIdx) => {
         const [dayString, dateString] =
           dropdownMenuIdx === -1
-            ? [dropdownMenu[dayIdx].name, dropdownMenu[dayIdx].date]
+            ? [dropdownMenu[dailyPlanIdx].name, dropdownMenu[dailyPlanIdx].date]
             : [
                 dropdownMenu[dropdownMenuIdx].name,
                 dropdownMenu[dropdownMenuIdx].date,
               ];
         return (
-          <Day key={day.dayId}>
+          <DailyPlan key={dailyPlan.dayId}>
             <Flex alignCenter>
-              <DayIndex>{dayString}</DayIndex>
-              <DayDate>{dateString}</DayDate>
-              <DayColor dayColor={day.color} />
+              <DailyPlanIndex>{dayString}</DailyPlanIndex>
+              <DailyPlanDate>{dateString}</DailyPlanDate>
+              <DailyPlanColor dailyPlanColor={dailyPlan.color} />
             </Flex>
             <Spacing height={10} />
-            <Droppable droppableId={String(day.dayId)}>
+            <Droppable droppableId={String(dailyPlan.dayId)}>
               {(droppableProvided, droppableSnapshot) => (
                 <ScheduleList
                   {...droppableProvided.droppableProps}
                   ref={droppableProvided.innerRef}
-                  isEmpty={!day.schedules.length}
+                  isEmpty={!dailyPlan.schedules.length}
                 >
-                  {day.schedules.length ? (
-                    day.schedules.map((schedule, scheduleIdx) => (
+                  {dailyPlan.schedules.length ? (
+                    dailyPlan.schedules.map((schedule, scheduleIdx) => (
                       <Draggable
                         key={schedule.scheduleId}
                         draggableId={String(schedule.scheduleId)}
@@ -230,13 +232,13 @@ const ScheduleTab = () => {
                 </ScheduleList>
               )}
             </Droppable>
-          </Day>
+          </DailyPlan>
         );
       })}
-    </DayList>
+    </DailyPlanList>
   );
 
-  const tempDragDropBox = (
+  const tempPlanDragDropBox = (
     <TempBox>
       <TempPopUpBtn type="button" onClick={handleTempPopUpBtnClick}>
         {isTempBoxPopUp ? (
@@ -312,8 +314,8 @@ const ScheduleTab = () => {
       >
         {isMounted ? (
           <DragDropBox>
-            {dayDragDropBox}
-            {tempDragDropBox}
+            {dailyPlanDragDropBox}
+            {tempPlanDragDropBox}
           </DragDropBox>
         ) : null}
       </DragDropContext>
@@ -341,7 +343,7 @@ const DragDropBox = styled.div`
   user-select: none;
 `;
 
-const DayList = styled.ul`
+const DailyPlanList = styled.ul`
   flex-grow: 1;
   flex-shrink: 1;
   display: flex;
@@ -357,33 +359,33 @@ const DayList = styled.ul`
   }
 `;
 
-const Day = styled.li`
+const DailyPlan = styled.li`
   flex-shrink: 0;
   display: flex;
   flex-direction: column;
 `;
 
-const DayIndex = styled.h3`
+const DailyPlanIndex = styled.h3`
   font-weight: 700;
   font-size: 1.6rem;
   color: ${color.gray3};
   margin-right: 8px;
 `;
 
-const DayDate = styled.span`
+const DailyPlanDate = styled.span`
   font-weight: 400;
   font-size: 1.2rem;
   color: ${color.gray2};
   margin-right: 10px;
 `;
 
-const DayColor = styled.div<{ dayColor: string }>`
+const DailyPlanColor = styled.div<{ dailyPlanColor: string }>`
   width: 10px;
   height: 10px;
   border-radius: 50%;
   margin-bottom: 2px;
-  ${({ dayColor }) => css`
-    ${dayColor && { backgroundColor: dayColor }}
+  ${({ dailyPlanColor }) => css`
+    ${dailyPlanColor && { backgroundColor: dailyPlanColor }}
   `};
 `;
 

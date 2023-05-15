@@ -3,13 +3,13 @@ import { ReactElement } from 'react';
 
 import HTTP from '@/api';
 
-interface IOAuthBtnProps {
+interface OAuthBtnProps {
   oauthServerName: string;
   oauthServerSvg: ReactElement;
 }
 
-const OAuthBtn = ({ oauthServerName, oauthServerSvg }: IOAuthBtnProps) => {
-  const { data: authUrlData } = useQuery(
+const OAuthBtn = ({ oauthServerName, oauthServerSvg }: OAuthBtnProps) => {
+  const { data: authUrl } = useQuery(
     [`login-uri-${oauthServerName}`],
     () => HTTP.getLoginUri(oauthServerName),
     {
@@ -19,8 +19,8 @@ const OAuthBtn = ({ oauthServerName, oauthServerSvg }: IOAuthBtnProps) => {
   );
 
   const handleOAuthBtnClick = () => {
-    if (authUrlData) {
-      window.location.href = authUrlData;
+    if (authUrl) {
+      window.location.href = authUrl;
     }
   };
 

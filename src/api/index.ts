@@ -4,20 +4,13 @@ import {
   logout,
   refreshAccessToken,
   checkRefreshToken,
-  resign,
 } from '@/api/oauth';
-import { getDailyPlanList } from '@/api/plan';
 import {
-  createSchedule,
-  changeScheduleOrder,
-  deleteSchedule,
-} from '@/api/schedule';
-import {
-  getTripList,
-  changeTripTitle,
-  createTrip,
-  deleteTrip,
-} from '@/api/trip';
+  getPlanCardDataList,
+  changePlanCardTitle,
+  createPlanCard,
+  deletePlanCard,
+} from '@/api/tripPlanList';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
@@ -26,18 +19,13 @@ const HTTP = {
   logout,
   refreshAccessToken,
   checkRefreshToken,
-  resign,
   getUserProfile,
   changeNickname,
   getUserInfo,
-  getTripList,
-  changeTripTitle,
-  createTrip,
-  deleteTrip,
-  getDailyPlanList,
-  createSchedule,
-  changeScheduleOrder,
-  deleteSchedule,
+  getPlanCardDataList,
+  changePlanCardTitle,
+  createPlanCard,
+  deletePlanCard,
 };
 
 export default HTTP;

@@ -31,10 +31,6 @@ export const blueBtnStyle = css`
     background-color: ${color.blue4};
     border: 1px solid ${color.blue4};
   }
-  &:disabled {
-    background-color: ${color.gray2};
-    border: 1px solid ${color.gray2};
-  }
 `;
 
 export const whiteBtnStyle = css`

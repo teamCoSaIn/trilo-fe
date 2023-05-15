@@ -1,7 +1,8 @@
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import HeaderLayout from '@/Layouts/HeaderLayout';
-import { Home, Login, User, Callback, TripList, Trip } from '@/pages';
+import { Home, Login, User, Callback, TripPlanList } from '@/pages';
+import TripPlan from '@/pages/TripPlan';
 import {
   EveryUser,
   OnlyLoginUser,
@@ -17,12 +18,12 @@ const Router = () => {
           <Route index element={<EveryUser page={<Home />} />} />
           <Route path="/user" element={<OnlyLoginUser page={<User />} />} />
           <Route
-            path="/triplist"
-            element={<ExceptLogoutUser page={<TripList />} />}
+            path="/tripplan-list"
+            element={<ExceptLogoutUser page={<TripPlanList />} />}
           />
           <Route
-            path="/triplist/:tripId"
-            element={<ExceptLogoutUser page={<Trip />} />}
+            path="/tripplan/:id"
+            element={<ExceptLogoutUser page={<TripPlan />} />}
           />
         </Route>
         <Route path="/login" element={<ExceptLoginUser page={<Login />} />} />

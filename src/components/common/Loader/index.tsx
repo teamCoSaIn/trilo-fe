@@ -1,7 +1,7 @@
 import Box from '@mui/material/Box';
 import CircularProgress from '@mui/material/CircularProgress';
 
-const CircularLoader = ({ size }: { size?: number }) => {
+const CircularLoader = () => {
   return (
     <Box
       sx={{
@@ -11,13 +11,9 @@ const CircularLoader = ({ size }: { size?: number }) => {
         height: '100%',
       }}
     >
-      <CircularProgress size={size} />
+      <CircularProgress />
     </Box>
   );
-};
-
-CircularLoader.defaultProps = {
-  size: 40,
 };
 
 export default CircularLoader;

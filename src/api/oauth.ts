@@ -1,25 +1,19 @@
-/* eslint-disable import/no-cycle */
+// eslint-disable-next-line import/no-cycle
 import axios from '@/api/core';
 
-export type TToken = string;
-
-interface ITokenInfo {
+interface AccessTokenResponse {
   token_type: string;
   expires_in: number;
-  access_token: TToken;
-  refresh_token: TToken;
+  access_token: string;
   scope: string;
+  refresh_token: string;
 }
 
-interface ICheckRefreshTokenResponse {
+interface CheckRefreshTokenResponse {
   response?: boolean;
 }
 
-interface ILogoutResponse {
-  response?: boolean;
-}
-
-interface IResignResponse {
+interface LogoutResponse {
   response?: boolean;
 }
 
@@ -35,7 +29,7 @@ export const getLoginUri = async (oauthServer: string) => {
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
 export const getAccessToken = async (oauthCode: string, oauthState: string) => {
-  const res = await axios<ITokenInfo>({
+  const res = await axios<AccessTokenResponse>({
     method: 'get',
     url: `/login/oauth2/code?code=${oauthCode}&state=${oauthState}`,
     requireAuth: false,
@@ -45,7 +39,7 @@ export const getAccessToken = async (oauthCode: string, oauthState: string) => {
 
 // 만료된 액세스 토큰을 새로 고침하는 함수
 export const refreshAccessToken = async () => {
-  const res = await axios<ITokenInfo>({
+  const res = await axios<AccessTokenResponse>({
     method: 'get',
     url: `/auth/regeneration`,
     requireAuth: false,
@@ -54,7 +48,7 @@ export const refreshAccessToken = async () => {
 };
 
 export const checkRefreshToken = async () => {
-  const res = await axios<ICheckRefreshTokenResponse>({
+  const res = await axios<CheckRefreshTokenResponse>({
     method: 'get',
     url: `/auth/check`,
     requireAuth: false,
@@ -63,20 +57,10 @@ export const checkRefreshToken = async () => {
 };
 
 export const logout = async () => {
-  const res = await axios<ILogoutResponse>({
+  const res = await axios<LogoutResponse>({
     method: 'get',
     url: `/auth/logout`,
     requireAuth: false,
-  });
-  delete axios.defaults.headers.common.Authorization;
-  return res.data;
-};
-
-export const resign = async () => {
-  const res = await axios<IResignResponse>({
-    method: 'get',
-    url: `/auth/resign`,
-    requireAuth: true,
   });
   delete axios.defaults.headers.common.Authorization;
   return res.data;

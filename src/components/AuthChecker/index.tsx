@@ -5,11 +5,11 @@ import { useSetRecoilState } from 'recoil';
 import HTTP from '@/api';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
-interface IAuthCheckerProps {
+interface AuthProviderProps {
   children: ReactNode;
 }
 
-const AuthChecker = ({ children }: IAuthCheckerProps) => {
+const AuthChecker = ({ children }: AuthProviderProps) => {
   const setUserStatus = useSetRecoilState(UserStatus);
 
   const { data } = useQuery(

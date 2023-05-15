@@ -2,9 +2,10 @@ import { useQuery } from '@tanstack/react-query';
 
 import HTTP from '@/api';
 import { IDailyPlan } from '@/api/plan';
+import { ITrip } from '@/api/trip';
 
 interface IUseGetDailyPlanListParam {
-  tripId: string;
+  tripId: ITrip['tripId'];
   onSuccess?: (data: IDailyPlan[]) => void;
   onError?: () => void;
 }

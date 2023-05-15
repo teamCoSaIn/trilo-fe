@@ -1,16 +1,16 @@
 import { useMemo } from 'react';
 import styled, { css } from 'styled-components';
 
-import { TripCardStatus } from '@/api/trip';
+import { TTripCardStatus } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 
-interface TripCardStatusLabelProps {
-  status: TripCardStatus;
+interface ITripCardStatusLabelProps {
+  status: TTripCardStatus;
 }
 
-const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
+const TripCardStatusLabel = ({ status }: ITripCardStatusLabelProps) => {
   // TODO: 날짜 계산
 
   const tripCardStatusContent = useMemo(() => {
@@ -39,7 +39,7 @@ const TripCardStatusLabel = ({ status }: TripCardStatusLabelProps) => {
   ) : null;
 };
 
-const TripCardStatusLabelBox = styled.div<{ status: TripCardStatus }>`
+const TripCardStatusLabelBox = styled.div<{ status: TTripCardStatus }>`
   position: absolute;
   top: 16px;
   left: 16px;

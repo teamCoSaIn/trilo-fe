@@ -45,6 +45,7 @@ const ScheduleTab = () => {
   const [dropdownMenu, setDropdownMenu] = useRecoilState(
     DropdownMenuFamily(tripId as string)
   );
+
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
 
   const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
@@ -68,7 +69,7 @@ const ScheduleTab = () => {
   };
 
   const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
-    tripId: tripId as string,
+    tripId: +(tripId as string),
     onSuccess: onSuccessCallback,
   });
 
@@ -102,11 +103,11 @@ const ScheduleTab = () => {
       return;
 
     scheduleOrderMutate({
-      tripId,
-      scheduleId: draggableId,
-      sourceDailyPlanId: source.droppableId,
+      tripId: +tripId,
+      scheduleId: +draggableId,
+      sourceDailyPlanId: +source.droppableId,
       sourceScheduleIdx: source.index,
-      destinationDailyPlanId: destination.droppableId,
+      destinationDailyPlanId: +destination.droppableId,
       destinationScheduleIdx: destination.index,
     });
   };
@@ -143,7 +144,7 @@ const ScheduleTab = () => {
     }
     if (window.confirm('찐으로 삭제하시겠습니까?')) {
       deleteMutate({
-        tripId,
+        tripId: +tripId,
         scheduleId,
       });
     }

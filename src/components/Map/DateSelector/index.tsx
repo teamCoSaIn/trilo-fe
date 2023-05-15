@@ -5,7 +5,7 @@ import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
-import { Schedule } from '@/api/schedule';
+import { ICreateScheduleParams } from '@/api/schedule';
 import DimLoader from '@/components/common/DimLoader';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
@@ -15,7 +15,7 @@ const DateSelector = () => {
   const { tripId } = useParams();
 
   const { data: dailyPlanListData } = useGetDailyPlanList({
-    tripId: tripId as string,
+    tripId: +(tripId as string),
   });
 
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
@@ -35,7 +35,7 @@ const DateSelector = () => {
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    (schedule: Schedule) => HTTP.createSchedule(schedule),
+    (schedule: ICreateScheduleParams) => HTTP.createSchedule(schedule),
     {
       onSuccess: (_, variables) => {
         if (variables.dayId) {
@@ -76,15 +76,17 @@ const DateSelector = () => {
   };
 
   const handleDateBtnClick = (dailyPlanId: number) => {
-    if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
-      const newSchedule = {
+    if (tripId && googleMarkerLatLng) {
+      const newSchedule: ICreateScheduleParams = {
         tripId: +tripId,
         dayId: dailyPlanId,
         title: placeName || '알 수 없는 장소',
         content: '',
         placeName: placeName || '알 수 없는 장소',
-        lat: googleMarkerLatLng.lat,
-        lng: googleMarkerLatLng.lng,
+        coordinate: {
+          latitude: googleMarkerLatLng.lat,
+          longitude: googleMarkerLatLng.lng,
+        },
       };
       mutate(newSchedule);
       setIsDateSelectorVisible(false);
@@ -92,15 +94,17 @@ const DateSelector = () => {
   };
 
   const handleTempBtnClick = () => {
-    if (tripId && googleMarkerLatLng.lat && googleMarkerLatLng.lng) {
-      const newSchedule = {
+    if (tripId && googleMarkerLatLng) {
+      const newSchedule: ICreateScheduleParams = {
         tripId: +tripId,
         dayId: null,
         title: placeName || '알 수 없는 장소',
         content: '',
         placeName: placeName || '알 수 없는 장소',
-        lat: googleMarkerLatLng.lat,
-        lng: googleMarkerLatLng.lng,
+        coordinate: {
+          latitude: googleMarkerLatLng.lat,
+          longitude: googleMarkerLatLng.lng,
+        },
       };
       mutate(newSchedule);
       setIsDateSelectorVisible(false);
@@ -115,7 +119,7 @@ const DateSelector = () => {
         <DateSelectorDateItem key={dailyPlanData.dayId}>
           <DateSelectorDateBtn
             onClick={() => {
-              handleDateBtnClick(dailyPlanData.dayId);
+              handleDateBtnClick(dailyPlanData.dayId!);
             }}
           >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
         </DateSelectorDateItem>

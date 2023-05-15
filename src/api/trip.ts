@@ -1,21 +1,21 @@
 import axios from '@/api/core';
 
-export type TripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
+export type TTripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
 
 export interface ITrip {
   tripId: number;
   title: string;
   picUrl: string;
-  status: TripCardStatus;
+  status: TTripCardStatus;
   startDay: string;
   endDay: string;
 }
 
-// TODO: 명세 확정 후 이름 바꾸기
-export interface TripCardTitleType {
-  id: number;
-  title: string;
-}
+export type TChangeTripTitleParams = Pick<ITrip, 'tripId' | 'title'>;
+
+export type TCreateTripTitleParams = ITrip['title'];
+
+export type TDeleteTripTitleParams = ITrip['tripId'];
 
 export const getTripList = async () => {
   const res = await axios<ITrip[]>({
@@ -26,17 +26,19 @@ export const getTripList = async () => {
   return res.data;
 };
 
-export const changeTripTitle = async (titleData: TripCardTitleType) => {
+export const changeTripTitle = async (
+  tripTitleData: TChangeTripTitleParams
+) => {
   const res = await axios({
     method: 'put',
     url: `/tripcard-title`,
-    data: titleData,
+    data: tripTitleData,
     requireAuth: true,
   });
   return res.status;
 };
 
-export const createTrip = async (tripTitle: string) => {
+export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
   const res = await axios({
     method: 'post',
     url: `/tripcard`,
@@ -46,10 +48,10 @@ export const createTrip = async (tripTitle: string) => {
   return res.status;
 };
 
-export const deleteTrip = async (id: number) => {
+export const deleteTrip = async (tripId: TDeleteTripTitleParams) => {
   const res = await axios({
     method: 'delete',
-    url: `/tripcard/${id}`,
+    url: `/tripcard/${tripId}`,
     requireAuth: true,
   });
   return res.status;

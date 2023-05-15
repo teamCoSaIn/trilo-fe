@@ -12,7 +12,7 @@ import TripHeader from '@/components/TripHeader';
 import TripLeftWindow from '@/components/TripLeftWindow';
 import TripRightWindow from '@/components/TripRightWindow';
 
-type Libraries = (
+type TLibraries = (
   | 'places'
   | 'drawing'
   | 'geometry'
@@ -20,7 +20,7 @@ type Libraries = (
   | 'visualization'
 )[];
 
-const libraries: Libraries = ['places'];
+const libraries: TLibraries = ['places'];
 
 const Trip = () => {
   const { reset } = useQueryErrorResetBoundary();

@@ -4,17 +4,17 @@ import styled from 'styled-components';
 
 import Flex from '@/components/common/Flex';
 
-interface TripCardListSkeletonProps {
+interface ITripCardListSkeletonProps {
   numOfTripCard?: number;
 }
 
-interface DefaultProps {
+interface ITripCardListSkeletonDefaultProps {
   numOfTripCard: number;
 }
 
 const TripCardListSkeleton = ({
   numOfTripCard = 7,
-}: TripCardListSkeletonProps | DefaultProps) => {
+}: ITripCardListSkeletonProps | ITripCardListSkeletonDefaultProps) => {
   const SkeletonList = Array.from({ length: numOfTripCard + 1 }).map(
     (_, idx) => {
       const id = Date.now() + idx;

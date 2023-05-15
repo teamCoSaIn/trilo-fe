@@ -1,12 +1,14 @@
-// eslint-disable-next-line import/no-cycle
+/* eslint-disable import/no-cycle */
 import axios from '@/api/core';
 
-interface IAccessTokenResponse {
+export type TToken = string;
+
+interface ITokenInfo {
   token_type: string;
   expires_in: number;
-  access_token: string;
+  access_token: TToken;
+  refresh_token: TToken;
   scope: string;
-  refresh_token: string;
 }
 
 interface ICheckRefreshTokenResponse {
@@ -33,7 +35,7 @@ export const getLoginUri = async (oauthServer: string) => {
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
 export const getAccessToken = async (oauthCode: string, oauthState: string) => {
-  const res = await axios<IAccessTokenResponse>({
+  const res = await axios<ITokenInfo>({
     method: 'get',
     url: `/login/oauth2/code?code=${oauthCode}&state=${oauthState}`,
     requireAuth: false,
@@ -43,7 +45,7 @@ export const getAccessToken = async (oauthCode: string, oauthState: string) => {
 
 // 만료된 액세스 토큰을 새로 고침하는 함수
 export const refreshAccessToken = async () => {
-  const res = await axios<IAccessTokenResponse>({
+  const res = await axios<ITokenInfo>({
     method: 'get',
     url: `/auth/regeneration`,
     requireAuth: false,

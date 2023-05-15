@@ -4,22 +4,23 @@ import React, { useState, SyntheticEvent, useRef } from 'react';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
+import { TCreateTripTitleParams } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 
-interface NewTripCardProps {
+interface INewTripCardProps {
   handleClose: () => void;
 }
 
-const NewTripCard = ({ handleClose }: NewTripCardProps) => {
+const NewTripCard = ({ handleClose }: INewTripCardProps) => {
   const [titleInputValue, setTitleInputValue] = useState('');
   const newTripCardRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    (tripTitle: string) => HTTP.createTrip(tripTitle),
+    (tripTitle: TCreateTripTitleParams) => HTTP.createTrip(tripTitle),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['tripList']);

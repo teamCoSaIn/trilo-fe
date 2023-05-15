@@ -5,11 +5,11 @@ import Spacing from '@/components/common/Spacing';
 import DateContainer from '@/components/DateTab/DateContainer';
 import { getDateInfoArray } from '@/utils/calendar';
 
-interface CalendarProps {
+interface ICalendarProps {
   date: Date;
 }
 
-const Calendar = ({ date }: CalendarProps) => {
+const Calendar = ({ date }: ICalendarProps) => {
   const calendarYear = date.getFullYear();
   const calendarMonth = date.getMonth() + 1;
   const curDateObj = new Date();

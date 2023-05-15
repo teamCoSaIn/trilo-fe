@@ -18,7 +18,7 @@ const TripHeader = () => {
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
   const { data: dailyPlanListData } = useGetDailyPlanList({
-    tripId: tripId as string,
+    tripId: +(tripId as string),
   });
   const setSelectedDates = useSetRecoilState(SelectedDates);
 

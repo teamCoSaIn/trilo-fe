@@ -2,14 +2,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
 
 import HTTP from '@/api';
-import { IDailyPlan } from '@/api/plan';
+import { IDailyPlan, ITempPlan } from '@/api/plan';
+import { ISchedule } from '@/api/schedule';
+import { ITrip } from '@/api/trip';
 
-interface MutateParams {
-  tripId: string;
-  scheduleId: string;
-  sourceDailyPlanId: string;
+interface IMutateParams {
+  tripId: ITrip['tripId'];
+  scheduleId: ISchedule['scheduleId'];
+  sourceDailyPlanId: IDailyPlan['dayId'] | ITempPlan['dayId'];
   sourceScheduleIdx: number;
-  destinationDailyPlanId: string;
+  destinationDailyPlanId: IDailyPlan['dayId'] | ITempPlan['dayId'];
   destinationScheduleIdx: number;
 }
 
@@ -17,7 +19,7 @@ const useChangeScheduleOrder = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    (params: MutateParams) =>
+    (params: IMutateParams) =>
       HTTP.changeScheduleOrder({
         scheduleId: params.scheduleId,
         destinationDailyPlanId: params.destinationDailyPlanId,
@@ -30,14 +32,14 @@ const useChangeScheduleOrder = () => {
         sourceScheduleIdx,
         destinationDailyPlanId,
         destinationScheduleIdx,
-      }: MutateParams) => {
+      }: IMutateParams) => {
         await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
 
-        const previousDailyPlanListList = queryClient.getQueryData<
-          IDailyPlan[]
-        >([`dailyPlanList${tripId}`]);
+        const previousDailyPlanList = queryClient.getQueryData<IDailyPlan[]>([
+          `dailyPlanList${tripId}`,
+        ]);
 
-        if (previousDailyPlanListList) {
+        if (previousDailyPlanList) {
           queryClient.setQueryData<IDailyPlan[]>(
             [`dailyPlanList${tripId}`],
             prevDailyPlanList => {
@@ -49,7 +51,7 @@ const useChangeScheduleOrder = () => {
                   prevDailyPlanList,
                   (draftDailyPlanList: IDailyPlan[]) => {
                     const targetDailyPlanIdx = draftDailyPlanList.findIndex(
-                      dailyPlan => dailyPlan.dayId === +sourceDailyPlanId
+                      dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                     );
                     if (targetDailyPlanIdx === -1) return prevDailyPlanList;
 
@@ -77,10 +79,10 @@ const useChangeScheduleOrder = () => {
                 prevDailyPlanList,
                 draftDailyPlanList => {
                   const sourceDailyPlanIdx = draftDailyPlanList.findIndex(
-                    dailyPlan => dailyPlan.dayId === +sourceDailyPlanId
+                    dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                   );
                   const destinationDailyPlanIdx = draftDailyPlanList.findIndex(
-                    dailyPlan => dailyPlan.dayId === +destinationDailyPlanId
+                    dailyPlan => dailyPlan.dayId === destinationDailyPlanId
                   );
                   if (
                     sourceDailyPlanIdx === -1 ||
@@ -115,20 +117,20 @@ const useChangeScheduleOrder = () => {
           );
         }
 
-        return { previousDailyPlanListList, tripId };
+        return { previousDailyPlanList, tripId };
       },
       onError: (
         err,
         variables,
         context?: {
-          previousDailyPlanListList: IDailyPlan[] | undefined;
-          tripId: string;
+          previousDailyPlanList: IDailyPlan[] | undefined;
+          tripId: ITrip['tripId'];
         }
       ) => {
-        if (context?.previousDailyPlanListList) {
+        if (context?.previousDailyPlanList) {
           queryClient.setQueryData<IDailyPlan[]>(
             [`dailyPlanList${context.tripId}`],
-            context.previousDailyPlanListList
+            context.previousDailyPlanList
           );
         }
       },

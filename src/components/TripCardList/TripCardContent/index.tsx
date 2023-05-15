@@ -8,11 +8,11 @@ import TripCardStatusLabel from '@/components/TripCardList/TripCardStatusLabel';
 import color from '@/constants/color';
 import { LOADING_Z_INDEX } from '@/constants/zIndex';
 
-interface TripCardContentProps {
+interface ITripCardContentProps {
   trip: ITrip;
 }
 
-const TripCardContent = ({ trip }: TripCardContentProps) => {
+const TripCardContent = ({ trip }: ITripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
   const tripContentPicUrl = trip.picUrl || tripCardDefaultPic;
 

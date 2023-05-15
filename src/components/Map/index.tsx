@@ -49,7 +49,7 @@ const Map = () => {
   const resetPlaceName = useResetRecoilState(PlaceName);
 
   const { data: dailyPlanListData } = useGetDailyPlanList({
-    tripId: tripId as string,
+    tripId: +(tripId as string),
   });
 
   const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);
@@ -82,10 +82,10 @@ const Map = () => {
   };
 
   const handleClickGoogleMap = (event: google.maps.MapMouseEvent) => {
-    if (!isDateSelectorVisible) {
+    if (!isDateSelectorVisible && event.latLng) {
       const selectedLocation = {
-        lat: event.latLng?.lat(),
-        lng: event.latLng?.lng(),
+        lat: event.latLng.lat(),
+        lng: event.latLng.lng(),
       };
       setGoogleMarkerLatLng(selectedLocation);
     }

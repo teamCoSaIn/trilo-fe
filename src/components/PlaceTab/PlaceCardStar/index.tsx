@@ -4,11 +4,11 @@ import { ReactComponent as GrayStarIcon } from '@/assets/GrayStar.svg';
 import { ReactComponent as HalfStarIcon } from '@/assets/HalfStar.svg';
 import { ReactComponent as YellowStarIcon } from '@/assets/YellowStar.svg';
 
-interface PlaceCardStarProps {
+interface IPlaceCardStarProps {
   rating: number | undefined;
 }
 
-const PlaceCardStar = ({ rating }: PlaceCardStarProps) => {
+const PlaceCardStar = ({ rating }: IPlaceCardStarProps) => {
   const newRating = rating || 0;
   let numOfYellowStar = Math.floor(newRating);
   let numOfHalfStar = 0;

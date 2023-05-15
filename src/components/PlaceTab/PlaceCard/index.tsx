@@ -1,27 +1,24 @@
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { LatLng } from 'use-places-autocomplete';
 
 import { ReactComponent as CopyIcon } from '@/assets/copy.svg';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
-import {
-  MapInstance,
-  PlaceCardLocation,
-  GoogleMarkerLatLng,
-} from '@/states/googleMaps';
+import { MapInstance, GoogleMarkerLatLng } from '@/states/googleMaps';
 import { PlaceName } from '@/states/schedule';
 
-interface PlaceCardProps {
+interface IPlaceCardProps {
   name: string | undefined;
   rating: number | undefined;
   address: string | undefined;
   numOfReviews: number | undefined;
   openingHours: google.maps.places.PlaceOpeningHours | undefined;
   googleMapLink: string | undefined;
-  imgUrl: string | null;
-  location: PlaceCardLocation;
+  imgUrl: string | undefined;
+  location: LatLng | undefined;
 }
 
 const PlaceCard = ({
@@ -33,7 +30,7 @@ const PlaceCard = ({
   googleMapLink,
   imgUrl,
   location,
-}: PlaceCardProps) => {
+}: IPlaceCardProps) => {
   const mapInstance = useRecoilValue(MapInstance);
   const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
   const setPlaceName = useSetRecoilState(PlaceName);
@@ -53,9 +50,9 @@ const PlaceCard = ({
   };
 
   const handlePlaceCardClick = () => {
-    if (location.lat && location.lng) {
+    if (location && mapInstance) {
       const selectedLocation = { lat: location.lat, lng: location.lng };
-      mapInstance?.setCenter(selectedLocation);
+      mapInstance.setCenter(selectedLocation);
       setGoogleMarkerLatLng(selectedLocation);
     }
     if (name) {

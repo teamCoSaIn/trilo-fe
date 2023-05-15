@@ -3,7 +3,7 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import { ITrip } from '@/api/trip';
-import { UserProfile } from '@/api/userInfo';
+import { IUserProfile } from '@/api/userInfo';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
@@ -19,7 +19,7 @@ const TripsInfo = () => {
         staleTime: Infinity,
         cacheTime: 1000 * 60 * 10,
         suspense: true,
-        select: (data: UserProfile) => data.nickname,
+        select: (data: IUserProfile) => data.nickname,
       },
       {
         queryKey: ['tripList'],

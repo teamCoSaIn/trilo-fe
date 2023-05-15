@@ -1,11 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api/index';
+import { TDeleteTripTitleParams } from '@/api/trip';
 
 const useDeleteTrip = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((id: number) => HTTP.deleteTrip(id), {
+  return useMutation((id: TDeleteTripTitleParams) => HTTP.deleteTrip(id), {
     onSuccess: () => {
       queryClient.invalidateQueries(['tripList']);
     },

@@ -5,11 +5,11 @@ import Flex from '@/components/common/Flex';
 import TripCardBottom from '@/components/TripCardList/TripCardBottom';
 import TripCardContent from '@/components/TripCardList/TripCardContent';
 
-interface TripCardProps {
+interface ITripCardProps {
   trip: ITrip;
 }
 
-const TripCard = ({ trip }: TripCardProps) => {
+const TripCard = ({ trip }: ITripCardProps) => {
   return (
     <TripCardBox column>
       <TripCardContent trip={trip} />

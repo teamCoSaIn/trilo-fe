@@ -3,10 +3,10 @@ import styled, { css } from 'styled-components';
 
 import color from '@/constants/color';
 import SelectedDates from '@/states/calendar';
-import { DateInfo } from '@/utils/calendar';
+import { IDateInfo } from '@/utils/calendar';
 
-interface DateContainerProps {
-  dateInfo: DateInfo;
+interface IDateContainerProps {
+  dateInfo: IDateInfo;
   dayIndex: number;
   disabled: boolean;
 }
@@ -15,7 +15,7 @@ const DateContainer = ({
   dateInfo,
   dayIndex,
   disabled,
-}: DateContainerProps) => {
+}: IDateContainerProps) => {
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
 

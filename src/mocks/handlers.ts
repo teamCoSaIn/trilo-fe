@@ -1,8 +1,20 @@
 import { rest } from 'msw';
 
-import { IScheduleResponse, IDailyPlan } from '@/api/plan';
+import { IDailyPlan } from '@/api/plan';
 
-type OauthServerKey = 'google' | 'kakao' | 'naver';
+interface IScheduleResponse {
+  scheduleId: number;
+  title: string;
+  placeName: string;
+  coordinate: ICoordinate;
+}
+
+interface ICoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+type TOauthServerKey = 'google' | 'kakao' | 'naver';
 const sleep = (ms: number) =>
   new Promise(r => {
     setTimeout(r, ms);
@@ -202,7 +214,7 @@ const getLoginUrl = rest.get(
       await sleep(3000);
     }
 
-    return res(ctx.json(oauthServerObj[oauthServer as OauthServerKey]));
+    return res(ctx.json(oauthServerObj[oauthServer as TOauthServerKey]));
   }
 );
 
@@ -369,12 +381,7 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
 
   const newSchedule: IScheduleResponse = {
     scheduleId: Date.now(),
-    title: data.title,
-    placeName: data.placeName,
-    coordinate: {
-      latitude: data.lat,
-      longitude: data.lng,
-    },
+    ...data,
   };
 
   tripDays.forEach((tripDay, idx, arr) => {

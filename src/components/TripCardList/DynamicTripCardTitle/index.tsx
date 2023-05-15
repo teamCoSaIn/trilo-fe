@@ -3,21 +3,22 @@ import React, { SyntheticEvent, useRef, useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import { ITrip } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import useChangeTripTitle from '@/queryHooks/useChangeTripTitle';
 import IsTitleEditFamily from '@/states/trip';
 
-interface TripCardTitleProps {
-  tripTitle: string;
-  tripCardId: number;
+interface IDynamicTripCardTitleProps {
+  tripTitle: ITrip['title'];
+  tripCardId: ITrip['tripId'];
 }
 
 const DynamicTripCardTitle = ({
   tripCardId,
   tripTitle,
-}: TripCardTitleProps) => {
+}: IDynamicTripCardTitleProps) => {
   const [isTitleEdit, setIsTitleEdit] = useRecoilState(
     IsTitleEditFamily(tripCardId)
   );
@@ -30,7 +31,7 @@ const DynamicTripCardTitle = ({
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     if (tripTitle !== titleInputValue) {
-      mutate({ title: titleInputValue, id: tripCardId });
+      mutate({ title: titleInputValue, tripId: tripCardId });
     }
     setTitleInputValue('');
     setIsTitleEdit(false);

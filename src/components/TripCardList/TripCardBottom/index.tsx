@@ -16,11 +16,11 @@ import color from '@/constants/color';
 import useDeleteTrip from '@/queryHooks/useDeleteTrip';
 import IsTitleEditFamily from '@/states/trip';
 
-interface TripCardContentProps {
+interface ITripCardBottomProps {
   trip: ITrip;
 }
 
-const TripCardBottom = ({ trip }: TripCardContentProps) => {
+const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   const [isOptionOpen, setIsOptionOpen] = useState(false);
   const { mutate, isLoading } = useDeleteTrip();
   const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));

@@ -1,26 +1,27 @@
+/* eslint-disable import/no-cycle */
 import axios from '@/api/core';
+import { ISchedule } from '@/api/schedule';
+import { ITrip } from '@/api/trip';
 
 export interface IDailyPlan {
-  tripId: number;
+  tripId: ITrip['tripId'];
   dayId: number;
   date: string | null;
   color: string;
-  schedules: IScheduleResponse[];
+  schedules: TScheduleSummary[];
 }
 
-export interface IScheduleResponse {
-  scheduleId: number;
-  title: string;
-  placeName: string;
-  coordinate: Coordinate;
+export interface ITempPlan extends Omit<IDailyPlan, 'dayId'> {
+  dayId: null;
 }
 
-interface Coordinate {
-  latitude: number;
-  longitude: number;
-}
+// 스케줄 서머리
+type TScheduleSummary = Pick<
+  ISchedule,
+  'scheduleId' | 'title' | 'placeName' | 'coordinate'
+>;
 
-export const getDailyPlanList = async (tripId: string) => {
+export const getDailyPlanList = async (tripId: ITrip['tripId']) => {
   const res = await axios<IDailyPlan[]>({
     method: 'get',
     url: `/trips/${tripId}/days`,

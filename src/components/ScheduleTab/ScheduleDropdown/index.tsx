@@ -11,11 +11,11 @@ import DailyPlanColor from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
 
-interface ScheduleDropdownProps {
+interface IScheduleDropdownProps {
   tripId: string;
 }
 
-const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
+const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)

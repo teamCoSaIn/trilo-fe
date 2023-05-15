@@ -23,12 +23,12 @@ const CALENDAR_HEIGHT = 241;
 const SLIDING_DISTANCE = CALENDAR_HEIGHT + 30;
 // calendar + spacing + line + spacing + calendar = 241 + 30 + 241
 const TRANSITION_WINDOW_HEIGHT = CALENDAR_HEIGHT * 2 + 30;
-type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
+type TSlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
   const { tripId } = useParams();
   const { data: dailyPlanListData } = useGetDailyPlanList({
-    tripId: tripId as string,
+    tripId: +(tripId as string),
   });
 
   const firstDate =
@@ -40,7 +40,7 @@ const DateTab = () => {
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
 
-  const [slidingStatus, setSlidingStatus] = useState<SlidingStatus>('STOP');
+  const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 
   const handleClickRefreshBtn = () => {
     setSelectedDates([null, null]);
@@ -144,7 +144,7 @@ const SlidingWindow = styled.div`
   overflow-y: hidden;
 `;
 
-const Slider = styled.div<{ slidingStatus: SlidingStatus }>`
+const Slider = styled.div<{ slidingStatus: TSlidingStatus }>`
   ${({ slidingStatus }) => {
     switch (slidingStatus) {
       case 'UP':

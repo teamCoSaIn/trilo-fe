@@ -9,10 +9,10 @@ import {
   blueBtnStyle,
 } from '@/components/common/Button/style';
 
-type BtnSizeType = 'large' | 'medium' | 'small';
-type BtnColor = 'white' | 'gray' | 'blue';
+type TBtnSize = 'large' | 'medium' | 'small';
+type TBtnColor = 'white' | 'gray' | 'blue';
 
-const Button = styled.button<{ btnSize?: BtnSizeType; btnColor?: BtnColor }>`
+const Button = styled.button<{ btnSize?: TBtnSize; btnColor?: TBtnColor }>`
   display: flex;
   justify-content: center;
   align-items: center;

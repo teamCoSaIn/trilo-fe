@@ -44,7 +44,13 @@
     "import/no-extraneous-dependencies": "off",
     "react/jsx-no-useless-fragment": "off",
     "@typescript-eslint/no-redeclare": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "react-hooks/exhaustive-deps": "off",
+    "react/jsx-props-no-spreading": "off",
+    "no-param-reassign": "off",
+    "consistent-return": "off",
+    "import/prefer-default-export": "off",
+    "react/no-array-index-key": "off"
   },
   "settings": {
     "import/resolver": { "webpack": {}, "typescript": {} }

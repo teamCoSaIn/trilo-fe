@@ -1,20 +1,26 @@
+import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
-import styled from 'styled-components';
+import { useRef, useState } from 'react';
+import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
+import { ReactComponent as CheckIcon } from '@/assets/check.svg';
+import { ReactComponent as EditIcon } from '@/assets/pencil.svg';
 import Description from '@/components/common/Description';
 import CircularLoader from '@/components/common/Loader/index';
+import color from '@/constants/color';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { nicknameRegExp } from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
   // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
-  const { data, isFetching } = useGetUserProfile({ selectKey: 'nickname' });
-  const nickname = data as string;
+  const { data: nicknameData, isFetching } = useGetUserProfile({
+    selectKey: 'nickname',
+  });
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
   const queryClient = useQueryClient();
+  const nicknameOnEditRef = useRef<HTMLDivElement>(null);
 
   const { mutate, isLoading } = useMutation(
     (newNickname: string) => HTTP.changeNickname(newNickname),
@@ -36,7 +42,7 @@ const DynamicUserNickname = () => {
     setIsEdit(true);
   };
 
-  const handleNicknameCancelBtnClick = () => {
+  const handleNicknameOnEditClickAway = () => {
     setIsEdit(false);
     setNicknameInputValue('');
   };
@@ -48,7 +54,7 @@ const DynamicUserNickname = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (nickname === nicknameInputValue) {
+    if (nicknameData === nicknameInputValue) {
       setIsEdit(false);
       setNicknameInputValue('');
       return;
@@ -67,96 +73,142 @@ const DynamicUserNickname = () => {
   ) => {
     setNicknameInputValue(event.target.value);
   };
-
   const Nickname = isFetching ? (
-    <div>fetching...</div>
+    <ProfileBox backgroundColor={color.gray1} />
   ) : (
-    <>
-      <NicknameDescription fontSize={3}>{nickname} 님</NicknameDescription>
-      <NicknameIconBox>
-        <NicknameIconBtn type="button" onClick={handleNicknameEditBtnClick}>
-          수정
-        </NicknameIconBtn>
-      </NicknameIconBox>
-    </>
+    <ProfileBox backgroundColor={color.white}>
+      <ProfileKey color={color.blue3} fontSize={1.6}>
+        닉네임
+      </ProfileKey>
+      <ProfileNickname
+        nickname={nicknameData as string}
+        color={color.gray3}
+        fontSize={1.6}
+      >
+        {nicknameData as string}
+      </ProfileNickname>
+      <IconBtn type="button" onClick={handleNicknameEditBtnClick}>
+        <EditIcon width={16} height={16} />
+      </IconBtn>
+    </ProfileBox>
   );
 
   const NicknameOnEdit = (
-    <NicknameForm onSubmit={handleSubmit}>
-      <NicknameEditInput
-        type="text"
-        placeholder="이름을 입력해주세요."
-        value={nicknameInputValue}
-        onChange={handleChangeNicknameInput}
-        autoFocus
-        maxLength={20}
-      />
-      <NicknameIconBox>
-        <NicknameIconBtn type="submit">확인</NicknameIconBtn>
-        <NicknameIconBtn type="button" onClick={handleNicknameCancelBtnClick}>
-          취소
-        </NicknameIconBtn>
-      </NicknameIconBox>
-    </NicknameForm>
+    <ClickAwayListener onClickAway={handleNicknameOnEditClickAway}>
+      <ProfileBox backgroundColor={color.blue1} ref={nicknameOnEditRef}>
+        <NicknameForm
+          onSubmit={handleSubmit}
+          inputLength={nicknameInputValue.length}
+        >
+          <NicknameEditInput
+            type="text"
+            placeholder={nicknameData as string}
+            value={nicknameInputValue}
+            onChange={handleChangeNicknameInput}
+            autoFocus
+            maxLength={20}
+          />
+          <IconBtn type="submit">
+            <CheckIcon fill={color.blue3} width={17} height={17} />
+          </IconBtn>
+        </NicknameForm>
+      </ProfileBox>
+    </ClickAwayListener>
   );
 
   const DynamicNickname = isEdit ? NicknameOnEdit : Nickname;
 
-  return (
-    <NicknameBox>
-      {isLoading ? <CircularLoader /> : DynamicNickname}
-    </NicknameBox>
+  return isLoading ? (
+    <ProfileBox backgroundColor={color.blue1}>
+      <CircularLoader />
+    </ProfileBox>
+  ) : (
+    DynamicNickname
   );
 };
 
-const NicknameBox = styled.div`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 80px;
-  gap: 17px;
+const ProfileBox = styled.div<{ backgroundColor?: string }>`
+  position: relative;
+  width: 307px;
+  height: 50px;
+  border-radius: 48px;
+  ${({ backgroundColor }) => css`
+    ${backgroundColor && { backgroundColor }}
+  `};
+  box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
 `;
 
-const NicknameForm = styled.form`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 17px;
+const ProfileKey = styled(Description)`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 55px;
 `;
 
-const NicknameDescription = styled(Description)`
-  height: 30px;
-  text-align: end;
-  width: 60%;
+const ProfileValue = styled(Description)`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 211px;
+`;
+
+const ProfileNickname = styled(ProfileValue)<{ nickname: string }>`
+  max-width: 45px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  ${({ nickname }) => {
+    if (nickname) {
+      return css`
+        &:hover {
+          max-width: 100%;
+        }
+        &:hover:after {
+          content: '${nickname}';
+          position: absolute;
+          top: 0;
+          left: 0;
+          background-color: white;
+        }
+      `;
+    }
+  }}
+`;
+
+const NicknameForm = styled.form<{ inputLength: number }>`
+  ${({ inputLength }) => {
+    if (inputLength >= 20) {
+      return css`
+        &::after {
+          content: '20글자 이내로 입력해주세요.';
+          color: red;
+          position: absolute;
+          top: 2px;
+          left: 55px;
+        }
+      `;
+    }
+  }}
 `;
 
 const NicknameEditInput = styled.input`
-  height: 30px;
-  padding: 0;
-  text-align: end;
-  font-size: 3rem;
-  border-bottom: 1px solid gray;
-  width: 60%;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 55px;
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #606060;
   ::placeholder {
-    font-size: 2rem;
+    font-size: 1.6rem;
   }
 `;
 
-const NicknameIconBox = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  gap: 10px;
-  width: 40%;
-  margin-right: 30px;
-`;
-
-const NicknameIconBtn = styled.button`
-  width: 55px;
-  height: 30px;
-  border: 1px solid black;
-  font-weight: 400;
-  font-size: 2rem;
+const IconBtn = styled.button`
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 270px;
 `;
 
 export default DynamicUserNickname;

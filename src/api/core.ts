@@ -1,7 +1,7 @@
+/* eslint-disable import/no-cycle */
 import Axios from 'axios';
 
-// eslint-disable-next-line import/no-cycle
-import { refreshAccessToken } from '@/api/oauth';
+import { refreshAccessToken, TToken } from '@/api/oauth';
 import isAccessTokenExpired from '@/utils/auth';
 
 const BASE_URL = process.env.API_SERVER;
@@ -12,7 +12,7 @@ const axios = Axios.create({
 });
 
 let isAxiosPause = false;
-const axiosStack: ((token: string) => void)[] = [];
+const axiosStack: ((token: TToken) => void)[] = [];
 
 axios.interceptors.request.use(
   async config => {
@@ -32,7 +32,7 @@ axios.interceptors.request.use(
           if (isAxiosPause) {
             // 요청 담기
             return await new Promise(resolve => {
-              axiosStack.push((newAccessToken: string) => {
+              axiosStack.push((newAccessToken: TToken) => {
                 newConfig.headers.Authorization = `Bearer ${newAccessToken}`;
                 resolve(newConfig);
               });

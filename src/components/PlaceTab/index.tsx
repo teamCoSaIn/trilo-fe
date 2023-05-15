@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
+import { LatLng } from 'use-places-autocomplete';
 
-import { LatLng } from '@/api/searchPlacesByText';
 import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
 import { ReactComponent as FocusedMarkerIcon } from '@/assets/triloMarker-focused.svg';
@@ -25,11 +25,7 @@ import {
 import { placeSearchInputRegExp } from '@/utils/regExp';
 import truncate from '@/utils/truncate';
 
-interface PlaceType {
-  [key: string]: string;
-}
-
-interface AutocompleteType {
+interface IAutocompleteData {
   placeId: string | undefined;
   mainText: string;
   description: string;
@@ -43,12 +39,12 @@ const PlaceTab = () => {
     { name: '호텔', id: 4 },
   ];
 
-  const korToEng: PlaceType = {
+  const korToEng = {
     식당: 'restaurant',
     관광명소: 'attraction',
     카페: 'cafe',
     호텔: 'hotel',
-  };
+  } as const;
 
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
@@ -62,7 +58,7 @@ const PlaceTab = () => {
   const [isAutocompleteVisible, setIsAutocompleteVisible] =
     useState<boolean>(false);
   const [autocompleteDataList, setAutocompleteDataList] = useState<
-    AutocompleteType[] | undefined
+    IAutocompleteData[] | undefined
   >(undefined);
   const [curLocation, setCurLocation] = useState<LatLng>({
     lat: LAT_LNG_SEOUL.lat,
@@ -115,12 +111,13 @@ const PlaceTab = () => {
   const handlePlaceLabelClick = async (event: React.MouseEvent) => {
     const target = event.target as HTMLElement;
     if (placesService && mapInstance) {
+      const innerText = target.innerText as keyof typeof korToEng;
       setCurLocation({
         lat: mapInstance.getCenter()?.lat() || LAT_LNG_SEOUL.lat,
         lng: mapInstance.getCenter()?.lng() || LAT_LNG_SEOUL.lng,
       });
-      setInputValue(target.innerText);
-      setSearchText(korToEng[target.innerText]);
+      setInputValue(innerText);
+      setSearchText(korToEng[innerText]);
       setIsFirstRender(false);
     }
   };
@@ -298,11 +295,13 @@ const PlaceTab = () => {
         numOfReviews={place.user_ratings_total}
         openingHours={place.opening_hours}
         googleMapLink={place.url}
-        imgUrl={place.photos ? place.photos[0].getUrl() : null}
-        location={{
-          lat: place.geometry?.location?.lat(),
-          lng: place.geometry?.location?.lng(),
-        }}
+        imgUrl={place.photos && place.photos[0].getUrl()}
+        location={
+          place.geometry?.location && {
+            lat: place.geometry.location.lat(),
+            lng: place.geometry.location.lng(),
+          }
+        }
       />
     ))
   ) : (

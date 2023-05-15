@@ -1,7 +1,4 @@
-export interface LatLng {
-  lat: number;
-  lng: number;
-}
+import { LatLng } from 'use-places-autocomplete';
 
 const searchPlacesByText = (
   searchText: string,

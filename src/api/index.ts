@@ -6,18 +6,18 @@ import {
   checkRefreshToken,
   resign,
 } from '@/api/oauth';
-import {
-  getPlanCardDataList,
-  changePlanCardTitle,
-  createPlanCard,
-  deletePlanCard,
-} from '@/api/planCard';
-import { getPlanDayList } from '@/api/planDay';
+import { getDailyPlanList } from '@/api/plan';
 import {
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,
 } from '@/api/schedule';
+import {
+  getTripList,
+  changeTripTitle,
+  createTrip,
+  deleteTrip,
+} from '@/api/trip';
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
@@ -30,11 +30,11 @@ const HTTP = {
   getUserProfile,
   changeNickname,
   getUserInfo,
-  getPlanCardDataList,
-  changePlanCardTitle,
-  createPlanCard,
-  deletePlanCard,
-  getPlanDayList,
+  getTripList,
+  changeTripTitle,
+  createTrip,
+  deleteTrip,
+  getDailyPlanList,
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,

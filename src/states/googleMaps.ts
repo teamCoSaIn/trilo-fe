@@ -1,9 +1,5 @@
 import { atom } from 'recoil';
-
-export interface PlaceCardLocation {
-  lat: number | undefined;
-  lng: number | undefined;
-}
+import { LatLng } from 'use-places-autocomplete';
 
 export const PlacesService = atom<google.maps.places.PlacesService | null>({
   key: 'placesService',
@@ -24,7 +20,7 @@ export const AutocompleteService =
     dangerouslyAllowMutability: true,
   });
 
-export const GoogleMarkerLatLng = atom<PlaceCardLocation>({
+export const GoogleMarkerLatLng = atom<LatLng | undefined>({
   key: 'googleMarkerLatLng',
   default: undefined,
 });

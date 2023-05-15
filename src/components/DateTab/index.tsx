@@ -13,7 +13,7 @@ import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
-import useGetDayList from '@/queryHooks/useGetDayList';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
 
@@ -23,22 +23,24 @@ const CALENDAR_HEIGHT = 241;
 const SLIDING_DISTANCE = CALENDAR_HEIGHT + 30;
 // calendar + spacing + line + spacing + calendar = 241 + 30 + 241
 const TRANSITION_WINDOW_HEIGHT = CALENDAR_HEIGHT * 2 + 30;
-type SlidingStatus = 'STOP' | 'UP' | 'DOWN';
+type TSlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
-  const { id } = useParams();
-  const { data: dayList } = useGetDayList({
-    tripId: id as string,
+  const { tripId } = useParams();
+  const { data: dailyPlanListData } = useGetDailyPlanList({
+    tripId: +(tripId as string),
   });
 
   const firstDate =
-    dayList && dayList[0]?.date ? new Date(dayList[0].date) : new Date();
+    dailyPlanListData && dailyPlanListData[0]?.date
+      ? new Date(dailyPlanListData[0].date)
+      : new Date();
   const [curDateObj, setCurDateObj] = useState(firstDate);
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
 
-  const [slidingStatus, setSlidingStatus] = useState<SlidingStatus>('STOP');
+  const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 
   const handleClickRefreshBtn = () => {
     setSelectedDates([null, null]);
@@ -142,7 +144,7 @@ const SlidingWindow = styled.div`
   overflow-y: hidden;
 `;
 
-const Slider = styled.div<{ slidingStatus: SlidingStatus }>`
+const Slider = styled.div<{ slidingStatus: TSlidingStatus }>`
   ${({ slidingStatus }) => {
     switch (slidingStatus) {
       case 'UP':

@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
+import { LatLng } from 'use-places-autocomplete';
 
-import searchPlacesByText, { LatLng } from '@/api/searchPlacesByText';
+import searchPlacesByText from '@/api/searchPlacesByText';
 
 const useSearchPlacesByText = (
   searchText: string,

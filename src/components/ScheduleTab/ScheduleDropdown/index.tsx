@@ -11,11 +11,11 @@ import DailyPlanColor from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
 
-interface ScheduleDropdownProps {
+interface IScheduleDropdownProps {
   tripId: string;
 }
 
-const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
+const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
@@ -61,7 +61,13 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
     dayDropdownIdx === -1 ? null : dayDropdownMenu[dayDropdownIdx];
 
   const handleColorBtnClick = (selectedColor: string) => {
-    console.log('dayId', selectedMenu?.dayId, 'color', selectedColor, '변경');
+    console.log(
+      'dayId',
+      selectedMenu?.dailyPlanId,
+      'color',
+      selectedColor,
+      '변경'
+    );
   };
 
   return (
@@ -89,7 +95,7 @@ const ScheduleDropdown = ({ tripId }: ScheduleDropdownProps) => {
         <DayBox>
           {dayDropdownMenu.map((menu, idx) => (
             <DayMenu
-              key={menu.dayId}
+              key={menu.dailyPlanId}
               onClick={() => handleDropdownItemClick(idx)}
             >
               {`${menu.name} - ${menu.date}`}

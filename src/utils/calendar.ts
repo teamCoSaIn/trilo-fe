@@ -1,10 +1,10 @@
-export interface DateInfo {
+export interface IDateInfo {
   year: number;
   month: number;
   date: number;
 }
 
-export const getDateInfoArray = (date: Date): DateInfo[][] => {
+export const getDateInfoArray = (date: Date): IDateInfo[][] => {
   const year = date.getFullYear();
   const monthIdx = date.getMonth();
   const firstDay = new Date(year, monthIdx, 1).getDay();

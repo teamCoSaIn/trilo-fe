@@ -1,20 +1,22 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api/index';
+import { ISchedule } from '@/api/schedule';
+import { ITrip } from '@/api/trip';
 
-interface MutateParams {
-  tripId: string;
-  scheduleId: number;
+interface IMutateParams {
+  tripId: ITrip['tripId'];
+  scheduleId: ISchedule['scheduleId'];
 }
 
 const useDeleteSchedule = () => {
   const queryClient = useQueryClient();
 
   return useMutation(
-    ({ scheduleId }: MutateParams) => HTTP.deleteSchedule(scheduleId),
+    ({ scheduleId }: IMutateParams) => HTTP.deleteSchedule(scheduleId),
     {
       onSuccess: (data, variables) => {
-        queryClient.invalidateQueries([`dayList${variables.tripId}`]);
+        queryClient.invalidateQueries([`dailyPlanList${variables.tripId}`]);
       },
       onError: () => {
         alert('delete failed.');

@@ -1,10 +1,12 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { produce } from 'immer';
+import { original, produce } from 'immer';
 
 import HTTP from '@/api';
-import { IDailyPlan, TTempPlanDayId } from '@/api/plan';
+import { IDailyPlan, TScheduleSummary, TTempPlanDayId } from '@/api/plan';
 import { ISchedule } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
+import { TEMP_PLAN_ID } from '@/constants/tempPlan';
+import swap from '@/utils/swap';
 
 interface IMutateParams {
   tripId: ITrip['tripId'];
@@ -22,7 +24,10 @@ const useChangeScheduleOrder = () => {
     (params: IMutateParams) =>
       HTTP.changeScheduleOrder({
         scheduleId: params.scheduleId,
-        destinationDailyPlanId: params.destinationDailyPlanId,
+        destinationDailyPlanId:
+          params.destinationDailyPlanId === TEMP_PLAN_ID
+            ? null
+            : params.destinationDailyPlanId,
         destinationScheduleIdx: params.destinationScheduleIdx,
       }),
     {
@@ -34,43 +39,49 @@ const useChangeScheduleOrder = () => {
         destinationScheduleIdx,
       }: IMutateParams) => {
         await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
+        await queryClient.cancelQueries([`tempPlanList${tripId}`]);
 
         const previousDailyPlanList = queryClient.getQueryData<IDailyPlan[]>([
           `dailyPlanList${tripId}`,
         ]);
 
-        if (previousDailyPlanList) {
+        const previousTempPlanList = queryClient.getQueryData<
+          TScheduleSummary[]
+        >([`tempPlanList${tripId}`]);
+
+        // 임시보관함이 아닌 dailyPlan 내부 이동
+        if (
+          sourceDailyPlanId !== TEMP_PLAN_ID &&
+          destinationDailyPlanId !== TEMP_PLAN_ID
+        ) {
           queryClient.setQueryData<IDailyPlan[]>(
             [`dailyPlanList${tripId}`],
             prevDailyPlanList => {
-              if (!prevDailyPlanList) return prevDailyPlanList;
+              if (!prevDailyPlanList) {
+                return prevDailyPlanList;
+              }
 
               // 1. 같은 Day 내에서 옮기는 경우
               if (sourceDailyPlanId === destinationDailyPlanId) {
                 const nextDailyPlanList = produce(
                   prevDailyPlanList,
-                  (draftDailyPlanList: IDailyPlan[]) => {
-                    const targetDailyPlanIdx = draftDailyPlanList.findIndex(
+                  draftDailyPlanList => {
+                    const targetDailyPlan = draftDailyPlanList.find(
                       dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                     );
-                    if (targetDailyPlanIdx === -1) return prevDailyPlanList;
 
-                    const newSchedules = [
-                      ...draftDailyPlanList[targetDailyPlanIdx].schedules,
-                    ];
-                    const [reorderedSchedule] = newSchedules.splice(
+                    if (!targetDailyPlan) {
+                      return prevDailyPlanList;
+                    }
+
+                    swap(
+                      targetDailyPlan.schedules,
                       sourceScheduleIdx,
-                      1
+                      destinationScheduleIdx
                     );
-                    newSchedules.splice(
-                      destinationScheduleIdx,
-                      0,
-                      reorderedSchedule
-                    );
-                    draftDailyPlanList[targetDailyPlanIdx].schedules =
-                      newSchedules;
                   }
                 );
+
                 return nextDailyPlanList;
               }
 
@@ -78,37 +89,27 @@ const useChangeScheduleOrder = () => {
               const nextDailyPlanList = produce(
                 prevDailyPlanList,
                 draftDailyPlanList => {
-                  const sourceDailyPlanIdx = draftDailyPlanList.findIndex(
+                  const sourceDailyPlan = draftDailyPlanList.find(
                     dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                   );
-                  const destinationDailyPlanIdx = draftDailyPlanList.findIndex(
+                  const destinationDailyPlan = draftDailyPlanList.find(
                     dailyPlan => dailyPlan.dayId === destinationDailyPlanId
                   );
-                  if (
-                    sourceDailyPlanIdx === -1 ||
-                    destinationDailyPlanIdx === -1
-                  )
-                    return prevDailyPlanList;
 
-                  const newSourceSchedules = [
-                    ...draftDailyPlanList[sourceDailyPlanIdx].schedules,
-                  ];
-                  const newDestinationSchedules = [
-                    ...draftDailyPlanList[destinationDailyPlanIdx].schedules,
-                  ];
-                  const [reorderedSchedule] = newSourceSchedules.splice(
+                  if (!sourceDailyPlan || !destinationDailyPlan) {
+                    return prevDailyPlanList;
+                  }
+
+                  const [reorderedSchedule] = sourceDailyPlan.schedules.splice(
                     sourceScheduleIdx,
                     1
                   );
-                  newDestinationSchedules.splice(
+
+                  destinationDailyPlan.schedules.splice(
                     destinationScheduleIdx,
                     0,
                     reorderedSchedule
                   );
-                  draftDailyPlanList[sourceDailyPlanIdx].schedules =
-                    newSourceSchedules;
-                  draftDailyPlanList[destinationDailyPlanIdx].schedules =
-                    newDestinationSchedules;
                 }
               );
 
@@ -117,13 +118,159 @@ const useChangeScheduleOrder = () => {
           );
         }
 
-        return { previousDailyPlanList, tripId };
+        // dailyPlan -> 임시보관함
+        if (
+          sourceDailyPlanId !== TEMP_PLAN_ID &&
+          destinationDailyPlanId === TEMP_PLAN_ID
+        ) {
+          let reorderedSchedule: TScheduleSummary | undefined;
+
+          queryClient.setQueryData<IDailyPlan[]>(
+            [`dailyPlanList${tripId}`],
+            prevDailyPlanList => {
+              if (!prevDailyPlanList) {
+                return prevDailyPlanList;
+              }
+
+              const nextDailyPlanList = produce(
+                prevDailyPlanList,
+                draftDailyPlanList => {
+                  const sourceDailyPlan = draftDailyPlanList.find(
+                    dailyPlan => dailyPlan.dayId === sourceDailyPlanId
+                  );
+                  if (!sourceDailyPlan) {
+                    return prevDailyPlanList;
+                  }
+
+                  const [extractedSchedule] = sourceDailyPlan.schedules.splice(
+                    sourceScheduleIdx,
+                    1
+                  );
+                  reorderedSchedule = original(extractedSchedule);
+                }
+              );
+
+              return nextDailyPlanList;
+            }
+          );
+
+          queryClient.setQueryData<TScheduleSummary[]>(
+            [`tempPlanList${tripId}`],
+            prevTempPlanList => {
+              if (!prevTempPlanList) {
+                return prevTempPlanList;
+              }
+              const nextTempPlanList = produce(
+                prevTempPlanList,
+                draftTempPlanList => {
+                  if (!reorderedSchedule) {
+                    return prevTempPlanList;
+                  }
+
+                  draftTempPlanList.splice(
+                    destinationScheduleIdx,
+                    0,
+                    reorderedSchedule
+                  );
+                }
+              );
+
+              return nextTempPlanList;
+            }
+          );
+        }
+
+        // 임시보관함 -> dailyPlan
+        if (
+          sourceDailyPlanId === TEMP_PLAN_ID &&
+          destinationDailyPlanId !== TEMP_PLAN_ID
+        ) {
+          let reorderedSchedule: TScheduleSummary | undefined;
+
+          queryClient.setQueryData<TScheduleSummary[]>(
+            [`tempPlanList${tripId}`],
+            prevTempPlanList => {
+              if (!prevTempPlanList) {
+                return prevTempPlanList;
+              }
+
+              const nextTempPlanList = produce(
+                prevTempPlanList,
+                draftTempPlanList => {
+                  const [extractedSchedule] = draftTempPlanList.splice(
+                    sourceScheduleIdx,
+                    1
+                  );
+                  reorderedSchedule = original(extractedSchedule);
+                }
+              );
+
+              return nextTempPlanList;
+            }
+          );
+
+          queryClient.setQueryData<IDailyPlan[]>(
+            [`dailyPlanList${tripId}`],
+            prevDailyPlanList => {
+              if (!prevDailyPlanList) {
+                return prevDailyPlanList;
+              }
+
+              const nextDailyPlanList = produce(
+                prevDailyPlanList,
+                draftDailyPlanList => {
+                  const destinationDailyPlan = draftDailyPlanList.find(
+                    dailyPlan => dailyPlan.dayId === destinationDailyPlanId
+                  );
+
+                  if (!destinationDailyPlan || !reorderedSchedule) {
+                    return prevDailyPlanList;
+                  }
+
+                  destinationDailyPlan.schedules.splice(
+                    destinationScheduleIdx,
+                    0,
+                    reorderedSchedule
+                  );
+                }
+              );
+
+              return nextDailyPlanList;
+            }
+          );
+        }
+
+        // 임시보관함 -> 임시보관함
+        queryClient.setQueryData<TScheduleSummary[]>(
+          [`tempPlanList${tripId}`],
+          prevTempPlanList => {
+            if (!prevTempPlanList) {
+              return prevTempPlanList;
+            }
+
+            const nextTempPlanList = produce(
+              prevTempPlanList,
+              draftTempPlanList => {
+                swap(
+                  draftTempPlanList,
+                  sourceScheduleIdx,
+                  destinationScheduleIdx
+                );
+              }
+            );
+
+            return nextTempPlanList;
+          }
+        );
+
+        return { previousDailyPlanList, previousTempPlanList, tripId };
       },
       onError: (
         err,
         variables,
         context?: {
           previousDailyPlanList: IDailyPlan[] | undefined;
+          previousTempPlanList: TScheduleSummary[] | undefined;
           tripId: ITrip['tripId'];
         }
       ) => {
@@ -131,6 +278,12 @@ const useChangeScheduleOrder = () => {
           queryClient.setQueryData<IDailyPlan[]>(
             [`dailyPlanList${context.tripId}`],
             context.previousDailyPlanList
+          );
+        }
+        if (context?.previousTempPlanList) {
+          queryClient.setQueryData<TScheduleSummary[]>(
+            [`tempPlanList${context.tripId}`],
+            context.previousTempPlanList
           );
         }
       },

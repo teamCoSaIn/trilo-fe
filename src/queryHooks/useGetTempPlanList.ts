@@ -24,7 +24,7 @@ const useGetTempPlanList = ({
 }: IUseGetTempPlanListParam) => {
   return useQuery(
     [`tempPlanList${tripId}`],
-    async () => HTTP.getTempPlanList(tripId),
+    () => HTTP.getTempPlanList(tripId),
     {
       onSuccess,
       onError,

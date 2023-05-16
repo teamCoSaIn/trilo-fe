@@ -160,12 +160,35 @@ const tripDays: IDailyPlan[] = [
       },
     ],
   },
+];
+
+const tempPlan = [
   {
-    dayId: 4,
-    tripId: 1,
-    date: null,
-    color: 'gray',
-    schedules: [],
+    scheduleId: 335410,
+    title: '포트 드루시 해변 공원',
+    placeName: '캐널시티 하카타',
+    coordinate: {
+      latitude: 21.34032591434633,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335411,
+    title: '콜로왈루 공원',
+    placeName: '콜로왈루 공원',
+    coordinate: {
+      latitude: 21.24985050848401,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335412,
+    title: '카마넬 공원',
+    placeName: '카마넬 공원',
+    coordinate: {
+      latitude: 21.44985050848401,
+      longitude: -157.7248269653323,
+    },
   },
 ];
 
@@ -175,7 +198,7 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
     {
       dayId: 3,
       tripId: 1,
-      date: null,
+      date: '2023-05-18',
       color: '#ccc',
       schedules: [],
     },
@@ -422,6 +445,18 @@ const deleteSchedule = rest.delete(
   }
 );
 
+const getTempPlanList = rest.get(
+  '/api/trips/:tripId/temporary-storage',
+  async (req, res, ctx) => {
+    await sleep(2000);
+    const { tripId } = req.params;
+    if (tripId) {
+      return res(ctx.json(tempPlan));
+    }
+    return res(ctx.status(400));
+  }
+);
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -440,6 +475,7 @@ const handlers = [
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,
+  getTempPlanList,
 ];
 
 export default handlers;

@@ -1,6 +1,6 @@
 /* eslint-disable import/no-cycle */
 import axios from '@/api/core';
-import { IDailyPlan, ITempPlan } from '@/api/plan';
+import { IDailyPlan, TTempPlanDayId } from '@/api/plan';
 import { ITrip } from '@/api/trip';
 
 // 스케줄 생성할 때의 타입
@@ -10,7 +10,7 @@ export interface ICreateScheduleParams extends Omit<ISchedule, 'scheduleId'> {
 
 // 진짜 스케줄: get으로 불러올 때의 타입
 export interface ISchedule {
-  dayId: IDailyPlan['dayId'] | ITempPlan['dayId'];
+  dayId: IDailyPlan['dayId'] | TTempPlanDayId;
   scheduleId: number;
   title: string;
   content: string;
@@ -25,7 +25,7 @@ export interface ICoordinate {
 
 interface IChangeScheduleOrderParams {
   scheduleId: ISchedule['scheduleId'];
-  destinationDailyPlanId: IDailyPlan['dayId'] | ITempPlan['dayId'];
+  destinationDailyPlanId: IDailyPlan['dayId'] | TTempPlanDayId;
   destinationScheduleIdx: number;
 }
 

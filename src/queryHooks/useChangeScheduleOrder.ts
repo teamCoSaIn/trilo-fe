@@ -2,16 +2,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { produce } from 'immer';
 
 import HTTP from '@/api';
-import { IDailyPlan, ITempPlan } from '@/api/plan';
+import { IDailyPlan, TTempPlanDayId } from '@/api/plan';
 import { ISchedule } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
 
 interface IMutateParams {
   tripId: ITrip['tripId'];
   scheduleId: ISchedule['scheduleId'];
-  sourceDailyPlanId: IDailyPlan['dayId'] | ITempPlan['dayId'];
+  sourceDailyPlanId: IDailyPlan['dayId'] | TTempPlanDayId;
   sourceScheduleIdx: number;
-  destinationDailyPlanId: IDailyPlan['dayId'] | ITempPlan['dayId'];
+  destinationDailyPlanId: IDailyPlan['dayId'] | TTempPlanDayId;
   destinationScheduleIdx: number;
 }
 

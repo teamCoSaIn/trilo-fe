@@ -6,17 +6,15 @@ import { ITrip } from '@/api/trip';
 export interface IDailyPlan {
   tripId: ITrip['tripId'];
   dayId: number;
-  date: string | null;
+  date: string;
   color: string;
   schedules: TScheduleSummary[];
 }
 
-export interface ITempPlan extends Omit<IDailyPlan, 'dayId'> {
-  dayId: null;
-}
+export type TTempPlanDayId = null;
 
 // 스케줄 서머리
-type TScheduleSummary = Pick<
+export type TScheduleSummary = Pick<
   ISchedule,
   'scheduleId' | 'title' | 'placeName' | 'coordinate'
 >;
@@ -25,6 +23,15 @@ export const getDailyPlanList = async (tripId: ITrip['tripId']) => {
   const res = await axios<IDailyPlan[]>({
     method: 'get',
     url: `/trips/${tripId}/days`,
+    requireAuth: true,
+  });
+  return res.data;
+};
+
+export const getTempPlanList = async (tripId: ITrip['tripId']) => {
+  const res = await axios<TScheduleSummary[]>({
+    method: 'get',
+    url: `/trips/${tripId}/temporary-storage`,
     requireAuth: true,
   });
   return res.data;

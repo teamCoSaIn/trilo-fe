@@ -24,11 +24,12 @@ const TripHeader = () => {
 
   const startDate =
     dailyPlanListData &&
-    dailyPlanListData[0]?.date &&
+    dailyPlanListData[0] &&
     new Date(dailyPlanListData[0].date);
-  const endDateData =
-    dailyPlanListData && dailyPlanListData[dailyPlanListData.length - 2]?.date;
-  const endDate = endDateData && new Date(endDateData);
+  const endDate =
+    dailyPlanListData &&
+    dailyPlanListData[dailyPlanListData.length - 1] &&
+    new Date(dailyPlanListData[dailyPlanListData.length - 1].date);
 
   const disabled = !startDate || !endDate;
   const transformedStartDate = disabled
@@ -49,7 +50,7 @@ const TripHeader = () => {
       <Period disabled={disabled}>
         <Description>{transformedStartDate}</Description>
         <Spacing width={12} />
-        <Description>~</Description>
+        {!disabled && <Description>~</Description>}
         <Spacing width={12} />
         <Description>{transformedEndDate}</Description>
       </Period>

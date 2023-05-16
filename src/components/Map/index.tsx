@@ -15,6 +15,7 @@ import {
 
 import DateSelector from '@/components/Map/DateSelector';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
+import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import {
   PlacesService,
   MapInstance,
@@ -49,6 +50,10 @@ const Map = () => {
   const resetPlaceName = useResetRecoilState(PlaceName);
 
   const { data: dailyPlanListData } = useGetDailyPlanList({
+    tripId: +(tripId as string),
+  });
+
+  const { data: tempPlanData } = useGetTempPlanList({
     tripId: +(tripId as string),
   });
 
@@ -96,18 +101,16 @@ const Map = () => {
     setIsDateSelectorVisible(true);
   };
 
-  const handleClickTriloMarker = (
-    event: google.maps.MapMouseEvent,
-    scheduleId: number
-  ) => {
-    console.log('trilo marker clicked.', scheduleId);
-  };
+  const handleClickTriloMarker =
+    (scheduleId: number) => (event: google.maps.MapMouseEvent) => {
+      console.log('trilo marker clicked.', scheduleId, event);
+    };
 
   const scheduleMarkers = useMemo(() => {
     if (!dailyPlanListData) {
       return [];
     }
-    return dailyPlanListData?.map(dailyPlanData =>
+    return dailyPlanListData.map(dailyPlanData =>
       dailyPlanData.schedules.map((scheduleData, idx) => {
         const triloMarkerDataUrl = convertToDataUrl(
           createTriloMarkerSvg(idx + 1, dailyPlanData.color)
@@ -122,20 +125,42 @@ const Map = () => {
             options={{
               icon: triloMarkerDataUrl,
             }}
-            onClick={event => {
-              handleClickTriloMarker(event, scheduleData.scheduleId);
-            }}
+            onClick={handleClickTriloMarker(scheduleData.scheduleId)}
           />
         );
       })
     );
   }, [dailyPlanListData]);
 
+  const tempScheduleMarkers = useMemo(() => {
+    if (!tempPlanData) {
+      return [];
+    }
+    return tempPlanData.schedules.map((scheduleData, idx) => {
+      const triloMarkerDataUrl = convertToDataUrl(
+        createTriloMarkerSvg(idx + 1, tempPlanData.color)
+      );
+      return (
+        <MarkerF
+          key={scheduleData.scheduleId}
+          position={{
+            lat: scheduleData.coordinate.latitude,
+            lng: scheduleData.coordinate.longitude,
+          }}
+          options={{
+            icon: triloMarkerDataUrl,
+          }}
+          onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+        />
+      );
+    });
+  }, [tempPlanData]);
+
   const schedulePolyLines = useMemo(() => {
     if (!dailyPlanListData) {
       return [];
     }
-    return dailyPlanListData.slice(0, -1).map(dailyPlanData =>
+    return dailyPlanListData.map(dailyPlanData =>
       dailyPlanData.schedules.slice(0, -1).map((scheduleData, idx) => {
         const path = [
           {
@@ -176,6 +201,9 @@ const Map = () => {
   const selectedScheduleMarkers =
     dropdownMenuIdx === -1 ? scheduleMarkers : scheduleMarkers[dropdownMenuIdx];
 
+  const selectedTempScheduleMarkers =
+    dropdownMenuIdx === -1 && tempScheduleMarkers;
+
   const selectedSchedulePolyLines =
     dropdownMenuIdx === -1
       ? schedulePolyLines
@@ -206,6 +234,7 @@ const Map = () => {
         </MarkerF>
       )}
       {selectedScheduleMarkers}
+      {selectedTempScheduleMarkers}
       {selectedSchedulePolyLines}
     </GoogleMap>
   );

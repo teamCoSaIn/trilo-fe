@@ -31,6 +31,7 @@ import {
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
+import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
 const ScheduleTab = () => {
@@ -55,16 +56,14 @@ const ScheduleTab = () => {
   const [isTempBoxPopUp, setIsTempBoxPopUp] = useState(false);
 
   const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
-    const newDropdownMenu = dailyPlanListData
-      .filter(dailyPlanData => dailyPlanData.date)
-      .map((dailyPlanData, idx) => {
-        return {
-          dailyPlanId: dailyPlanData.dayId,
-          name: `Day${idx + 1}`,
-          date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-          color: dailyPlanData.color,
-        };
-      });
+    const newDropdownMenu = dailyPlanListData.map((dailyPlanData, idx) => {
+      return {
+        dailyPlanId: dailyPlanData.dayId,
+        name: `Day${idx + 1}`,
+        date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
+        color: dailyPlanData.color,
+      };
+    });
     setDropdownMenu(newDropdownMenu);
   };
 
@@ -73,19 +72,19 @@ const ScheduleTab = () => {
     onSuccess: onSuccessCallback,
   });
 
+  const { data: tempPlanData } = useGetTempPlanList({
+    tripId: +(tripId as string),
+  });
+
   const { mutate: scheduleOrderMutate } = useChangeScheduleOrder();
 
   const { mutate: deleteMutate, isLoading: isDeleteLoading } =
     useDeleteSchedule();
 
-  const selectedDayList =
+  const selectedDailyPlanList =
     dropdownMenuIdx === -1
-      ? dailyPlanListData?.slice(0, dailyPlanListData.length - 1)
+      ? dailyPlanListData
       : dailyPlanListData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
-
-  const tempDay = dailyPlanListData
-    ? dailyPlanListData[dailyPlanListData.length - 1]
-    : null;
 
   const handleDragEnd = (result: DropResult) => {
     if (!tripId) return;
@@ -152,7 +151,7 @@ const ScheduleTab = () => {
 
   const dailyPlanDragDropBox = (
     <DailyPlanList>
-      {selectedDayList?.map((dailyPlan, dailyPlanIdx) => {
+      {selectedDailyPlanList?.map((dailyPlan, dailyPlanIdx) => {
         const [dayString, dateString] =
           dropdownMenuIdx === -1
             ? [dropdownMenu[dailyPlanIdx].name, dropdownMenu[dailyPlanIdx].date]
@@ -249,15 +248,15 @@ const ScheduleTab = () => {
         )}
       </TempPopUpBtn>
       <TempTitle>임시보관함</TempTitle>
-      {tempDay ? (
-        <Droppable droppableId={String(tempDay.dayId)}>
+      {tempPlanData ? (
+        <Droppable droppableId={String(tempPlanData.dayId)}>
           {(droppableProvided, droppableSnapshot) => (
             <TempList
               {...droppableProvided.droppableProps}
               ref={droppableProvided.innerRef}
               isPopUpOpen={isTempBoxPopUp}
             >
-              {tempDay.schedules.map((schedule, scheduleIdx) => (
+              {tempPlanData.schedules.map((schedule, scheduleIdx) => (
                 <Draggable
                   key={schedule.scheduleId}
                   draggableId={String(schedule.scheduleId)}

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ReactComponent as DownArrow } from '@/assets/downArrow.svg';
@@ -32,30 +32,30 @@ const DateTab = () => {
   });
 
   const firstDate =
-    dailyPlanListData && dailyPlanListData[0]?.date
+    dailyPlanListData && dailyPlanListData[0]
       ? new Date(dailyPlanListData[0].date)
       : new Date();
   const [curDateObj, setCurDateObj] = useState(firstDate);
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
-  const [[selectedStartDate, selectedEndDate], setSelectedDates] =
-    useRecoilState(SelectedDates);
+  const [selectedStartDate, selectedEndDate] = useRecoilValue(SelectedDates);
+  const resetSelectedDates = useResetRecoilState(SelectedDates);
 
   const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 
-  const handleClickRefreshBtn = () => {
-    setSelectedDates([null, null]);
+  const handleRefreshBtnClick = () => {
+    resetSelectedDates();
   };
-  const handleClickPrevMonthBtn = () => {
+  const handlePrevMonthBtnClick = () => {
     if (slidingStatus !== 'STOP') return;
     setSlidingStatus('DOWN');
   };
 
-  const handleClickNextMonthBtn = () => {
+  const handleNextMonthBtnClick = () => {
     if (slidingStatus !== 'STOP') return;
     setSlidingStatus('UP');
   };
 
-  const handleTransitionEndSlidingPart = () => {
+  const handleSlidingPartTransitionEnd = () => {
     if (slidingStatus === 'UP') {
       setCurDateObj(new Date(curYear, curMonth + 1));
     }
@@ -78,7 +78,7 @@ const DateTab = () => {
       <SlidingWindow>
         <Slider
           slidingStatus={slidingStatus}
-          onTransitionEnd={handleTransitionEndSlidingPart}
+          onTransitionEnd={handleSlidingPartTransitionEnd}
         >
           <Calendar date={new Date(curYear, curMonth - 1)} />
           <Spacing height={10} />
@@ -97,15 +97,15 @@ const DateTab = () => {
       </SlidingWindow>
       <Spacing height={20} />
       <BtnWrapper>
-        <CalendarBtn onClick={handleClickRefreshBtn}>
+        <CalendarBtn onClick={handleRefreshBtnClick}>
           <Refresh />
         </CalendarBtn>
         <Flex justifyCenter alignCenter>
-          <CalendarBtn onClick={handleClickPrevMonthBtn}>
+          <CalendarBtn onClick={handlePrevMonthBtnClick}>
             <UpArrow />
           </CalendarBtn>
           <Spacing width={4} />
-          <CalendarBtn onClick={handleClickNextMonthBtn}>
+          <CalendarBtn onClick={handleNextMonthBtnClick}>
             <DownArrow />
           </CalendarBtn>
         </Flex>

@@ -3,12 +3,12 @@ import styled from 'styled-components';
 
 import { ReactComponent as LogoImg } from '@/assets/logo.svg';
 
-interface LogoProps {
+interface ILogoProps {
   width: number;
   height: number;
 }
 
-const Logo = ({ width, height }: LogoProps) => {
+const Logo = ({ width, height }: ILogoProps) => {
   return (
     <LogoBox>
       <Link to="/">

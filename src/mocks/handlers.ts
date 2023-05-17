@@ -1,7 +1,20 @@
 import { rest } from 'msw';
 
-type OauthServerKey = 'google' | 'kakao' | 'naver';
+import { IDailyPlan } from '@/api/plan';
 
+interface IScheduleResponse {
+  scheduleId: number;
+  title: string;
+  placeName: string;
+  coordinate: ICoordinate;
+}
+
+interface ICoordinate {
+  latitude: number;
+  longitude: number;
+}
+
+type TOauthServerKey = 'google' | 'kakao' | 'naver';
 const sleep = (ms: number) =>
   new Promise(r => {
     setTimeout(r, ms);
@@ -12,9 +25,9 @@ const sleep = (ms: number) =>
 let error = false;
 let isLogin = JSON.parse(localStorage.getItem('mockLogin') as string) || false;
 let nickname = 'oliver';
-const planCardList = [
+const tripList = [
   {
-    id: 0,
+    tripId: 0,
     title: '2023 다낭계획',
     picUrl: '',
     status: '',
@@ -22,51 +35,175 @@ const planCardList = [
     endDay: '',
   },
   {
-    id: 1,
+    tripId: 1,
     title: '2023 제주 여행',
     picUrl:
-      'https://s3-alpha-sig.figma.com/img/644a/d81e/0c050de4ad0e11b23c482035a398dbb8?Expires=1681084800&Signature=LlPAb4a49H2P-E5n1sPfZCM~QLsD7CFLARDBzpFpckFnysDtV~4hv8xTJoTUos8KRMJQPctTi91~80GSvfJXGgiMZZv5TEVcXYVp0FTUH26~fHq88~NsZ7sVbpUgog5JXhgr4B-qqFrr7EXoijIP9qBV1DkNxCNuMxtm9~-OMe1XUa2-8DEL4ytEQ6eNfTgNIHZ6NDs5cCy31jnibVBKmAB5quZTuHtB88QhbyBP7WBzu52wN4BMO5n58dXaULVHT~TWH5WexLSR0OyKfgtXsmJ1tdbQSN~we9IFg2n-9a~IdpTLHnvhh7DMyfpMJC5okiBbIgmUCj339tys9QsSXQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+      'https://s3-alpha-sig.figma.com/img/42e0/e6ed/d32374f2148dd5d0d4b792ce4a967827?Expires=1682294400&Signature=Yhsq8G6FgF~pYiGL00IWRlZZTi0kYVCkszFS1~CVyZm8giYMEb8m237SayXMHhQ-A2iGhDR1PlQuU~2hPAoe3LvHGhH2w92WV-KpDfJmPtbM3cgB9EMFfw0-tjPM-OO5GqcHEZyquqGeAUdBIWOE6pmA6R7DJWS9Ix~pjKtpvIA6MRjvXarb8-T7z2tl1DGpS56WTSl-8MTmhBHdBeioR39yp5Q3sybQf9KvTuNDAzR7K4QsOcKGxdk9smy3feLLX9UVBv7K1Gi7V18DveaZ7h0DlG~eGAlS-fXaI4pjAXi6LZFyedcE7e4kpdUrPx3rhT~ZZUZRaQ9jeUEvheX6rw__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'AFTER',
     startDay: '23.03.25',
     endDay: '23.03.27',
   },
   {
-    id: 2,
+    tripId: 2,
     title: '2023 부산 여행',
     picUrl:
-      'https://s3-alpha-sig.figma.com/img/3327/e6a1/5bcb290a01f335bc8da914c5c122d36b?Expires=1681084800&Signature=gVDVxEhPgeboEejFZCLW~VZh~j2GKc6UmEsg2-D0Nd-00HDHxjwjApBrL4~XWmhRLwGzbHpb1IQ7L5tuJbnDHWp53r1j5EY2rFlyeq2~c~JVVjRVrokIpV64mXFC7YFxlTHaSUBqKz6bQSTbouWlVbLnamgcDeuXbh9AvFVUQPczIdQb554WMHtJKLVy3WT5T951W6UtoUh1g4uVT2WqDtpgupfQK9Kn5hcsfDgMnKrgu~GlV3meu8q3mZrnBU2yMj2kECNS-2KskWNsIS3h5eC-mRhqnfKaH-Ok71kZe8FmRL~c7JTGxFqGuE1UX-2DhbHd1zsAQeXnAnvs-e7nTA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+      'https://s3-alpha-sig.figma.com/img/0304/b1fa/45b3c6de7187bb138e7099de0a1dfb3f?Expires=1682294400&Signature=kThV6-Fsjp1jdxtFz4H63msIV7qxx2Ptly3kPNTSIsmV6EGMbUDTUAKU7TkmsL5cw-dFkw9VVI1UFqO3AgzQ590Vzgy3oKTUB0mx7vO~is~fi334wDnFoHnZNK1l2nq77~DpiJ1wkStp-FpHfO9Y-2bWXhK5nSNoEVWiDqVUDfstouvzJnKmYuEMQNfv0i0k43xnZ-hu4vrvBLFDsa5AkygCANAjP3UUBPKmYZfDF-hSKcHkzk64RN~jffjeQtSHNd-8akS6Xy2uW3Ep5l4CEgjzoQwd6F-zlNeJbpPRt8KCMFFNyzTR1k~xoquN-lhJcG-s8V66pmbsD9G9EnzvlA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'BEFORE',
     startDay: '23.08.20',
     endDay: '23.08.22',
   },
   {
-    id: 3,
+    tripId: 3,
     title: '23년 1월 괌 여행',
     picUrl:
-      'https://s3-alpha-sig.figma.com/img/644a/d81e/0c050de4ad0e11b23c482035a398dbb8?Expires=1681084800&Signature=LlPAb4a49H2P-E5n1sPfZCM~QLsD7CFLARDBzpFpckFnysDtV~4hv8xTJoTUos8KRMJQPctTi91~80GSvfJXGgiMZZv5TEVcXYVp0FTUH26~fHq88~NsZ7sVbpUgog5JXhgr4B-qqFrr7EXoijIP9qBV1DkNxCNuMxtm9~-OMe1XUa2-8DEL4ytEQ6eNfTgNIHZ6NDs5cCy31jnibVBKmAB5quZTuHtB88QhbyBP7WBzu52wN4BMO5n58dXaULVHT~TWH5WexLSR0OyKfgtXsmJ1tdbQSN~we9IFg2n-9a~IdpTLHnvhh7DMyfpMJC5okiBbIgmUCj339tys9QsSXQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+      'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'BEFORE',
     startDay: '23.03.25',
     endDay: '23.03.27',
   },
   {
-    id: 4,
+    tripId: 4,
     title: '2023 다낭계획',
     picUrl:
-      'https://s3-alpha-sig.figma.com/img/3327/e6a1/5bcb290a01f335bc8da914c5c122d36b?Expires=1681084800&Signature=gVDVxEhPgeboEejFZCLW~VZh~j2GKc6UmEsg2-D0Nd-00HDHxjwjApBrL4~XWmhRLwGzbHpb1IQ7L5tuJbnDHWp53r1j5EY2rFlyeq2~c~JVVjRVrokIpV64mXFC7YFxlTHaSUBqKz6bQSTbouWlVbLnamgcDeuXbh9AvFVUQPczIdQb554WMHtJKLVy3WT5T951W6UtoUh1g4uVT2WqDtpgupfQK9Kn5hcsfDgMnKrgu~GlV3meu8q3mZrnBU2yMj2kECNS-2KskWNsIS3h5eC-mRhqnfKaH-Ok71kZe8FmRL~c7JTGxFqGuE1UX-2DhbHd1zsAQeXnAnvs-e7nTA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+      'https://s3-alpha-sig.figma.com/img/42e0/e6ed/d32374f2148dd5d0d4b792ce4a967827?Expires=1682294400&Signature=Yhsq8G6FgF~pYiGL00IWRlZZTi0kYVCkszFS1~CVyZm8giYMEb8m237SayXMHhQ-A2iGhDR1PlQuU~2hPAoe3LvHGhH2w92WV-KpDfJmPtbM3cgB9EMFfw0-tjPM-OO5GqcHEZyquqGeAUdBIWOE6pmA6R7DJWS9Ix~pjKtpvIA6MRjvXarb8-T7z2tl1DGpS56WTSl-8MTmhBHdBeioR39yp5Q3sybQf9KvTuNDAzR7K4QsOcKGxdk9smy3feLLX9UVBv7K1Gi7V18DveaZ7h0DlG~eGAlS-fXaI4pjAXi6LZFyedcE7e4kpdUrPx3rhT~ZZUZRaQ9jeUEvheX6rw__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'ON',
     startDay: '23.08.20',
     endDay: '23.08.22',
   },
   {
-    id: 5,
+    tripId: 5,
     title: '2023 다낭계획',
     picUrl:
-      'https://s3-alpha-sig.figma.com/img/644a/d81e/0c050de4ad0e11b23c482035a398dbb8?Expires=1681084800&Signature=LlPAb4a49H2P-E5n1sPfZCM~QLsD7CFLARDBzpFpckFnysDtV~4hv8xTJoTUos8KRMJQPctTi91~80GSvfJXGgiMZZv5TEVcXYVp0FTUH26~fHq88~NsZ7sVbpUgog5JXhgr4B-qqFrr7EXoijIP9qBV1DkNxCNuMxtm9~-OMe1XUa2-8DEL4ytEQ6eNfTgNIHZ6NDs5cCy31jnibVBKmAB5quZTuHtB88QhbyBP7WBzu52wN4BMO5n58dXaULVHT~TWH5WexLSR0OyKfgtXsmJ1tdbQSN~we9IFg2n-9a~IdpTLHnvhh7DMyfpMJC5okiBbIgmUCj339tys9QsSXQ__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+      'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'AFTER',
     startDay: '23.03.25',
     endDay: '23.03.27',
   },
 ];
+
+const tripDays: IDailyPlan[] = [
+  {
+    dayId: 1,
+    tripId: 1,
+    date: '2023-02-15',
+    color: '#FB6C6C',
+    schedules: [
+      {
+        scheduleId: 235410,
+        title: '캐널시티 하카타',
+        placeName: '캐널시티 하카타',
+        coordinate: {
+          latitude: 21.31032591434633,
+          longitude: -157.80890464782715,
+        },
+      },
+      {
+        scheduleId: 235411,
+        title: '쇼핑 리스트',
+        placeName: '',
+        coordinate: {
+          latitude: 21.29985050848401,
+          longitude: -157.81482696533203,
+        },
+      },
+    ],
+  },
+  {
+    dayId: 2,
+    tripId: 1,
+    date: '2023-02-16',
+    color: '#5800FF',
+    schedules: [
+      {
+        scheduleId: 235412,
+        title: '동방명주',
+        placeName: '캐널시티 하카타',
+        coordinate: {
+          latitude: 21.303432369155537,
+          longitude: -157.84836605395122,
+        },
+      },
+      {
+        scheduleId: 235413,
+        title: '하노이',
+        placeName: '',
+        coordinate: {
+          latitude: 21.29465251080877,
+          longitude: -157.84246444702148,
+        },
+      },
+      {
+        scheduleId: 235414,
+        title: '관람차',
+        placeName: '놀이공원',
+        coordinate: {
+          latitude: 21.292973118425635,
+          longitude: -157.85164833068848,
+        },
+      },
+    ],
+  },
+  {
+    dayId: 3,
+    tripId: 1,
+    date: '2023-02-17',
+    color: '#777',
+    schedules: [
+      {
+        scheduleId: 235415,
+        title: '포케 먹기',
+        placeName: '',
+        coordinate: {
+          latitude: 21.31,
+          longitude: -157.8282696533203,
+        },
+      },
+    ],
+  },
+];
+
+const tempPlan = [
+  {
+    scheduleId: 335410,
+    title: '포트 드루시 해변 공원',
+    placeName: '캐널시티 하카타',
+    coordinate: {
+      latitude: 21.34032591434633,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335411,
+    title: '콜로왈루 공원',
+    placeName: '콜로왈루 공원',
+    coordinate: {
+      latitude: 21.24985050848401,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335412,
+    title: '카마넬 공원',
+    placeName: '카마넬 공원',
+    coordinate: {
+      latitude: 21.44985050848401,
+      longitude: -157.7248269653323,
+    },
+  },
+];
+
+const tripCardIds: { [index: string]: typeof tripDays } = {
+  1: tripDays,
+  2: [
+    {
+      dayId: 3,
+      tripId: 1,
+      date: '2023-05-18',
+      color: '#ccc',
+      schedules: [],
+    },
+  ],
+};
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -100,7 +237,7 @@ const getLoginUrl = rest.get(
       await sleep(3000);
     }
 
-    return res(ctx.json(oauthServerObj[oauthServer as OauthServerKey]));
+    return res(ctx.json(oauthServerObj[oauthServer as TOauthServerKey]));
   }
 );
 
@@ -192,28 +329,25 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
   return res(
     ctx.json({
       totalDistanceOfPastTrip: 410,
-      totalNumOfTripPlan: 10,
+      totalNumOfTrip: 10,
       badgeImgUrl:
         'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
     })
   );
 });
 
-const getPlanCardDataList = rest.get(
-  '/api/plancard-list',
-  async (req, res, ctx) => {
-    await sleep(2000);
-    return res(ctx.json(planCardList));
-  }
-);
+const getTripList = rest.get('/api/tripcard-list', async (req, res, ctx) => {
+  await sleep(2000);
+  return res(ctx.json(tripList));
+});
 
-const changePlanCardTitle = rest.put(
-  '/api/plancard-title',
+const changeTripTitle = rest.put(
+  '/api/tripcard-title',
   async (req, res, ctx) => {
     const { title, id } = await req.json();
 
-    planCardList.forEach((el, idx, arr) => {
-      if (el.id === id) {
+    tripList.forEach((el, idx, arr) => {
+      if (el.tripId === id) {
         arr[idx].title = title;
       }
     });
@@ -224,12 +358,12 @@ const changePlanCardTitle = rest.put(
   }
 );
 
-const createPlanCard = rest.post('/api/plancard', async (req, res, ctx) => {
+const createTrip = rest.post('/api/tripcard', async (req, res, ctx) => {
   const { title } = await req.json();
   await sleep(2000);
 
-  const planCardData = {
-    id: +new Date(),
+  const trip = {
+    tripId: +new Date(),
     title,
     picUrl: '',
     status: '',
@@ -237,22 +371,89 @@ const createPlanCard = rest.post('/api/plancard', async (req, res, ctx) => {
     endDay: '',
   };
 
-  planCardList.unshift(planCardData);
+  tripList.unshift(trip);
 
   return res(ctx.status(200));
 });
 
-const deletePlanCard = rest.delete(
-  '/api/plancard/:id',
+const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
+  await sleep(2000);
+
+  const { id } = req.params;
+
+  const idx = tripList.findIndex(el => el.tripId === +id);
+  tripList.splice(idx, 1);
+
+  return res(ctx.status(200));
+});
+
+const getDailyPlanList = rest.get(
+  '/api/trips/:tripId/days',
+  async (req, res, ctx) => {
+    await sleep(2000);
+    const { tripId } = req.params;
+    if (tripId && tripCardIds[tripId as string]) {
+      return res(ctx.json(tripCardIds[tripId as string]));
+    }
+    return res(ctx.status(400));
+  }
+);
+
+const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
+  const data = await req.json();
+
+  const newSchedule: IScheduleResponse = {
+    scheduleId: Date.now(),
+    ...data,
+  };
+
+  tripDays.forEach((tripDay, idx, arr) => {
+    if (tripDay.dayId === data.dayId) {
+      arr[idx].schedules.push(newSchedule);
+    }
+  });
+
+  return res(ctx.status(200));
+});
+
+const changeScheduleOrder = rest.patch(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    // do something
+    // const { scheduleId } = req.params;
+    tripDays[0].schedules.length = 1;
+    return res(ctx.status(200));
+  }
+);
+
+const deleteSchedule = rest.delete(
+  '/api/schedules/:scheduleId',
   async (req, res, ctx) => {
     await sleep(2000);
 
-    const { id } = req.params;
-
-    const idx = planCardList.findIndex(el => el.id === +id);
-    planCardList.splice(idx, 1);
-
+    const { scheduleId } = req.params;
+    const curTrip = tripCardIds['1'];
+    curTrip.forEach(day => {
+      const idx = day.schedules.findIndex(
+        sch => sch.scheduleId === +scheduleId
+      );
+      if (idx !== -1) {
+        day.schedules.splice(idx, 1);
+      }
+    });
     return res(ctx.status(200));
+  }
+);
+
+const getTempPlanList = rest.get(
+  '/api/trips/:tripId/temporary-storage',
+  async (req, res, ctx) => {
+    await sleep(2000);
+    const { tripId } = req.params;
+    if (tripId) {
+      return res(ctx.json(tempPlan));
+    }
+    return res(ctx.status(400));
   }
 );
 
@@ -266,10 +467,15 @@ const handlers = [
   getUserProfile,
   changeNickname,
   getUserInfo,
-  getPlanCardDataList,
-  changePlanCardTitle,
-  createPlanCard,
-  deletePlanCard,
+  getTripList,
+  changeTripTitle,
+  createTrip,
+  deleteTrip,
+  getDailyPlanList,
+  createSchedule,
+  changeScheduleOrder,
+  deleteSchedule,
+  getTempPlanList,
 ];
 
 export default handlers;

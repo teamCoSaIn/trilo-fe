@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 import Flex from '@/components/common/Flex/index';
 import CircularLoader from '@/components/common/Loader/index';
+import { LOADING_Z_INDEX } from '@/constants/zIndex';
 
 const DimLoader = () => {
   return (
@@ -19,7 +20,7 @@ const LoadingBox = styled(Flex)`
   height: 100%;
   background-color: black;
   opacity: 0.7;
-  z-index: 3;
+  z-index: ${LOADING_Z_INDEX};
 `;
 
 export default DimLoader;

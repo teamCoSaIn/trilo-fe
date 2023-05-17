@@ -8,7 +8,7 @@ const Home = () => {
     <div>
       <h1>홈 페이지입니다.</h1>
       <NewTripBtn btnColor="white">
-        <Link to="/tripplan-list">여행 계획 만들기</Link>
+        <Link to="/triplist">여행 계획 만들기</Link>
       </NewTripBtn>
     </div>
   );

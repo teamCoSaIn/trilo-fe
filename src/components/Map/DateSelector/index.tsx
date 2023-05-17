@@ -41,10 +41,8 @@ const DateSelector = () => {
         if (variables.dayId) {
           queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
         } else {
-          // TODO: 임시 보관함 쿼리키로 변경
-          queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
+          queryClient.invalidateQueries([`tempPlanList${tripId}`]);
         }
-
         resetGoogleMarkerLatLng();
       },
     }
@@ -75,7 +73,7 @@ const DateSelector = () => {
     event.stopPropagation();
   };
 
-  const handleDateBtnClick = (dailyPlanId: number) => {
+  const handleCreateScheduleClick = (dailyPlanId: number | null) => () => {
     if (tripId && googleMarkerLatLng) {
       const newSchedule: ICreateScheduleParams = {
         tripId: +tripId,
@@ -93,38 +91,16 @@ const DateSelector = () => {
     }
   };
 
-  const handleTempBtnClick = () => {
-    if (tripId && googleMarkerLatLng) {
-      const newSchedule: ICreateScheduleParams = {
-        tripId: +tripId,
-        dayId: null,
-        title: placeName || '알 수 없는 장소',
-        content: '',
-        placeName: placeName || '알 수 없는 장소',
-        coordinate: {
-          latitude: googleMarkerLatLng.lat,
-          longitude: googleMarkerLatLng.lng,
-        },
-      };
-      mutate(newSchedule);
-      setIsDateSelectorVisible(false);
-    }
-  };
-
-  const dateSelectorDateList = dailyPlanListData
-    ?.filter(dailyPlanData => dailyPlanData.date)
-    .map((dailyPlanData, idx) => {
-      const date = dailyPlanData.date?.split('-').join('.').substring(2);
-      return (
-        <DateSelectorDateItem key={dailyPlanData.dayId}>
-          <DateSelectorDateBtn
-            onClick={() => {
-              handleDateBtnClick(dailyPlanData.dayId!);
-            }}
-          >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
-        </DateSelectorDateItem>
-      );
-    });
+  const dateSelectorDateList = dailyPlanListData?.map((dailyPlanData, idx) => {
+    const date = dailyPlanData.date?.split('-').join('.').substring(2);
+    return (
+      <DateSelectorDateItem key={dailyPlanData.dayId}>
+        <DateSelectorDateBtn
+          onClick={handleCreateScheduleClick(dailyPlanData.dayId)}
+        >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
+      </DateSelectorDateItem>
+    );
+  });
 
   return (
     <DateSelectorBox
@@ -137,7 +113,7 @@ const DateSelector = () => {
       <DateSelctorHeader>일정 추가하기</DateSelctorHeader>
       <DateSelectorDateListBox>{dateSelectorDateList}</DateSelectorDateListBox>
       <DateSelectorTempStorageBox>
-        <DateSelectorDateBtn onClick={handleTempBtnClick}>
+        <DateSelectorDateBtn onClick={handleCreateScheduleClick(null)}>
           임시 보관함
         </DateSelectorDateBtn>
       </DateSelectorTempStorageBox>

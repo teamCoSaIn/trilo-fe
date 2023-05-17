@@ -241,27 +241,32 @@ const useChangeScheduleOrder = () => {
         }
 
         // 임시보관함 -> 임시보관함
-        queryClient.setQueryData<TScheduleSummary[]>(
-          [`tempPlanList${tripId}`],
-          prevTempPlanList => {
-            if (!prevTempPlanList) {
-              return prevTempPlanList;
-            }
-
-            const nextTempPlanList = produce(
-              prevTempPlanList,
-              draftTempPlanList => {
-                swap(
-                  draftTempPlanList,
-                  sourceScheduleIdx,
-                  destinationScheduleIdx
-                );
+        if (
+          sourceDailyPlanId === TEMP_PLAN_ID &&
+          destinationDailyPlanId === TEMP_PLAN_ID
+        ) {
+          queryClient.setQueryData<TScheduleSummary[]>(
+            [`tempPlanList${tripId}`],
+            prevTempPlanList => {
+              if (!prevTempPlanList) {
+                return prevTempPlanList;
               }
-            );
 
-            return nextTempPlanList;
-          }
-        );
+              const nextTempPlanList = produce(
+                prevTempPlanList,
+                draftTempPlanList => {
+                  swap(
+                    draftTempPlanList,
+                    sourceScheduleIdx,
+                    destinationScheduleIdx
+                  );
+                }
+              );
+
+              return nextTempPlanList;
+            }
+          );
+        }
 
         return { previousDailyPlanList, previousTempPlanList, tripId };
       },

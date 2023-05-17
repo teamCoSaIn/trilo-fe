@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   DragDropContext,
   Draggable,
@@ -19,7 +19,6 @@ import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
-import ScheduleDropdown from '@/components/ScheduleTab/ScheduleDropdown';
 import color from '@/constants/color';
 import {
   SCHEDULE_HEIGHT,
@@ -34,7 +33,7 @@ import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
 
-const ScheduleTab = () => {
+const ScheduleList = () => {
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -87,19 +86,24 @@ const ScheduleTab = () => {
       : dailyPlanListData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
   const handleDragEnd = (result: DropResult) => {
-    if (!tripId) return;
+    if (!tripId) {
+      return;
+    }
 
     const { destination, source, draggableId } = result;
 
     // Day 밖으로 나가서 Drop 되는 경우
-    if (!destination) return;
+    if (!destination) {
+      return;
+    }
 
     // 같은 Day, 같은 자리에서 Drop 되는 경우
     if (
       destination.droppableId === source.droppableId &&
       source.index === destination.index
-    )
+    ) {
       return;
+    }
 
     scheduleOrderMutate({
       tripId: +tripId,
@@ -169,7 +173,7 @@ const ScheduleTab = () => {
             <Spacing height={10} />
             <Droppable droppableId={String(dailyPlan.dayId)}>
               {(droppableProvided, droppableSnapshot) => (
-                <ScheduleList
+                <ScheduleListBox
                   {...droppableProvided.droppableProps}
                   ref={droppableProvided.innerRef}
                   isEmpty={!dailyPlan.schedules.length}
@@ -229,7 +233,7 @@ const ScheduleTab = () => {
                         }}
                       />
                     )}
-                </ScheduleList>
+                </ScheduleListBox>
               )}
             </Droppable>
           </DailyPlan>
@@ -305,43 +309,23 @@ const ScheduleTab = () => {
   );
 
   return (
-    <Box column>
-      <ScheduleDropdown tripId={tripId as string} />
+    <>
       <DragDropContext
         onDragEnd={handleDragEnd}
         onDragStart={handleDragStart}
         onDragUpdate={handleDragUpdate}
       >
         {isMounted ? (
-          <DragDropBox>
+          <>
             {dailyPlanDragDropBox}
             {tempPlanDragDropBox}
-          </DragDropBox>
+          </>
         ) : null}
       </DragDropContext>
       {(isDeleteLoading || isFetching) && <DimLoader />}
-    </Box>
+    </>
   );
 };
-
-const Box = styled(Flex)`
-  height: 100%;
-  width: 100%;
-  min-width: ${SCHEDULE_WIDTH};
-`;
-
-const DragDropBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: calc(100% - 23px);
-  width: 100%;
-  margin-top: 23px;
-  border: 1px solid #d9d9d9;
-  background-color: #f6f6f6;
-  -ms-user-select: none;
-  -webkit-user-select: none;
-  user-select: none;
-`;
 
 const DailyPlanList = styled.ul`
   flex-grow: 1;
@@ -389,7 +373,7 @@ const DailyPlanColor = styled.div<{ dailyPlanColor: string }>`
   `};
 `;
 
-const ScheduleList = styled.ul<{ isEmpty: boolean }>`
+const ScheduleListBox = styled.ul<{ isEmpty: boolean }>`
   display: flex;
   flex-direction: column;
   position: relative;
@@ -543,4 +527,4 @@ const TempPopUpBtn = styled.button`
   }
 `;
 
-export default ScheduleTab;
+export default ScheduleList;

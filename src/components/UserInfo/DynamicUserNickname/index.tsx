@@ -129,6 +129,7 @@ const DynamicUserNickname = () => {
 
 const ProfileBox = styled.div<{ backgroundColor?: string }>`
   position: relative;
+  flex-shrink: 0;
   width: 307px;
   height: 50px;
   border-radius: 48px;

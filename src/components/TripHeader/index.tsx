@@ -59,8 +59,8 @@ const TripHeader = () => {
 };
 
 const Box = styled.div`
-  position: fixed;
-  top: 0;
+  position: absolute;
+  top: -${HEADER_HEIGHT};
   left: 50%;
   transform: translateX(-50%);
   height: ${HEADER_HEIGHT};

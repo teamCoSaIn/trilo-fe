@@ -4,34 +4,27 @@ import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
+import Flex from '@/components/common/Flex';
 import CircularLoader from '@/components/common/Loader/index';
-import Spacing from '@/components/common/Spacing';
 import UserInfo from '@/components/UserInfo/index';
 
 const User = () => {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
-    <UserInfoBox>
+    <Layout column alignCenter>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
         <Suspense fallback={<CircularLoader />}>
-          <Spacing height={99} />
           <UserInfo />
-          <Spacing height={82} />
         </Suspense>
       </ErrorBoundary>
-    </UserInfoBox>
+    </Layout>
   );
 };
 
-const UserInfoBox = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+const Layout = styled(Flex)`
   min-height: 100%;
-  // TODO: 적절한 min width 정하기
-  min-width: 500px;
+  padding: 100px 0;
 `;
 
 export default User;

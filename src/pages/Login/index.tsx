@@ -23,7 +23,7 @@ const Login = () => {
   };
 
   return (
-    <Layout>
+    <Layout column alignCenter>
       <Logo width={76} height={50} />
       <Spacing height={85} />
       <Description color={color.gray2} fontSize={1.4}>
@@ -49,10 +49,7 @@ const Login = () => {
 
 export default Login;
 
-const Layout = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+const Layout = styled(Flex)`
   height: 100%;
+  padding-top: 100px;
 `;

@@ -4,6 +4,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
 import Error from '@/components/common/Error';
+import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import TripCardList from '@/components/TripCardList';
 import TripCardListSkeleton from '@/components/TripCardList/TripCardListSkeleton';
@@ -14,7 +15,7 @@ const TripList = () => {
   const { reset } = useQueryErrorResetBoundary();
 
   return (
-    <Layout>
+    <Layout column>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
         <Suspense fallback={<TripsInfoSkeleton />}>
           <TripsInfo />
@@ -28,14 +29,9 @@ const TripList = () => {
   );
 };
 
-const Layout = styled.div`
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  width: 100%;
-  padding: 104px 150px 0 150px;
-  // TODO: padding * 2 + TripTripCardWidth * 4 + TripTripCardBoxGap * 3
-  min-width: 1364px;
+const Layout = styled(Flex)`
+  min-height: 100%;
+  padding: 100px;
 `;
 
 export default TripList;

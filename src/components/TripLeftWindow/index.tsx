@@ -7,7 +7,6 @@ import { ReactComponent as RightArrowIcon } from '@/assets/RightArrow.svg';
 import DateTab from '@/components/DateTab';
 import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
-import { HEADER_HEIGHT } from '@/constants/size';
 import { TRIP_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 
@@ -61,11 +60,11 @@ const TripLeftWindow = () => {
 };
 
 const TripLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
-  position: fixed;
-  top: ${HEADER_HEIGHT};
+  position: absolute;
+  top: 0;
   left: 0;
   width: 363px;
-  height: calc(100% - ${HEADER_HEIGHT});
+  height: 100%;
   ${props => (props.isWindowFold ? 'transform: translate(-363px);' : null)}
   transition: all .5s;
   background-color: ${color.white};

@@ -31,21 +31,21 @@ const Trip = () => {
   });
 
   return (
-    <ErrorBoundary FallbackComponent={Error} onReset={reset}>
-      <Suspense fallback={<CircularLoader />}>
-        <TripHeader />
-        <TripLeftWindow />
-        <Box>
+    <Layout>
+      <ErrorBoundary FallbackComponent={Error} onReset={reset}>
+        <Suspense fallback={<CircularLoader />}>
+          <TripHeader />
+          <TripLeftWindow />
           {isLoaded ? <Map /> : <div>loading...</div>}
           <TripRightWindow />
-        </Box>
-      </Suspense>
-    </ErrorBoundary>
+        </Suspense>
+      </ErrorBoundary>
+    </Layout>
   );
 };
 
-const Box = styled(Flex)`
-  width: 100%;
+const Layout = styled(Flex)`
+  position: relative;
   height: 100%;
 `;
 

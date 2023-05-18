@@ -1,19 +1,28 @@
 import { useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import ScheduleDropdown from '@/components/ScheduleDropdown';
+import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
+import { SelectedScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
 
+  const selectedScheduleId = useRecoilValue(SelectedScheduleId);
+
+  const dynamicScheduleList = selectedScheduleId ? (
+    <ScheduleEditor />
+  ) : (
+    <ScheduleList />
+  );
+
   return (
     <TripRightWindowBox>
       <ScheduleDropdown tripId={tripId as string} />
-      <ScheduleContent>
-        <ScheduleList />
-      </ScheduleContent>
+      <ScheduleContent>{dynamicScheduleList}</ScheduleContent>
     </TripRightWindowBox>
   );
 };

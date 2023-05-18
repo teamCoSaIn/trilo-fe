@@ -152,7 +152,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235415,
         title: '포케 먹기',
-        placeName: '',
+        placeName: '와이키키',
         coordinate: {
           latitude: 21.31,
           longitude: -157.8282696533203,
@@ -205,6 +205,17 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
   ],
 };
 
+const scheduleDetails = {
+  scheduleId: 112233,
+  dayId: 3,
+  title: '포케 먹기',
+  placeName: '와이키키',
+  coordinate: {
+    latitude: 21.31,
+    longitude: -157.8282696533203,
+  },
+  content: '12시에 해변 놀러가기',
+};
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 const getLoginUrl = rest.get(
@@ -445,6 +456,18 @@ const deleteSchedule = rest.delete(
   }
 );
 
+const getScheduleDetails = rest.get(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    const { scheduleId } = req.params;
+    if (scheduleId) {
+      return res(ctx.json(scheduleDetails));
+    }
+    return res(ctx.status(400));
+  }
+);
+
 const getTempPlanList = rest.get(
   '/api/trips/:tripId/temporary-storage',
   async (req, res, ctx) => {
@@ -475,6 +498,7 @@ const handlers = [
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,
+  getScheduleDetails,
   getTempPlanList,
 ];
 

@@ -64,3 +64,14 @@ export const deleteSchedule = async (scheduleId: ISchedule['scheduleId']) => {
   });
   return res.status;
 };
+
+export const getScheduleDetails = async (
+  scheduleId: ISchedule['scheduleId']
+) => {
+  const res = await axios({
+    method: 'get',
+    url: `/schedules/${scheduleId}`,
+    requireAuth: true,
+  });
+  return res.data;
+};

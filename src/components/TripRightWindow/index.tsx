@@ -33,6 +33,8 @@ const TripRightWindowBox = styled.div`
   background-color: ${color.white};
   padding: 12px 17px;
   flex-shrink: 0;
+  // MEMO: min-height 임시 설정 값임.
+  min-height: 500px;
 `;
 
 const ScheduleContent = styled.div`

@@ -14,6 +14,7 @@ const GlobalStyle = createGlobalStyle`
     min-width: 1264px;
     min-height: 789px;
     max-width: 2560px;
+    margin: 0 auto;
   }
   body {
     height: 100%;

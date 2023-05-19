@@ -26,6 +26,7 @@ const Error = ({ error, resetErrorBoundary }: FallbackProps) => {
 };
 
 const AlertBox = styled(Alert)`
+  margin: auto auto;
   display: flex;
   align-items: center;
   .MuiAlert-action {

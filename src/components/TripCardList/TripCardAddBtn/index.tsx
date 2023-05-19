@@ -2,6 +2,7 @@ import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as PlusIcon } from '@/assets/plus.svg';
+import Flex from '@/components/common/Flex';
 import NewTripCard from '@/components/TripCardList/NewTripCard';
 import color from '@/constants/color';
 
@@ -17,12 +18,12 @@ const TripCardAddBtn = () => {
   };
 
   return (
-    <>
+    <Flex>
       <AddBtn onClick={handleAddBtnClick}>
         <PlusIcon width={46} height={46} />
       </AddBtn>
       {onCreation && <NewTripCard handleClose={handleClose} />}
-    </>
+    </Flex>
   );
 };
 

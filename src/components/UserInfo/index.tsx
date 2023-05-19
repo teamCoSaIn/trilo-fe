@@ -41,29 +41,49 @@ const UserInfo = () => {
     }
   };
 
+  const totalDistance = userInfoData?.totalDistanceOfPastTrip
+    ? userInfoData.totalDistanceOfPastTrip.toLocaleString()
+    : 0;
+
+  const totalTrip = userInfoData?.totalNumOfTrip
+    ? userInfoData.totalNumOfTrip
+    : 0;
+
   return (
     <>
       <ProfileBadge src={userInfoData?.badgeImgUrl} />
-      <Spacing height={24} />
+      <Spacing height={30} />
       <DynamicUserNickname />
-      <Spacing height={12} />
-      <ProfileBox backgroundColor={color.white}>
-        <ProfileKey color={color.blue3} fontSize={1.6}>
+      <Spacing height={24} />
+      <InfoBox backgroundColor={color.white}>
+        <InfoKey color={color.blue3} fontSize={1.6}>
           나의 여정
-        </ProfileKey>
-        <ProfileValue color={color.gray3} fontSize={1.6}>
-          {`${userInfoData?.totalDistanceOfPastTrip} KM`}
-        </ProfileValue>
-      </ProfileBox>
-      <Spacing height={12} />
-      <ProfileBox backgroundColor={color.white}>
-        <ProfileKey color={color.blue3} fontSize={1.6}>
+        </InfoKey>
+        <FlexibleSpacing />
+        <InfoValueBox>
+          <InfoValue color={color.gray3} fontSize={1.6}>
+            {totalDistance}
+          </InfoValue>
+          <InfoValueUnit color={color.gray3} fontSize={1.6}>
+            KM
+          </InfoValueUnit>
+        </InfoValueBox>
+      </InfoBox>
+      <Spacing height={24} />
+      <InfoBox backgroundColor={color.white}>
+        <InfoKey color={color.blue3} fontSize={1.6}>
           나의 일정
-        </ProfileKey>
-        <ProfileValue color={color.gray3} fontSize={1.6}>
-          {`${userInfoData?.totalNumOfTrip} 개`}
-        </ProfileValue>
-      </ProfileBox>
+        </InfoKey>
+        <FlexibleSpacing />
+        <InfoValueBox>
+          <InfoValue color={color.gray3} fontSize={1.6}>
+            {totalTrip}
+          </InfoValue>
+          <InfoValueUnit color={color.gray3} fontSize={1.6}>
+            개
+          </InfoValueUnit>
+        </InfoValueBox>
+      </InfoBox>
       <Spacing height={95} />
       <ResignBtn onClick={handleResignBtnClick} disabled={isLoading}>
         {isLoading ? <CircularLoader /> : '회원 탈퇴하기'}
@@ -78,11 +98,14 @@ const ProfileBadge = styled.img`
   object-fit: cover;
 `;
 
-const ProfileBox = styled.div<{ backgroundColor?: string }>`
-  position: relative;
+const InfoBox = styled.div<{ backgroundColor?: string }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   flex-shrink: 0;
   width: 307px;
-  height: 50px;
+  height: 70px;
+  padding: 0 50px;
   border-radius: 48px;
   ${({ backgroundColor }) => css`
     ${backgroundColor && { backgroundColor }}
@@ -90,19 +113,29 @@ const ProfileBox = styled.div<{ backgroundColor?: string }>`
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
 `;
 
-const ProfileKey = styled(Description)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 55px;
+const FlexibleSpacing = styled.div`
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 10px;
 `;
 
-const ProfileValue = styled(Description)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 211px;
+const InfoValueBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 4px;
 `;
+
+const InfoKey = styled(Description)`
+  flex-shrink: 0;
+`;
+
+const InfoValue = styled(Description)`
+  text-align: right;
+  word-wrap: break-word;
+  word-break: break-all;
+`;
+
+const InfoValueUnit = styled(Description)``;
 
 const ResignBtn = styled.button`
   font-size: 1.4rem;

@@ -14,6 +14,7 @@ import {
   NEW_TRIP_CARD_Z_INDEX,
   NEW_TRIP_DIM_LAYER_Z_INDEX,
 } from '@/constants/zIndex';
+import { tripTitleRegExp } from '@/utils/regExp';
 
 interface INewTripCardProps {
   handleClose: () => void;
@@ -36,6 +37,15 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const isInputValid = tripTitleRegExp.test(
+      titleInputValue.replace(/\s/g, '')
+    );
+    if (!isInputValid) {
+      alert(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      );
+      return;
+    }
     mutate(titleInputValue);
   };
 

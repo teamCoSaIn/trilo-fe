@@ -46,7 +46,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
 
   const tripPeriod = (
     <TripPeriod>
-      {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : ''}
+      {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : '여행 기간 미정'}
     </TripPeriod>
   );
 

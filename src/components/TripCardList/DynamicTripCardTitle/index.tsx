@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -8,6 +8,7 @@ import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import useChangeTripTitle from '@/queryHooks/useChangeTripTitle';
 import { IsTitleEditFamily } from '@/states/trip';
+import { tripTitleRegExp } from '@/utils/regExp';
 
 interface IDynamicTripCardTitleProps {
   tripTitle: ITrip['title'];
@@ -23,17 +24,26 @@ const DynamicTripCardTitle = ({
   );
   const [titleInputValue, setTitleInputValue] = useState('');
 
-  const titleFormRef = useRef<HTMLFormElement>(null);
-
   const { mutate } = useChangeTripTitle();
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (tripTitle !== titleInputValue) {
+    const isInputValid = tripTitleRegExp.test(
+      titleInputValue.replace(/\s/g, '')
+    );
+    if (!isInputValid) {
+      alert(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      );
+      return;
+    }
+    if (isInputValid && tripTitle !== titleInputValue) {
       mutate({ title: titleInputValue, tripId: tripCardId });
     }
-    setTitleInputValue('');
-    setIsTitleEdit(false);
+    setTimeout(() => {
+      setTitleInputValue('');
+      setIsTitleEdit(false);
+    }, 0);
   };
 
   const handleTitleInputChange = (
@@ -43,7 +53,7 @@ const DynamicTripCardTitle = ({
   };
 
   const DynamicTitle = isTitleEdit ? (
-    <TitleForm onSubmit={handleTitleSubmit} ref={titleFormRef}>
+    <TitleForm onSubmit={handleTitleSubmit}>
       <TitleEditInput
         type="text"
         value={titleInputValue}

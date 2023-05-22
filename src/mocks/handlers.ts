@@ -206,7 +206,7 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
 };
 
 const scheduleDetails = {
-  scheduleId: 112233,
+  scheduleId: 235415,
   dayId: 3,
   title: '포케 먹기',
   placeName: '와이키키',

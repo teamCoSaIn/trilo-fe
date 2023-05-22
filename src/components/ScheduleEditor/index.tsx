@@ -29,7 +29,6 @@ const ScheduleEditor = () => {
     onEditorContentChange: (editorParams: BlockNoteEditor) => {
       if (scheduleDetails) {
         if (debouncingTimer.current) {
-          // console.log('clear', debouncingTimer.current);
           clearTimeout(debouncingTimer.current);
         }
 
@@ -37,10 +36,9 @@ const ScheduleEditor = () => {
           mutate({
             scheduleId: scheduleDetails.scheduleId,
             title: scheduleDetails.title,
-            content: editorParams.topLevelBlocks,
+            content: JSON.stringify(editorParams.topLevelBlocks),
           });
         }, 1000);
-        // console.log('set', debouncingTimer.current);
       }
     },
   });

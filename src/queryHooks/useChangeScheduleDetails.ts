@@ -25,8 +25,12 @@ const useChangeScheduleDetails = () => {
                 return;
               }
               const newData = produce(prevData, draftData => {
-                draftData.title = data.title;
-                draftData.content = data.content;
+                if (data.title) {
+                  draftData.title = data.title;
+                }
+                if (data.content) {
+                  draftData.content = data.content;
+                }
               });
               return newData;
             }

@@ -214,66 +214,8 @@ const scheduleDetails = {
     latitude: 21.31,
     longitude: -157.8282696533203,
   },
-  content: JSON.stringify([
-    {
-      id: 'bc60208b-7261-4a43-ae11-49de53c42d7d',
-      type: 'heading',
-      props: {
-        textColor: 'default',
-        backgroundColor: 'default',
-        textAlignment: 'left',
-        level: '1',
-      },
-      content: [{ type: 'text', text: '아침 일정', styles: {} }],
-      children: [],
-    },
-    {
-      id: 'a258bbe7-8498-42b0-a358-d481ade18e6b',
-      type: 'bulletListItem',
-      props: {
-        textColor: 'default',
-        backgroundColor: 'default',
-        textAlignment: 'left',
-      },
-      content: [{ type: 'text', text: '우버 타고 이동하기', styles: {} }],
-      children: [],
-    },
-    {
-      id: '184aaa20-e85f-4e7d-8881-bb1fb80f592f',
-      type: 'paragraph',
-      props: {
-        textColor: 'default',
-        backgroundColor: 'default',
-        textAlignment: 'left',
-      },
-      content: [],
-      children: [],
-    },
-    {
-      id: '456c7030-c4cb-4fb4-b29b-efb6bdc23a59',
-      type: 'bulletListItem',
-      props: {
-        textColor: 'default',
-        backgroundColor: 'default',
-        textAlignment: 'left',
-      },
-      content: [
-        { type: 'text', text: '브런치 카페에서 아침 먹기', styles: {} },
-      ],
-      children: [],
-    },
-    {
-      id: 'c7202d6d-69a7-4c2c-8352-f894e40b69d7',
-      type: 'paragraph',
-      props: {
-        textColor: 'default',
-        backgroundColor: 'default',
-        textAlignment: 'left',
-      },
-      content: [],
-      children: [],
-    },
-  ]),
+  content:
+    '[{"id":"bc60208b-7261-4a43-ae11-49de53c42d7d","type":"heading","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left","level":"1"},"content":[{"type":"text","text":"아침 일정","styles":{}}],"children":[]},{"id":"a258bbe7-8498-42b0-a358-d481ade18e6b","type":"bulletListItem","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"우버 타고 이동하기","styles":{}}],"children":[]},{"id":"184aaa20-e85f-4e7d-8881-bb1fb80f592f","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]},{"id":"456c7030-c4cb-4fb4-b29b-efb6bdc23a59","type":"bulletListItem","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"브런치 카페에서 아침 먹기","styles":{}}],"children":[]},{"id":"c7202d6d-69a7-4c2c-8352-f894e40b69d7","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
 };
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
@@ -534,9 +476,12 @@ const changeScheduleDetails = rest.put(
     const { scheduleId } = req.params;
     const data = await req.json();
     if (scheduleId) {
-      console.log('http request');
-      scheduleDetails.title = data.title;
-      scheduleDetails.content = JSON.stringify(data.content);
+      if (data.title) {
+        scheduleDetails.title = data.title;
+      }
+      if (data.content) {
+        scheduleDetails.content = data.content;
+      }
     }
     return res(ctx.json(data.scheduleId));
   }

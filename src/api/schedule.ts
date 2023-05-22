@@ -31,8 +31,8 @@ interface IChangeScheduleOrderParams {
 
 export interface IChangeScheduleDetailsParams {
   scheduleId: ISchedule['scheduleId'];
-  title: ISchedule['title'];
-  content: ISchedule['content'];
+  title?: ISchedule['title'];
+  content?: ISchedule['content'];
 }
 
 export const createSchedule = async (schedule: ICreateScheduleParams) => {

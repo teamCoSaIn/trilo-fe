@@ -12,6 +12,7 @@ import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import TimePicker from '@/components/ScheduleEditor/TimePicker';
+import { SCHEDULE_DETAILS_DEBOUNCE_TIME } from '@/constants/debounce';
 import useChangeScheduleDetails from '@/queryHooks/useChangeScheduleDetails';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { SelectedScheduleId } from '@/states/schedule';
@@ -22,45 +23,61 @@ const ScheduleEditor = () => {
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
   const { mutate } = useChangeScheduleDetails();
 
-  const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
+  const contentDebouncingTimer = useRef<NodeJS.Timeout | null>(null);
+  const titleDebouncingTimer = useRef<NodeJS.Timeout | null>(null);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: JSON.parse(scheduleDetails?.content || JSON.stringify('')),
     onEditorContentChange: (editorParams: BlockNoteEditor) => {
       if (scheduleDetails) {
-        if (debouncingTimer.current) {
-          clearTimeout(debouncingTimer.current);
+        if (contentDebouncingTimer.current) {
+          clearTimeout(contentDebouncingTimer.current);
         }
 
-        debouncingTimer.current = setTimeout(() => {
+        contentDebouncingTimer.current = setTimeout(() => {
           mutate({
             scheduleId: scheduleDetails.scheduleId,
-            title: scheduleDetails.title,
             content: JSON.stringify(editorParams.topLevelBlocks),
           });
-        }, 1000);
+        }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
       }
     },
   });
 
-  const [inputValue, setInputValue] = useState('');
+  const [titleInputValue, setTitleInputValue] = useState(
+    scheduleDetails?.title
+  );
 
   useEffect(() => {
-    if (scheduleDetails) {
-      setInputValue(scheduleDetails.title);
-    }
-  }, [scheduleDetails]);
+    titleDebouncingTimer.current = setTimeout(() => {
+      if (scheduleDetails) {
+        mutate({
+          scheduleId: scheduleDetails.scheduleId,
+          title: titleInputValue,
+        });
+      }
+    }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
+
+    return () => {
+      if (titleDebouncingTimer.current) {
+        clearTimeout(titleDebouncingTimer.current);
+      }
+    };
+  }, [titleInputValue]);
 
   const handleTitleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setInputValue(event.target.value);
+    setTitleInputValue(event.target.value);
   };
 
   return (
     <ScheduleEditorBox>
       <ScheduleTitleBox alignCenter>
-        <ScheduleTitle value={inputValue} onChange={handleTitleInputChange} />
+        <ScheduleTitle
+          value={titleInputValue}
+          onChange={handleTitleInputChange}
+        />
         <CancelBtn>
           <CancelIcon width={13} height={13} fill="#4F4F4F" />
         </CancelBtn>

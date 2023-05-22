@@ -1,7 +1,7 @@
 import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import '@blocknote/core/style.css';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -12,21 +12,36 @@ import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import TimePicker from '@/components/ScheduleEditor/TimePicker';
+import useChangeScheduleDetails from '@/queryHooks/useChangeScheduleDetails';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { SelectedScheduleId } from '@/states/schedule';
-
-// MEMO: 부모 컴포넌트한테 title을 받아와서 초기값 설정해 줘야 할 듯
-// TODO: Loading UI
 
 const ScheduleEditor = () => {
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
 
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
+  const { mutate } = useChangeScheduleDetails();
+
+  const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
 
   const editor: BlockNoteEditor | null = useBlockNote({
     initialContent: JSON.parse(scheduleDetails?.content || JSON.stringify('')),
     onEditorContentChange: (editorParams: BlockNoteEditor) => {
-      // call mutateFn
+      if (scheduleDetails) {
+        if (debouncingTimer.current) {
+          // console.log('clear', debouncingTimer.current);
+          clearTimeout(debouncingTimer.current);
+        }
+
+        debouncingTimer.current = setTimeout(() => {
+          mutate({
+            scheduleId: scheduleDetails.scheduleId,
+            title: scheduleDetails.title,
+            content: editorParams.topLevelBlocks,
+          });
+        }, 1000);
+        // console.log('set', debouncingTimer.current);
+      }
     },
   });
 

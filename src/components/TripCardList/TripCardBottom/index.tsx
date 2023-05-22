@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useSetRecoilState } from 'recoil';
+import React, { useState } from 'react';
+import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ITrip } from '@/api/trip';
@@ -7,23 +7,43 @@ import { ReactComponent as CameraIcon } from '@/assets/camera.svg';
 import { ReactComponent as EllipsisIcon } from '@/assets/ellipsis.svg';
 import { ReactComponent as MultiplyIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PencilIcon } from '@/assets/pencil.svg';
+import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
 import { ReactComponent as TrashCanIcon } from '@/assets/trash-can.svg';
+import { ReactComponent as CheckIcon } from '@/assets/whiteCheck.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import DynamicTripCardTitle from '@/components/TripCardList/DynamicTripCardTitle';
 import color from '@/constants/color';
+import useChangeTripImg from '@/queryHooks/useChangeTripImg';
 import useDeleteTrip from '@/queryHooks/useDeleteTrip';
-import IsTitleEditFamily from '@/states/trip';
+import {
+  ImgPreviewFamily,
+  IsOptionOpenFamily,
+  IsTitleEditFamily,
+} from '@/states/trip';
 
 interface ITripCardBottomProps {
   trip: ITrip;
 }
 
 const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
-  const [isOptionOpen, setIsOptionOpen] = useState(false);
-  const { mutate, isLoading } = useDeleteTrip();
+  const [isOptionOpen, setIsOptionOpen] = useRecoilState(
+    IsOptionOpenFamily(trip.tripId)
+  );
   const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
+  const [imgPreview, setImgPreview] = useRecoilState(
+    ImgPreviewFamily(trip.tripId)
+  );
+  const resetImgPreview = useResetRecoilState(ImgPreviewFamily(trip.tripId));
+
+  const [imgData, setImgData] = useState<FormData | null>(null);
+
+  const { mutate: deleteTripMutate, isLoading: isDeleteTripLoading } =
+    useDeleteTrip();
+  const { mutate: changeTripImgMutate, isLoading: isChangeTripImgLoading } =
+    useChangeTripImg();
+
   const tripPeriod = (
     <TripPeriod>
       {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : ''}
@@ -34,45 +54,105 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
     setIsOptionOpen(true);
   };
 
-  const handleEditTitleBtnClick = () => {
+  const handleTitleEditBtnClick = () => {
     setIsTitleEdit(true);
     setIsOptionOpen(false);
   };
 
-  const handleDeleteBtnClick = () => {
+  const handleTripDeleteBtnClick = () => {
     if (window.confirm('찐으로 삭제하시렵니까?')) {
-      mutate(trip.tripId);
+      deleteTripMutate(trip.tripId);
     }
   };
 
   const handleOptionCloseBtnClick = () => {
+    resetImgPreview();
+    setIsTitleEdit(false);
     setIsOptionOpen(false);
   };
 
-  const BottomContent = isOptionOpen ? (
-    <OptionBox>
-      {isLoading && <DimLoader />}
-      <OptionCloseBtn onClick={handleOptionCloseBtnClick}>
-        <MultiplyIcon />
-      </OptionCloseBtn>
-      <IconBtn>
+  const handleTripImgInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const file = e.target.files[0];
+      if (!file) {
+        return;
+      }
+      const formData = new FormData();
+      formData.append('tripId', String(trip.tripId));
+      formData.append('file', file);
+      setImgData(formData);
+
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onloadend = () => {
+        if (!reader.result) {
+          return;
+        }
+        setImgPreview(reader.result as string);
+      };
+    }
+  };
+
+  const handleImgRefreshBtnClick = () => {
+    resetImgPreview();
+  };
+
+  const handleTripImgSaveBtnClick = () => {
+    if (!imgData) return;
+    changeTripImgMutate(imgData);
+  };
+
+  const OptionContent = imgPreview ? (
+    <>
+      <IconBtn onClick={handleImgRefreshBtnClick}>
+        <IconWrapper>
+          <RefreshIcon />
+        </IconWrapper>
+        되돌리기
+      </IconBtn>
+      <IconBtn onClick={handleTripImgSaveBtnClick}>
+        <IconWrapper>
+          <CheckIcon fill={color.gray3} />
+        </IconWrapper>
+        사진 저장
+      </IconBtn>
+    </>
+  ) : (
+    <>
+      <TripImgLabel htmlFor={`tripThumbnail${trip.tripId}`}>
         <IconWrapper>
           <CameraIcon />
         </IconWrapper>
         사진 변경
-      </IconBtn>
-      <IconBtn onClick={handleEditTitleBtnClick}>
+      </TripImgLabel>
+      <TripImgInput
+        type="file"
+        accept={'image/*'}
+        id={`tripThumbnail${trip.tripId}`}
+        onChange={handleTripImgInputChange}
+      />
+      <IconBtn onClick={handleTitleEditBtnClick}>
         <IconWrapper>
           <PencilIcon />
         </IconWrapper>
         이름 수정
       </IconBtn>
-      <IconBtn onClick={handleDeleteBtnClick}>
+      <IconBtn onClick={handleTripDeleteBtnClick}>
         <IconWrapper>
           <TrashCanIcon />
         </IconWrapper>
         계획 삭제
       </IconBtn>
+    </>
+  );
+
+  const BottomContent = isOptionOpen ? (
+    <OptionBox>
+      {(isDeleteTripLoading || isChangeTripImgLoading) && <DimLoader />}
+      <OptionCloseBtn onClick={handleOptionCloseBtnClick}>
+        <MultiplyIcon />
+      </OptionCloseBtn>
+      {OptionContent}
     </OptionBox>
   ) : (
     <BottomBox column alignCenter justifyCenter>
@@ -125,6 +205,31 @@ const OptionBox = styled(Flex)`
   &:hover {
     color: ${color.blue3};
   }
+`;
+
+const TripImgInput = styled.input`
+  display: none;
+`;
+
+const TripImgLabel = styled.label`
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  height: 52px;
+  font-weight: 500;
+  font-size: 12px;
+  color: ${color.gray3};
+  &:hover {
+    color: ${color.blue3};
+    > div {
+      border-color: ${color.blue3};
+      > svg {
+        fill: ${color.blue3};
+      }
+    }
+  }
+  cursor: pointer;
 `;
 
 const IconBtn = styled.button`

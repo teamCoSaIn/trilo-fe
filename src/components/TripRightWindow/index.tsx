@@ -1,7 +1,9 @@
+import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/Loader';
 import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
@@ -14,7 +16,9 @@ const TripRightWindow = () => {
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
 
   const dynamicScheduleList = selectedScheduleId ? (
-    <ScheduleEditor />
+    <Suspense fallback={<CircularLoader />}>
+      <ScheduleEditor />
+    </Suspense>
   ) : (
     <ScheduleList />
   );

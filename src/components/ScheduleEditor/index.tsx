@@ -15,21 +15,21 @@ import TimePicker from '@/components/ScheduleEditor/TimePicker';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { SelectedScheduleId } from '@/states/schedule';
 
-const ScheduleEditor = () => {
-  const editor: BlockNoteEditor | null = useBlockNote({
-    // initialContent: data from react query,
-    onEditorContentChange: (editorParams: BlockNoteEditor) => {
-      // call mutateFn
-      console.log(JSON.stringify(editorParams.topLevelBlocks));
-    },
-  });
+// MEMO: 부모 컴포넌트한테 title을 받아와서 초기값 설정해 줘야 할 듯
+// TODO: Loading UI
 
+const ScheduleEditor = () => {
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
 
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
 
-  // MEMO: 부모 컴포넌트한테 title을 받아와서 초기값 설정해 줘야 할 듯
-  // TODO: Loading UI
+  const editor: BlockNoteEditor | null = useBlockNote({
+    initialContent: JSON.parse(scheduleDetails?.content || JSON.stringify('')),
+    onEditorContentChange: (editorParams: BlockNoteEditor) => {
+      // call mutateFn
+    },
+  });
+
   const [inputValue, setInputValue] = useState('');
 
   useEffect(() => {

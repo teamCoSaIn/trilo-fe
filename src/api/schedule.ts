@@ -68,7 +68,7 @@ export const deleteSchedule = async (scheduleId: ISchedule['scheduleId']) => {
 export const getScheduleDetails = async (
   scheduleId: ISchedule['scheduleId']
 ) => {
-  const res = await axios({
+  const res = await axios<ISchedule>({
     method: 'get',
     url: `/schedules/${scheduleId}`,
     requireAuth: true,

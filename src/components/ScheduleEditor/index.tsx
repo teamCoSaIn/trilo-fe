@@ -1,3 +1,6 @@
+import { BlockNoteEditor } from '@blocknote/core';
+import { BlockNoteView, useBlockNote } from '@blocknote/react';
+import '@blocknote/core/style.css';
 import { useEffect, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
@@ -13,6 +16,14 @@ import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { SelectedScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
+  const editor: BlockNoteEditor | null = useBlockNote({
+    // initialContent: data from react query,
+    onEditorContentChange: (editorParams: BlockNoteEditor) => {
+      // call mutateFn
+      console.log(JSON.stringify(editorParams.topLevelBlocks));
+    },
+  });
+
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
 
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
@@ -52,7 +63,9 @@ const ScheduleEditor = () => {
       <Spacing height={12} />
       <Line width={302} color="#B8B8B8" />
       <Spacing height={12} />
-      <Editor contentEditable />
+      <Editor>
+        <BlockNoteView editor={editor} />
+      </Editor>
       <PlaceNameBox>
         <LocationIcon />
         <PlaceName>{scheduleDetails?.placeName}</PlaceName>
@@ -95,9 +108,7 @@ const TimeDescription = styled.span`
 const Editor = styled.div`
   width: 302px;
   height: calc(100% - 110px);
-  outline: none;
   overflow: auto;
-  font-size: 15px;
 `;
 
 const PlaceNameBox = styled.div`

@@ -1,20 +1,58 @@
+import { ClickAwayListener } from '@mui/material';
+import { SyntheticEvent, useEffect, useRef } from 'react';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ITrip } from '@/api/trip';
 import Flex from '@/components/common/Flex';
 import TripCardBottom from '@/components/TripCardList/TripCardBottom';
 import TripCardContent from '@/components/TripCardList/TripCardContent';
+import {
+  ImgPreviewFamily,
+  IsOptionOpenFamily,
+  IsTitleEditFamily,
+} from '@/states/trip';
 
 interface ITripCardProps {
   trip: ITrip;
 }
 
 const TripCard = ({ trip }: ITripCardProps) => {
+  const tripCardRef = useRef<HTMLDivElement>(null);
+
+  const setIsOptionOpen = useSetRecoilState(IsOptionOpenFamily(trip.tripId));
+  const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
+  const resetTripImgPreview = useResetRecoilState(
+    ImgPreviewFamily(trip.tripId)
+  );
+
+  useEffect(() => {
+    return () => {
+      resetTripImgPreview();
+      setIsTitleEdit(false);
+      setIsOptionOpen(false);
+    };
+  }, []);
+
+  const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
+    if (
+      tripCardRef.current &&
+      tripCardRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    resetTripImgPreview();
+    setIsTitleEdit(false);
+    setIsOptionOpen(false);
+  };
+
   return (
-    <TripCardBox column>
-      <TripCardContent trip={trip} />
-      <TripCardBottom trip={trip} />
-    </TripCardBox>
+    <ClickAwayListener onClickAway={handleTitleFormClickAway}>
+      <TripCardBox column ref={tripCardRef}>
+        <TripCardContent trip={trip} />
+        <TripCardBottom trip={trip} />
+      </TripCardBox>
+    </ClickAwayListener>
   );
 };
 

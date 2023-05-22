@@ -3,10 +3,6 @@ import { useQuery } from '@tanstack/react-query';
 import HTTP from '@/api';
 import { ISchedule } from '@/api/schedule';
 
-// interface IUseGetScheduleDetailsParams {
-//   scheduleId: ISchedule['scheduleId'];
-// }
-
 const useGetScheduleDetails = (scheduleId: ISchedule['scheduleId']) => {
   return useQuery(
     [`scheduleDetail${scheduleId}`],

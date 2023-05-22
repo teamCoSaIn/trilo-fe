@@ -29,6 +29,12 @@ interface IChangeScheduleOrderParams {
   destinationScheduleIdx: number;
 }
 
+export interface IChangeScheduleDetailsParams {
+  scheduleId: ISchedule['scheduleId'];
+  title: ISchedule['title'];
+  content: ISchedule['content'];
+}
+
 export const createSchedule = async (schedule: ICreateScheduleParams) => {
   const res = await axios({
     method: 'post',
@@ -71,6 +77,18 @@ export const getScheduleDetails = async (
   const res = await axios<ISchedule>({
     method: 'get',
     url: `/schedules/${scheduleId}`,
+    requireAuth: true,
+  });
+  return res.data;
+};
+
+export const changeScheduleDetails = async (
+  data: IChangeScheduleDetailsParams
+) => {
+  const res = await axios<ISchedule['scheduleId']>({
+    method: 'put',
+    url: `/schedules/${data.scheduleId}`,
+    data,
     requireAuth: true,
   });
   return res.data;

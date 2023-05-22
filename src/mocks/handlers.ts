@@ -527,6 +527,21 @@ const getScheduleDetails = rest.get(
   }
 );
 
+const changeScheduleDetails = rest.put(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    const { scheduleId } = req.params;
+    const data = await req.json();
+    if (scheduleId) {
+      console.log('http request');
+      scheduleDetails.title = data.title;
+      scheduleDetails.content = JSON.stringify(data.content);
+    }
+    return res(ctx.json(data.scheduleId));
+  }
+);
+
 const getTempPlanList = rest.get(
   '/api/trips/:tripId/temporary-storage',
   async (req, res, ctx) => {
@@ -558,6 +573,7 @@ const handlers = [
   changeScheduleOrder,
   deleteSchedule,
   getScheduleDetails,
+  changeScheduleDetails,
   getTempPlanList,
 ];
 

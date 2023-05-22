@@ -12,6 +12,7 @@ import {
   changeScheduleOrder,
   deleteSchedule,
   getScheduleDetails,
+  changeScheduleDetails,
 } from '@/api/schedule';
 import {
   getTripList,
@@ -41,6 +42,7 @@ const HTTP = {
   changeScheduleOrder,
   deleteSchedule,
   getScheduleDetails,
+  changeScheduleDetails,
 };
 
 export default HTTP;

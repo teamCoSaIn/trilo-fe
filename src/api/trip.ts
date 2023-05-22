@@ -38,6 +38,16 @@ export const changeTripTitle = async (
   return res.status;
 };
 
+export const changeTripImg = async (tripImgData: FormData) => {
+  const res = await axios({
+    method: 'put',
+    url: `/tripcard-img`,
+    data: tripImgData,
+    requireAuth: true,
+  });
+  return res.status;
+};
+
 export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
   const res = await axios({
     method: 'post',

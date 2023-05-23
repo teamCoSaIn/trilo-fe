@@ -419,11 +419,15 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
     ...data,
   };
 
-  tripDays.forEach((tripDay, idx, arr) => {
-    if (tripDay.dayId === data.dayId) {
-      arr[idx].schedules.push(newSchedule);
-    }
-  });
+  if (data.dayId) {
+    tripDays.forEach((tripDay, idx, arr) => {
+      if (tripDay.dayId === data.dayId) {
+        arr[idx].schedules.push(newSchedule);
+      }
+    });
+  } else {
+    tempPlan.push(newSchedule);
+  }
 
   return res(ctx.status(200));
 });

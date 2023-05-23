@@ -106,7 +106,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
     <>
       <IconBtn onClick={handleTripImgRefreshBtnClick}>
         <IconWrapper>
-          <RefreshIcon />
+          <RefreshIcon width={16} height={16} />
         </IconWrapper>
         되돌리기
       </IconBtn>

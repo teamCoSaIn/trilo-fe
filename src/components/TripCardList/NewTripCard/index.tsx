@@ -12,7 +12,7 @@ import Flex from '@/components/common/Flex';
 import color from '@/constants/color';
 import {
   NEW_TRIP_CARD_Z_INDEX,
-  NEW_TRIP_DIM_LAYER_Z_INDEX,
+  TRIP_LIST_DIM_LAYER_Z_INDEX,
 } from '@/constants/zIndex';
 import { tripTitleRegExp } from '@/utils/regExp';
 
@@ -107,9 +107,9 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
 };
 
 const DimLayer = styled.div`
-  z-index: ${NEW_TRIP_DIM_LAYER_Z_INDEX};
+  z-index: ${TRIP_LIST_DIM_LAYER_Z_INDEX};
   background-color: ${color.black};
-  opacity: 0.7;
+  opacity: 0.5;
   position: fixed;
   top: 0;
   left: 0;

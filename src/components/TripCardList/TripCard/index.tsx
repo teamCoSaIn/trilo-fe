@@ -8,7 +8,7 @@ import Flex from '@/components/common/Flex';
 import TripCardBottom from '@/components/TripCardList/TripCardBottom';
 import TripCardContent from '@/components/TripCardList/TripCardContent';
 import {
-  ImgPreviewFamily,
+  PreviewImgFamily,
   IsOptionOpenFamily,
   IsTitleEditFamily,
 } from '@/states/trip';
@@ -22,13 +22,11 @@ const TripCard = ({ trip }: ITripCardProps) => {
 
   const setIsOptionOpen = useSetRecoilState(IsOptionOpenFamily(trip.tripId));
   const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
-  const resetTripImgPreview = useResetRecoilState(
-    ImgPreviewFamily(trip.tripId)
-  );
+  const resetPreviewImg = useResetRecoilState(PreviewImgFamily(trip.tripId));
 
   useEffect(() => {
     return () => {
-      resetTripImgPreview();
+      resetPreviewImg();
       setIsTitleEdit(false);
       setIsOptionOpen(false);
     };
@@ -41,7 +39,7 @@ const TripCard = ({ trip }: ITripCardProps) => {
     ) {
       return;
     }
-    resetTripImgPreview();
+    resetPreviewImg();
     setIsTitleEdit(false);
     setIsOptionOpen(false);
   };

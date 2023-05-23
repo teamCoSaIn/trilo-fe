@@ -10,7 +10,7 @@ export const IsOptionOpenFamily = atomFamily<boolean, number>({
   default: false,
 });
 
-export const ImgPreviewFamily = atomFamily<string, number>({
-  key: 'isImgEditFamily',
+export const PreviewImgFamily = atomFamily<string, number>({
+  key: 'previewImgFamily',
   default: undefined,
 });

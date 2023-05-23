@@ -18,7 +18,7 @@ import color from '@/constants/color';
 import useChangeTripImg from '@/queryHooks/useChangeTripImg';
 import useDeleteTrip from '@/queryHooks/useDeleteTrip';
 import {
-  ImgPreviewFamily,
+  PreviewImgFamily,
   IsOptionOpenFamily,
   IsTitleEditFamily,
 } from '@/states/trip';
@@ -32,10 +32,10 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
     IsOptionOpenFamily(trip.tripId)
   );
   const setIsTitleEdit = useSetRecoilState(IsTitleEditFamily(trip.tripId));
-  const [imgPreview, setImgPreview] = useRecoilState(
-    ImgPreviewFamily(trip.tripId)
+  const [previewImg, setPreviewImg] = useRecoilState(
+    PreviewImgFamily(trip.tripId)
   );
-  const resetImgPreview = useResetRecoilState(ImgPreviewFamily(trip.tripId));
+  const resetPreviewImg = useResetRecoilState(PreviewImgFamily(trip.tripId));
 
   const [imgData, setImgData] = useState<FormData | null>(null);
 
@@ -66,7 +66,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   };
 
   const handleOptionCloseBtnClick = () => {
-    resetImgPreview();
+    resetPreviewImg();
     setIsTitleEdit(false);
     setIsOptionOpen(false);
   };
@@ -88,13 +88,13 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
         if (!reader.result) {
           return;
         }
-        setImgPreview(reader.result as string);
+        setPreviewImg(reader.result as string);
       };
     }
   };
 
-  const handleImgRefreshBtnClick = () => {
-    resetImgPreview();
+  const handleTripImgRefreshBtnClick = () => {
+    resetPreviewImg();
   };
 
   const handleTripImgSaveBtnClick = () => {
@@ -102,9 +102,9 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
     changeTripImgMutate(imgData);
   };
 
-  const OptionContent = imgPreview ? (
+  const OptionContent = previewImg ? (
     <>
-      <IconBtn onClick={handleImgRefreshBtnClick}>
+      <IconBtn onClick={handleTripImgRefreshBtnClick}>
         <IconWrapper>
           <RefreshIcon />
         </IconWrapper>

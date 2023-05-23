@@ -8,7 +8,7 @@ import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
 import TripCardStatusLabel from '@/components/TripCardList/TripCardStatusLabel';
 import color from '@/constants/color';
 import { LOADING_Z_INDEX } from '@/constants/zIndex';
-import { ImgPreviewFamily } from '@/states/trip';
+import { PreviewImgFamily } from '@/states/trip';
 
 interface ITripCardContentProps {
   trip: ITrip;
@@ -16,9 +16,9 @@ interface ITripCardContentProps {
 
 const TripCardContent = ({ trip }: ITripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
-  const tripImgPreview = useRecoilValue(ImgPreviewFamily(trip.tripId));
+  const previewImg = useRecoilValue(PreviewImgFamily(trip.tripId));
 
-  const tripContentPicUrl = tripImgPreview || trip.picUrl || tripCardDefaultPic;
+  const tripContentPicUrl = previewImg || trip.picUrl || tripCardDefaultPic;
 
   const handleTripCardMouseEnter = () => {
     setIsHover(true);

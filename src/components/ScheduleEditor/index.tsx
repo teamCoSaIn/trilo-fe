@@ -23,47 +23,39 @@ const ScheduleEditor = () => {
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
   const { mutate } = useChangeScheduleDetails();
 
-  const contentDebouncingTimer = useRef<NodeJS.Timeout | null>(null);
-  const titleDebouncingTimer = useRef<NodeJS.Timeout | null>(null);
-
-  const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: JSON.parse(scheduleDetails?.content || JSON.stringify('')),
-    onEditorContentChange: (editorParams: BlockNoteEditor) => {
-      if (scheduleDetails) {
-        if (contentDebouncingTimer.current) {
-          clearTimeout(contentDebouncingTimer.current);
-        }
-
-        contentDebouncingTimer.current = setTimeout(() => {
-          mutate({
-            scheduleId: scheduleDetails.scheduleId,
-            content: JSON.stringify(editorParams.topLevelBlocks),
-          });
-        }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
-      }
-    },
-  });
-
+  const [contentInputValue, setContentInputValue] = useState(
+    JSON.parse(scheduleDetails?.content || JSON.stringify(''))
+  );
   const [titleInputValue, setTitleInputValue] = useState(
     scheduleDetails?.title
   );
 
+  const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const editor: BlockNoteEditor | null = useBlockNote({
+    initialContent: contentInputValue,
+    onEditorContentChange: (editorParams: BlockNoteEditor) => {
+      setContentInputValue(editorParams.topLevelBlocks);
+    },
+  });
+
   useEffect(() => {
-    titleDebouncingTimer.current = setTimeout(() => {
+    debouncingTimer.current = setTimeout(() => {
       if (scheduleDetails) {
         mutate({
           scheduleId: scheduleDetails.scheduleId,
           title: titleInputValue,
+          content: JSON.stringify(contentInputValue),
         });
       }
     }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
 
     return () => {
-      if (titleDebouncingTimer.current) {
-        clearTimeout(titleDebouncingTimer.current);
+      if (debouncingTimer.current) {
+        clearTimeout(debouncingTimer.current);
       }
     };
-  }, [titleInputValue]);
+  }, [titleInputValue, contentInputValue]);
 
   const handleTitleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>

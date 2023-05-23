@@ -109,7 +109,7 @@ const Map = () => {
   const handleClickTriloMarker = (scheduleId: number) => () => {
     if (selectedScheduleId === scheduleId) {
       resetSelectedScheduleId();
-    } else if (!selectedScheduleId) {
+    } else {
       setSelectedScheduleId(scheduleId);
     }
   };
@@ -125,6 +125,11 @@ const Map = () => {
             ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color)
             : createTriloMarkerSvg(idx + 1, dailyPlanData.color);
         const triloMarkerDataUrl = convertToDataUrl(svg);
+        const animation =
+          selectedScheduleId === scheduleData.scheduleId
+            ? google.maps.Animation.BOUNCE
+            : google.maps.Animation.DROP;
+
         return (
           <MarkerF
             key={scheduleData.scheduleId}
@@ -133,9 +138,13 @@ const Map = () => {
               lng: scheduleData.coordinate.longitude,
             }}
             options={{
-              icon: triloMarkerDataUrl,
+              icon: {
+                url: triloMarkerDataUrl,
+                // anchor: new google.maps.Point(15, 18),
+              },
             }}
             onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+            animation={animation}
           />
         );
       })
@@ -152,6 +161,10 @@ const Map = () => {
           ? createSelectedTriloMarkerSvg(idx + 1, tempPlanData.color)
           : createTriloMarkerSvg(idx + 1, tempPlanData.color);
       const triloMarkerDataUrl = convertToDataUrl(svg);
+      const animation =
+        selectedScheduleId === scheduleData.scheduleId
+          ? google.maps.Animation.BOUNCE
+          : google.maps.Animation.DROP;
       return (
         <MarkerF
           key={scheduleData.scheduleId}
@@ -160,9 +173,13 @@ const Map = () => {
             lng: scheduleData.coordinate.longitude,
           }}
           options={{
-            icon: triloMarkerDataUrl,
+            icon: {
+              url: triloMarkerDataUrl,
+              // anchor: new google.maps.Point(15, 18),
+            },
           }}
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+          animation={animation}
         />
       );
     });

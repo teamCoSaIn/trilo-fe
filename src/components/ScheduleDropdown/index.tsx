@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
@@ -9,7 +9,11 @@ import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import DailyPlanColor from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
-import { DropdownMenuFamily, DropdownIndexFamily } from '@/states/schedule';
+import {
+  DropdownMenuFamily,
+  DropdownIndexFamily,
+  SelectedScheduleId,
+} from '@/states/schedule';
 
 interface IScheduleDropdownProps {
   tripId: string;
@@ -20,6 +24,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
+  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
 
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState<boolean>(false);
   const [isColorDropdownOpen, setIsColorDropdownOpen] =
@@ -38,9 +43,10 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     setIsColorDropdownOpen(prev => !prev);
   };
 
-  const handleDropdownItemClick = (idx: number) => {
+  const handleDropdownItemClick = (idx: number) => () => {
     setDayDropdownIdx(idx);
     setIsDayDropdownOpen(false);
+    resetSelectedScheduleId();
   };
 
   const handleColorDropdownBtnMouseEnter = () => {
@@ -96,14 +102,12 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
           {dayDropdownMenu.map((menu, idx) => (
             <DayMenu
               key={menu.dailyPlanId}
-              onClick={() => handleDropdownItemClick(idx)}
+              onClick={handleDropdownItemClick(idx)}
             >
               {`${menu.name} - ${menu.date}`}
             </DayMenu>
           ))}
-          <DayMenu onClick={() => handleDropdownItemClick(-1)}>
-            전체일정
-          </DayMenu>
+          <DayMenu onClick={handleDropdownItemClick(-1)}>전체일정</DayMenu>
         </DayBox>
       </DropdownPopper>
       <DropdownPopper isDropdownOpen={isColorDropdownOpen}>

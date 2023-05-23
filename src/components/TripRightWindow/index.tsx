@@ -1,6 +1,6 @@
-import { Suspense } from 'react';
+import { Suspense, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import CircularLoader from '@/components/common/Loader';
@@ -14,6 +14,13 @@ const TripRightWindow = () => {
   const { tripId } = useParams();
 
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
+  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+
+  useEffect(() => {
+    return () => {
+      resetSelectedScheduleId();
+    };
+  }, []);
 
   const dynamicScheduleList = selectedScheduleId ? (
     <Suspense fallback={<CircularLoader />}>

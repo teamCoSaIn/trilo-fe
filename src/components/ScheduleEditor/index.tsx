@@ -2,7 +2,7 @@ import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import '@blocknote/core/style.css';
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { ReactComponent as ClockIcon } from '@/assets/clock.svg';
@@ -19,6 +19,7 @@ import { SelectedScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
+  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
 
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
   const { mutate } = useChangeScheduleDetails();
@@ -63,6 +64,10 @@ const ScheduleEditor = () => {
     setTitleInputValue(event.target.value);
   };
 
+  const handleCancelBtnClick = () => {
+    resetSelectedScheduleId();
+  };
+
   return (
     <ScheduleEditorBox>
       <ScheduleTitleBox alignCenter>
@@ -70,18 +75,18 @@ const ScheduleEditor = () => {
           value={titleInputValue}
           onChange={handleTitleInputChange}
         />
-        <CancelBtn>
+        <CancelBtn onClick={handleCancelBtnClick}>
           <CancelIcon width={13} height={13} fill="#4F4F4F" />
         </CancelBtn>
       </ScheduleTitleBox>
       <Spacing height={13} />
-      <ScheduleTimeBox alignCenter>
+      <Flex alignCenter>
         <ClockIcon />
         <TimeDescription>일정 시간</TimeDescription>
         <TimePicker />
         <Line left={6} right={6} width={30} color="#D9D9D9" />
         <TimePicker />
-      </ScheduleTimeBox>
+      </Flex>
       <Spacing height={12} />
       <Line width={302} color="#B8B8B8" />
       <Spacing height={12} />
@@ -118,8 +123,6 @@ const ScheduleTitle = styled.input`
 `;
 
 const CancelBtn = styled.button``;
-
-const ScheduleTimeBox = styled(Flex)``;
 
 const TimeDescription = styled.span`
   font-size: 12px;

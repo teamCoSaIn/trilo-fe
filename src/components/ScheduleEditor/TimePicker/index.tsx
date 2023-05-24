@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
@@ -21,8 +21,30 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
   const [isMinuteOptionsScrollVisible, setIsMinuteOptionsScrollVisible] =
     useState(false);
 
+  const timeOptionsRef = useRef<HTMLDivElement>(null);
+
   const hourDataList = Array.from({ length: 24 }, (_, i) => i);
   const minuteDataList = Array.from({ length: 12 }, (_, i) => i * 5);
+
+  const handleClickAway = (event: MouseEvent) => {
+    event.stopPropagation();
+    if (event.target !== timeOptionsRef.current) {
+      setIsTimeOptionsVisible(false);
+    }
+  };
+
+  useEffect(() => {
+    setTimeout(() => {
+      if (isTimeOptionsVisible) {
+        document.addEventListener('click', handleClickAway);
+      }
+    }, 0);
+    return () => {
+      if (isTimeOptionsVisible) {
+        document.removeEventListener('click', handleClickAway);
+      }
+    };
+  }, [isTimeOptionsVisible]);
 
   const handleTimePickerMouseEnter = () => {
     setIsRefreshIconVisible(true);
@@ -104,7 +126,10 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
           </RefreshBtn>
         )}
       </TimePickerContent>
-      <TimeOptionsDropdown isTimeOptionsVisible={isTimeOptionsVisible}>
+      <TimeOptionsDropdown
+        isTimeOptionsVisible={isTimeOptionsVisible}
+        ref={timeOptionsRef}
+      >
         <TimeOptionsListBox>
           <TimeOptionsList
             onMouseEnter={handleHourOptionsMouseEnter}

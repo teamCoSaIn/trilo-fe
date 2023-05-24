@@ -37,6 +37,16 @@ const GlobalStyle = createGlobalStyle`
   ui, li, ol{
     list-style: none;
   }
+  .tippy-box {
+    display: none !important;
+    visibility: hidden !important;
+  }
+  ._bnEditor_dbz5y_3 {
+    padding-inline: 10px !important;
+  }
+  ._blockContent_63zqr_10._isEmpty_63zqr_224._hasAnchor_63zqr_247>:first-child:before {
+    content: "Enter text..." !important;
+  }
 `;
 
 export default GlobalStyle;

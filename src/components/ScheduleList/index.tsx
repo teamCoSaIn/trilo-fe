@@ -147,17 +147,19 @@ const ScheduleList = () => {
     setIsTempBoxPopUp(prev => !prev);
   };
 
-  const handleScheduleDeleteBtnClick = (scheduleId: number) => {
-    if (!tripId) {
-      return;
-    }
-    if (window.confirm('찐으로 삭제하시겠습니까?')) {
-      deleteMutate({
-        tripId: +tripId,
-        scheduleId,
-      });
-    }
-  };
+  const handleScheduleDeleteBtnClick =
+    (scheduleId: number) => (event: React.MouseEvent) => {
+      event.stopPropagation();
+      if (!tripId) {
+        return;
+      }
+      if (window.confirm('찐으로 삭제하시겠습니까?')) {
+        deleteMutate({
+          tripId: +tripId,
+          scheduleId,
+        });
+      }
+    };
 
   const handleScheduleClick = (scheduleId: number) => () => {
     setSelectedScheduleId(scheduleId);
@@ -211,11 +213,9 @@ const ScheduleList = () => {
                               </Place>
                             )}
                             <ScheduleDeleteBtn
-                              onClick={() =>
-                                handleScheduleDeleteBtnClick(
-                                  schedule.scheduleId
-                                )
-                              }
+                              onClick={handleScheduleDeleteBtnClick(
+                                schedule.scheduleId
+                              )}
                             >
                               <DeleteIcon
                                 width={7}

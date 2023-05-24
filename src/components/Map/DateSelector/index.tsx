@@ -1,7 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
@@ -21,8 +21,7 @@ const DateSelector = () => {
     tripId: +(tripId as string),
   });
 
-  const [isDateSelectorVisible, setIsDateSelectorVisible] =
-    useRecoilState(InfoBoxVisible);
+  const setIsDateSelectorVisible = useSetRecoilState(InfoBoxVisible);
   const googleMarkerLatLng = useRecoilValue(GoogleMarkerLatLng);
   const placeName = useRecoilValue(PlaceName);
   const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
@@ -30,7 +29,7 @@ const DateSelector = () => {
   const infoBoxRef = useRef<HTMLDivElement>(null);
 
   const handleClickAway = useCallback((event: MouseEvent) => {
-    if (isDateSelectorVisible && event.target !== infoBoxRef.current) {
+    if (event.target !== infoBoxRef.current) {
       setIsDateSelectorVisible(false);
     }
   }, []);
@@ -52,9 +51,7 @@ const DateSelector = () => {
   );
 
   useEffect(() => {
-    if (isDateSelectorVisible) {
-      document.addEventListener('click', handleClickAway);
-    }
+    document.addEventListener('click', handleClickAway);
     return () => {
       document.removeEventListener('click', handleClickAway);
     };

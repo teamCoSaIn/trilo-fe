@@ -246,9 +246,9 @@ const getLoginUrl = rest.get(
     if (oauthServer === 'google') {
       await sleep(1000);
     } else if (oauthServer === 'naver') {
-      await sleep(2000);
+      await sleep(1000);
     } else if (oauthServer === 'kakao') {
-      await sleep(3000);
+      await sleep(1000);
     }
 
     return res(ctx.json(oauthServerObj[oauthServer as TOauthServerKey]));
@@ -262,7 +262,7 @@ const getAccessToken = rest.get(
     const oauthState = req.url.searchParams.get('state');
     localStorage.setItem('mockLogin', 'true');
     isLogin = true;
-    await sleep(2000);
+    await sleep(1000);
     return res(
       ctx.json({
         token_type: `code:${oauthCode} state:${oauthState}`,
@@ -301,7 +301,7 @@ const checkRefreshToken = rest.get('/api/auth/check', async (req, res, ctx) => {
 const getExpiredAccessToken = rest.get(
   '/api/expired-access-token',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     return res(
       ctx.json({
         token_type: 'Bearer Token',
@@ -334,7 +334,7 @@ const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {
 const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
   const { nickname: newNickname } = await req.json();
   nickname = newNickname;
-  await sleep(2000);
+  await sleep(1000);
 
   return res(ctx.status(200));
 });
@@ -351,7 +351,7 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 });
 
 const getTripList = rest.get('/api/tripcard-list', async (req, res, ctx) => {
-  await sleep(2000);
+  await sleep(1000);
   return res(ctx.json(tripList));
 });
 
@@ -366,7 +366,7 @@ const changeTripTitle = rest.put(
       }
     });
 
-    await sleep(2000);
+    await sleep(1000);
 
     return res(ctx.status(200));
   }
@@ -374,7 +374,7 @@ const changeTripTitle = rest.put(
 
 const createTrip = rest.post('/api/tripcard', async (req, res, ctx) => {
   const { title } = await req.json();
-  await sleep(2000);
+  await sleep(1000);
 
   const trip = {
     tripId: +new Date(),
@@ -391,7 +391,7 @@ const createTrip = rest.post('/api/tripcard', async (req, res, ctx) => {
 });
 
 const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
-  await sleep(2000);
+  await sleep(1000);
 
   const { id } = req.params;
 
@@ -404,7 +404,7 @@ const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
 const getDailyPlanList = rest.get(
   '/api/trips/:tripId/days',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     const { tripId } = req.params;
     if (tripId && tripCardIds[tripId as string]) {
       return res(ctx.json(tripCardIds[tripId as string]));
@@ -447,7 +447,7 @@ const changeScheduleOrder = rest.patch(
 const deleteSchedule = rest.delete(
   '/api/schedules/:scheduleId',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
 
     const { scheduleId } = req.params;
     const curTrip = tripCardIds['1'];
@@ -494,7 +494,7 @@ const changeScheduleDetails = rest.put(
 const getTempPlanList = rest.get(
   '/api/trips/:tripId/temporary-storage',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     const { tripId } = req.params;
     if (tripId) {
       return res(ctx.json(tempPlan));

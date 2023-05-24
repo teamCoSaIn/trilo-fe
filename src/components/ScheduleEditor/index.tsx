@@ -15,11 +15,13 @@ import TimePicker from '@/components/ScheduleEditor/TimePicker';
 import { SCHEDULE_DETAILS_DEBOUNCE_TIME } from '@/constants/debounce';
 import useChangeScheduleDetails from '@/queryHooks/useChangeScheduleDetails';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
+import { MapInstance } from '@/states/googleMaps';
 import { SelectedScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
   const selectedScheduleId = useRecoilValue(SelectedScheduleId);
   const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const mapInstance = useRecoilValue(MapInstance);
 
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
   const { mutate } = useChangeScheduleDetails();
@@ -72,6 +74,15 @@ const ScheduleEditor = () => {
     resetSelectedScheduleId();
   };
 
+  const handlePlaceNameBtnClick = () => {
+    if (mapInstance && scheduleDetails) {
+      mapInstance.setCenter({
+        lat: scheduleDetails.coordinate.latitude,
+        lng: scheduleDetails.coordinate.longitude,
+      });
+    }
+  };
+
   return (
     <ScheduleEditorBox>
       <ScheduleTitleBox alignCenter>
@@ -97,7 +108,7 @@ const ScheduleEditor = () => {
       <Editor>
         <BlockNoteView editor={editor} />
       </Editor>
-      <PlaceNameBox>
+      <PlaceNameBox onClick={handlePlaceNameBtnClick}>
         <LocationIcon />
         <PlaceName>{scheduleDetails?.placeName}</PlaceName>
       </PlaceNameBox>
@@ -140,19 +151,30 @@ const Editor = styled.div`
   overflow: auto;
 `;
 
-const PlaceNameBox = styled.div`
+const PlaceNameBox = styled.button`
   position: absolute;
   bottom: 18px;
   right: 14px;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 5px;
+  color: #b8b8b8;
+  border-radius: 10px;
+  &:hover {
+    background-color: #4096ff;
+    color: white;
+    > svg > path {
+      fill: white;
+    }
+  }
+  transition: background-color 0.2s;
 `;
 
 const PlaceName = styled.span`
   font-size: 14px;
   font-weight: 500;
-  color: #b8b8b8;
+  color: inherit;
 `;
 
 export default ScheduleEditor;

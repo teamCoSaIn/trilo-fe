@@ -16,6 +16,8 @@ export interface ISchedule {
   content: string;
   placeName: string;
   coordinate: ICoordinate;
+  startTime: string;
+  endTime: string;
 }
 
 export interface ICoordinate {

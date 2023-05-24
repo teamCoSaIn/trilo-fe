@@ -56,7 +56,18 @@ const ScheduleEditor = () => {
         clearTimeout(debouncingTimer.current);
       }
     };
-  }, [titleInputValue, contentInputValue]);
+
+  useEffect(() => {
+    return () => {
+      if (scheduleDetails) {
+        mutate({
+          scheduleId: scheduleDetails.scheduleId,
+          title: titleInputValue,
+          content: JSON.stringify(contentInputValue),
+        });
+      }
+    };
+  }, []);
 
   const handleTitleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>

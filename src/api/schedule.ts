@@ -33,8 +33,10 @@ interface IChangeScheduleOrderParams {
 
 export interface IChangeScheduleDetailsParams {
   scheduleId: ISchedule['scheduleId'];
-  title?: ISchedule['title'];
-  content?: ISchedule['content'];
+  title: ISchedule['title'];
+  content: ISchedule['content'];
+  startTime: ISchedule['startTime'];
+  endTime: ISchedule['endTime'];
 }
 
 export const createSchedule = async (schedule: ICreateScheduleParams) => {

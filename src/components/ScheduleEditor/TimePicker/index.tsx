@@ -1,94 +1,68 @@
-/*
-TODO:
-- click away listener 추가
-- startTime > endTime 막기
-*/
-
 import { useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
+import { TIMEPICKER_Z_INDEX } from '@/constants/zIndex';
 
-const TimePicker = () => {
-  const INITIAL_HOUR = 'HH';
-  const INITIAL_MINUTE = 'MM';
-  const INITIAL_SELECTED_ID = -1;
+interface ITimePickerProps {
+  time: string | undefined;
+  setTime: React.Dispatch<React.SetStateAction<string | undefined>>;
+}
 
-  const [hour, setHour] = useState(INITIAL_HOUR);
-  const [minute, setMinute] = useState(INITIAL_MINUTE);
+const TimePicker = ({ time, setTime }: ITimePickerProps) => {
+  const [initHour, initMinute] = (time || '').split(':');
+  const [hour, setHour] = useState(initHour);
+  const [minute, setMinute] = useState(initMinute);
+
   const [isRefreshIconVisible, setIsRefreshIconVisible] = useState(false);
-  const [isTimeOptionVisible, setIsTimeOptionVisible] = useState(false);
+  const [isTimeOptionsVisible, setIsTimeOptionsVisible] = useState(false);
   const [isHourOptionsScrollVisible, setIsHourOptionsScrollVisible] =
     useState(false);
   const [isMinuteOptionsScrollVisible, setIsMinuteOptionsScrollVisible] =
     useState(false);
-  const [selectedHourId, setSelectedHourId] =
-    useState<number>(INITIAL_SELECTED_ID);
-  const [selectedMinuteId, setSelectedMinuteId] =
-    useState<number>(INITIAL_SELECTED_ID);
 
   const hourDataList = Array.from({ length: 24 }, (_, i) => i);
   const minuteDataList = Array.from({ length: 12 }, (_, i) => i * 5);
 
-  const resetTimePicker = () => {
-    setHour(INITIAL_HOUR);
-    setMinute(INITIAL_MINUTE);
-    setSelectedHourId(INITIAL_SELECTED_ID);
-    setSelectedMinuteId(INITIAL_SELECTED_ID);
-  };
-
-  const handleTimePickerClick = () => {
-    setIsTimeOptionVisible(prev => !prev);
-    if (hour === INITIAL_HOUR || minute === INITIAL_MINUTE) {
-      resetTimePicker();
-    }
-  };
-
   const handleTimePickerMouseEnter = () => {
     setIsRefreshIconVisible(true);
   };
-
   const handleTimePickerMouseLeave = () => {
     setIsRefreshIconVisible(false);
-  };
-
-  const handleRefreshBtnClick = (event: React.MouseEvent) => {
-    resetTimePicker();
-    event.stopPropagation();
   };
 
   const handleHourOptionsMouseEnter = () => {
     setIsHourOptionsScrollVisible(true);
   };
-
   const handleHourOptionsMouseLeave = () => {
     setIsHourOptionsScrollVisible(false);
   };
-
   const handleMinuteOptionsMouseEnter = () => {
     setIsMinuteOptionsScrollVisible(true);
   };
-
   const handleMinuteOptionsMouseLeave = () => {
     setIsMinuteOptionsScrollVisible(false);
   };
 
-  const handleHourOptionsClick = (paddedHour: string, id: number) => () => {
-    setHour(paddedHour);
-    setSelectedHourId(id);
-    // if (minute !== INITIAL_MINUTE) {
-    //   // post 요청
-    //   setIsTimeOptionVisible(false);
-    // }
+  const handleTimePickerClick = () => {
+    setIsTimeOptionsVisible(prev => !prev);
   };
 
-  const handleMinuteOptionsClick = (paddedMinute: string, id: number) => () => {
+  const handleRefreshBtnClick = (event: React.MouseEvent) => {
+    setHour(initHour);
+    setMinute(initMinute);
+    event.stopPropagation();
+  };
+
+  const handleHourOptionsClick = (paddedHour: string) => () => {
+    setHour(paddedHour);
+    setIsTimeOptionsVisible(false);
+    setTime(`${paddedHour}:${minute}`);
+  };
+  const handleMinuteOptionsClick = (paddedMinute: string) => () => {
     setMinute(paddedMinute);
-    setSelectedMinuteId(id);
-    if (hour !== INITIAL_HOUR) {
-      // post 요청
-      setIsTimeOptionVisible(false);
-    }
+    setIsTimeOptionsVisible(false);
+    setTime(`${hour}:${paddedMinute}`);
   };
 
   const hourOptions = hourDataList.map((hourData, idx) => {
@@ -96,9 +70,8 @@ const TimePicker = () => {
     return (
       <TimeOptionsItem
         key={idx}
-        optionId={idx}
-        onClick={handleHourOptionsClick(paddedHour, idx)}
-        selectedOptionId={selectedHourId}
+        onClick={handleHourOptionsClick(paddedHour)}
+        isSelected={paddedHour === hour}
       >
         {paddedHour}
       </TimeOptionsItem>
@@ -109,9 +82,8 @@ const TimePicker = () => {
     return (
       <TimeOptionsItem
         key={idx}
-        optionId={idx}
-        onClick={handleMinuteOptionsClick(paddedMinute, idx)}
-        selectedOptionId={selectedMinuteId}
+        onClick={handleMinuteOptionsClick(paddedMinute)}
+        isSelected={paddedMinute === minute}
       >
         {paddedMinute}
       </TimeOptionsItem>
@@ -132,7 +104,7 @@ const TimePicker = () => {
           </RefreshBtn>
         )}
       </TimePickerContent>
-      <TimeOptionsDropdown isTimeOptionVisible={isTimeOptionVisible}>
+      <TimeOptionsDropdown isTimeOptionsVisible={isTimeOptionsVisible}>
         <TimeOptionsListBox>
           <TimeOptionsList
             onMouseEnter={handleHourOptionsMouseEnter}
@@ -186,9 +158,9 @@ const RefreshBtn = styled.button`
   }
 `;
 
-const TimeOptionsDropdown = styled.div<{ isTimeOptionVisible: boolean }>`
-  max-height: ${({ isTimeOptionVisible }) =>
-    isTimeOptionVisible ? '180px' : '0px'};
+const TimeOptionsDropdown = styled.div<{ isTimeOptionsVisible: boolean }>`
+  max-height: ${({ isTimeOptionsVisible }) =>
+    isTimeOptionsVisible ? '180px' : '0px'};
   overflow: hidden;
   transition: max-height 0.1s ease-out;
   position: absolute;
@@ -196,12 +168,15 @@ const TimeOptionsDropdown = styled.div<{ isTimeOptionVisible: boolean }>`
   left: 0px;
   width: 90px;
   height: 180px;
-  /* border: 1px solid #d9d9d9; */
   background-color: #fff;
   border-radius: 5px;
   color: #4f4f4f;
-  box-shadow: 0 6px 16px 0 rgba(0, 0, 0, 0.08),
-    0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: ${({ isTimeOptionsVisible }) =>
+    isTimeOptionsVisible
+      ? `0 6px 16px 0 rgba(0, 0, 0, 0.08),
+    0 3px 6px -4px rgba(0, 0, 0, 0.12), 0 9px 28px 8px rgba(0, 0, 0, 0.05)`
+      : 'null'};
+  z-index: ${TIMEPICKER_Z_INDEX};
 `;
 
 const TimeOptionsListBox = styled.div`
@@ -228,14 +203,12 @@ const TimeOptionsList = styled.ul<{ isVisible: boolean }>`
 `;
 
 const TimeOptionsItem = styled.li<{
-  optionId: number;
-  selectedOptionId: number;
+  isSelected: boolean;
 }>`
   font-size: 12px;
   padding: 4px 10px;
   border-radius: 5px;
-  background-color: ${({ optionId, selectedOptionId }) =>
-    optionId === selectedOptionId ? '#e6f4ff' : 'none'};
+  background-color: ${({ isSelected }) => (isSelected ? '#e6f4ff' : 'none')};
   &:hover {
     background-color: rgba(0, 0, 0, 0.04);
   }

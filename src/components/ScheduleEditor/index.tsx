@@ -24,12 +24,14 @@ const ScheduleEditor = () => {
   const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
   const { mutate } = useChangeScheduleDetails();
 
-  const [contentInputValue, setContentInputValue] = useState(
-    JSON.parse(scheduleDetails?.content || JSON.stringify(''))
-  );
   const [titleInputValue, setTitleInputValue] = useState(
     scheduleDetails?.title
   );
+  const [contentInputValue, setContentInputValue] = useState(
+    JSON.parse(scheduleDetails?.content || JSON.stringify(''))
+  );
+  const [startTime, setStartTime] = useState(scheduleDetails?.startTime);
+  const [endTime, setEndTime] = useState(scheduleDetails?.endTime);
 
   const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -42,11 +44,13 @@ const ScheduleEditor = () => {
 
   useEffect(() => {
     debouncingTimer.current = setTimeout(() => {
-      if (scheduleDetails) {
+      if (scheduleDetails && titleInputValue) {
         mutate({
           scheduleId: scheduleDetails.scheduleId,
           title: titleInputValue,
           content: JSON.stringify(contentInputValue),
+          startTime: startTime || scheduleDetails.startTime,
+          endTime: endTime || scheduleDetails.endTime,
         });
       }
     }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
@@ -56,18 +60,7 @@ const ScheduleEditor = () => {
         clearTimeout(debouncingTimer.current);
       }
     };
-
-  useEffect(() => {
-    return () => {
-      if (scheduleDetails) {
-        mutate({
-          scheduleId: scheduleDetails.scheduleId,
-          title: titleInputValue,
-          content: JSON.stringify(contentInputValue),
-        });
-      }
-    };
-  }, []);
+  }, [titleInputValue, contentInputValue, startTime, endTime]);
 
   const handleTitleInputChange = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -94,9 +87,9 @@ const ScheduleEditor = () => {
       <Flex alignCenter>
         <ClockIcon />
         <TimeDescription>일정 시간</TimeDescription>
-        <TimePicker />
+        <TimePicker time={startTime} setTime={setStartTime} />
         <Line left={6} right={6} width={30} color="#D9D9D9" />
-        <TimePicker />
+        <TimePicker time={endTime} setTime={setEndTime} />
       </Flex>
       <Spacing height={12} />
       <Line width={302} color="#B8B8B8" />

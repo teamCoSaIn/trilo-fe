@@ -482,12 +482,10 @@ const changeScheduleDetails = rest.put(
     const { scheduleId } = req.params;
     const data = await req.json();
     if (scheduleId) {
-      if (data.title) {
-        scheduleDetails.title = data.title;
-      }
-      if (data.content) {
-        scheduleDetails.content = data.content;
-      }
+      scheduleDetails.title = data.title;
+      scheduleDetails.content = data.content;
+      scheduleDetails.startTime = data.startTime;
+      scheduleDetails.endTime = data.endTime;
     }
     return res(ctx.json(data.scheduleId));
   }

@@ -98,9 +98,17 @@ const ScheduleEditor = () => {
       <Flex alignCenter>
         <ClockIcon />
         <TimeDescription>일정 시간</TimeDescription>
-        <TimePicker time={startTime} setTime={setStartTime} />
+        <TimePicker
+          time={scheduleDetails?.startTime}
+          setTime={setStartTime}
+          clearTimer={debouncingTimer.current}
+        />
         <Line left={6} right={6} width={30} color="#D9D9D9" />
-        <TimePicker time={endTime} setTime={setEndTime} />
+        <TimePicker
+          time={scheduleDetails?.endTime}
+          setTime={setEndTime}
+          clearTimer={debouncingTimer.current}
+        />
       </Flex>
       <Spacing height={12} />
       <Line width={302} color="#B8B8B8" />

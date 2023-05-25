@@ -24,7 +24,7 @@ interface IGetTripListParams {
   sort?: string;
 }
 
-interface IGetTripListResponse {
+export interface IGetTripListResponse {
   trips: ITrip[];
   totalCount: number;
   totalPage: number;

@@ -81,6 +81,62 @@ const tripList = [
   },
 ];
 
+const tripList1 = [
+  {
+    tripId: 6,
+    title: '2023 다낭계획',
+    picUrl: '',
+    status: '',
+    startDay: '',
+    endDay: '',
+  },
+  {
+    tripId: 7,
+    title: '2023 제주 여행',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/42e0/e6ed/d32374f2148dd5d0d4b792ce4a967827?Expires=1682294400&Signature=Yhsq8G6FgF~pYiGL00IWRlZZTi0kYVCkszFS1~CVyZm8giYMEb8m237SayXMHhQ-A2iGhDR1PlQuU~2hPAoe3LvHGhH2w92WV-KpDfJmPtbM3cgB9EMFfw0-tjPM-OO5GqcHEZyquqGeAUdBIWOE6pmA6R7DJWS9Ix~pjKtpvIA6MRjvXarb8-T7z2tl1DGpS56WTSl-8MTmhBHdBeioR39yp5Q3sybQf9KvTuNDAzR7K4QsOcKGxdk9smy3feLLX9UVBv7K1Gi7V18DveaZ7h0DlG~eGAlS-fXaI4pjAXi6LZFyedcE7e4kpdUrPx3rhT~ZZUZRaQ9jeUEvheX6rw__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'AFTER',
+    startDay: '23.03.25',
+    endDay: '23.03.27',
+  },
+  {
+    tripId: 8,
+    title: '2023 부산 여행',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/0304/b1fa/45b3c6de7187bb138e7099de0a1dfb3f?Expires=1682294400&Signature=kThV6-Fsjp1jdxtFz4H63msIV7qxx2Ptly3kPNTSIsmV6EGMbUDTUAKU7TkmsL5cw-dFkw9VVI1UFqO3AgzQ590Vzgy3oKTUB0mx7vO~is~fi334wDnFoHnZNK1l2nq77~DpiJ1wkStp-FpHfO9Y-2bWXhK5nSNoEVWiDqVUDfstouvzJnKmYuEMQNfv0i0k43xnZ-hu4vrvBLFDsa5AkygCANAjP3UUBPKmYZfDF-hSKcHkzk64RN~jffjeQtSHNd-8akS6Xy2uW3Ep5l4CEgjzoQwd6F-zlNeJbpPRt8KCMFFNyzTR1k~xoquN-lhJcG-s8V66pmbsD9G9EnzvlA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'BEFORE',
+    startDay: '23.08.20',
+    endDay: '23.08.22',
+  },
+  {
+    tripId: 9,
+    title: '23년 1월 괌 여행',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'BEFORE',
+    startDay: '23.03.25',
+    endDay: '23.03.27',
+  },
+  {
+    tripId: 10,
+    title: '2023 다낭계획',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/42e0/e6ed/d32374f2148dd5d0d4b792ce4a967827?Expires=1682294400&Signature=Yhsq8G6FgF~pYiGL00IWRlZZTi0kYVCkszFS1~CVyZm8giYMEb8m237SayXMHhQ-A2iGhDR1PlQuU~2hPAoe3LvHGhH2w92WV-KpDfJmPtbM3cgB9EMFfw0-tjPM-OO5GqcHEZyquqGeAUdBIWOE6pmA6R7DJWS9Ix~pjKtpvIA6MRjvXarb8-T7z2tl1DGpS56WTSl-8MTmhBHdBeioR39yp5Q3sybQf9KvTuNDAzR7K4QsOcKGxdk9smy3feLLX9UVBv7K1Gi7V18DveaZ7h0DlG~eGAlS-fXaI4pjAXi6LZFyedcE7e4kpdUrPx3rhT~ZZUZRaQ9jeUEvheX6rw__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'ON',
+    startDay: '23.08.20',
+    endDay: '23.08.22',
+  },
+  {
+    tripId: 11,
+    title: '2023 다낭계획',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'AFTER',
+    startDay: '23.03.25',
+    endDay: '23.03.27',
+  },
+];
+
 const tripDays: IDailyPlan[] = [
   {
     dayId: 1,
@@ -351,8 +407,33 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 });
 
 const getTripList = rest.get('/api/tripcard-list', async (req, res, ctx) => {
-  await sleep(1000);
-  return res(ctx.json(tripList));
+  await sleep(2000);
+  let response;
+  if (req.url.searchParams.get('page') === '0') {
+    response = {
+      trips: tripList,
+      page: 0,
+      totalCount: tripList.length,
+      totalPage: 1,
+      currentPage: 0,
+      size: 5,
+      isFirst: true,
+      isLast: false,
+    };
+  } else if (req.url.searchParams.get('page') === '1') {
+    response = {
+      trips: tripList1,
+      page: 1,
+      totalCount: tripList1.length,
+      totalPage: 1,
+      currentPage: 1,
+      size: 5,
+      isFirst: true,
+      isLast: true,
+    };
+  }
+
+  return res(ctx.json(response));
 });
 
 const changeTripTitle = rest.put(
@@ -503,6 +584,11 @@ const getTempPlanList = rest.get(
   }
 );
 
+const changeTripImg = rest.put('/api/tripcard-img', async (req, res, ctx) => {
+  await sleep(2000);
+  return res(ctx.status(200));
+});
+
 const handlers = [
   getLoginUrl,
   getAccessToken,
@@ -524,6 +610,7 @@ const handlers = [
   getScheduleDetails,
   changeScheduleDetails,
   getTempPlanList,
+  changeTripImg,
 ];
 
 export default handlers;

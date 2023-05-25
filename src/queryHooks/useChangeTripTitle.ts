@@ -1,7 +1,12 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import {
+  InfiniteData,
+  useMutation,
+  useQueryClient,
+} from '@tanstack/react-query';
+import { produce } from 'immer';
 
 import HTTP from '@/api';
-import { ITrip, TChangeTripTitleParams } from '@/api/trip';
+import { IGetTripListResponse, TChangeTripTitleParams } from '@/api/trip';
 
 const useChangeTripTitle = () => {
   const queryClient = useQueryClient();
@@ -12,19 +17,31 @@ const useChangeTripTitle = () => {
       onMutate: async (titleData: TChangeTripTitleParams) => {
         await queryClient.cancelQueries(['tripList']);
 
-        const previousTripList = queryClient.getQueryData<ITrip[]>([
-          'tripList',
-        ]);
+        const previousTripList = queryClient.getQueryData<
+          InfiniteData<IGetTripListResponse>
+        >(['tripList']);
 
         if (previousTripList) {
-          queryClient.setQueryData<ITrip[]>(['tripList'], prevTripList => {
-            return prevTripList?.map((trip: ITrip) => {
-              if (trip.tripId === titleData.tripId) {
-                return { ...trip, title: titleData.title };
-              }
-              return trip;
-            });
-          });
+          queryClient.setQueryData<InfiniteData<IGetTripListResponse>>(
+            ['tripList'],
+            prevTripListPageData => {
+              const nextTripListPageData = produce(
+                prevTripListPageData,
+                draftTripListPageData => {
+                  draftTripListPageData?.pages.forEach(draftTripListData => {
+                    (draftTripListData.trips || []).forEach(
+                      (draftTripData, idx, arr) => {
+                        if (draftTripData.tripId === titleData.tripId) {
+                          arr[idx].title = titleData.title;
+                        }
+                      }
+                    );
+                  });
+                }
+              );
+              return nextTripListPageData;
+            }
+          );
         }
 
         return { previousTripList };
@@ -32,10 +49,12 @@ const useChangeTripTitle = () => {
       onError: (
         err,
         variables,
-        context?: { previousTripList: ITrip[] | undefined }
+        context?: {
+          previousTripList: InfiniteData<IGetTripListResponse> | undefined;
+        }
       ) => {
         if (context?.previousTripList) {
-          queryClient.setQueryData<ITrip[]>(
+          queryClient.setQueryData<InfiniteData<IGetTripListResponse>>(
             ['tripList'],
             context.previousTripList
           );

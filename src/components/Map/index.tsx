@@ -12,7 +12,9 @@ import {
   useResetRecoilState,
   useSetRecoilState,
 } from 'recoil';
+import styled from 'styled-components';
 
+import { ReactComponent as PositionIcon } from '@/assets/position.svg';
 import DateSelector from '@/components/Map/DateSelector';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
@@ -37,7 +39,9 @@ import {
 const Map = () => {
   const { tripId } = useParams();
 
-  const setMapInstance = useSetRecoilState<google.maps.Map | null>(MapInstance);
+  const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
+    MapInstance
+  );
   const setPlacesService =
     useSetRecoilState<google.maps.places.PlacesService | null>(PlacesService);
   const setAutocompleteService =
@@ -62,7 +66,23 @@ const Map = () => {
     tripId: +(tripId as string),
   });
 
-  const googleMapCenter = useMemo(() => ({ lat: 21.3, lng: -157.83 }), []);
+  const googleMapCenter = useMemo(() => {
+    if (dailyPlanListData) {
+      for (let i = 0; i < dailyPlanListData.length; i += 1) {
+        if (dailyPlanListData[i].schedules.length) {
+          return {
+            lat: dailyPlanListData[i].schedules[0].coordinate.latitude,
+            lng: dailyPlanListData[i].schedules[0].coordinate.longitude,
+          };
+        }
+      }
+    }
+    return {
+      // 광화문
+      lat: 37.576026,
+      lng: 126.9768428,
+    };
+  }, []);
 
   const googleMapStyle = {
     width: '100%',
@@ -75,7 +95,7 @@ const Map = () => {
     mapTypeControl: false,
   };
 
-  const googleMapZoomLevel = 14;
+  const googleMapZoomLevel = 12;
 
   const infoBoxOptions = {
     closeBoxURL: '',
@@ -111,6 +131,33 @@ const Map = () => {
       resetSelectedScheduleId();
     } else {
       setSelectedScheduleId(scheduleId);
+    }
+  };
+
+  const onGetCurPosSuccess = (position: GeolocationPosition) => {
+    const curPos = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+    if (mapInstance) {
+      mapInstance.setCenter(curPos);
+    }
+    // loading state false
+  };
+
+  const onGetCurPosFail = () => {
+    // error message
+  };
+
+  const handlePositionBtnClick = () => {
+    // loading state true;
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        onGetCurPosSuccess,
+        onGetCurPosFail
+      );
+    } else {
+      alert(`Browser doesn't support Geolocation!`);
     }
   };
 
@@ -265,8 +312,30 @@ const Map = () => {
       {selectedScheduleMarkers}
       {selectedTempScheduleMarkers}
       {selectedSchedulePolyLines}
+      <GetPositionBtn onClick={handlePositionBtnClick}>
+        <PositionIcon strokeWidth="20" />
+      </GetPositionBtn>
     </GoogleMap>
   );
 };
+
+const GetPositionBtn = styled.button`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 115px;
+  right: 10px;
+  width: 40px;
+  height: 40px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  background-color: #fff;
+  border-radius: 2px;
+  &:hover {
+    svg > path {
+      fill: #111;
+    }
+  }
+`;
 
 export default Map;

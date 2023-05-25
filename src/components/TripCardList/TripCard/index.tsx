@@ -90,13 +90,14 @@ const TripCardBox = styled(Flex)<{ isSelected: boolean }>`
   box-shadow: 0 2.97356px 20px rgba(0, 0, 0, 0.1);
   ${({ isSelected }) => css`
     ${isSelected && { zIndex: `${OPTION_OPEN_TRIP_CARD_Z_INDEX}` }}
+    ${isSelected && { animation: 'boxShadowFlicker 2s infinite alternate' }}
   `};
-  animation: boxShadowFlicker 2s infinite alternate;
+
   @keyframes boxShadowFlicker {
     0% {
     }
     100% {
-      box-shadow: 0 0 10px white;
+      box-shadow: 0 0 15px white;
     }
   }
 `;

@@ -27,7 +27,7 @@ const Home = () => {
       </Description>
       <Spacing height={160} />
       <NewTripBtn btnColor="white">
-        <Link to="/triplist">여행 계획 만들기</Link>
+        <NewTripLink to="/triplist">여행 계획 만들기</NewTripLink>
       </NewTripBtn>
     </Layout>
   );
@@ -49,6 +49,14 @@ const NewTripBtn = styled(Button)`
   height: 51px;
   border-radius: 3rem;
   font-size: 1.6rem;
+`;
+
+const NewTripLink = styled(Link)`
+  width: 100%;
+  height: 100%;
+  line-height: 51px;
+  text-align: center;
+  border-radius: 3rem;
 `;
 
 export default Home;

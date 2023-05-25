@@ -17,11 +17,27 @@ export type TCreateTripTitleParams = ITrip['title'];
 
 export type TDeleteTripTitleParams = ITrip['tripId'];
 
-export const getTripList = async () => {
-  const res = await axios<ITrip[]>({
+interface IGetTripListParams {
+  tripperId: number;
+  size?: number;
+  page?: number;
+  sort?: string;
+}
+
+interface IGetTripListResponse {
+  trips: ITrip[];
+  totalCount: number;
+  totalPage: number;
+  currentPage: number;
+  isLast: boolean;
+}
+
+export const getTripList = async (reqParams: IGetTripListParams) => {
+  const res = await axios<IGetTripListResponse>({
     method: 'get',
     url: `/tripcard-list`,
     requireAuth: true,
+    params: reqParams,
   });
   return res.data;
 };
@@ -33,6 +49,16 @@ export const changeTripTitle = async (
     method: 'put',
     url: `/tripcard-title`,
     data: tripTitleData,
+    requireAuth: true,
+  });
+  return res.status;
+};
+
+export const changeTripImg = async (tripImgData: FormData) => {
+  const res = await axios({
+    method: 'put',
+    url: `/tripcard-img`,
+    data: tripImgData,
     requireAuth: true,
   });
   return res.status;

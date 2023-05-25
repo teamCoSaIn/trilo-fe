@@ -1,12 +1,14 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ITrip } from '@/api/trip';
 import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
 import TripCardStatusLabel from '@/components/TripCardList/TripCardStatusLabel';
 import color from '@/constants/color';
-import { LOADING_Z_INDEX } from '@/constants/zIndex';
+import { TRIP_LIST_DIM_LAYER_Z_INDEX } from '@/constants/zIndex';
+import { PreviewImgFamily } from '@/states/trip';
 
 interface ITripCardContentProps {
   trip: ITrip;
@@ -14,7 +16,9 @@ interface ITripCardContentProps {
 
 const TripCardContent = ({ trip }: ITripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
-  const tripContentPicUrl = trip.picUrl || tripCardDefaultPic;
+  const previewImg = useRecoilValue(PreviewImgFamily(trip.tripId));
+
+  const tripContentPicUrl = previewImg || trip.picUrl || tripCardDefaultPic;
 
   const handleTripCardMouseEnter = () => {
     setIsHover(true);
@@ -66,7 +70,7 @@ const DimLayer = styled.div`
     rgba(0, 0, 0, 0.5125) 47.92%,
     rgba(0, 0, 0, 0) 100%
   );
-  z-index: ${LOADING_Z_INDEX};
+  z-index: ${TRIP_LIST_DIM_LAYER_Z_INDEX};
   display: flex;
   justify-content: center;
   align-items: center;

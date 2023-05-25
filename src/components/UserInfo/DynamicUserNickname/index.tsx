@@ -80,16 +80,15 @@ const DynamicUserNickname = () => {
       <ProfileKey color={color.blue3} fontSize={1.6}>
         닉네임
       </ProfileKey>
-      <ProfileNickname
-        nickname={nicknameData as string}
-        color={color.gray3}
-        fontSize={1.6}
-      >
-        {nicknameData as string}
-      </ProfileNickname>
-      <IconBtn type="button" onClick={handleNicknameEditBtnClick}>
-        <EditIcon width={16} height={16} />
-      </IconBtn>
+      <FlexibleSpacing />
+      <ProfileValueBox>
+        <ProfileNickname color={color.gray3} fontSize={1.6}>
+          {nicknameData as string}
+        </ProfileNickname>
+        <IconBtn type="button" onClick={handleNicknameEditBtnClick}>
+          <EditIcon width={16} height={16} />
+        </IconBtn>
+      </ProfileValueBox>
     </ProfileBox>
   );
 
@@ -129,8 +128,13 @@ const DynamicUserNickname = () => {
 
 const ProfileBox = styled.div<{ backgroundColor?: string }>`
   position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
   width: 307px;
-  height: 50px;
+  height: 70px;
+  padding: 0 50px;
   border-radius: 48px;
   ${({ backgroundColor }) => css`
     ${backgroundColor && { backgroundColor }}
@@ -138,53 +142,41 @@ const ProfileBox = styled.div<{ backgroundColor?: string }>`
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
 `;
 
+const FlexibleSpacing = styled.div`
+  flex-grow: 1;
+  flex-shrink: 1;
+  min-width: 10px;
+`;
+
+const ProfileValueBox = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+`;
+
 const ProfileKey = styled(Description)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 55px;
+  flex-shrink: 0;
 `;
 
-const ProfileValue = styled(Description)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 211px;
-`;
-
-const ProfileNickname = styled(ProfileValue)<{ nickname: string }>`
-  max-width: 45px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  ${({ nickname }) => {
-    if (nickname) {
-      return css`
-        &:hover {
-          max-width: 100%;
-        }
-        &:hover:after {
-          content: '${nickname}';
-          position: absolute;
-          top: 0;
-          left: 0;
-          background-color: white;
-        }
-      `;
-    }
-  }}
+const ProfileNickname = styled(Description)`
+  text-align: right;
 `;
 
 const NicknameForm = styled.form<{ inputLength: number }>`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
   ${({ inputLength }) => {
     if (inputLength >= 20) {
       return css`
         &::after {
           content: '20글자 이내로 입력해주세요.';
+          font-size: 1.2rem;
           color: red;
           position: absolute;
-          top: 2px;
-          left: 55px;
+          top: -10px;
+          left: 50px;
         }
       `;
     }
@@ -192,10 +184,6 @@ const NicknameForm = styled.form<{ inputLength: number }>`
 `;
 
 const NicknameEditInput = styled.input`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 55px;
   font-size: 1.6rem;
   font-weight: 700;
   color: #606060;
@@ -204,11 +192,6 @@ const NicknameEditInput = styled.input`
   }
 `;
 
-const IconBtn = styled.button`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  left: 270px;
-`;
+const IconBtn = styled.button``;
 
 export default DynamicUserNickname;

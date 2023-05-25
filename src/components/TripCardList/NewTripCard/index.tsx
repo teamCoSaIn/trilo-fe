@@ -1,7 +1,7 @@
 import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState, SyntheticEvent, useRef } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
 import { TCreateTripTitleParams } from '@/api/trip';
@@ -9,6 +9,12 @@ import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
+import color from '@/constants/color';
+import {
+  NEW_TRIP_CARD_Z_INDEX,
+  TRIP_LIST_DIM_LAYER_Z_INDEX,
+} from '@/constants/zIndex';
+import { tripTitleRegExp } from '@/utils/regExp';
 
 interface INewTripCardProps {
   handleClose: () => void;
@@ -16,6 +22,7 @@ interface INewTripCardProps {
 
 const NewTripCard = ({ handleClose }: INewTripCardProps) => {
   const [titleInputValue, setTitleInputValue] = useState('');
+  const [isAwayClicked, setIsAwayClicked] = useState(false);
   const newTripCardRef = useRef<HTMLDivElement>(null);
   const queryClient = useQueryClient();
 
@@ -24,12 +31,22 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['tripList']);
+        queryClient.invalidateQueries(['tripListInfo']);
       },
     }
   );
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
+    const isInputValid = tripTitleRegExp.test(
+      titleInputValue.replace(/\s/g, '')
+    );
+    if (!isInputValid) {
+      alert(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      );
+      return;
+    }
     mutate(titleInputValue);
   };
 
@@ -46,13 +63,25 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
     ) {
       return;
     }
-    handleClose();
+    setIsAwayClicked(true);
+  };
+
+  const handleTripCardAnimationEnd = () => {
+    if (isAwayClicked) {
+      handleClose();
+    }
   };
 
   return (
     <>
+      <DimLayer />
       <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-        <TripCardBox column ref={newTripCardRef}>
+        <TripCardBox
+          column
+          ref={newTripCardRef}
+          isAwayClicked={isAwayClicked}
+          onAnimationEnd={handleTripCardAnimationEnd}
+        >
           {isLoading && <DimLoader />}
           <LogoBox>
             <LogoIcon fill="white" />
@@ -78,12 +107,66 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
   );
 };
 
-const TripCardBox = styled(Flex)`
-  width: 245px;
+const DimLayer = styled.div`
+  z-index: ${TRIP_LIST_DIM_LAYER_Z_INDEX};
+  background-color: ${color.black};
+  opacity: 0.5;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+`;
+
+const TripCardBox = styled(Flex)<{ isAwayClicked: boolean }>`
+  z-index: ${NEW_TRIP_CARD_Z_INDEX};
   height: 256px;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: 0 2.97356px 20px rgba(0, 0, 0, 0.1);
+  margin-left: 28px;
+  ${({ isAwayClicked }) => {
+    if (isAwayClicked) {
+      return css`
+        animation: decreaseWidth 0.3s forwards;
+        @keyframes decreaseWidth {
+          0% {
+            width: 245px;
+          }
+          50% {
+            margin-left: 24px;
+          }
+          90% {
+            margin-left: 12px;
+          }
+          100% {
+            width: 0;
+            margin-left: 0;
+          }
+        }
+      `;
+    }
+    return css`
+      animation-name: increaseWidth, boxShadowFlicker;
+      animation-duration: 0.3s, 2s;
+      animation-iteration-count: 1, infinite;
+      animation-direction: normal, alternate;
+      @keyframes boxShadowFlicker {
+        0% {
+        }
+        100% {
+          box-shadow: 0 0 10px white;
+        }
+      }
+      @keyframes increaseWidth {
+        0% {
+          width: 0;
+        }
+        100% {
+          width: 245px;
+        }
+      }
+    `;
+  }};
 `;
 
 const LogoBox = styled.div`
@@ -99,6 +182,7 @@ const BottomBox = styled(Flex)`
   width: 100%;
   height: 80px;
   padding: 14px 12px;
+  background-color: ${color.white};
 `;
 
 const TitleForm = styled.form`

@@ -17,6 +17,7 @@ import {
 import {
   getTripList,
   changeTripTitle,
+  changeTripImg,
   createTrip,
   deleteTrip,
 } from '@/api/trip';
@@ -34,6 +35,7 @@ const HTTP = {
   getUserInfo,
   getTripList,
   changeTripTitle,
+  changeTripImg,
   createTrip,
   deleteTrip,
   getDailyPlanList,

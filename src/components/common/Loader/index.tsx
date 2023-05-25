@@ -9,6 +9,7 @@ const CircularLoader = ({ size }: { size?: number }) => {
         justifyContent: 'center',
         alignItems: 'center',
         height: '100%',
+        margin: 'auto auto',
       }}
     >
       <CircularProgress size={size} />

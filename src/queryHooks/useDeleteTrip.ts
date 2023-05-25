@@ -9,6 +9,7 @@ const useDeleteTrip = () => {
   return useMutation((id: TDeleteTripTitleParams) => HTTP.deleteTrip(id), {
     onSuccess: () => {
       queryClient.invalidateQueries(['tripList']);
+      queryClient.invalidateQueries(['tripListInfo']);
     },
     onError: () => {
       alert('delete failed.');

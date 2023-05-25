@@ -1,5 +1,6 @@
 /* eslint-disable import/no-cycle */
 import Axios from 'axios';
+import { stringify } from 'qs';
 
 import { refreshAccessToken, TToken } from '@/api/oauth';
 import isAccessTokenExpired from '@/utils/auth';
@@ -9,6 +10,9 @@ const BASE_URL = process.env.API_SERVER;
 const axios = Axios.create({
   baseURL: `${BASE_URL}/api`,
   withCredentials: true,
+  paramsSerializer: {
+    serialize: params => stringify(params, { arrayFormat: 'repeat' }),
+  },
 });
 
 let isAxiosPause = false;

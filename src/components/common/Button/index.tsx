@@ -16,6 +16,7 @@ const Button = styled.button<{ btnSize?: TBtnSize; btnColor?: TBtnColor }>`
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-shrink: 0;
 
   ${props => {
     switch (props.btnColor) {

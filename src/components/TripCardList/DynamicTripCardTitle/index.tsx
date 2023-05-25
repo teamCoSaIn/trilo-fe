@@ -1,5 +1,4 @@
-import { ClickAwayListener } from '@mui/material';
-import React, { SyntheticEvent, useRef, useState } from 'react';
+import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -8,7 +7,8 @@ import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import useChangeTripTitle from '@/queryHooks/useChangeTripTitle';
-import IsTitleEditFamily from '@/states/trip';
+import { IsTitleEditFamily } from '@/states/trip';
+import { tripTitleRegExp } from '@/utils/regExp';
 
 interface IDynamicTripCardTitleProps {
   tripTitle: ITrip['title'];
@@ -24,17 +24,26 @@ const DynamicTripCardTitle = ({
   );
   const [titleInputValue, setTitleInputValue] = useState('');
 
-  const titleFormRef = useRef<HTMLFormElement>(null);
-
   const { mutate } = useChangeTripTitle();
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (tripTitle !== titleInputValue) {
+    const isInputValid = tripTitleRegExp.test(
+      titleInputValue.replace(/\s/g, '')
+    );
+    if (!isInputValid) {
+      alert(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      );
+      return;
+    }
+    if (isInputValid && tripTitle !== titleInputValue) {
       mutate({ title: titleInputValue, tripId: tripCardId });
     }
-    setTitleInputValue('');
-    setIsTitleEdit(false);
+    setTimeout(() => {
+      setTitleInputValue('');
+      setIsTitleEdit(false);
+    }, 0);
   };
 
   const handleTitleInputChange = (
@@ -43,33 +52,20 @@ const DynamicTripCardTitle = ({
     setTitleInputValue(event.target.value);
   };
 
-  const handleTitleFormClickAway = (event: Event | SyntheticEvent) => {
-    if (
-      titleFormRef.current &&
-      titleFormRef.current.contains(event.target as HTMLElement)
-    ) {
-      return;
-    }
-    setIsTitleEdit(false);
-    setTitleInputValue('');
-  };
-
   const DynamicTitle = isTitleEdit ? (
-    <ClickAwayListener onClickAway={handleTitleFormClickAway}>
-      <TitleForm onSubmit={handleTitleSubmit} ref={titleFormRef}>
-        <TitleEditInput
-          type="text"
-          value={titleInputValue}
-          placeholder={tripTitle}
-          onChange={handleTitleInputChange}
-          autoFocus
-          maxLength={20}
-        />
-        <TitleConfirmBtn type="submit">
-          <CheckIcon fill="#4D77FF" width={14} height={14} />
-        </TitleConfirmBtn>
-      </TitleForm>
-    </ClickAwayListener>
+    <TitleForm onSubmit={handleTitleSubmit}>
+      <TitleEditInput
+        type="text"
+        value={titleInputValue}
+        placeholder={tripTitle}
+        onChange={handleTitleInputChange}
+        autoFocus
+        maxLength={20}
+      />
+      <TitleConfirmBtn type="submit">
+        <CheckIcon fill="#4D77FF" width={14} height={14} />
+      </TitleConfirmBtn>
+    </TitleForm>
   ) : (
     <Box>
       <Description color={color.gray3} fontSize={1.6}>

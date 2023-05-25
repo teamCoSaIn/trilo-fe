@@ -10,6 +10,11 @@ const GlobalStyle = createGlobalStyle`
   html {
     font-size: 10px;
     height: 100%;
+    // TripTripCardWidth(245) * 4 + TripTripCardBoxGap(28) * 3 + padding(100) * 2
+    min-width: 1264px;
+    min-height: 789px;
+    max-width: 2560px;
+    margin: 0 auto;
   }
   body {
     height: 100%;
@@ -34,7 +39,7 @@ const GlobalStyle = createGlobalStyle`
     text-decoration: none;
     color: inherit;
   }
-  ui, li, ol{
+  ul, li, ol{
     list-style: none;
   }
   .tippy-box {

@@ -8,7 +8,7 @@ import {
   DropResult,
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { IDailyPlan } from '@/api/plan';
@@ -31,7 +31,11 @@ import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
-import { DropdownIndexFamily, DropdownMenuFamily } from '@/states/schedule';
+import {
+  DropdownIndexFamily,
+  DropdownMenuFamily,
+  SelectedScheduleId,
+} from '@/states/schedule';
 
 const ScheduleList = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -47,6 +51,8 @@ const ScheduleList = () => {
   );
 
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
+
+  const setSelectedScheduleId = useSetRecoilState(SelectedScheduleId);
 
   const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
     null
@@ -141,16 +147,22 @@ const ScheduleList = () => {
     setIsTempBoxPopUp(prev => !prev);
   };
 
-  const handleScheduleDeleteBtnClick = (scheduleId: number) => {
-    if (!tripId) {
-      return;
-    }
-    if (window.confirm('찐으로 삭제하시겠습니까?')) {
-      deleteMutate({
-        tripId: +tripId,
-        scheduleId,
-      });
-    }
+  const handleScheduleDeleteBtnClick =
+    (scheduleId: number) => (event: React.MouseEvent) => {
+      event.stopPropagation();
+      if (!tripId) {
+        return;
+      }
+      if (window.confirm('찐으로 삭제하시겠습니까?')) {
+        deleteMutate({
+          tripId: +tripId,
+          scheduleId,
+        });
+      }
+    };
+
+  const handleScheduleClick = (scheduleId: number) => () => {
+    setSelectedScheduleId(scheduleId);
   };
 
   const dailyPlanDragDropBox = (
@@ -191,6 +203,7 @@ const ScheduleList = () => {
                             {...draggableProvided.dragHandleProps}
                             {...draggableProvided.draggableProps}
                             isDragging={draggableSnapshot.isDragging}
+                            onClick={handleScheduleClick(schedule.scheduleId)}
                           >
                             <ScheduleTitle>{schedule.title}</ScheduleTitle>
                             {schedule.placeName && (
@@ -200,11 +213,9 @@ const ScheduleList = () => {
                               </Place>
                             )}
                             <ScheduleDeleteBtn
-                              onClick={() =>
-                                handleScheduleDeleteBtnClick(
-                                  schedule.scheduleId
-                                )
-                              }
+                              onClick={handleScheduleDeleteBtnClick(
+                                schedule.scheduleId
+                              )}
                             >
                               <DeleteIcon
                                 width={7}
@@ -272,6 +283,7 @@ const ScheduleList = () => {
                       {...draggableProvided.dragHandleProps}
                       {...draggableProvided.draggableProps}
                       isDragging={draggableSnapshot.isDragging}
+                      onClick={handleScheduleClick(schedule.scheduleId)}
                     >
                       <ScheduleTitle>{schedule.title}</ScheduleTitle>
                       {schedule.placeName && (

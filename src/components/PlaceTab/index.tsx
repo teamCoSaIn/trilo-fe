@@ -12,7 +12,7 @@ import CircularLoader from '@/components/common/Loader';
 import PlaceCard from '@/components/PlaceTab/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
-import PLACE_SEARCH_DEBOUNCE_TIME from '@/constants/debounce';
+import { PLACE_SEARCH_DEBOUNCE_TIME } from '@/constants/debounce';
 import LAT_LNG_SEOUL from '@/constants/latlng';
 import { PLACE_SEARCH_INPUT_Z_INDEX } from '@/constants/zIndex';
 import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';

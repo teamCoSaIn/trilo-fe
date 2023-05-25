@@ -1,5 +1,7 @@
 import { atom, atomFamily } from 'recoil';
 
+import { ISchedule } from '@/api/schedule';
+
 interface IMenu {
   dailyPlanId: number;
   name: string;
@@ -20,4 +22,9 @@ export const DropdownIndexFamily = atomFamily<number, string>({
 export const PlaceName = atom<string>({
   key: 'placeName',
   default: '',
+});
+
+export const SelectedScheduleId = atom<ISchedule['scheduleId']>({
+  key: 'selectedScheduleId',
+  default: undefined,
 });

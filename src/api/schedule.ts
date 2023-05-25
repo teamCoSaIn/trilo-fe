@@ -16,6 +16,8 @@ export interface ISchedule {
   content: string;
   placeName: string;
   coordinate: ICoordinate;
+  startTime: string;
+  endTime: string;
 }
 
 export interface ICoordinate {
@@ -27,6 +29,14 @@ interface IChangeScheduleOrderParams {
   scheduleId: ISchedule['scheduleId'];
   destinationDailyPlanId: IDailyPlan['dayId'] | TTempPlanDayId;
   destinationScheduleIdx: number;
+}
+
+export interface IChangeScheduleDetailsParams {
+  scheduleId: ISchedule['scheduleId'];
+  title: ISchedule['title'];
+  content: ISchedule['content'];
+  startTime: ISchedule['startTime'];
+  endTime: ISchedule['endTime'];
 }
 
 export const createSchedule = async (schedule: ICreateScheduleParams) => {
@@ -63,4 +73,27 @@ export const deleteSchedule = async (scheduleId: ISchedule['scheduleId']) => {
     requireAuth: true,
   });
   return res.status;
+};
+
+export const getScheduleDetails = async (
+  scheduleId: ISchedule['scheduleId']
+) => {
+  const res = await axios<ISchedule>({
+    method: 'get',
+    url: `/schedules/${scheduleId}`,
+    requireAuth: true,
+  });
+  return res.data;
+};
+
+export const changeScheduleDetails = async (
+  data: IChangeScheduleDetailsParams
+) => {
+  const res = await axios<ISchedule['scheduleId']>({
+    method: 'put',
+    url: `/schedules/${data.scheduleId}`,
+    data,
+    requireAuth: true,
+  });
+  return res.data;
 };

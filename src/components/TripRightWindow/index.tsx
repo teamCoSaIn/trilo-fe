@@ -1,19 +1,39 @@
+import { Suspense, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/Loader';
 import ScheduleDropdown from '@/components/ScheduleDropdown';
+import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
+import { SelectedScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
 
+  const selectedScheduleId = useRecoilValue(SelectedScheduleId);
+  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+
+  useEffect(() => {
+    return () => {
+      resetSelectedScheduleId();
+    };
+  }, []);
+
+  const dynamicScheduleList = selectedScheduleId ? (
+    <Suspense fallback={<CircularLoader />}>
+      <ScheduleEditor />
+    </Suspense>
+  ) : (
+    <ScheduleList />
+  );
+
   return (
     <TripRightWindowBox>
       <ScheduleDropdown tripId={tripId as string} />
-      <ScheduleContent>
-        <ScheduleList />
-      </ScheduleContent>
+      <ScheduleContent>{dynamicScheduleList}</ScheduleContent>
     </TripRightWindowBox>
   );
 };
@@ -24,6 +44,8 @@ const TripRightWindowBox = styled.div`
   background-color: ${color.white};
   padding: 12px 17px;
   flex-shrink: 0;
+  // MEMO: min-height 임시 설정 값임.
+  min-height: 500px;
 `;
 
 const ScheduleContent = styled.div`

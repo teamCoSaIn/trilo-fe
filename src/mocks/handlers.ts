@@ -152,7 +152,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235415,
         title: '포케 먹기',
-        placeName: '',
+        placeName: '와이키키',
         coordinate: {
           latitude: 21.31,
           longitude: -157.8282696533203,
@@ -205,6 +205,20 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
   ],
 };
 
+const scheduleDetails = {
+  scheduleId: 235415,
+  dayId: 3,
+  title: '포케 먹기',
+  placeName: '와이키키',
+  coordinate: {
+    latitude: 21.31,
+    longitude: -157.8282696533203,
+  },
+  content:
+    '[{"id":"bc60208b-7261-4a43-ae11-49de53c42d7d","type":"heading","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left","level":"1"},"content":[{"type":"text","text":"아침 일정","styles":{}}],"children":[]},{"id":"a258bbe7-8498-42b0-a358-d481ade18e6b","type":"bulletListItem","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"우버 타고 이동하기","styles":{}}],"children":[]},{"id":"184aaa20-e85f-4e7d-8881-bb1fb80f592f","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]},{"id":"456c7030-c4cb-4fb4-b29b-efb6bdc23a59","type":"bulletListItem","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[{"type":"text","text":"브런치 카페에서 아침 먹기","styles":{}}],"children":[]},{"id":"c7202d6d-69a7-4c2c-8352-f894e40b69d7","type":"paragraph","props":{"textColor":"default","backgroundColor":"default","textAlignment":"left"},"content":[],"children":[]}]',
+  startTime: '10:00',
+  endTime: '12:30',
+};
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
 const getLoginUrl = rest.get(
@@ -232,9 +246,9 @@ const getLoginUrl = rest.get(
     if (oauthServer === 'google') {
       await sleep(1000);
     } else if (oauthServer === 'naver') {
-      await sleep(2000);
+      await sleep(1000);
     } else if (oauthServer === 'kakao') {
-      await sleep(3000);
+      await sleep(1000);
     }
 
     return res(ctx.json(oauthServerObj[oauthServer as TOauthServerKey]));
@@ -248,7 +262,7 @@ const getAccessToken = rest.get(
     const oauthState = req.url.searchParams.get('state');
     localStorage.setItem('mockLogin', 'true');
     isLogin = true;
-    await sleep(2000);
+    await sleep(1000);
     return res(
       ctx.json({
         token_type: `code:${oauthCode} state:${oauthState}`,
@@ -287,7 +301,7 @@ const checkRefreshToken = rest.get('/api/auth/check', async (req, res, ctx) => {
 const getExpiredAccessToken = rest.get(
   '/api/expired-access-token',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     return res(
       ctx.json({
         token_type: 'Bearer Token',
@@ -320,7 +334,7 @@ const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {
 const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
   const { nickname: newNickname } = await req.json();
   nickname = newNickname;
-  await sleep(2000);
+  await sleep(1000);
 
   return res(ctx.status(200));
 });
@@ -337,7 +351,7 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 });
 
 const getTripList = rest.get('/api/tripcard-list', async (req, res, ctx) => {
-  await sleep(2000);
+  await sleep(1000);
   return res(ctx.json(tripList));
 });
 
@@ -352,7 +366,7 @@ const changeTripTitle = rest.put(
       }
     });
 
-    await sleep(2000);
+    await sleep(1000);
 
     return res(ctx.status(200));
   }
@@ -360,7 +374,7 @@ const changeTripTitle = rest.put(
 
 const createTrip = rest.post('/api/tripcard', async (req, res, ctx) => {
   const { title } = await req.json();
-  await sleep(2000);
+  await sleep(1000);
 
   const trip = {
     tripId: +new Date(),
@@ -377,7 +391,7 @@ const createTrip = rest.post('/api/tripcard', async (req, res, ctx) => {
 });
 
 const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
-  await sleep(2000);
+  await sleep(1000);
 
   const { id } = req.params;
 
@@ -390,7 +404,7 @@ const deleteTrip = rest.delete('/api/tripcard/:id', async (req, res, ctx) => {
 const getDailyPlanList = rest.get(
   '/api/trips/:tripId/days',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     const { tripId } = req.params;
     if (tripId && tripCardIds[tripId as string]) {
       return res(ctx.json(tripCardIds[tripId as string]));
@@ -407,11 +421,15 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
     ...data,
   };
 
-  tripDays.forEach((tripDay, idx, arr) => {
-    if (tripDay.dayId === data.dayId) {
-      arr[idx].schedules.push(newSchedule);
-    }
-  });
+  if (data.dayId) {
+    tripDays.forEach((tripDay, idx, arr) => {
+      if (tripDay.dayId === data.dayId) {
+        arr[idx].schedules.push(newSchedule);
+      }
+    });
+  } else {
+    tempPlan.push(newSchedule);
+  }
 
   return res(ctx.status(200));
 });
@@ -429,7 +447,7 @@ const changeScheduleOrder = rest.patch(
 const deleteSchedule = rest.delete(
   '/api/schedules/:scheduleId',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
 
     const { scheduleId } = req.params;
     const curTrip = tripCardIds['1'];
@@ -445,10 +463,38 @@ const deleteSchedule = rest.delete(
   }
 );
 
+const getScheduleDetails = rest.get(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    const { scheduleId } = req.params;
+    if (scheduleId) {
+      return res(ctx.json(scheduleDetails));
+    }
+    return res(ctx.status(400));
+  }
+);
+
+const changeScheduleDetails = rest.put(
+  '/api/schedules/:scheduleId',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    const { scheduleId } = req.params;
+    const data = await req.json();
+    if (scheduleId) {
+      scheduleDetails.title = data.title;
+      scheduleDetails.content = data.content;
+      scheduleDetails.startTime = data.startTime;
+      scheduleDetails.endTime = data.endTime;
+    }
+    return res(ctx.json(data.scheduleId));
+  }
+);
+
 const getTempPlanList = rest.get(
   '/api/trips/:tripId/temporary-storage',
   async (req, res, ctx) => {
-    await sleep(2000);
+    await sleep(1000);
     const { tripId } = req.params;
     if (tripId) {
       return res(ctx.json(tempPlan));
@@ -475,6 +521,8 @@ const handlers = [
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,
+  getScheduleDetails,
+  changeScheduleDetails,
   getTempPlanList,
 ];
 

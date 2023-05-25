@@ -31,6 +31,7 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['tripList']);
+        queryClient.invalidateQueries(['tripListInfo']);
       },
     }
   );

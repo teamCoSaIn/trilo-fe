@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
-import { ITrip } from '@/api/trip';
 import { IUserProfile } from '@/api/userInfo';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
@@ -11,7 +10,7 @@ import color from '@/constants/color';
 import useQueries2 from '@/utils/useQueries2';
 
 const TripsInfo = () => {
-  const [{ data: nickname }, { data: numOfTrips }] = useQueries2({
+  const [{ data: nickname }, { data: tripListPageData }] = useQueries2({
     queries: [
       {
         queryKey: ['userProfile'],
@@ -22,15 +21,16 @@ const TripsInfo = () => {
         select: (data: IUserProfile) => data.nickname,
       },
       {
-        queryKey: ['tripList'],
-        queryFn: HTTP.getTripList,
+        queryKey: ['tripListInfo'],
+        queryFn: () => HTTP.getTripList({ tripperId: 0, page: 0 }),
         staleTime: 30 * 60 * 1000,
         refetchOnWindowFocus: false,
         suspense: true,
-        select: (data: ITrip[]) => data.length,
       },
     ],
   });
+
+  const numOfTrips = tripListPageData ? tripListPageData.totalCount : 0;
 
   return (
     <Flex column>

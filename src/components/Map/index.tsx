@@ -4,7 +4,7 @@ import {
   PolylineF,
   InfoBoxF,
 } from '@react-google-maps/api';
-import { useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
   useRecoilState,
@@ -13,6 +13,7 @@ import {
   useSetRecoilState,
 } from 'recoil';
 import styled from 'styled-components';
+import { LatLng } from 'use-places-autocomplete';
 
 import { ReactComponent as PositionIcon } from '@/assets/position.svg';
 import DateSelector from '@/components/Map/DateSelector';
@@ -32,6 +33,7 @@ import {
 } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
 import {
+  createPositionMarkerSvg,
   createSelectedTriloMarkerSvg,
   createTriloMarkerSvg,
 } from '@/utils/createMarkerSvg';
@@ -58,6 +60,7 @@ const Map = () => {
     useRecoilState(SelectedScheduleId);
   const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
 
+  const [userPosition, setUserPosition] = useState<LatLng | null>(null);
   const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
@@ -65,24 +68,6 @@ const Map = () => {
   const { data: tempPlanData } = useGetTempPlanList({
     tripId: +(tripId as string),
   });
-
-  const googleMapCenter = useMemo(() => {
-    if (dailyPlanListData) {
-      for (let i = 0; i < dailyPlanListData.length; i += 1) {
-        if (dailyPlanListData[i].schedules.length) {
-          return {
-            lat: dailyPlanListData[i].schedules[0].coordinate.latitude,
-            lng: dailyPlanListData[i].schedules[0].coordinate.longitude,
-          };
-        }
-      }
-    }
-    return {
-      // 광화문
-      lat: 37.576026,
-      lng: 126.9768428,
-    };
-  }, []);
 
   const googleMapStyle = {
     width: '100%',
@@ -93,7 +78,16 @@ const Map = () => {
     streetViewControl: false,
     fullscreenControl: false,
     mapTypeControl: false,
+    maxZoom: 18,
   };
+
+  const googleMapCenter = useMemo(() => {
+    return {
+      // 광화문
+      lat: 37.576026,
+      lng: 126.9768428,
+    };
+  }, []);
 
   const googleMapZoomLevel = 12;
 
@@ -102,6 +96,65 @@ const Map = () => {
     enableEventPropagation: false,
     pixelOffset: new window.google.maps.Size(25, -35),
   };
+
+  const boundsArray = useMemo(() => {
+    const tempArr: google.maps.LatLngBounds[] = [];
+    if (dailyPlanListData) {
+      const allBounds = new google.maps.LatLngBounds();
+      for (let i = 0; i < dailyPlanListData.length; i += 1) {
+        const dailyPlanData = dailyPlanListData[i];
+        const bounds = new google.maps.LatLngBounds();
+        for (let j = 0; j < dailyPlanData.schedules.length; j += 1) {
+          const scheduleData = dailyPlanData.schedules[j];
+          bounds.extend({
+            lat: scheduleData.coordinate.latitude,
+            lng: scheduleData.coordinate.longitude,
+          });
+          allBounds.extend({
+            lat: scheduleData.coordinate.latitude,
+            lng: scheduleData.coordinate.longitude,
+          });
+        }
+        tempArr.push(bounds);
+      }
+      tempArr.unshift(allBounds);
+    }
+    return tempArr;
+  }, [dailyPlanListData]);
+
+  const onGetCurPosSuccess = (position: GeolocationPosition) => {
+    const curPosition = {
+      lat: position.coords.latitude,
+      lng: position.coords.longitude,
+    };
+    if (mapInstance) {
+      mapInstance.setCenter(curPosition);
+      mapInstance.setZoom(12);
+    }
+    setUserPosition(curPosition);
+    // loading state false
+  };
+
+  const onGetCurPosFail = () => {
+    // error message
+  };
+
+  useEffect(() => {
+    if (!boundsArray[dropdownMenuIdx + 1].isEmpty()) {
+      mapInstance?.fitBounds(boundsArray[dropdownMenuIdx + 1]);
+    }
+  }, [dropdownMenuIdx, mapInstance]);
+
+  useEffect(() => {
+    if (boundsArray[0].isEmpty()) {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          onGetCurPosSuccess,
+          onGetCurPosFail
+        );
+      }
+    }
+  }, [mapInstance]);
 
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
@@ -132,21 +185,6 @@ const Map = () => {
     } else {
       setSelectedScheduleId(scheduleId);
     }
-  };
-
-  const onGetCurPosSuccess = (position: GeolocationPosition) => {
-    const curPos = {
-      lat: position.coords.latitude,
-      lng: position.coords.longitude,
-    };
-    if (mapInstance) {
-      mapInstance.setCenter(curPos);
-    }
-    // loading state false
-  };
-
-  const onGetCurPosFail = () => {
-    // error message
   };
 
   const handlePositionBtnClick = () => {
@@ -285,6 +323,8 @@ const Map = () => {
       ? schedulePolyLines
       : schedulePolyLines[dropdownMenuIdx];
 
+  const userPositionMarkerUrl = convertToDataUrl(createPositionMarkerSvg());
+
   return (
     <GoogleMap
       zoom={googleMapZoomLevel}
@@ -315,6 +355,16 @@ const Map = () => {
       <GetPositionBtn onClick={handlePositionBtnClick}>
         <PositionIcon strokeWidth="20" />
       </GetPositionBtn>
+      {userPosition && (
+        <MarkerF
+          position={{ lat: userPosition.lat, lng: userPosition.lng }}
+          options={{
+            icon: {
+              url: userPositionMarkerUrl,
+            },
+          }}
+        />
+      )}
     </GoogleMap>
   );
 };
@@ -328,7 +378,7 @@ const GetPositionBtn = styled.button`
   right: 10px;
   width: 40px;
   height: 40px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0px 1px 4px -1px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 1px 4px -1px;
   background-color: #fff;
   border-radius: 2px;
   &:hover {

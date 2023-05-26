@@ -16,4 +16,20 @@ const createTriloMarkerSvg = (num: number, color = '#4D77FF') => {
   `;
 };
 
-export { createSelectedTriloMarkerSvg, createTriloMarkerSvg };
+const createPositionMarkerSvg = () => {
+  return `<svg width="15" height="15" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<circle cx="10" cy="10" r="10" fill="url(#paint0_linear_719_662)"/>
+<defs>
+<linearGradient id="paint0_linear_719_662" x1="10" y1="0" x2="10" y2="20" gradientUnits="userSpaceOnUse">
+<stop stop-color="#10BCE4"/>
+<stop offset="1" stop-color="#7756ED"/>
+</linearGradient>
+</defs>
+</svg>`;
+};
+
+export {
+  createSelectedTriloMarkerSvg,
+  createTriloMarkerSvg,
+  createPositionMarkerSvg,
+};

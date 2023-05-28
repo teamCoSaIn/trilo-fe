@@ -17,7 +17,7 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
     () => HTTP.checkRefreshToken(),
     {
       onSuccess: async response => {
-        if (response.response) {
+        if (response.availability) {
           return setUserStatus(UserStatusTypes.LOGIN);
         }
         return setUserStatus(UserStatusTypes.LOGOUT);
@@ -32,7 +32,7 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
 
   // TODO: staleTime 제거 고민해보기
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
-    enabled: !!data?.response,
+    enabled: !!data?.availability,
     staleTime: Infinity,
     suspense: true,
     useErrorBoundary: false,

@@ -20,7 +20,7 @@ const OAuthBtn = ({ oauthServerName, oauthServerSvg }: IOAuthBtnProps) => {
 
   const handleOAuthBtnClick = () => {
     if (authUrlData) {
-      window.location.href = authUrlData;
+      window.location.href = authUrlData.uri;
     }
   };
 

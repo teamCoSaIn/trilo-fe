@@ -39,6 +39,8 @@ import {
   createTriloMarkerSvg,
 } from '@/utils/createMarkerSvg';
 
+const ZOOM_LEVEL = 15;
+
 const Map = () => {
   const { tripId } = useParams();
 
@@ -91,8 +93,6 @@ const Map = () => {
     };
   }, []);
 
-  const googleMapZoomLevel = 12;
-
   const infoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: false,
@@ -103,6 +103,7 @@ const Map = () => {
     const tempArr: google.maps.LatLngBounds[] = [];
     if (dailyPlanListData) {
       const allBounds = new google.maps.LatLngBounds();
+      tempArr.push(allBounds);
       for (let i = 0; i < dailyPlanListData.length; i += 1) {
         const dailyPlanData = dailyPlanListData[i];
         const bounds = new google.maps.LatLngBounds();
@@ -119,7 +120,6 @@ const Map = () => {
         }
         tempArr.push(bounds);
       }
-      tempArr.unshift(allBounds);
     }
     return tempArr;
   }, [dailyPlanListData]);
@@ -131,7 +131,7 @@ const Map = () => {
     };
     if (mapInstance) {
       mapInstance.setCenter(curPosition);
-      mapInstance.setZoom(15);
+      mapInstance.setZoom(ZOOM_LEVEL);
     }
     setUserPosition(curPosition);
     setIsGetCurrPosLoading(false);
@@ -139,6 +139,7 @@ const Map = () => {
 
   const onGetCurPosFail = () => {
     alert(`Current browser doesn't support geolocation.`);
+    setIsGetCurrPosLoading(false);
   };
 
   useEffect(() => {
@@ -149,7 +150,7 @@ const Map = () => {
           .getNorthEast()
           .equals(boundsArray[dropdownMenuIdx + 1].getSouthWest())
       ) {
-        mapInstance.setZoom(15);
+        mapInstance.setZoom(ZOOM_LEVEL);
       }
     }
   }, [dropdownMenuIdx, mapInstance]);
@@ -336,7 +337,7 @@ const Map = () => {
 
   return (
     <GoogleMap
-      zoom={googleMapZoomLevel}
+      zoom={ZOOM_LEVEL}
       center={googleMapCenter}
       mapContainerStyle={googleMapStyle}
       options={googleMapOptions}

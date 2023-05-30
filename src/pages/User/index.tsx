@@ -3,9 +3,9 @@ import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/CircularLoader/index';
 import Error from '@/components/common/Error';
 import Flex from '@/components/common/Flex';
-import CircularLoader from '@/components/common/Loader/index';
 import UserInfo from '@/components/UserInfo/index';
 
 const User = () => {

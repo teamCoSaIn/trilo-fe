@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import CircularLoader from '@/components/common/Loader';
+import CircularLoader from '@/components/common/CircularLoader';
 import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';

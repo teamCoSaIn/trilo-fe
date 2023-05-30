@@ -4,8 +4,8 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import Button from '@/components/common/Button';
+import CircularLoader from '@/components/common/CircularLoader';
 import Flex from '@/components/common/Flex';
-import CircularLoader from '@/components/common/Loader';
 import Spacing from '@/components/common/Spacing';
 import TripCard from '@/components/TripCardList/TripCard';
 import TripCardAddBtn from '@/components/TripCardList/TripCardAddBtn/index';

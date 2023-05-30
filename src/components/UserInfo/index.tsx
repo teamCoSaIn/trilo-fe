@@ -4,8 +4,8 @@ import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
+import CircularLoader from '@/components/common/CircularLoader';
 import Description from '@/components/common/Description/index';
-import CircularLoader from '@/components/common/Loader';
 import Spacing from '@/components/common/Spacing/index';
 import DynamicUserNickname from '@/components/UserInfo/DynamicUserNickname/index';
 import color from '@/constants/color';

@@ -3,7 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import CircularLoader from '@/components/common/Loader/index';
+import CircularLoader from '@/components/common/CircularLoader/index';
 import REDIRECT_URL from '@/constants/route';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 

@@ -16,6 +16,7 @@ import styled from 'styled-components';
 import { LatLng } from 'use-places-autocomplete';
 
 import { ReactComponent as PositionIcon } from '@/assets/position.svg';
+import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
@@ -61,6 +62,8 @@ const Map = () => {
   const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
 
   const [userPosition, setUserPosition] = useState<LatLng | null>(null);
+  const [isGetCurrPosLoading, setIsGetCurrPosLoading] = useState(false);
+
   const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
@@ -131,7 +134,7 @@ const Map = () => {
       mapInstance.setZoom(15);
     }
     setUserPosition(curPosition);
-    // loading state false
+    setIsGetCurrPosLoading(false);
   };
 
   const onGetCurPosFail = () => {
@@ -194,7 +197,7 @@ const Map = () => {
   };
 
   const handlePositionBtnClick = () => {
-    // loading state true;
+    setIsGetCurrPosLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         onGetCurPosSuccess,
@@ -360,7 +363,11 @@ const Map = () => {
       {selectedTempScheduleMarkers}
       {selectedSchedulePolyLines}
       <GetPositionBtn onClick={handlePositionBtnClick}>
-        <PositionIcon strokeWidth="20" />
+        {isGetCurrPosLoading ? (
+          <CircularLoader size={20} />
+        ) : (
+          <PositionIcon strokeWidth="20" />
+        )}
       </GetPositionBtn>
       {userPosition && (
         <MarkerF

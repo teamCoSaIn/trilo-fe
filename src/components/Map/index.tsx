@@ -78,7 +78,6 @@ const Map = () => {
     streetViewControl: false,
     fullscreenControl: false,
     mapTypeControl: false,
-    maxZoom: 18,
   };
 
   const googleMapCenter = useMemo(() => {
@@ -129,19 +128,26 @@ const Map = () => {
     };
     if (mapInstance) {
       mapInstance.setCenter(curPosition);
-      mapInstance.setZoom(12);
+      mapInstance.setZoom(15);
     }
     setUserPosition(curPosition);
     // loading state false
   };
 
   const onGetCurPosFail = () => {
-    // error message
+    alert(`Current browser doesn't support geolocation.`);
   };
 
   useEffect(() => {
-    if (!boundsArray[dropdownMenuIdx + 1].isEmpty()) {
-      mapInstance?.fitBounds(boundsArray[dropdownMenuIdx + 1]);
+    if (!boundsArray[dropdownMenuIdx + 1].isEmpty() && mapInstance) {
+      mapInstance.fitBounds(boundsArray[dropdownMenuIdx + 1], 200);
+      if (
+        boundsArray[dropdownMenuIdx + 1]
+          .getNorthEast()
+          .equals(boundsArray[dropdownMenuIdx + 1].getSouthWest())
+      ) {
+        mapInstance.setZoom(15);
+      }
     }
   }, [dropdownMenuIdx, mapInstance]);
 
@@ -340,6 +346,7 @@ const Map = () => {
             lat: googleMarkerLatLng.lat,
             lng: googleMarkerLatLng.lng,
           }}
+          animation={google.maps.Animation.DROP}
           onClick={handleClickGoogleMarker}
         >
           {isDateSelectorVisible && (
@@ -363,6 +370,7 @@ const Map = () => {
               url: userPositionMarkerUrl,
             },
           }}
+          animation={google.maps.Animation.DROP}
         />
       )}
     </GoogleMap>

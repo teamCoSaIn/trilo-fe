@@ -203,7 +203,7 @@ const tripDays: IDailyPlan[] = [
     dayId: 3,
     tripId: 1,
     date: '2023-02-17',
-    color: '#777',
+    color: '#209b43',
     schedules: [
       {
         scheduleId: 235415,

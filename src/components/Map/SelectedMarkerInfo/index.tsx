@@ -8,7 +8,7 @@ import CircularLoader from '@/components/common/CircularLoader';
 import Flex from '@/components/common/Flex';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import color from '@/constants/color';
-import useSearchPlaceInfo from '@/queryHooks/useSearchPlaceInfo';
+import useSearchSelectedPlaceInfo from '@/queryHooks/useSearchSelectedPlaceInfo';
 import { PlacesService } from '@/states/googleMaps';
 
 interface SelectedMarkerInfoProps {
@@ -19,15 +19,17 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
 
   const {
     isLoading,
-    data: placeSearchData,
+    data: selectedPlaceData,
     isError,
-  } = useSearchPlaceInfo(scheduleData.placeName, placesService, {
-    lat: scheduleData.coordinate.latitude,
-    lng: scheduleData.coordinate.longitude,
-  });
-
-  // place Id 같은 장소 찾아야함.
-  const selectedPlace = placeSearchData?.[0];
+  } = useSearchSelectedPlaceInfo(
+    scheduleData.placeId,
+    scheduleData.placeName,
+    placesService,
+    {
+      lat: scheduleData.coordinate.latitude,
+      lng: scheduleData.coordinate.longitude,
+    }
+  );
 
   const handleInfoBoxClick = (event: React.MouseEvent) => {
     event.stopPropagation();
@@ -47,7 +49,7 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
 
   const handleClickGoogleLink = (event: React.MouseEvent) => {
     event.stopPropagation();
-    window.open(selectedPlace?.url || 'https://www.google.com/maps');
+    window.open(selectedPlaceData?.url || 'https://www.google.com/maps');
   };
 
   const handleClickNaverLink = (event: React.MouseEvent) => {
@@ -73,27 +75,29 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
           <CircularLoader />
         ) : (
           <>
-            <PlaceName title={selectedPlace?.name}>
-              {selectedPlace?.name || '알 수 없음'}
+            <PlaceName title={selectedPlaceData?.name}>
+              {selectedPlaceData?.name || '알 수 없는 장소'}
             </PlaceName>
             <PlaceRatingBox>
               <PlaceRating>
-                {selectedPlace?.rating
-                  ? selectedPlace.rating.toFixed(1)
+                {selectedPlaceData?.rating
+                  ? selectedPlaceData.rating.toFixed(1)
                   : '0.0'}
               </PlaceRating>
-              <PlaceCardStar rating={selectedPlace?.rating} />
+              <PlaceCardStar rating={selectedPlaceData?.rating} />
             </PlaceRatingBox>
-            <PlaceLinkBtnBox>
-              <PlaceLinkBtn onClick={handleClickGoogleLink}>
-                <GoogleIcon />
-                구글 맵
-              </PlaceLinkBtn>
-              <PlaceLinkBtn onClick={handleClickNaverLink}>
-                <NaverIcon />
-                네이버
-              </PlaceLinkBtn>
-            </PlaceLinkBtnBox>
+            {scheduleData.placeName && (
+              <PlaceLinkBtnBox>
+                <PlaceLinkBtn onClick={handleClickGoogleLink}>
+                  <GoogleIcon />
+                  구글 맵
+                </PlaceLinkBtn>
+                <PlaceLinkBtn onClick={handleClickNaverLink}>
+                  <NaverIcon />
+                  네이버
+                </PlaceLinkBtn>
+              </PlaceLinkBtnBox>
+            )}
           </>
         )}
       </Box>

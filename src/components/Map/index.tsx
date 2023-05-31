@@ -18,6 +18,7 @@ import { LatLng } from 'use-places-autocomplete';
 import { ReactComponent as PositionIcon } from '@/assets/position.svg';
 import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
+import SelectedMarkerInfo from '@/components/Map/SelectedMarkerInfo';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import {
@@ -93,10 +94,16 @@ const Map = () => {
     };
   }, []);
 
-  const infoBoxOptions = {
+  const dateSelectorInfoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: false,
     pixelOffset: new window.google.maps.Size(25, -35),
+  };
+
+  const SelectedMarkerInfoBoxOptions = {
+    closeBoxURL: '',
+    enableEventPropagation: false,
+    pixelOffset: new window.google.maps.Size(-90, -170),
   };
 
   const boundsArray = useMemo(() => {
@@ -240,7 +247,13 @@ const Map = () => {
             }}
             onClick={handleClickTriloMarker(scheduleData.scheduleId)}
             animation={animation}
-          />
+          >
+            {selectedScheduleId === scheduleData.scheduleId && (
+              <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
+                <SelectedMarkerInfo scheduleData={scheduleData} />
+              </InfoBoxF>
+            )}
+          </MarkerF>
         );
       })
     );
@@ -275,7 +288,14 @@ const Map = () => {
           }}
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
           animation={animation}
-        />
+        >
+          {' '}
+          {selectedScheduleId === scheduleData.scheduleId && (
+            <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
+              <SelectedMarkerInfo scheduleData={scheduleData} />
+            </InfoBoxF>
+          )}
+        </MarkerF>
       );
     });
   }, [tempPlanData, selectedScheduleId]);
@@ -354,7 +374,7 @@ const Map = () => {
           onClick={handleClickGoogleMarker}
         >
           {isDateSelectorVisible && (
-            <InfoBoxF options={infoBoxOptions}>
+            <InfoBoxF options={dateSelectorInfoBoxOptions}>
               <DateSelector />
             </InfoBoxF>
           )}

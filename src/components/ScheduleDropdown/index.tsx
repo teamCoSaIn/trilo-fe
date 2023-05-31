@@ -1,4 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import { ClickAwayListener } from '@mui/material';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -25,6 +26,8 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     DropdownIndexFamily(tripId)
   );
   const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   const [isDayDropdownOpen, setIsDayDropdownOpen] = useState<boolean>(false);
   const [isColorDropdownOpen, setIsColorDropdownOpen] =
@@ -76,55 +79,68 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     );
   };
 
+  const handleDropdownBoxClickAway = (event: Event | SyntheticEvent) => {
+    if (
+      dropdownRef.current &&
+      dropdownRef.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    setIsDayDropdownOpen(false);
+    setIsColorDropdownOpen(false);
+  };
+
   return (
-    <DropdownBox>
-      <DropdownMenu
-        onClick={handleDayDropdownBtnClick}
-        isColorDropdownBtnHover={isColorDropdownBtnHover}
-      >
-        <SelectedDay fontSize={1.6}>
-          {selectedMenu
-            ? `${selectedMenu.name} - ${selectedMenu.date}`
-            : '전체일정'}
-        </SelectedDay>
-        {selectedMenu && (
-          <ColorDropdownBtn
-            type="button"
-            onClick={handleColorDropdownBtnClick}
-            onMouseEnter={handleColorDropdownBtnMouseEnter}
-            onMouseLeave={handleColorDropdownBtnMouseLeave}
-          />
-        )}
-        {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
-      </DropdownMenu>
-      <DropdownPopper isDropdownOpen={isDayDropdownOpen}>
-        <DayBox>
-          {dayDropdownMenu.map((menu, idx) => (
-            <DayMenu
-              key={menu.dailyPlanId}
-              onClick={handleDropdownItemClick(idx)}
-            >
-              {`${menu.name} - ${menu.date}`}
-            </DayMenu>
-          ))}
-          <DayMenu onClick={handleDropdownItemClick(-1)}>전체일정</DayMenu>
-        </DayBox>
-      </DropdownPopper>
-      <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
-        <ColorBox>
-          {DailyPlanColor.map(dayColor => (
-            <ColorMenu key={dayColor}>
-              <ColorBtn
-                dayColor={dayColor}
-                onClick={() => handleColorBtnClick(dayColor)}
+    <ClickAwayListener onClickAway={handleDropdownBoxClickAway}>
+      <DropdownBox ref={dropdownRef}>
+        <DropdownMenu
+          onClick={handleDayDropdownBtnClick}
+          isColorDropdownBtnHover={isColorDropdownBtnHover}
+        >
+          <SelectedDay fontSize={1.6}>
+            {selectedMenu
+              ? `${selectedMenu.name} - ${selectedMenu.date}`
+              : '전체일정'}
+          </SelectedDay>
+          {selectedMenu && (
+            <ColorDropdownBtn
+              type="button"
+              onClick={handleColorDropdownBtnClick}
+              onMouseEnter={handleColorDropdownBtnMouseEnter}
+              onMouseLeave={handleColorDropdownBtnMouseLeave}
+            />
+          )}
+          {isDayDropdownOpen ? <UpArrowIcon /> : <DownArrowIcon />}
+        </DropdownMenu>
+        <DropdownPopper isDropdownOpen={isDayDropdownOpen}>
+          <DayBox>
+            {dayDropdownMenu.map((menu, idx) => (
+              <DayMenu
+                key={menu.dailyPlanId}
+                onClick={handleDropdownItemClick(idx)}
               >
-                {dayColor === selectedMenu?.color && <WhiteCheckIcon />}
-              </ColorBtn>
-            </ColorMenu>
-          ))}
-        </ColorBox>
-      </DropdownPopper>
-    </DropdownBox>
+                {`${menu.name} - ${menu.date}`}
+              </DayMenu>
+            ))}
+            <DayMenu onClick={handleDropdownItemClick(-1)}>전체일정</DayMenu>
+          </DayBox>
+        </DropdownPopper>
+        <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
+          <ColorBox>
+            {DailyPlanColor.map(dayColor => (
+              <ColorMenu key={dayColor}>
+                <ColorBtn
+                  dayColor={dayColor}
+                  onClick={() => handleColorBtnClick(dayColor)}
+                >
+                  {dayColor === selectedMenu?.color && <WhiteCheckIcon />}
+                </ColorBtn>
+              </ColorMenu>
+            ))}
+          </ColorBox>
+        </DropdownPopper>
+      </DropdownBox>
+    </ClickAwayListener>
   );
 };
 

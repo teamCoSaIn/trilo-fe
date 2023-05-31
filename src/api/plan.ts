@@ -16,7 +16,7 @@ export type TTempPlanDayId = null;
 // 스케줄 서머리
 export type TScheduleSummary = Pick<
   ISchedule,
-  'scheduleId' | 'title' | 'placeName' | 'coordinate'
+  'scheduleId' | 'title' | 'placeId' | 'placeName' | 'coordinate'
 >;
 
 export const getDailyPlanList = async (tripId: ITrip['tripId']) => {

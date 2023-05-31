@@ -5,6 +5,7 @@ import { IDailyPlan } from '@/api/plan';
 interface IScheduleResponse {
   scheduleId: number;
   title: string;
+  placeId: string;
   placeName: string;
   coordinate: ICoordinate;
 }
@@ -147,6 +148,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235410,
         title: '캐널시티 하카타',
+        placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
         placeName: '캐널시티 하카타',
         coordinate: {
           latitude: 21.31032591434633,
@@ -156,6 +158,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235411,
         title: '쇼핑 리스트',
+        placeId: '',
         placeName: '',
         coordinate: {
           latitude: 21.29985050848401,
@@ -173,6 +176,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235412,
         title: '동방명주',
+        placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
         placeName: '캐널시티 하카타',
         coordinate: {
           latitude: 21.303432369155537,
@@ -182,6 +186,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235413,
         title: '하노이',
+        placeId: '',
         placeName: '',
         coordinate: {
           latitude: 21.29465251080877,
@@ -191,6 +196,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235414,
         title: '관람차',
+        placeId: 'ChIJH4KfOtiTQTURBa18FQ38vaI',
         placeName: '놀이공원',
         coordinate: {
           latitude: 21.292973118425635,
@@ -208,6 +214,7 @@ const tripDays: IDailyPlan[] = [
       {
         scheduleId: 235415,
         title: '포케 먹기',
+        placeId: 'ChIJrynB5fRtAHwReIhoKsXdM0Y',
         placeName: '와이키키',
         coordinate: {
           latitude: 21.31,
@@ -222,6 +229,7 @@ const tempPlan = [
   {
     scheduleId: 335410,
     title: '포트 드루시 해변 공원',
+    placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
     placeName: '캐널시티 하카타',
     coordinate: {
       latitude: 21.34032591434633,
@@ -231,6 +239,7 @@ const tempPlan = [
   {
     scheduleId: 335411,
     title: '콜로왈루 공원',
+    placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
     placeName: '콜로왈루 공원',
     coordinate: {
       latitude: 21.24985050848401,
@@ -240,6 +249,7 @@ const tempPlan = [
   {
     scheduleId: 335412,
     title: '카마넬 공원',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
     placeName: '카마넬 공원',
     coordinate: {
       latitude: 21.44985050848401,

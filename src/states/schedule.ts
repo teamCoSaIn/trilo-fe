@@ -19,9 +19,9 @@ export const DropdownIndexFamily = atomFamily<number, string>({
   default: -1,
 });
 
-export const PlaceName = atom<string>({
-  key: 'placeName',
-  default: '',
+export const PlaceInfo = atom<{ id: string; name: string }>({
+  key: 'placeInfo',
+  default: { id: '', name: '' },
 });
 
 export const SelectedScheduleId = atom<ISchedule['scheduleId']>({

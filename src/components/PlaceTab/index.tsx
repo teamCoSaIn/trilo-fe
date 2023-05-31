@@ -289,6 +289,7 @@ const PlaceTab = () => {
     placeSearchData?.map(place => (
       <PlaceCard
         key={place.place_id}
+        id={place.place_id}
         name={place.name}
         rating={place.rating}
         address={place.formatted_address}

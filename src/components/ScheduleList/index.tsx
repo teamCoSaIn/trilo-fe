@@ -206,12 +206,12 @@ const ScheduleList = () => {
                             onClick={handleScheduleClick(schedule.scheduleId)}
                           >
                             <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                            {schedule.placeName && (
-                              <Place>
-                                <PlaceIcon />
-                                <PlaceName>{schedule.placeName}</PlaceName>
-                              </Place>
-                            )}
+                            <Place>
+                              <PlaceIcon />
+                              <PlaceName>
+                                {schedule.placeName || '알 수 없는 장소'}
+                              </PlaceName>
+                            </Place>
                             <ScheduleDeleteBtn
                               onClick={handleScheduleDeleteBtnClick(
                                 schedule.scheduleId
@@ -286,12 +286,12 @@ const ScheduleList = () => {
                       onClick={handleScheduleClick(schedule.scheduleId)}
                     >
                       <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                      {schedule.placeName && (
-                        <Place>
-                          <PlaceIcon />
-                          <PlaceName>{schedule.placeName}</PlaceName>
-                        </Place>
-                      )}
+                      <Place>
+                        <PlaceIcon />
+                        <PlaceName>
+                          {schedule.placeName || '알 수 없는 장소'}
+                        </PlaceName>
+                      </Place>
                       <ScheduleDeleteBtn
                         onClick={() =>
                           handleScheduleDeleteBtnClick(schedule.scheduleId)

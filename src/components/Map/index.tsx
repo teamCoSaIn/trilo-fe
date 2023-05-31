@@ -30,7 +30,7 @@ import {
 } from '@/states/googleMaps';
 import {
   DropdownIndexFamily,
-  PlaceName,
+  PlaceInfo,
   SelectedScheduleId,
 } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
@@ -59,7 +59,7 @@ const Map = () => {
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
-  const resetPlaceName = useResetRecoilState(PlaceName);
+  const resetPlaceInfo = useResetRecoilState(PlaceInfo);
   const [selectedScheduleId, setSelectedScheduleId] =
     useRecoilState(SelectedScheduleId);
   const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
@@ -189,7 +189,7 @@ const Map = () => {
       };
       setGoogleMarkerLatLng(selectedLocation);
     }
-    resetPlaceName();
+    resetPlaceInfo();
   };
 
   const handleClickGoogleMarker = () => {
@@ -289,7 +289,6 @@ const Map = () => {
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
           animation={animation}
         >
-          {' '}
           {selectedScheduleId === scheduleData.scheduleId && (
             <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
               <SelectedMarkerInfo scheduleData={scheduleData} />

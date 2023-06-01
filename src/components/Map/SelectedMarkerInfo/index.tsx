@@ -1,3 +1,4 @@
+/* eslint-disable no-nested-ternary */
 import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
@@ -5,6 +6,7 @@ import { TScheduleSummary } from '@/api/plan';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import CircularLoader from '@/components/common/CircularLoader';
+import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import color from '@/constants/color';
@@ -59,6 +61,37 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
     );
   };
 
+  const infoContent = scheduleData.placeId ? (
+    <>
+      <PlaceName title={selectedPlaceData?.name}>
+        {selectedPlaceData?.name}
+      </PlaceName>
+      <PlaceRatingBox>
+        <PlaceRating>
+          {selectedPlaceData?.rating
+            ? selectedPlaceData.rating.toFixed(1)
+            : '0.0'}
+        </PlaceRating>
+        <PlaceCardStar rating={selectedPlaceData?.rating} />
+      </PlaceRatingBox>
+      <PlaceLinkBtnBox>
+        <PlaceLinkBtn onClick={handleClickGoogleLink}>
+          <GoogleIcon />
+          구글 맵
+        </PlaceLinkBtn>
+        <PlaceLinkBtn onClick={handleClickNaverLink}>
+          <NaverIcon />
+          네이버
+        </PlaceLinkBtn>
+      </PlaceLinkBtnBox>
+    </>
+  ) : (
+    <NoInfoBox column justifyCenter alignCenter>
+      <Description fontSize={2.5}>🙅</Description>
+      <Description fontSize={1.2}>장소에 대한 정보가 없습니다.</Description>
+    </NoInfoBox>
+  );
+
   return (
     <Flex
       column
@@ -74,31 +107,7 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
         ) : isLoading ? (
           <CircularLoader />
         ) : (
-          <>
-            <PlaceName title={selectedPlaceData?.name}>
-              {selectedPlaceData?.name || '알 수 없는 장소'}
-            </PlaceName>
-            <PlaceRatingBox>
-              <PlaceRating>
-                {selectedPlaceData?.rating
-                  ? selectedPlaceData.rating.toFixed(1)
-                  : '0.0'}
-              </PlaceRating>
-              <PlaceCardStar rating={selectedPlaceData?.rating} />
-            </PlaceRatingBox>
-            {scheduleData.placeName && (
-              <PlaceLinkBtnBox>
-                <PlaceLinkBtn onClick={handleClickGoogleLink}>
-                  <GoogleIcon />
-                  구글 맵
-                </PlaceLinkBtn>
-                <PlaceLinkBtn onClick={handleClickNaverLink}>
-                  <NaverIcon />
-                  네이버
-                </PlaceLinkBtn>
-              </PlaceLinkBtnBox>
-            )}
-          </>
+          infoContent
         )}
       </Box>
       <Tail />
@@ -165,6 +174,10 @@ const PlaceLinkBtn = styled.button`
   border-radius: 10px;
   font-size: 8px;
   font-weight: 400;
+`;
+
+const NoInfoBox = styled(Flex)`
+  gap: 10px;
 `;
 
 export default SelectedMarkerInfo;

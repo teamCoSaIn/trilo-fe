@@ -34,6 +34,7 @@ import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import {
   DropdownIndexFamily,
   DropdownMenuFamily,
+  IsTempBoxOpen,
   SelectedEditorScheduleId,
   SelectedMarkerScheduleId,
 } from '@/states/schedule';
@@ -55,11 +56,11 @@ const ScheduleList = () => {
     SelectedEditorScheduleId
   );
   const selectedMarkerScheduleId = useRecoilValue(SelectedMarkerScheduleId);
+  const [isTempBoxOpen, setIsTempBoxOpen] = useRecoilState(IsTempBoxOpen);
 
   const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
     null
   );
-  const [isTempBoxPopUp, setIsTempBoxPopUp] = useState(false);
 
   const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
     const newDropdownMenu = dailyPlanListData.map((dailyPlanData, idx) => {
@@ -145,7 +146,7 @@ const ScheduleList = () => {
   };
 
   const handleTempPopUpBtnClick = () => {
-    setIsTempBoxPopUp(prev => !prev);
+    setIsTempBoxOpen(prev => !prev);
   };
 
   const handleScheduleDeleteBtnClick =
@@ -260,7 +261,7 @@ const ScheduleList = () => {
   const tempPlanDragDropBox = (
     <TempBox>
       <TempPopUpBtn type="button" onClick={handleTempPopUpBtnClick}>
-        {isTempBoxPopUp ? (
+        {isTempBoxOpen ? (
           <DownArrowIcon width={27} height={15} strokeWidth={2} />
         ) : (
           <UpArrowIcon width={27} height={15} strokeWidth={2} />
@@ -273,7 +274,7 @@ const ScheduleList = () => {
             <TempList
               {...droppableProvided.droppableProps}
               ref={droppableProvided.innerRef}
-              isPopUpOpen={isTempBoxPopUp}
+              isPopUpOpen={isTempBoxOpen}
             >
               {tempPlanData.schedules.map((schedule, scheduleIdx) => (
                 <Draggable

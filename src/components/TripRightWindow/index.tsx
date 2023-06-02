@@ -8,7 +8,7 @@ import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
-import { SelectedEditorScheduleId } from '@/states/schedule';
+import { IsTempBoxOpen, SelectedEditorScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
@@ -17,10 +17,12 @@ const TripRightWindow = () => {
   const resetSelectedEditorScheduleId = useResetRecoilState(
     SelectedEditorScheduleId
   );
+  const resetIsTempBoxOpen = useResetRecoilState(IsTempBoxOpen);
 
   useEffect(() => {
     return () => {
       resetSelectedEditorScheduleId();
+      resetIsTempBoxOpen();
     };
   }, []);
 

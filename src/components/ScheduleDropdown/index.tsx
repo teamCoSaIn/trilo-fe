@@ -25,6 +25,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
+  const resetDayDropdownIdx = useResetRecoilState(DropdownIndexFamily(tripId));
   const resetSelectedEditorScheduleId = useResetRecoilState(
     SelectedEditorScheduleId
   );
@@ -64,7 +65,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
 
   useEffect(() => {
     return () => {
-      setDayDropdownIdx(-1);
+      resetDayDropdownIdx();
     };
   }, []);
 

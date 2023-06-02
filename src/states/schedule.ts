@@ -33,3 +33,8 @@ export const SelectedMarkerScheduleId = atom<ISchedule['scheduleId']>({
   key: 'selectedMarkerScheduleId',
   default: undefined,
 });
+
+export const IsTempBoxOpen = atom<boolean>({
+  key: 'isTempBoxOpen',
+  default: false,
+});

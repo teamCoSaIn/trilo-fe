@@ -19,12 +19,22 @@ export const DropdownIndexFamily = atomFamily<number, string>({
   default: -1,
 });
 
-export const PlaceName = atom<string>({
-  key: 'placeName',
-  default: '',
+export const PlaceInfo = atom<{ id: string; name: string }>({
+  key: 'placeInfo',
+  default: { id: '', name: '' },
 });
 
-export const SelectedScheduleId = atom<ISchedule['scheduleId']>({
-  key: 'selectedScheduleId',
+export const SelectedEditorScheduleId = atom<ISchedule['scheduleId']>({
+  key: 'selectedEditorScheduleId',
   default: undefined,
+});
+
+export const SelectedMarkerScheduleId = atom<ISchedule['scheduleId']>({
+  key: 'selectedMarkerScheduleId',
+  default: undefined,
+});
+
+export const IsTempBoxOpen = atom<boolean>({
+  key: 'isTempBoxOpen',
+  default: false,
 });

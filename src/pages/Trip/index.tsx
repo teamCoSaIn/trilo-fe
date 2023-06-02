@@ -4,9 +4,9 @@ import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/CircularLoader';
 import Error from '@/components/common/Error';
 import Flex from '@/components/common/Flex';
-import CircularLoader from '@/components/common/Loader';
 import Map from '@/components/Map';
 import TripHeader from '@/components/TripHeader';
 import TripLeftWindow from '@/components/TripLeftWindow';

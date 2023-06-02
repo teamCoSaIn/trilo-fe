@@ -9,7 +9,7 @@ import { ICreateScheduleParams } from '@/api/schedule';
 import DimLoader from '@/components/common/DimLoader';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
-import { PlaceName } from '@/states/schedule';
+import { PlaceInfo } from '@/states/schedule';
 
 const INITIAL_HOUR = '00';
 const INITIAL_MINUTE = '00';
@@ -23,7 +23,7 @@ const DateSelector = () => {
 
   const setIsDateSelectorVisible = useSetRecoilState(InfoBoxVisible);
   const googleMarkerLatLng = useRecoilValue(GoogleMarkerLatLng);
-  const placeName = useRecoilValue(PlaceName);
+  const placeInfo = useRecoilValue(PlaceInfo);
   const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
 
   const infoBoxRef = useRef<HTMLDivElement>(null);
@@ -78,9 +78,10 @@ const DateSelector = () => {
       const newSchedule: ICreateScheduleParams = {
         tripId: +tripId,
         dayId: dailyPlanId,
-        title: placeName || '알 수 없는 장소',
+        title: placeInfo.name,
         content: '',
-        placeName: placeName || '알 수 없는 장소',
+        placeId: placeInfo.id,
+        placeName: placeInfo.name,
         coordinate: {
           latitude: googleMarkerLatLng.lat,
           longitude: googleMarkerLatLng.lng,
@@ -162,7 +163,6 @@ const DateSelectorDateItem = styled.li`
   text-align: center;
   font-weight: 400;
   font-size: 12px;
-  font-family: 'Noto Sans KR';
   color: #4f4f4f;
   &:hover {
     background: #ecf0ff;
@@ -188,7 +188,7 @@ const DateSelectorTempStorageBox = styled.div`
   font-weight: 500;
   color: #4d77ff;
   background-color: #ecf0ff;
-  border-radius: 0px 0px 5px 5px;
+  border-radius: 0 0 5px 5px;
 `;
 
 export default DateSelector;

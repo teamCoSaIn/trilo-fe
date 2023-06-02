@@ -7,8 +7,8 @@ import { ReactComponent as DeleteIcon } from '@/assets/delete.svg';
 import { ReactComponent as SearchIcon } from '@/assets/search.svg';
 import { ReactComponent as FocusedMarkerIcon } from '@/assets/triloMarker-focused.svg';
 import Button from '@/components/common/Button';
+import CircularLoader from '@/components/common/CircularLoader';
 import Flex from '@/components/common/Flex';
-import CircularLoader from '@/components/common/Loader';
 import PlaceCard from '@/components/PlaceTab/PlaceCard';
 import PlaceCardSkeleton from '@/components/PlaceTab/PlaceCardSkeleton';
 import color from '@/constants/color';
@@ -289,6 +289,7 @@ const PlaceTab = () => {
     placeSearchData?.map(place => (
       <PlaceCard
         key={place.place_id}
+        id={place.place_id}
         name={place.name}
         rating={place.rating}
         address={place.formatted_address}

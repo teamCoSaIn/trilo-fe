@@ -3,26 +3,30 @@ import { useParams } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
-import CircularLoader from '@/components/common/Loader';
+import CircularLoader from '@/components/common/CircularLoader';
 import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
-import { SelectedScheduleId } from '@/states/schedule';
+import { IsTempBoxOpen, SelectedEditorScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
 
-  const selectedScheduleId = useRecoilValue(SelectedScheduleId);
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
+  const resetSelectedEditorScheduleId = useResetRecoilState(
+    SelectedEditorScheduleId
+  );
+  const resetIsTempBoxOpen = useResetRecoilState(IsTempBoxOpen);
 
   useEffect(() => {
     return () => {
-      resetSelectedScheduleId();
+      resetSelectedEditorScheduleId();
+      resetIsTempBoxOpen();
     };
   }, []);
 
-  const dynamicScheduleList = selectedScheduleId ? (
+  const dynamicScheduleList = selectedEditorScheduleId ? (
     <Suspense fallback={<CircularLoader />}>
       <ScheduleEditor />
     </Suspense>

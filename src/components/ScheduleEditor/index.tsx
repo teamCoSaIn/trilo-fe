@@ -16,14 +16,18 @@ import { SCHEDULE_DETAILS_DEBOUNCE_TIME } from '@/constants/debounce';
 import useChangeScheduleDetails from '@/queryHooks/useChangeScheduleDetails';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { MapInstance } from '@/states/googleMaps';
-import { SelectedScheduleId } from '@/states/schedule';
+import { SelectedEditorScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
-  const selectedScheduleId = useRecoilValue(SelectedScheduleId);
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
+  const resetSelectedEditorScheduleId = useResetRecoilState(
+    SelectedEditorScheduleId
+  );
   const mapInstance = useRecoilValue(MapInstance);
 
-  const { data: scheduleDetails } = useGetScheduleDetails(selectedScheduleId);
+  const { data: scheduleDetails } = useGetScheduleDetails(
+    selectedEditorScheduleId
+  );
   const { mutate } = useChangeScheduleDetails();
 
   const [titleInputValue, setTitleInputValue] = useState(
@@ -71,7 +75,7 @@ const ScheduleEditor = () => {
   };
 
   const handleCancelBtnClick = () => {
-    resetSelectedScheduleId();
+    resetSelectedEditorScheduleId();
   };
 
   const handlePlaceNameBtnClick = () => {

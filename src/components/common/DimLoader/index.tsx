@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
+import CircularLoader from '@/components/common/CircularLoader/index';
 import Flex from '@/components/common/Flex/index';
-import CircularLoader from '@/components/common/Loader/index';
 import color from '@/constants/color';
 import { LOADING_Z_INDEX } from '@/constants/zIndex';
 

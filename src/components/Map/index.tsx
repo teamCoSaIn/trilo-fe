@@ -16,7 +16,9 @@ import styled from 'styled-components';
 import { LatLng } from 'use-places-autocomplete';
 
 import { ReactComponent as PositionIcon } from '@/assets/position.svg';
+import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
+import SelectedMarkerInfo from '@/components/Map/SelectedMarkerInfo';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import {
@@ -28,8 +30,9 @@ import {
 } from '@/states/googleMaps';
 import {
   DropdownIndexFamily,
-  PlaceName,
-  SelectedScheduleId,
+  PlaceInfo,
+  SelectedEditorScheduleId,
+  SelectedMarkerScheduleId,
 } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
 import {
@@ -37,6 +40,8 @@ import {
   createSelectedTriloMarkerSvg,
   createTriloMarkerSvg,
 } from '@/utils/createMarkerSvg';
+
+const ZOOM_LEVEL = 15;
 
 const Map = () => {
   const { tripId } = useParams();
@@ -55,12 +60,17 @@ const Map = () => {
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
-  const resetPlaceName = useResetRecoilState(PlaceName);
-  const [selectedScheduleId, setSelectedScheduleId] =
-    useRecoilState(SelectedScheduleId);
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const resetPlaceInfo = useResetRecoilState(PlaceInfo);
+  const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
+  const [selectedMarkerScheduleId, setSelectedMarkerScheduleId] =
+    useRecoilState(SelectedMarkerScheduleId);
+  const resetSelectedMarkerScheduleId = useResetRecoilState(
+    SelectedMarkerScheduleId
+  );
 
   const [userPosition, setUserPosition] = useState<LatLng | null>(null);
+  const [isGetCurrPosLoading, setIsGetCurrPosLoading] = useState(false);
+
   const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
@@ -78,7 +88,6 @@ const Map = () => {
     streetViewControl: false,
     fullscreenControl: false,
     mapTypeControl: false,
-    maxZoom: 18,
   };
 
   const googleMapCenter = useMemo(() => {
@@ -89,18 +98,28 @@ const Map = () => {
     };
   }, []);
 
-  const googleMapZoomLevel = 12;
-
-  const infoBoxOptions = {
+  const dateSelectorInfoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: false,
     pixelOffset: new window.google.maps.Size(25, -35),
+    disableAutoPan: true,
+  };
+
+  const SelectedMarkerInfoBoxOptions = {
+    closeBoxURL: '',
+    enableEventPropagation: false,
+    pixelOffset:
+      selectedEditorScheduleId === selectedMarkerScheduleId
+        ? new window.google.maps.Size(-90, -170)
+        : new window.google.maps.Size(-90, -150),
+    disableAutoPan: true,
   };
 
   const boundsArray = useMemo(() => {
     const tempArr: google.maps.LatLngBounds[] = [];
     if (dailyPlanListData) {
       const allBounds = new google.maps.LatLngBounds();
+      tempArr.push(allBounds);
       for (let i = 0; i < dailyPlanListData.length; i += 1) {
         const dailyPlanData = dailyPlanListData[i];
         const bounds = new google.maps.LatLngBounds();
@@ -117,7 +136,6 @@ const Map = () => {
         }
         tempArr.push(bounds);
       }
-      tempArr.unshift(allBounds);
     }
     return tempArr;
   }, [dailyPlanListData]);
@@ -129,19 +147,27 @@ const Map = () => {
     };
     if (mapInstance) {
       mapInstance.setCenter(curPosition);
-      mapInstance.setZoom(12);
+      mapInstance.setZoom(ZOOM_LEVEL);
     }
     setUserPosition(curPosition);
-    // loading state false
+    setIsGetCurrPosLoading(false);
   };
 
   const onGetCurPosFail = () => {
-    // error message
+    alert(`Current browser doesn't support geolocation.`);
+    setIsGetCurrPosLoading(false);
   };
 
   useEffect(() => {
-    if (!boundsArray[dropdownMenuIdx + 1].isEmpty()) {
-      mapInstance?.fitBounds(boundsArray[dropdownMenuIdx + 1]);
+    if (!boundsArray[dropdownMenuIdx + 1].isEmpty() && mapInstance) {
+      mapInstance.fitBounds(boundsArray[dropdownMenuIdx + 1], 200);
+      if (
+        boundsArray[dropdownMenuIdx + 1]
+          .getNorthEast()
+          .equals(boundsArray[dropdownMenuIdx + 1].getSouthWest())
+      ) {
+        mapInstance.setZoom(ZOOM_LEVEL);
+      }
     }
   }, [dropdownMenuIdx, mapInstance]);
 
@@ -172,7 +198,7 @@ const Map = () => {
       };
       setGoogleMarkerLatLng(selectedLocation);
     }
-    resetPlaceName();
+    resetPlaceInfo();
   };
 
   const handleClickGoogleMarker = () => {
@@ -180,15 +206,15 @@ const Map = () => {
   };
 
   const handleClickTriloMarker = (scheduleId: number) => () => {
-    if (selectedScheduleId === scheduleId) {
-      resetSelectedScheduleId();
+    if (selectedMarkerScheduleId === scheduleId) {
+      resetSelectedMarkerScheduleId();
     } else {
-      setSelectedScheduleId(scheduleId);
+      setSelectedMarkerScheduleId(scheduleId);
     }
   };
 
   const handlePositionBtnClick = () => {
-    // loading state true;
+    setIsGetCurrPosLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         onGetCurPosSuccess,
@@ -206,12 +232,13 @@ const Map = () => {
     return dailyPlanListData.map(dailyPlanData =>
       dailyPlanData.schedules.map((scheduleData, idx) => {
         const svg =
-          selectedScheduleId === scheduleData.scheduleId
+          selectedEditorScheduleId === scheduleData.scheduleId ||
+          selectedMarkerScheduleId === scheduleData.scheduleId
             ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color)
             : createTriloMarkerSvg(idx + 1, dailyPlanData.color);
         const triloMarkerDataUrl = convertToDataUrl(svg);
         const animation =
-          selectedScheduleId === scheduleData.scheduleId
+          selectedEditorScheduleId === scheduleData.scheduleId
             ? google.maps.Animation.BOUNCE
             : google.maps.Animation.DROP;
 
@@ -230,11 +257,17 @@ const Map = () => {
             }}
             onClick={handleClickTriloMarker(scheduleData.scheduleId)}
             animation={animation}
-          />
+          >
+            {selectedMarkerScheduleId === scheduleData.scheduleId && (
+              <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
+                <SelectedMarkerInfo scheduleData={scheduleData} />
+              </InfoBoxF>
+            )}
+          </MarkerF>
         );
       })
     );
-  }, [dailyPlanListData, selectedScheduleId]);
+  }, [dailyPlanListData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const tempScheduleMarkers = useMemo(() => {
     if (!tempPlanData) {
@@ -242,12 +275,12 @@ const Map = () => {
     }
     return tempPlanData.schedules.map((scheduleData, idx) => {
       const svg =
-        selectedScheduleId === scheduleData.scheduleId
+        selectedEditorScheduleId === scheduleData.scheduleId
           ? createSelectedTriloMarkerSvg(idx + 1, tempPlanData.color)
           : createTriloMarkerSvg(idx + 1, tempPlanData.color);
       const triloMarkerDataUrl = convertToDataUrl(svg);
       const animation =
-        selectedScheduleId === scheduleData.scheduleId
+        selectedEditorScheduleId === scheduleData.scheduleId
           ? google.maps.Animation.BOUNCE
           : google.maps.Animation.DROP;
       return (
@@ -265,10 +298,16 @@ const Map = () => {
           }}
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
           animation={animation}
-        />
+        >
+          {selectedMarkerScheduleId === scheduleData.scheduleId && (
+            <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
+              <SelectedMarkerInfo scheduleData={scheduleData} />
+            </InfoBoxF>
+          )}
+        </MarkerF>
       );
     });
-  }, [tempPlanData, selectedScheduleId]);
+  }, [tempPlanData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const schedulePolyLines = useMemo(() => {
     if (!dailyPlanListData) {
@@ -327,7 +366,7 @@ const Map = () => {
 
   return (
     <GoogleMap
-      zoom={googleMapZoomLevel}
+      zoom={ZOOM_LEVEL}
       center={googleMapCenter}
       mapContainerStyle={googleMapStyle}
       options={googleMapOptions}
@@ -340,10 +379,11 @@ const Map = () => {
             lat: googleMarkerLatLng.lat,
             lng: googleMarkerLatLng.lng,
           }}
+          animation={google.maps.Animation.DROP}
           onClick={handleClickGoogleMarker}
         >
           {isDateSelectorVisible && (
-            <InfoBoxF options={infoBoxOptions}>
+            <InfoBoxF options={dateSelectorInfoBoxOptions}>
               <DateSelector />
             </InfoBoxF>
           )}
@@ -353,7 +393,11 @@ const Map = () => {
       {selectedTempScheduleMarkers}
       {selectedSchedulePolyLines}
       <GetPositionBtn onClick={handlePositionBtnClick}>
-        <PositionIcon strokeWidth="20" />
+        {isGetCurrPosLoading ? (
+          <CircularLoader size={20} />
+        ) : (
+          <PositionIcon strokeWidth="20" />
+        )}
       </GetPositionBtn>
       {userPosition && (
         <MarkerF
@@ -363,6 +407,7 @@ const Map = () => {
               url: userPositionMarkerUrl,
             },
           }}
+          animation={google.maps.Animation.DROP}
         />
       )}
     </GoogleMap>

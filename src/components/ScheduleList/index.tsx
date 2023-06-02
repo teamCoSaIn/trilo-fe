@@ -34,7 +34,9 @@ import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
 import {
   DropdownIndexFamily,
   DropdownMenuFamily,
-  SelectedScheduleId,
+  IsTempBoxOpen,
+  SelectedEditorScheduleId,
+  SelectedMarkerScheduleId,
 } from '@/states/schedule';
 
 const ScheduleList = () => {
@@ -49,16 +51,16 @@ const ScheduleList = () => {
   const [dropdownMenu, setDropdownMenu] = useRecoilState(
     DropdownMenuFamily(tripId as string)
   );
-
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
-
-  const setSelectedScheduleId = useSetRecoilState(SelectedScheduleId);
+  const setSelectedEditorScheduleId = useSetRecoilState(
+    SelectedEditorScheduleId
+  );
+  const selectedMarkerScheduleId = useRecoilValue(SelectedMarkerScheduleId);
+  const [isTempBoxOpen, setIsTempBoxOpen] = useRecoilState(IsTempBoxOpen);
 
   const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
     null
   );
-
-  const [isTempBoxPopUp, setIsTempBoxPopUp] = useState(false);
 
   const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
     const newDropdownMenu = dailyPlanListData.map((dailyPlanData, idx) => {
@@ -144,7 +146,7 @@ const ScheduleList = () => {
   };
 
   const handleTempPopUpBtnClick = () => {
-    setIsTempBoxPopUp(prev => !prev);
+    setIsTempBoxOpen(prev => !prev);
   };
 
   const handleScheduleDeleteBtnClick =
@@ -162,7 +164,7 @@ const ScheduleList = () => {
     };
 
   const handleScheduleClick = (scheduleId: number) => () => {
-    setSelectedScheduleId(scheduleId);
+    setSelectedEditorScheduleId(scheduleId);
   };
 
   const dailyPlanDragDropBox = (
@@ -204,14 +206,17 @@ const ScheduleList = () => {
                             {...draggableProvided.draggableProps}
                             isDragging={draggableSnapshot.isDragging}
                             onClick={handleScheduleClick(schedule.scheduleId)}
+                            isSelectedMarker={
+                              selectedMarkerScheduleId === schedule.scheduleId
+                            }
                           >
                             <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                            {schedule.placeName && (
-                              <Place>
-                                <PlaceIcon />
-                                <PlaceName>{schedule.placeName}</PlaceName>
-                              </Place>
-                            )}
+                            <Place>
+                              <PlaceIcon />
+                              <PlaceName>
+                                {schedule.placeName || '알 수 없는 장소'}
+                              </PlaceName>
+                            </Place>
                             <ScheduleDeleteBtn
                               onClick={handleScheduleDeleteBtnClick(
                                 schedule.scheduleId
@@ -256,7 +261,7 @@ const ScheduleList = () => {
   const tempPlanDragDropBox = (
     <TempBox>
       <TempPopUpBtn type="button" onClick={handleTempPopUpBtnClick}>
-        {isTempBoxPopUp ? (
+        {isTempBoxOpen ? (
           <DownArrowIcon width={27} height={15} strokeWidth={2} />
         ) : (
           <UpArrowIcon width={27} height={15} strokeWidth={2} />
@@ -269,7 +274,7 @@ const ScheduleList = () => {
             <TempList
               {...droppableProvided.droppableProps}
               ref={droppableProvided.innerRef}
-              isPopUpOpen={isTempBoxPopUp}
+              isPopUpOpen={isTempBoxOpen}
             >
               {tempPlanData.schedules.map((schedule, scheduleIdx) => (
                 <Draggable
@@ -284,14 +289,17 @@ const ScheduleList = () => {
                       {...draggableProvided.draggableProps}
                       isDragging={draggableSnapshot.isDragging}
                       onClick={handleScheduleClick(schedule.scheduleId)}
+                      isSelectedMarker={
+                        selectedMarkerScheduleId === schedule.scheduleId
+                      }
                     >
                       <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                      {schedule.placeName && (
-                        <Place>
-                          <PlaceIcon />
-                          <PlaceName>{schedule.placeName}</PlaceName>
-                        </Place>
-                      )}
+                      <Place>
+                        <PlaceIcon />
+                        <PlaceName>
+                          {schedule.placeName || '알 수 없는 장소'}
+                        </PlaceName>
+                      </Place>
                       <ScheduleDeleteBtn
                         onClick={() =>
                           handleScheduleDeleteBtnClick(schedule.scheduleId)
@@ -410,7 +418,7 @@ const ScheduleListBox = styled.ul<{ isEmpty: boolean }>`
   }};
 `;
 
-const Schedule = styled.li<{ isDragging: boolean }>`
+const Schedule = styled.li<{ isDragging: boolean; isSelectedMarker: boolean }>`
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -425,11 +433,18 @@ const Schedule = styled.li<{ isDragging: boolean }>`
   margin-left: ${SCHEDULE_MARGIN_LEFT}px;
   margin-right: 5px;
   margin-bottom: ${SCHEDULE_MARGIN_BOTTOM}px;
+  border: 1px solid white;
   cursor: grab;
-  ${({ isDragging }) => {
-    if (isDragging) {
+  ${({ isDragging, isSelectedMarker }) => {
+    if (isDragging && !isSelectedMarker) {
       return css`
-        border: 0.5px solid ${color.blue3};
+        border: 1px solid ${color.blue3};
+      `;
+    }
+    if (isSelectedMarker) {
+      return css`
+        border: 1px solid ${color.blue2};
+        box-shadow: 0 2px 8px ${color.blue2};
       `;
     }
   }};
@@ -475,7 +490,7 @@ const Ghost = styled.div`
   width: ${SCHEDULE_WIDTH}px;
   height: ${SCHEDULE_HEIGHT}px;
   background-color: ${color.white};
-  border: 0.5px dashed ${color.blue3};
+  border: 1px dashed ${color.blue3};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   opacity: 80%;

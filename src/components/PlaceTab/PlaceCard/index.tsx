@@ -8,9 +8,10 @@ import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import { MapInstance, GoogleMarkerLatLng } from '@/states/googleMaps';
-import { PlaceName } from '@/states/schedule';
+import { PlaceInfo } from '@/states/schedule';
 
 interface IPlaceCardProps {
+  id: string | undefined;
   name: string | undefined;
   rating: number | undefined;
   address: string | undefined;
@@ -22,6 +23,7 @@ interface IPlaceCardProps {
 }
 
 const PlaceCard = ({
+  id,
   name,
   rating,
   address,
@@ -33,7 +35,7 @@ const PlaceCard = ({
 }: IPlaceCardProps) => {
   const mapInstance = useRecoilValue(MapInstance);
   const setGoogleMarkerLatLng = useSetRecoilState(GoogleMarkerLatLng);
-  const setPlaceName = useSetRecoilState(PlaceName);
+  const setPlaceInfo = useSetRecoilState(PlaceInfo);
 
   const dateObj = new Date();
   const dayOfToday = dateObj.getDay();
@@ -55,8 +57,8 @@ const PlaceCard = ({
       mapInstance.setCenter(selectedLocation);
       setGoogleMarkerLatLng(selectedLocation);
     }
-    if (name) {
-      setPlaceName(name);
+    if (id && name) {
+      setPlaceInfo({ id, name });
     }
   };
 

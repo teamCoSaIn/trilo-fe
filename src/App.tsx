@@ -1,7 +1,7 @@
 import { Suspense } from 'react';
 
 import AuthChecker from '@/components/AuthChecker';
-import CircularLoader from '@/components/common/Loader/index';
+import CircularLoader from '@/components/common/CircularLoader/index';
 import Router from '@/Router';
 
 import worker from './mocks/browser';

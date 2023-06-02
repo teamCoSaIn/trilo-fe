@@ -6,8 +6,8 @@ import styled from 'styled-components';
 import { ReactComponent as GoogleLogin } from '@/assets/google-login.svg';
 import { ReactComponent as KakaoLogin } from '@/assets/kakao-login.svg';
 import { ReactComponent as NaverLogin } from '@/assets/naver-login.svg';
+import CircularLoader from '@/components/common/CircularLoader/index';
 import Error from '@/components/common/Error';
-import CircularLoader from '@/components/common/Loader/index';
 import OAuthBtn from '@/components/OAuthBtnContainer/OAuthBtn';
 
 const OAuthBtnContainer = () => {

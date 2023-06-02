@@ -40,7 +40,5 @@ export const transformDateToDotFormat = (date: Date) => {
     .replace(/\./g, '')
     .split(' ')
     .slice(0, 3);
-  return monthStr.length === 1
-    ? `${yearStr}.0${monthStr}.${dateStr}`
-    : `${yearStr}.${monthStr}.${dateStr}`;
+  return `${yearStr}.${monthStr.padStart(2, '0')}.${dateStr.padStart(2, '0')}`;
 };

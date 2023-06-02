@@ -1,23 +1,30 @@
 /* eslint-disable no-nested-ternary */
-import { useRecoilValue } from 'recoil';
+import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
 import { TScheduleSummary } from '@/api/plan';
 import { ReactComponent as GoogleIcon } from '@/assets/google.svg';
+import { ReactComponent as CancelIcon } from '@/assets/multiply.svg';
 import { ReactComponent as NaverIcon } from '@/assets/naver.svg';
 import CircularLoader from '@/components/common/CircularLoader';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
+import Spacing from '@/components/common/Spacing';
 import PlaceCardStar from '@/components/PlaceTab/PlaceCardStar';
 import color from '@/constants/color';
+import { SELECTEDMARKERINFO_TAIL_Z_INDEX } from '@/constants/zIndex';
 import useSearchSelectedPlaceInfo from '@/queryHooks/useSearchSelectedPlaceInfo';
 import { PlacesService } from '@/states/googleMaps';
+import { SelectedMarkerScheduleId } from '@/states/schedule';
 
 interface SelectedMarkerInfoProps {
   scheduleData: TScheduleSummary;
 }
 const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
   const placesService = useRecoilValue(PlacesService);
+  const resetSelectedMarkerScheduleId = useResetRecoilState(
+    SelectedMarkerScheduleId
+  );
 
   const {
     isLoading,
@@ -61,11 +68,16 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
     );
   };
 
+  const handleCancelBtnClick = () => {
+    resetSelectedMarkerScheduleId();
+  };
+
   const infoContent = scheduleData.placeId ? (
     <>
       <PlaceName title={selectedPlaceData?.name}>
         {selectedPlaceData?.name}
       </PlaceName>
+      <Spacing height={3} />
       <PlaceRatingBox>
         <PlaceRating>
           {selectedPlaceData?.rating
@@ -74,6 +86,7 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
         </PlaceRating>
         <PlaceCardStar rating={selectedPlaceData?.rating} />
       </PlaceRatingBox>
+      <Spacing height={10} />
       <PlaceLinkBtnBox>
         <PlaceLinkBtn onClick={handleClickGoogleLink}>
           <GoogleIcon />
@@ -109,6 +122,9 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
         ) : (
           infoContent
         )}
+        <CancelBtn onClick={handleCancelBtnClick}>
+          <CancelIcon width={10} height={10} />
+        </CancelBtn>
       </Box>
       <Tail />
     </Flex>
@@ -116,14 +132,26 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
 };
 
 const Box = styled(Flex)`
+  position: relative;
   width: 180px;
   height: 90px;
   padding-left: 12px;
   padding-right: 12px;
   background-color: ${color.white};
   border-radius: 11px;
-  gap: 7px;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  cursor: auto;
+`;
+
+const CancelBtn = styled.button`
+  position: absolute;
+  top: 7px;
+  right: 9px;
+  &:hover {
+    svg {
+      fill: ${color.blue3};
+    }
+  }
 `;
 
 const Tail = styled.div`
@@ -131,6 +159,8 @@ const Tail = styled.div`
   border-left: 10px solid transparent;
   border-right: 10px solid transparent;
   border-bottom: 0 solid transparent;
+  z-index: ${SELECTEDMARKERINFO_TAIL_Z_INDEX};
+  cursor: auto;
 `;
 
 const PlaceName = styled.h2`
@@ -138,6 +168,7 @@ const PlaceName = styled.h2`
   font-weight: 700;
   font-size: 1.4rem;
   line-height: 20px;
+  padding-right: 10px;
   color: ${color.gray3};
   overflow: hidden;
   text-overflow: ellipsis;

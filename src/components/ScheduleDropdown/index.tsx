@@ -13,7 +13,7 @@ import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import {
   DropdownMenuFamily,
   DropdownIndexFamily,
-  SelectedScheduleId,
+  SelectedEditorScheduleId,
 } from '@/states/schedule';
 
 interface IScheduleDropdownProps {
@@ -25,7 +25,9 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const resetSelectedEditorScheduleId = useResetRecoilState(
+    SelectedEditorScheduleId
+  );
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -49,7 +51,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const handleDropdownItemClick = (idx: number) => () => {
     setDayDropdownIdx(idx);
     setIsDayDropdownOpen(false);
-    resetSelectedScheduleId();
+    resetSelectedEditorScheduleId();
   };
 
   const handleColorDropdownBtnMouseEnter = () => {

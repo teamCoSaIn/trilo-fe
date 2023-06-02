@@ -8,21 +8,23 @@ import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
-import { SelectedScheduleId } from '@/states/schedule';
+import { SelectedEditorScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
 
-  const selectedScheduleId = useRecoilValue(SelectedScheduleId);
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
+  const resetSelectedEditorScheduleId = useResetRecoilState(
+    SelectedEditorScheduleId
+  );
 
   useEffect(() => {
     return () => {
-      resetSelectedScheduleId();
+      resetSelectedEditorScheduleId();
     };
   }, []);
 
-  const dynamicScheduleList = selectedScheduleId ? (
+  const dynamicScheduleList = selectedEditorScheduleId ? (
     <Suspense fallback={<CircularLoader />}>
       <ScheduleEditor />
     </Suspense>

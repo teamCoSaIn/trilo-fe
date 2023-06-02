@@ -31,7 +31,8 @@ import {
 import {
   DropdownIndexFamily,
   PlaceInfo,
-  SelectedScheduleId,
+  SelectedEditorScheduleId,
+  SelectedMarkerScheduleId,
 } from '@/states/schedule';
 import convertToDataUrl from '@/utils/convertToDataUrl';
 import {
@@ -60,9 +61,12 @@ const Map = () => {
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
   const resetPlaceInfo = useResetRecoilState(PlaceInfo);
-  const [selectedScheduleId, setSelectedScheduleId] =
-    useRecoilState(SelectedScheduleId);
-  const resetSelectedScheduleId = useResetRecoilState(SelectedScheduleId);
+  const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
+  const [selectedMarkerScheduleId, setSelectedMarkerScheduleId] =
+    useRecoilState(SelectedMarkerScheduleId);
+  const resetSelectedMarkerScheduleId = useResetRecoilState(
+    SelectedMarkerScheduleId
+  );
 
   const [userPosition, setUserPosition] = useState<LatLng | null>(null);
   const [isGetCurrPosLoading, setIsGetCurrPosLoading] = useState(false);
@@ -103,7 +107,10 @@ const Map = () => {
   const SelectedMarkerInfoBoxOptions = {
     closeBoxURL: '',
     enableEventPropagation: false,
-    pixelOffset: new window.google.maps.Size(-90, -170),
+    pixelOffset:
+      selectedEditorScheduleId === selectedMarkerScheduleId
+        ? new window.google.maps.Size(-90, -170)
+        : new window.google.maps.Size(-90, -150),
   };
 
   const boundsArray = useMemo(() => {
@@ -197,10 +204,10 @@ const Map = () => {
   };
 
   const handleClickTriloMarker = (scheduleId: number) => () => {
-    if (selectedScheduleId === scheduleId) {
-      resetSelectedScheduleId();
+    if (selectedMarkerScheduleId === scheduleId) {
+      resetSelectedMarkerScheduleId();
     } else {
-      setSelectedScheduleId(scheduleId);
+      setSelectedMarkerScheduleId(scheduleId);
     }
   };
 
@@ -223,12 +230,13 @@ const Map = () => {
     return dailyPlanListData.map(dailyPlanData =>
       dailyPlanData.schedules.map((scheduleData, idx) => {
         const svg =
-          selectedScheduleId === scheduleData.scheduleId
+          selectedEditorScheduleId === scheduleData.scheduleId ||
+          selectedMarkerScheduleId === scheduleData.scheduleId
             ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color)
             : createTriloMarkerSvg(idx + 1, dailyPlanData.color);
         const triloMarkerDataUrl = convertToDataUrl(svg);
         const animation =
-          selectedScheduleId === scheduleData.scheduleId
+          selectedEditorScheduleId === scheduleData.scheduleId
             ? google.maps.Animation.BOUNCE
             : google.maps.Animation.DROP;
 
@@ -248,7 +256,7 @@ const Map = () => {
             onClick={handleClickTriloMarker(scheduleData.scheduleId)}
             animation={animation}
           >
-            {selectedScheduleId === scheduleData.scheduleId && (
+            {selectedMarkerScheduleId === scheduleData.scheduleId && (
               <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
                 <SelectedMarkerInfo scheduleData={scheduleData} />
               </InfoBoxF>
@@ -257,7 +265,7 @@ const Map = () => {
         );
       })
     );
-  }, [dailyPlanListData, selectedScheduleId]);
+  }, [dailyPlanListData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const tempScheduleMarkers = useMemo(() => {
     if (!tempPlanData) {
@@ -265,12 +273,12 @@ const Map = () => {
     }
     return tempPlanData.schedules.map((scheduleData, idx) => {
       const svg =
-        selectedScheduleId === scheduleData.scheduleId
+        selectedEditorScheduleId === scheduleData.scheduleId
           ? createSelectedTriloMarkerSvg(idx + 1, tempPlanData.color)
           : createTriloMarkerSvg(idx + 1, tempPlanData.color);
       const triloMarkerDataUrl = convertToDataUrl(svg);
       const animation =
-        selectedScheduleId === scheduleData.scheduleId
+        selectedEditorScheduleId === scheduleData.scheduleId
           ? google.maps.Animation.BOUNCE
           : google.maps.Animation.DROP;
       return (
@@ -289,7 +297,7 @@ const Map = () => {
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
           animation={animation}
         >
-          {selectedScheduleId === scheduleData.scheduleId && (
+          {selectedMarkerScheduleId === scheduleData.scheduleId && (
             <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
               <SelectedMarkerInfo scheduleData={scheduleData} />
             </InfoBoxF>
@@ -297,7 +305,7 @@ const Map = () => {
         </MarkerF>
       );
     });
-  }, [tempPlanData, selectedScheduleId]);
+  }, [tempPlanData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const schedulePolyLines = useMemo(() => {
     if (!dailyPlanListData) {

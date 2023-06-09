@@ -31,10 +31,14 @@ export const getLoginUri = async (oauthServer: string) => {
 };
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
-export const getAccessToken = async (oauthCode: string, oauthState: string) => {
+export const getAccessToken = async (
+  oauthServerName: string,
+  oauthCode: string,
+  redirectUri: string
+) => {
   const res = await axios<IGetAccessTokenResponse>({
     method: 'get',
-    url: `/auth/login/oauth2/code?code=${oauthCode}&state=${oauthState}`,
+    url: `/auth/login/${oauthServerName}?code=${oauthCode}&redirect_uri=${redirectUri}`,
     requireAuth: false,
   });
   return res.data;

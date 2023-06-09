@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
@@ -15,25 +15,38 @@ const Callback = () => {
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
 
-  const onSuccess = async () => {
+  const onSuccess = () => {
     setUserStatus(UserStatusTypes.LOGIN);
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };
 
   const onError = () => {
+    alert('잘못된 접근입니다.');
     navigate('/login');
   };
 
-  useQuery(
-    ['getAccessToken', oauthCode],
-    () => HTTP.getAccessToken(oauthCode, oauthState),
-    {
-      enabled: !!oauthCode,
-      onSuccess,
-      onError,
+  useEffect(() => {
+    const localOauthState = localStorage.getItem('oauthState');
+    const localOauthServerName = localStorage.getItem('oauthServerName');
+
+    if (
+      oauthCode &&
+      oauthState &&
+      localOauthServerName &&
+      oauthState === localOauthState
+    ) {
+      HTTP.getAccessToken(
+        localOauthServerName,
+        oauthCode,
+        process.env.OAUTH_REDIRECT_URI as string
+      )
+        .then(() => onSuccess())
+        .catch(() => onError());
+    } else {
+      onError();
     }
-  );
+  }, []);
 
   return <CircularLoader />;
 };

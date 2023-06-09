@@ -2,7 +2,8 @@
 import Axios from 'axios';
 import { stringify } from 'qs';
 
-import { refreshAccessToken, TToken } from '@/api/oauth';
+import HTTP from '@/api/index';
+import { TToken } from '@/api/oauth';
 import isAccessTokenExpired from '@/utils/auth';
 
 const BASE_URL = process.env.API_SERVER;
@@ -45,7 +46,8 @@ axios.interceptors.request.use(
 
           // Access token 갱신 요청
           isAxiosPause = true;
-          const { accessToken: newAccessToken } = await refreshAccessToken();
+          const { accessToken: newAccessToken } =
+            await HTTP.refreshAccessToken();
           isAxiosPause = false;
 
           // Access Token 만료 후 첫 요청의 Header에 새로운 Access Token을 저장

@@ -315,10 +315,9 @@ const getLoginUrl = rest.get(
 );
 
 const getAccessToken = rest.get(
-  '/api/login/oauth2/code',
+  '/api/login/:oauthServer',
   async (req, res, ctx) => {
     const oauthCode = req.url.searchParams.get('code');
-    const oauthState = req.url.searchParams.get('state');
     localStorage.setItem('mockLogin', 'true');
     isLogin = true;
     await sleep(1000);
@@ -332,7 +331,7 @@ const getAccessToken = rest.get(
     // }
     return res(
       ctx.json({
-        authType: `code:${oauthCode} state:${oauthState}`,
+        authType: `code:${oauthCode}`,
         accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
       })
@@ -340,7 +339,7 @@ const getAccessToken = rest.get(
   }
 );
 
-const refreshAccessToken = rest.get(
+const refreshAccessToken = rest.post(
   '/api/auth/reissue',
   async (req, res, ctx) => {
     await sleep(1000);

@@ -1,33 +1,23 @@
-import { useQuery } from '@tanstack/react-query';
 import { ReactElement } from 'react';
-
-import HTTP from '@/api';
 
 interface IOAuthBtnProps {
   oauthServerName: string;
   oauthServerSvg: ReactElement;
+  oauthServerLoginUri: string;
 }
 
-const OAuthBtn = ({ oauthServerName, oauthServerSvg }: IOAuthBtnProps) => {
-  const { data: authUrlData } = useQuery(
-    [`login-uri-${oauthServerName}`],
-    () => HTTP.getLoginUri(oauthServerName),
-    {
-      suspense: true,
-      staleTime: 1000 * 5 * 60,
-    }
-  );
-
-  const handleOAuthBtnClick = () => {
-    if (authUrlData) {
-      window.location.href = authUrlData;
-    }
+const OAuthBtn = ({
+  oauthServerName,
+  oauthServerSvg,
+  oauthServerLoginUri,
+}: IOAuthBtnProps) => {
+  const handleOAuthLinkClick = () => {
+    localStorage.setItem('oauthServerName', oauthServerName);
   };
-
   return (
-    <button type="button" onClick={handleOAuthBtnClick}>
+    <a onClick={handleOAuthLinkClick} href={oauthServerLoginUri}>
       {oauthServerSvg}
-    </button>
+    </a>
   );
 };
 

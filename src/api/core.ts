@@ -2,7 +2,8 @@
 import Axios from 'axios';
 import { stringify } from 'qs';
 
-import { refreshAccessToken, TToken } from '@/api/oauth';
+import HTTP from '@/api/index';
+import { TToken } from '@/api/oauth';
 import isAccessTokenExpired from '@/utils/auth';
 
 const BASE_URL = process.env.API_SERVER;
@@ -45,7 +46,8 @@ axios.interceptors.request.use(
 
           // Access token 갱신 요청
           isAxiosPause = true;
-          const { access_token: newAccessToken } = await refreshAccessToken();
+          const { accessToken: newAccessToken } =
+            await HTTP.refreshAccessToken();
           isAxiosPause = false;
 
           // Access Token 만료 후 첫 요청의 Header에 새로운 Access Token을 저장
@@ -68,7 +70,7 @@ axios.interceptors.request.use(
       return newConfig;
     }
 
-    // Access token이 필요 없는 요청 처리
+    // Access token이 필요 없는 요청 처리(현재 요청에 대한 Authorization 삭제)
     delete newConfig.headers.Authorization;
     return newConfig;
   },
@@ -79,8 +81,8 @@ axios.interceptors.request.use(
 
 axios.interceptors.response.use(
   response => {
-    if (response.data?.access_token) {
-      axios.defaults.headers.common.Authorization = `Bearer ${response.data.access_token}`;
+    if (response.data?.accessToken) {
+      axios.defaults.headers.common.Authorization = `Bearer ${response.data.accessToken}`;
     }
     return response;
   },

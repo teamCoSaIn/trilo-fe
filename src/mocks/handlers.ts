@@ -305,8 +305,10 @@ const getLoginUrl = rest.get(
     const oauthServerObj = {
       google:
         'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=617586228502-jt90dtphens9q13kekbgjbm1pljptju6.apps.googleusercontent.com&scope=profile email&state=B59MKaVW5uj5g7u49_6Prv0TYwgManDktWldh23NJXo=&redirect_uri=http://localhost:3000/oauth2/callback&service=lso&o2v=2&flowName=GeneralOAuthFlow',
-      naver: 'https://www.naver.com',
-      kakao: 'https://www.kakaocorp.com',
+      naver:
+        'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=test&scope=name%20email%20profile_image&state=-6nnyzW2TFZOeexTU6oItkq5gt8FwTPoz1GthHsqEDs%3D&redirect_uri=http://localhost:3000/oauth2/callback',
+      kakao:
+        'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=test&scope=profile_nickname%20profile_image%20account_email&state=q5DmRxSlzPj7CQSEcQVu2xvb8Po9oX91ILhWf_SSakE%3D&redirect_uri=http://localhost:3000/oauth2/callback',
     };
 
     if (oauthServer === 'google') {
@@ -317,52 +319,57 @@ const getLoginUrl = rest.get(
       await sleep(1000);
     }
 
-    return res(ctx.json(oauthServerObj[oauthServer as TOauthServerKey]));
+    const response = { uri: oauthServerObj[oauthServer as TOauthServerKey] };
+    return res(ctx.json(response));
   }
 );
 
 const getAccessToken = rest.get(
-  '/api/login/oauth2/code',
+  '/api/login/:oauthServer',
   async (req, res, ctx) => {
     const oauthCode = req.url.searchParams.get('code');
-    const oauthState = req.url.searchParams.get('state');
     localStorage.setItem('mockLogin', 'true');
     isLogin = true;
     await sleep(1000);
+    // {
+    //   token_type: `code:${oauthCode} state:${oauthState}`,
+    //     expires_in: 86400,
+    //   access_token:
+    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+    //     scope: 'photo offline_access',
+    //   refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
+    // }
     return res(
       ctx.json({
-        token_type: `code:${oauthCode} state:${oauthState}`,
-        expires_in: 86400,
-        access_token:
+        authType: `code:${oauthCode}`,
+        accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-        scope: 'photo offline_access',
-        refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
       })
     );
   }
 );
 
-const refreshAccessToken = rest.get(
-  '/api/auth/regeneration',
+const refreshAccessToken = rest.post(
+  '/api/auth/reissue',
   async (req, res, ctx) => {
     await sleep(1000);
     return res(
       ctx.json({
-        token_type: 'Bearer Token',
-        expires_in: 86400,
-        access_token:
+        authType: `Bearer`,
+        accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-        scope: 'photo offline_access',
-        refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
       })
     );
   }
 );
 
-const checkRefreshToken = rest.get('/api/auth/check', async (req, res, ctx) => {
-  await sleep(1000);
-  return res(ctx.json({ response: isLogin }));
-});
+const checkRefreshToken = rest.get(
+  '/api/auth/token/refresh-token-info',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    return res(ctx.json({ availability: isLogin }));
+  }
+);
 
 const getExpiredAccessToken = rest.get(
   '/api/expired-access-token',
@@ -381,10 +388,10 @@ const getExpiredAccessToken = rest.get(
   }
 );
 
-const logout = rest.get('/api/auth/logout', async (req, res, ctx) => {
+const logout = rest.post('/api/auth/logout', async (req, res, ctx) => {
   isLogin = false;
   localStorage.setItem('mockLogin', 'false');
-  return res(ctx.json({}));
+  return res(ctx.status(200));
 });
 
 const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {

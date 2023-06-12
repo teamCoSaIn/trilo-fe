@@ -6,7 +6,7 @@ import Router from '@/Router';
 
 import worker from './mocks/browser';
 
-if (process.env.NODE_ENV === 'development') {
+if (process.env.MODE === 'development') {
   worker.start();
 }
 

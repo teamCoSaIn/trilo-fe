@@ -11,9 +11,9 @@ const aliases = require('./aliases');
 dotenv.config({
   path: path.resolve(
     __dirname,
-    process.env.NODE_ENV === 'production'
+    process.env.MODE === 'production'
       ? '.env'
-      : process.env.NODE_ENV === 'development'
+      : process.env.MODE === 'development'
       ? '.env.development'
       : '.env.apiTest'
   ),

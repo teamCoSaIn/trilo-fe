@@ -15,7 +15,6 @@ interface ICoordinate {
   longitude: number;
 }
 
-type TOauthServerKey = 'google' | 'kakao' | 'naver';
 const sleep = (ms: number) =>
   new Promise(r => {
     setTimeout(r, ms);
@@ -23,7 +22,6 @@ const sleep = (ms: number) =>
 
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ DB ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-let error = false;
 let isLogin = JSON.parse(localStorage.getItem('mockLogin') as string) || false;
 let nickname = 'oliver';
 const tripList = [
@@ -287,58 +285,13 @@ const scheduleDetails = {
 };
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-const getLoginUrl = rest.get(
-  '/api/auth/login/:oauthServer',
-  async (req, res, ctx) => {
-    if (error) {
-      error = false;
-      return res(
-        ctx.status(403),
-        ctx.json({
-          errorMessage: `url not found`,
-        })
-      );
-    }
-
-    const { oauthServer } = req.params;
-
-    const oauthServerObj = {
-      google:
-        'https://accounts.google.com/o/oauth2/v2/auth/oauthchooseaccount?response_type=code&client_id=617586228502-jt90dtphens9q13kekbgjbm1pljptju6.apps.googleusercontent.com&scope=profile email&state=B59MKaVW5uj5g7u49_6Prv0TYwgManDktWldh23NJXo=&redirect_uri=http://localhost:3000/oauth2/callback&service=lso&o2v=2&flowName=GeneralOAuthFlow',
-      naver:
-        'https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=test&scope=name%20email%20profile_image&state=-6nnyzW2TFZOeexTU6oItkq5gt8FwTPoz1GthHsqEDs%3D&redirect_uri=http://localhost:3000/oauth2/callback',
-      kakao:
-        'https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=test&scope=profile_nickname%20profile_image%20account_email&state=q5DmRxSlzPj7CQSEcQVu2xvb8Po9oX91ILhWf_SSakE%3D&redirect_uri=http://localhost:3000/oauth2/callback',
-    };
-
-    if (oauthServer === 'google') {
-      await sleep(1000);
-    } else if (oauthServer === 'naver') {
-      await sleep(1000);
-    } else if (oauthServer === 'kakao') {
-      await sleep(1000);
-    }
-
-    const response = { uri: oauthServerObj[oauthServer as TOauthServerKey] };
-    return res(ctx.json(response));
-  }
-);
-
 const getAccessToken = rest.get(
-  '/api/login/:oauthServer',
+  '/api/auth/login/:oauthServer',
   async (req, res, ctx) => {
     const oauthCode = req.url.searchParams.get('code');
     localStorage.setItem('mockLogin', 'true');
     isLogin = true;
     await sleep(1000);
-    // {
-    //   token_type: `code:${oauthCode} state:${oauthState}`,
-    //     expires_in: 86400,
-    //   access_token:
-    //   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-    //     scope: 'photo offline_access',
-    //   refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
-    // }
     return res(
       ctx.json({
         authType: `code:${oauthCode}`,
@@ -607,7 +560,6 @@ const changeTripImg = rest.put('/api/tripcard-img', async (req, res, ctx) => {
 });
 
 const handlers = [
-  getLoginUrl,
   getAccessToken,
   refreshAccessToken,
   getExpiredAccessToken,

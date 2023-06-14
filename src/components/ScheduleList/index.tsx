@@ -504,7 +504,7 @@ const TempBox = styled.div`
   background: #ffffff;
   border: 1px solid #d9d9d9;
   border-radius: 7px 7px 0 0;
-  padding: 20px 16px;
+  padding: 20px 8px 20px 16px;
 `;
 
 const TempTitle = styled.h3`
@@ -529,11 +529,13 @@ const TempList = styled.ul<{ isPopUpOpen: boolean }>`
       height: 0;
     `;
   }};
-  overflow: scroll;
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+  overflow-y: scroll;
   ::-webkit-scrollbar {
-    display: none;
+    width: 8px;
+  }
+  ::-webkit-scrollbar-thumb {
+    background-color: #bbb;
+    border-radius: 10px;
   }
 `;
 

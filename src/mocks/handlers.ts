@@ -263,6 +263,66 @@ const tempPlan = [
       longitude: -157.7248269653323,
     },
   },
+  {
+    scheduleId: 335413,
+    title: '해변 공원',
+    placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
+    placeName: '하카타',
+    coordinate: {
+      latitude: 21.35,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335414,
+    title: '콜로왈공원',
+    placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
+    placeName: '콜로왈 공원',
+    coordinate: {
+      latitude: 21.26,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335415,
+    title: '카마공원',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카마넬 공원',
+    coordinate: {
+      latitude: 21.46,
+      longitude: -157.7248269653323,
+    },
+  },
+  {
+    scheduleId: 335416,
+    title: '해공원',
+    placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
+    placeName: '하카타',
+    coordinate: {
+      latitude: 21.37,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335417,
+    title: '콜공원',
+    placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
+    placeName: '콜로왈 공원',
+    coordinate: {
+      latitude: 21.28,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335418,
+    title: '카공원',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카마넬 공원',
+    coordinate: {
+      latitude: 21.48,
+      longitude: -157.7248269653323,
+    },
+  },
 ];
 
 const tripCardIds: { [index: string]: typeof tripDays } = {

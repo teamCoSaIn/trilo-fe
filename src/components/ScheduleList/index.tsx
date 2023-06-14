@@ -68,7 +68,7 @@ const ScheduleList = () => {
         dailyPlanId: dailyPlanData.dayId,
         name: `Day${idx + 1}`,
         date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-        color: dailyPlanData.color,
+        color: dailyPlanData.color.code,
       };
     });
     setDropdownMenu(newDropdownMenu);
@@ -182,7 +182,7 @@ const ScheduleList = () => {
             <Flex alignCenter>
               <DailyPlanIndex>{dayString}</DailyPlanIndex>
               <DailyPlanDate>{dateString}</DailyPlanDate>
-              <DailyPlanColor dailyPlanColor={dailyPlan.color} />
+              <DailyPlanColor dailyPlanColor={dailyPlan.color.code} />
             </Flex>
             <Spacing height={10} />
             <Droppable droppableId={String(dailyPlan.dayId)}>

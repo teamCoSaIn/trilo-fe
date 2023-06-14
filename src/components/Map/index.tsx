@@ -234,8 +234,8 @@ const Map = () => {
         const svg =
           selectedEditorScheduleId === scheduleData.scheduleId ||
           selectedMarkerScheduleId === scheduleData.scheduleId
-            ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color)
-            : createTriloMarkerSvg(idx + 1, dailyPlanData.color);
+            ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color.code)
+            : createTriloMarkerSvg(idx + 1, dailyPlanData.color.code);
         const triloMarkerDataUrl = convertToDataUrl(svg);
         const animation =
           selectedEditorScheduleId === scheduleData.scheduleId
@@ -252,7 +252,6 @@ const Map = () => {
             options={{
               icon: {
                 url: triloMarkerDataUrl,
-                // anchor: new google.maps.Point(15, 18),
               },
             }}
             onClick={handleClickTriloMarker(scheduleData.scheduleId)}
@@ -293,7 +292,6 @@ const Map = () => {
           options={{
             icon: {
               url: triloMarkerDataUrl,
-              // anchor: new google.maps.Point(15, 18),
             },
           }}
           onClick={handleClickTriloMarker(scheduleData.scheduleId)}
@@ -331,7 +329,7 @@ const Map = () => {
             {
               icon: {
                 path: 'M 0,0 0,2 1,2 1,0 Z',
-                fillColor: dailyPlanData.color,
+                fillColor: dailyPlanData.color.code,
                 fillOpacity: 1,
                 scale: 2.8,
                 strokeWeight: 0,

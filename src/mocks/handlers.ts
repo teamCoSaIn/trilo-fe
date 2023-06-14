@@ -141,7 +141,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 1,
     tripId: 1,
     date: '2023-02-15',
-    color: '#FB6C6C',
+    color: {
+      name: 'red',
+      code: '#FB6C6C',
+    },
     schedules: [
       {
         scheduleId: 235410,
@@ -169,7 +172,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 2,
     tripId: 1,
     date: '2023-02-16',
-    color: '#5800FF',
+    color: {
+      name: 'blue',
+      code: '#4D77FF',
+    },
     schedules: [
       {
         scheduleId: 235412,
@@ -207,7 +213,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 3,
     tripId: 1,
     date: '2023-02-17',
-    color: '#209b43',
+    color: {
+      name: 'green',
+      code: '#43D65A',
+    },
     schedules: [
       {
         scheduleId: 235415,
@@ -263,7 +272,10 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
       dayId: 3,
       tripId: 1,
       date: '2023-05-18',
-      color: '#ccc',
+      color: {
+        name: 'red',
+        code: '#ccc',
+      },
       schedules: [],
     },
   ],

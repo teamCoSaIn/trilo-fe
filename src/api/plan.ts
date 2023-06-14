@@ -2,18 +2,23 @@
 import axios from '@/api/core';
 import { ISchedule } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
+import { TDailyPlanColorName } from '@/constants/dailyPlanColor';
+
+interface IDailyPlanColor {
+  name: TDailyPlanColorName;
+  code: string;
+}
 
 export interface IDailyPlan {
   tripId: ITrip['tripId'];
   dayId: number;
   date: string;
-  color: string;
+  color: IDailyPlanColor;
   schedules: TScheduleSummary[];
 }
 
 export type TTempPlanDayId = null;
 
-// 스케줄 서머리
 export type TScheduleSummary = Pick<
   ISchedule,
   'scheduleId' | 'title' | 'placeId' | 'placeName' | 'coordinate'

@@ -7,11 +7,21 @@ export interface ITrip {
   title: string;
   picUrl: string;
   status: TTripCardStatus;
-  startDay: string;
-  endDay: string;
+  startDate: string;
+  endDate: string;
 }
 
 export type TChangeTripTitleParams = Pick<ITrip, 'tripId' | 'title'>;
+
+export type TChangeTripPeriodParams = Pick<
+  ITrip,
+  'tripId' | 'startDate' | 'endDate'
+>;
+
+export interface IChangeTripImageParams {
+  tripId: ITrip['tripId'];
+  formData: FormData;
+}
 
 export type TCreateTripTitleParams = ITrip['title'];
 
@@ -46,19 +56,31 @@ export const changeTripTitle = async (
   tripTitleData: TChangeTripTitleParams
 ) => {
   const res = await axios({
-    method: 'put',
-    url: `/tripcard-title`,
+    method: 'patch',
+    url: `/trips/${tripTitleData.tripId}/title`,
     data: tripTitleData,
     requireAuth: true,
   });
   return res.status;
 };
 
-export const changeTripImg = async (tripImgData: FormData) => {
+export const changeTripPeriod = async (
+  tripPeriodData: TChangeTripPeriodParams
+) => {
   const res = await axios({
-    method: 'put',
-    url: `/tripcard-img`,
-    data: tripImgData,
+    method: 'patch',
+    url: `/trips/${tripPeriodData.tripId}/period`,
+    data: tripPeriodData,
+    requireAuth: true,
+  });
+  return res.status;
+};
+
+export const changeTripImg = async (tripImgData: IChangeTripImageParams) => {
+  const res = await axios({
+    method: 'patch',
+    url: `/trips/${tripImgData.tripId}/image`,
+    data: tripImgData.formData,
     requireAuth: true,
   });
   return res.status;
@@ -67,7 +89,7 @@ export const changeTripImg = async (tripImgData: FormData) => {
 export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
   const res = await axios({
     method: 'post',
-    url: `/tripcard`,
+    url: `/trips`,
     data: { title: tripTitle },
     requireAuth: true,
   });
@@ -77,7 +99,7 @@ export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
 export const deleteTrip = async (tripId: TDeleteTripTitleParams) => {
   const res = await axios({
     method: 'delete',
-    url: `/tripcard/${tripId}`,
+    url: `/trips/${tripId}`,
     requireAuth: true,
   });
   return res.status;

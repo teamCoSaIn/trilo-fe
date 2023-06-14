@@ -17,6 +17,7 @@ import {
 import {
   getTripList,
   changeTripTitle,
+  changeTripPeriod,
   changeTripImg,
   createTrip,
   deleteTrip,
@@ -35,6 +36,7 @@ const HTTP = {
   getUserInfo,
   getTripList,
   changeTripTitle,
+  changeTripPeriod,
   changeTripImg,
   createTrip,
   deleteTrip,

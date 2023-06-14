@@ -6,7 +6,6 @@ import { IDailyPlan, TScheduleSummary, TTempPlanDayId } from '@/api/plan';
 import { ISchedule } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
 import { TEMP_PLAN_ID } from '@/constants/tempPlan';
-import swap from '@/utils/swap';
 
 interface IMutateParams {
   tripId: ITrip['tripId'];
@@ -74,10 +73,13 @@ const useChangeScheduleOrder = () => {
                       return prevDailyPlanList;
                     }
 
-                    swap(
-                      targetDailyPlan.schedules,
-                      sourceScheduleIdx,
-                      destinationScheduleIdx
+                    const [reorderedSchedule] =
+                      targetDailyPlan.schedules.splice(sourceScheduleIdx, 1);
+
+                    targetDailyPlan.schedules.splice(
+                      destinationScheduleIdx,
+                      0,
+                      reorderedSchedule
                     );
                   }
                 );
@@ -255,10 +257,15 @@ const useChangeScheduleOrder = () => {
               const nextTempPlanList = produce(
                 prevTempPlanList,
                 draftTempPlanList => {
-                  swap(
-                    draftTempPlanList,
+                  const [reorderedSchedule] = draftTempPlanList.splice(
                     sourceScheduleIdx,
-                    destinationScheduleIdx
+                    1
+                  );
+
+                  draftTempPlanList.splice(
+                    destinationScheduleIdx,
+                    0,
+                    reorderedSchedule
                   );
                 }
               );

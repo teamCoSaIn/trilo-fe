@@ -8,7 +8,7 @@ import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import { ReactComponent as WhiteCheckIcon } from '@/assets/whiteCheck.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
-import DailyPlanColor from '@/constants/dailyPlanColor';
+import DAILYPLAN_COLORS from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import {
   DropdownMenuFamily,
@@ -130,7 +130,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
         </DropdownPopper>
         <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
           <ColorBox>
-            {DailyPlanColor.map(dayColor => (
+            {Object.values(DAILYPLAN_COLORS).map(dayColor => (
               <ColorMenu key={dayColor}>
                 <ColorBtn
                   dayColor={dayColor}

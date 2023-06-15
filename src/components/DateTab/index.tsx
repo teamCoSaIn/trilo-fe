@@ -8,11 +8,13 @@ import { ReactComponent as Refresh } from '@/assets/refresh.svg';
 import { ReactComponent as UpArrow } from '@/assets/upArrow.svg';
 import Button from '@/components/common/Button';
 import Description from '@/components/common/Description';
+import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
+import useChangeTripPeriod from '@/queryHooks/useChangeTripPeriod';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
@@ -30,6 +32,8 @@ const DateTab = () => {
   const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
+  const { mutate, isLoading: isChangeTripPeriodLoading } =
+    useChangeTripPeriod();
 
   const firstDate =
     dailyPlanListData && dailyPlanListData[0]
@@ -71,6 +75,17 @@ const DateTab = () => {
   const endDateString = selectedEndDate
     ? transformDateToDotFormat(selectedEndDate)
     : '';
+
+  const handleChangePeriodBtnClick = () => {
+    if (!tripId || !selectedStartDate || !selectedEndDate) {
+      return;
+    }
+    mutate({
+      tripId: +tripId,
+      startDate: transformDateToApiFormat(selectedStartDate),
+      endDate: transformDateToApiFormat(selectedEndDate),
+    });
+  };
 
   return (
     <Flex column alignCenter justifyCenter>
@@ -134,6 +149,7 @@ const DateTab = () => {
       >
         확인
       </Button>
+      {isChangeTripPeriodLoading && <DimLoader />}
       <Spacing height={40} />
     </Flex>
   );

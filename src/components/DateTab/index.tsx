@@ -16,8 +16,11 @@ import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
 import useChangeTripPeriod from '@/queryHooks/useChangeTripPeriod';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
-import SelectedDates from '@/states/calendar';
-import { transformDateToDotFormat } from '@/utils/calendar';
+import SelectedDates, { IsPeriodOver10Days } from '@/states/calendar';
+import {
+  transformDateToApiFormat,
+  transformDateToDotFormat,
+} from '@/utils/calendar';
 
 // title + spacing + calendar = 19 + 12 + 210
 const CALENDAR_HEIGHT = 241;
@@ -43,7 +46,7 @@ const DateTab = () => {
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [selectedStartDate, selectedEndDate] = useRecoilValue(SelectedDates);
   const resetSelectedDates = useResetRecoilState(SelectedDates);
-
+  const isPeriodOver10Days = useRecoilValue(IsPeriodOver10Days);
   const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 
   const handleRefreshBtnClick = () => {
@@ -125,7 +128,15 @@ const DateTab = () => {
           </CalendarBtn>
         </Flex>
       </BtnWrapper>
-      <Spacing height={40} />
+      <Spacing height={10} />
+      <AlertMessageBox>
+        {isPeriodOver10Days && (
+          <AlertMessage fontSize={1.3} color="red">
+            최대 10일까지 선택할 수 있습니다.
+          </AlertMessage>
+        )}
+      </AlertMessageBox>
+      <Spacing height={10} />
       <Flex alignCenter>
         <Description fontSize={1.2} color={color.blue3}>
           시작일
@@ -145,7 +156,8 @@ const DateTab = () => {
       <Button
         type="button"
         btnSize="medium"
-        disabled={!selectedStartDate || !selectedEndDate}
+        disabled={!selectedStartDate || !selectedEndDate || isPeriodOver10Days}
+        onClick={handleChangePeriodBtnClick}
       >
         확인
       </Button>
@@ -209,6 +221,31 @@ const DateDescription = styled.p`
   font-weight: 700;
   background-color: #d9d9d9;
   border-radius: 16px;
+`;
+
+const AlertMessageBox = styled.div`
+  min-height: 30px;
+`;
+
+const AlertMessage = styled(Description)`
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+  animation: vibrate 0.4s 3;
+  @keyframes vibrate {
+    0% {
+      transform: translateX(0px);
+    }
+    25% {
+      transform: translateX(-5px);
+    }
+    75% {
+      transform: translateX(5px);
+    }
+    100% {
+      transform: translateX(0);
+    }
+  }
 `;
 
 export default DateTab;

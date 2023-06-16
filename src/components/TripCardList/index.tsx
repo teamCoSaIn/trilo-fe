@@ -22,16 +22,17 @@ const TripCardList = () => {
     isFetchingNextPage,
   } = useInfiniteQuery(
     ['tripList'],
-    ({ pageParam = 0 }) => HTTP.getTripList({ tripperId: 0, page: pageParam }),
+    ({ pageParam = 0 }) =>
+      HTTP.getTripList({ 'tripper-id': 0, page: pageParam, size: 5 }),
     {
       suspense: true,
       staleTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
-      getNextPageParam: lastPage => {
-        if (lastPage.isLast) {
+      getNextPageParam: (lastPage, allPages) => {
+        if (!lastPage.hasNext) {
           return;
         }
-        return lastPage.currentPage + 1;
+        return allPages.length;
       },
     }
   );

@@ -3,6 +3,7 @@ import axios from '@/api/core';
 export type TTripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
 
 export interface ITrip {
+  tripperId: number;
   tripId: number;
   title: string;
   picUrl: string;
@@ -30,18 +31,14 @@ export type TDeleteTripTitleParams = ITrip['tripId'];
 export type TGetTripParams = ITrip['tripId'];
 
 interface IGetTripListParams {
-  tripperId: number;
+  ['tripper-id']: ITrip['tripperId'];
   size?: number;
   page?: number;
-  sort?: string;
 }
 
 export interface IGetTripListResponse {
   trips: ITrip[];
-  totalCount: number;
-  totalPage: number;
-  currentPage: number;
-  isLast: boolean;
+  hasNext: boolean;
 }
 
 export const getTrip = async (tripId: TGetTripParams) => {
@@ -56,7 +53,7 @@ export const getTrip = async (tripId: TGetTripParams) => {
 export const getTripList = async (reqParams: IGetTripListParams) => {
   const res = await axios<IGetTripListResponse>({
     method: 'get',
-    url: `/tripcard-list`,
+    url: `/trips`,
     requireAuth: true,
     params: reqParams,
   });

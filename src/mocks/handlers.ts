@@ -376,30 +376,18 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
   );
 });
 
-const getTripList = rest.get('/api/tripcard-list', async (req, res, ctx) => {
-  await sleep(2000);
+const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
+  await sleep(1000);
   let response;
   if (req.url.searchParams.get('page') === '0') {
     response = {
       trips: tripList,
-      page: 0,
-      totalCount: tripList.length,
-      totalPage: 1,
-      currentPage: 0,
-      size: 5,
-      isFirst: true,
-      isLast: false,
+      hasNext: true,
     };
   } else if (req.url.searchParams.get('page') === '1') {
     response = {
       trips: tripList1,
-      page: 1,
-      totalCount: tripList1.length,
-      totalPage: 1,
-      currentPage: 1,
-      size: 5,
-      isFirst: true,
-      isLast: true,
+      hasNext: false,
     };
   }
 
@@ -580,6 +568,14 @@ const getTempPlanList = rest.get(
   }
 );
 
+const getTrip = rest.get('/api/trips/:tripId', async (req, res, ctx) => {
+  await sleep(1000);
+  const { tripId } = req.params;
+  const response = tripList.find(trip => trip.tripId === +tripId);
+
+  return res(ctx.json(response));
+});
+
 const handlers = [
   getAccessToken,
   refreshAccessToken,
@@ -602,6 +598,7 @@ const handlers = [
   getTempPlanList,
   changeTripImg,
   changeTripPeriod,
+  getTrip,
 ];
 
 export default handlers;

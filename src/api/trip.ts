@@ -27,6 +27,8 @@ export type TCreateTripTitleParams = ITrip['title'];
 
 export type TDeleteTripTitleParams = ITrip['tripId'];
 
+export type TGetTripParams = ITrip['tripId'];
+
 interface IGetTripListParams {
   tripperId: number;
   size?: number;
@@ -41,6 +43,15 @@ export interface IGetTripListResponse {
   currentPage: number;
   isLast: boolean;
 }
+
+export const getTrip = async (tripId: TGetTripParams) => {
+  const res = await axios<ITrip>({
+    method: 'get',
+    url: `/trips/${tripId}`,
+    requireAuth: true,
+  });
+  return res.data;
+};
 
 export const getTripList = async (reqParams: IGetTripListParams) => {
   const res = await axios<IGetTripListResponse>({

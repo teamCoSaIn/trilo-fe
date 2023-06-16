@@ -15,7 +15,6 @@ import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
 import useChangeTripPeriod from '@/queryHooks/useChangeTripPeriod';
-import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import SelectedDates, { IsPeriodOver10Days } from '@/states/calendar';
 import {
   transformDateToApiFormat,
@@ -32,21 +31,16 @@ type TSlidingStatus = 'STOP' | 'UP' | 'DOWN';
 
 const DateTab = () => {
   const { tripId } = useParams();
-  const { data: dailyPlanListData } = useGetDailyPlanList({
-    tripId: +(tripId as string),
-  });
+
   const { mutate, isLoading: isChangeTripPeriodLoading } =
     useChangeTripPeriod();
 
-  const firstDate =
-    dailyPlanListData && dailyPlanListData[0]
-      ? new Date(dailyPlanListData[0].date)
-      : new Date();
-  const [curDateObj, setCurDateObj] = useState(firstDate);
-  const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [selectedStartDate, selectedEndDate] = useRecoilValue(SelectedDates);
   const resetSelectedDates = useResetRecoilState(SelectedDates);
   const isPeriodOver10Days = useRecoilValue(IsPeriodOver10Days);
+
+  const [curDateObj, setCurDateObj] = useState(selectedStartDate || new Date());
+  const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 
   const handleRefreshBtnClick = () => {

@@ -19,7 +19,7 @@ const OAuthBtnContainer = () => {
     {
       name: 'google',
       svg: <GoogleLogin />,
-      loginUri: `https://accounts.google.com/o/oauth2/v2/auth?scope=https://www.googleapis.com/auth/userinfo.email&include_granted_scopes=true&response_type=code&state=${oauthState}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}&client_id=${process.env.GOOGLE_CLIENT_ID}`,
+      loginUri: `https://accounts.google.com/o/oauth2/v2/auth?scope=email profile&include_granted_scopes=true&response_type=code&state=${oauthState}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}&client_id=${process.env.GOOGLE_CLIENT_ID}`,
     },
     {
       name: 'naver',

@@ -26,6 +26,24 @@ const Callback = () => {
     navigate('/login');
   };
 
+  const getOauthData = (
+    oauthServerName: string,
+    code: string,
+    state: string,
+    redirectUri: string
+  ) => {
+    switch (oauthServerName) {
+      case 'kakao':
+        return { code, redirect_uri: redirectUri };
+      case 'google':
+        return { code, redirect_uri: redirectUri };
+      case 'naver':
+        return { code, state };
+      default:
+        return { code, state, redirect_uri: redirectUri };
+    }
+  };
+
   useEffect(() => {
     const localOauthState = localStorage.getItem('oauthState');
     const localOauthServerName = localStorage.getItem('oauthServerName');
@@ -36,11 +54,13 @@ const Callback = () => {
       localOauthServerName &&
       oauthState === localOauthState
     ) {
-      HTTP.getAccessToken(
+      const oauthData = getOauthData(
         localOauthServerName,
         oauthCode,
+        oauthState,
         process.env.OAUTH_REDIRECT_URI as string
-      )
+      );
+      HTTP.getAccessToken({ oauthServerName: localOauthServerName, oauthData })
         .then(() => onSuccess())
         .catch(() => onError());
     } else {

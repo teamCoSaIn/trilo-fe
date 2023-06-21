@@ -291,7 +291,7 @@ const scheduleDetails = {
 };
 /* ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~ */
 
-const getAccessToken = rest.get(
+const getAccessToken = rest.post(
   '/api/auth/login/:oauthServer',
   async (req, res, ctx) => {
     const oauthCode = req.url.searchParams.get('code');
@@ -303,6 +303,7 @@ const getAccessToken = rest.get(
         authType: `code:${oauthCode}`,
         accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+        tripperId: 0,
       })
     );
   }
@@ -385,7 +386,7 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
   await sleep(1000);
   let response;
-  const pointerId = req.url.searchParams.get('cursor');
+  const pointerId = req.url.searchParams.get('tripId');
   const size = Number(req.url.searchParams.get('size') || '0');
   if (!pointerId) {
     response = {

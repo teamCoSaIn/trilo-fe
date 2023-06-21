@@ -11,6 +11,8 @@ import TripCard from '@/components/TripCardList/TripCard';
 import TripCardAddBtn from '@/components/TripCardList/TripCardAddBtn/index';
 import TripCardListSkeleton from '@/components/TripCardList/TripCardListSkeleton';
 
+const TRIP_LIST_SIZE = 8;
+
 const TripCardList = () => {
   // TODO: 방문자일 때와 로그인일 때 구분
 
@@ -22,17 +24,21 @@ const TripCardList = () => {
     isFetchingNextPage,
   } = useInfiniteQuery(
     ['tripList'],
-    ({ pageParam = 0 }) =>
-      HTTP.getTripList({ 'tripper-id': 0, page: pageParam, size: 5 }),
+    ({ pageParam = null }) =>
+      HTTP.getTripList({
+        'tripper-id': 0,
+        cursor: pageParam,
+        size: pageParam ? TRIP_LIST_SIZE : TRIP_LIST_SIZE - 1,
+      }),
     {
       suspense: true,
       staleTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
-      getNextPageParam: (lastPage, allPages) => {
+      getNextPageParam: lastPage => {
         if (!lastPage.hasNext) {
           return;
         }
-        return allPages.length;
+        return lastPage.trips[lastPage.trips.length - 1].tripId;
       },
     }
   );

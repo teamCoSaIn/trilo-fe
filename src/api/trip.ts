@@ -32,8 +32,8 @@ export type TGetTripParams = ITrip['tripId'];
 
 interface IGetTripListParams {
   ['tripper-id']: ITrip['tripperId'];
-  size?: number;
-  page?: number;
+  cursor: ITrip['tripId'] | null;
+  size: number;
 }
 
 export interface IGetTripListResponse {

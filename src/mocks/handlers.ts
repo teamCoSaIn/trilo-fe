@@ -78,9 +78,6 @@ const tripList = [
     startDate: '2023-03-25',
     endDate: '2023-03-27',
   },
-];
-
-const tripList1 = [
   {
     tripId: 6,
     title: '2023 다낭계획',
@@ -128,6 +125,15 @@ const tripList1 = [
   {
     tripId: 11,
     title: '2023 다낭계획',
+    picUrl:
+      'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
+    status: 'AFTER',
+    startDate: '2023.09.25',
+    endDate: '2023.09.27',
+  },
+  {
+    tripId: 12,
+    title: '2023 오키나와계획',
     picUrl:
       'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'AFTER',
@@ -379,15 +385,19 @@ const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
 const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
   await sleep(1000);
   let response;
-  if (req.url.searchParams.get('page') === '0') {
+  const pointerId = req.url.searchParams.get('cursor');
+  const size = Number(req.url.searchParams.get('size') || '0');
+  if (!pointerId) {
     response = {
-      trips: tripList,
-      hasNext: true,
+      trips: tripList.slice(0, size),
+      hasNext: tripList.length > size,
     };
-  } else if (req.url.searchParams.get('page') === '1') {
+  } else {
+    const pointerIdx = tripList.findIndex(it => it.tripId === +pointerId);
+    const curTripList = tripList.slice(pointerIdx + 1, pointerIdx + 1 + size);
     response = {
-      trips: tripList1,
-      hasNext: false,
+      trips: curTripList,
+      hasNext: pointerIdx + 1 + size < tripList.length,
     };
   }
 

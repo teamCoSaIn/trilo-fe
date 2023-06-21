@@ -24,15 +24,15 @@ export interface IChangeTripImageParams {
   formData: FormData;
 }
 
-export type TCreateTripTitleParams = ITrip['title'];
+type TCreateTripParams = ITrip['title'];
 
-export type TDeleteTripTitleParams = ITrip['tripId'];
+type TDeleteTripParams = ITrip['tripId'];
 
-export type TGetTripParams = ITrip['tripId'];
+type TGetTripParams = ITrip['tripId'];
 
 interface IGetTripListParams {
-  ['tripper-id']: ITrip['tripperId'];
-  cursor: ITrip['tripId'] | null;
+  tripperId: ITrip['tripperId'];
+  tripId: ITrip['tripId'] | null;
   size: number;
 }
 
@@ -94,7 +94,7 @@ export const changeTripImg = async (tripImgData: IChangeTripImageParams) => {
   return res.status;
 };
 
-export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
+export const createTrip = async (tripTitle: TCreateTripParams) => {
   const res = await axios({
     method: 'post',
     url: `/trips`,
@@ -104,7 +104,7 @@ export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
   return res.status;
 };
 
-export const deleteTrip = async (tripId: TDeleteTripTitleParams) => {
+export const deleteTrip = async (tripId: TDeleteTripParams) => {
   const res = await axios({
     method: 'delete',
     url: `/trips/${tripId}`,

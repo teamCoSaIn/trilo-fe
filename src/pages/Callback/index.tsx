@@ -3,9 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
+import { IGetAccessTokenResponse } from '@/api/oauth';
 import CircularLoader from '@/components/common/CircularLoader/index';
 import REDIRECT_URL from '@/constants/route';
-import UserStatus, { UserStatusTypes } from '@/states/userStatus';
+import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
 const Callback = () => {
   const [searchParams] = useSearchParams();
@@ -14,9 +15,11 @@ const Callback = () => {
 
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
+  const setUserId = useSetRecoilState(UserId);
 
-  const onSuccess = () => {
+  const onSuccess = (data: IGetAccessTokenResponse) => {
     setUserStatus(UserStatusTypes.LOGIN);
+    setUserId(data.tripperId);
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };
@@ -61,7 +64,7 @@ const Callback = () => {
         process.env.OAUTH_REDIRECT_URI as string
       );
       HTTP.getAccessToken({ oauthServerName: localOauthServerName, oauthData })
-        .then(() => onSuccess())
+        .then(data => onSuccess(data))
         .catch(() => onError());
     } else {
       onError();

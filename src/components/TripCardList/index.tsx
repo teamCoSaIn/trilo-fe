@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
@@ -10,11 +11,13 @@ import Spacing from '@/components/common/Spacing';
 import TripCard from '@/components/TripCardList/TripCard';
 import TripCardAddBtn from '@/components/TripCardList/TripCardAddBtn/index';
 import TripCardListSkeleton from '@/components/TripCardList/TripCardListSkeleton';
+import { UserId } from '@/states/userStatus';
 
 const TRIP_LIST_SIZE = 8;
 
 const TripCardList = () => {
   // TODO: 방문자일 때와 로그인일 때 구분
+  const userId = useRecoilValue(UserId);
 
   const {
     data: tripListPageData,
@@ -26,8 +29,8 @@ const TripCardList = () => {
     ['tripList'],
     ({ pageParam = null }) =>
       HTTP.getTripList({
-        'tripper-id': 0,
-        cursor: pageParam,
+        tripperId: userId,
+        tripId: pageParam,
         size: pageParam ? TRIP_LIST_SIZE : TRIP_LIST_SIZE - 1,
       }),
     {

@@ -1,11 +1,13 @@
 /* eslint-disable import/no-cycle */
 import axios from '@/api/core';
+import { ITrip } from '@/api/trip';
 
 export type TToken = string;
 
-interface IGetAccessTokenResponse {
+export interface IGetAccessTokenResponse {
   authType: string;
   accessToken: TToken;
+  tripperId: ITrip['tripperId'];
 }
 
 interface IGetLoginUriResponse {

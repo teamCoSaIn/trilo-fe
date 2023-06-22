@@ -34,7 +34,7 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
   // 최초 한번만 동작하는 자동로그인
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
     onSuccess: response => {
-      setUserId(response.tripperId);
+      setUserId(response.userId);
     },
     onError: () => {
       setUserStatus(UserStatusTypes.LOGOUT);

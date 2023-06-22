@@ -7,7 +7,7 @@ export type TToken = string;
 export interface IGetAccessTokenResponse {
   authType: string;
   accessToken: TToken;
-  tripperId: ITrip['tripperId'];
+  userId: ITrip['tripperId'];
 }
 
 interface IGetLoginUriResponse {

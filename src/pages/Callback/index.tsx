@@ -19,7 +19,7 @@ const Callback = () => {
 
   const onSuccess = (data: IGetAccessTokenResponse) => {
     setUserStatus(UserStatusTypes.LOGIN);
-    setUserId(data.tripperId);
+    setUserId(data.userId);
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };

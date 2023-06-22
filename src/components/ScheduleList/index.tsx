@@ -11,11 +11,12 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { IDailyPlan } from '@/api/plan';
+import { IDailyPlan, ITempPlan, TScheduleSummary } from '@/api/plan';
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
 import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
+import CircularLoader from '@/components/common/CircularLoader';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
@@ -27,10 +28,11 @@ import {
   SCHEDULE_MARGIN_BOTTOM,
   SCHEDULE_MARGIN_LEFT,
 } from '@/constants/scheduleDnd';
+import { SIZE_OF_TEMP_PLAN_PAGE, TEMP_PLAN_ID } from '@/constants/tempPlan';
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
-import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
+import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import {
   DropdownIndexFamily,
   DropdownMenuFamily,
@@ -61,6 +63,7 @@ const ScheduleList = () => {
   const [placeholderClientY, setPlaceholderClientY] = useState<number | null>(
     null
   );
+  const [onDragging, setOnDragging] = useState<boolean>(false);
 
   const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
     const newDropdownMenu = dailyPlanListData.map((dailyPlanData, idx) => {
@@ -79,9 +82,13 @@ const ScheduleList = () => {
     onSuccess: onSuccessCallback,
   });
 
-  const { data: tempPlanData } = useGetTempPlanList({
-    tripId: +(tripId as string),
-  });
+  const {
+    data: tempPlanPageData,
+    isFetching: isTempPlanPageDataFetching,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useGetTempPlanPageList(+(tripId as string));
 
   const { mutate: scheduleOrderMutate } = useChangeScheduleOrder();
 
@@ -93,19 +100,28 @@ const ScheduleList = () => {
       ? dailyPlanListData
       : dailyPlanListData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
+  const handleDragStart = (start: DragStart) => {
+    setOnDragging(true);
+    const draggableHeight =
+      SCHEDULE_HEIGHT + SCHEDULE_MARGIN_TOP + SCHEDULE_MARGIN_BOTTOM;
+
+    const clientY = SCHEDULE_MARGIN_TOP + start.source.index * draggableHeight;
+
+    setPlaceholderClientY(clientY);
+  };
+
   const handleDragEnd = (result: DropResult) => {
+    setOnDragging(false);
     if (!tripId) {
       return;
     }
 
     const { destination, source, draggableId } = result;
 
-    // Day 밖으로 나가서 Drop 되는 경우
     if (!destination) {
       return;
     }
 
-    // 같은 Day, 같은 자리에서 Drop 되는 경우
     if (
       destination.droppableId === source.droppableId &&
       source.index === destination.index
@@ -120,16 +136,8 @@ const ScheduleList = () => {
       sourceScheduleIdx: source.index,
       destinationDailyPlanId: +destination.droppableId,
       destinationScheduleIdx: destination.index,
+      size: SIZE_OF_TEMP_PLAN_PAGE,
     });
-  };
-
-  const handleDragStart = (start: DragStart) => {
-    const draggableHeight =
-      SCHEDULE_HEIGHT + SCHEDULE_MARGIN_TOP + SCHEDULE_MARGIN_BOTTOM;
-
-    const clientY = SCHEDULE_MARGIN_TOP + start.source.index * draggableHeight;
-
-    setPlaceholderClientY(clientY);
   };
 
   const handleDragUpdate = (update: DragUpdate) => {
@@ -150,21 +158,31 @@ const ScheduleList = () => {
   };
 
   const handleScheduleDeleteBtnClick =
-    (scheduleId: number) => (event: React.MouseEvent) => {
+    (scheduleId: number, dayId: number) => (event: React.MouseEvent) => {
       event.stopPropagation();
       if (!tripId) {
         return;
       }
-      if (window.confirm('찐으로 삭제하시겠습니까?')) {
+      if (window.confirm('일정을 삭제하시겠습니까?')) {
         deleteMutate({
           tripId: +tripId,
           scheduleId,
+          dayId,
         });
       }
     };
 
   const handleScheduleClick = (scheduleId: number) => () => {
     setSelectedEditorScheduleId(scheduleId);
+  };
+
+  const handleTempListScroll = (event: React.UIEvent) => {
+    const { scrollHeight, scrollTop, clientHeight } = event.currentTarget;
+    if (scrollHeight - scrollTop <= clientHeight * 1.01) {
+      if (hasNextPage && !isFetchingNextPage && !onDragging) {
+        fetchNextPage();
+      }
+    }
   };
 
   const dailyPlanDragDropBox = (
@@ -210,7 +228,9 @@ const ScheduleList = () => {
                               selectedMarkerScheduleId === schedule.scheduleId
                             }
                           >
-                            <ScheduleTitle>{schedule.title}</ScheduleTitle>
+                            <ScheduleTitle>
+                              {schedule.title || '알 수 없는 장소'}
+                            </ScheduleTitle>
                             <Place>
                               <PlaceIcon />
                               <PlaceName>
@@ -219,7 +239,8 @@ const ScheduleList = () => {
                             </Place>
                             <ScheduleDeleteBtn
                               onClick={handleScheduleDeleteBtnClick(
-                                schedule.scheduleId
+                                schedule.scheduleId,
+                                dailyPlan.dayId
                               )}
                             >
                               <DeleteIcon
@@ -268,49 +289,64 @@ const ScheduleList = () => {
         )}
       </TempPopUpBtn>
       <TempTitle>임시보관함</TempTitle>
-      {tempPlanData ? (
-        <Droppable droppableId={String(tempPlanData.dayId)}>
+      {tempPlanPageData?.pages.length ? (
+        <Droppable droppableId={String(TEMP_PLAN_ID)}>
           {(droppableProvided, droppableSnapshot) => (
             <TempList
               {...droppableProvided.droppableProps}
               ref={droppableProvided.innerRef}
               isPopUpOpen={isTempBoxOpen}
+              onScroll={handleTempListScroll}
             >
-              {tempPlanData.schedules.map((schedule, scheduleIdx) => (
-                <Draggable
-                  key={schedule.scheduleId}
-                  draggableId={String(schedule.scheduleId)}
-                  index={scheduleIdx}
-                >
-                  {(draggableProvided, draggableSnapshot) => (
-                    <Schedule
-                      ref={draggableProvided.innerRef}
-                      {...draggableProvided.dragHandleProps}
-                      {...draggableProvided.draggableProps}
-                      isDragging={draggableSnapshot.isDragging}
-                      onClick={handleScheduleClick(schedule.scheduleId)}
-                      isSelectedMarker={
-                        selectedMarkerScheduleId === schedule.scheduleId
-                      }
-                    >
-                      <ScheduleTitle>{schedule.title}</ScheduleTitle>
-                      <Place>
-                        <PlaceIcon />
-                        <PlaceName>
-                          {schedule.placeName || '알 수 없는 장소'}
-                        </PlaceName>
-                      </Place>
-                      <ScheduleDeleteBtn
-                        onClick={() =>
-                          handleScheduleDeleteBtnClick(schedule.scheduleId)
+              {tempPlanPageData.pages
+                .reduce(
+                  (
+                    tempPlanSchedules: TScheduleSummary[],
+                    currPage: ITempPlan
+                  ) => {
+                    tempPlanSchedules.push(...currPage.tempSchedules);
+                    return tempPlanSchedules;
+                  },
+                  []
+                )
+                .map((tempSchedule, tempScheduleIdx) => (
+                  <Draggable
+                    key={tempSchedule.scheduleId}
+                    draggableId={String(tempSchedule.scheduleId)}
+                    index={tempScheduleIdx}
+                  >
+                    {(draggableProvided, draggableSnapshot) => (
+                      <Schedule
+                        ref={draggableProvided.innerRef}
+                        {...draggableProvided.dragHandleProps}
+                        {...draggableProvided.draggableProps}
+                        isDragging={draggableSnapshot.isDragging}
+                        onClick={handleScheduleClick(tempSchedule.scheduleId)}
+                        isSelectedMarker={
+                          selectedMarkerScheduleId === tempSchedule.scheduleId
                         }
                       >
-                        <DeleteIcon width={7} height={7} fill={color.gray2} />
-                      </ScheduleDeleteBtn>
-                    </Schedule>
-                  )}
-                </Draggable>
-              ))}
+                        <ScheduleTitle>
+                          {tempSchedule.title || '알 수 없는 장소'}
+                        </ScheduleTitle>
+                        <Place>
+                          <PlaceIcon />
+                          <PlaceName>
+                            {tempSchedule.placeName || '알 수 없는 장소'}
+                          </PlaceName>
+                        </Place>
+                        <ScheduleDeleteBtn
+                          onClick={handleScheduleDeleteBtnClick(
+                            tempSchedule.scheduleId,
+                            TEMP_PLAN_ID
+                          )}
+                        >
+                          <DeleteIcon width={7} height={7} fill={color.gray2} />
+                        </ScheduleDeleteBtn>
+                      </Schedule>
+                    )}
+                  </Draggable>
+                ))}
               {droppableProvided.placeholder}
               {placeholderClientY !== null &&
                 droppableSnapshot.isDraggingOver && (
@@ -321,6 +357,12 @@ const ScheduleList = () => {
                     }}
                   />
                 )}
+              {isFetchingNextPage && (
+                <>
+                  <Spacing height={20} />
+                  <CircularLoader />
+                </>
+              )}
             </TempList>
           )}
         </Droppable>
@@ -342,7 +384,9 @@ const ScheduleList = () => {
           </>
         ) : null}
       </DragDropContext>
-      {(isDeleteLoading || isFetching) && <DimLoader />}
+      {(isDeleteLoading ||
+        isFetching ||
+        (isTempPlanPageDataFetching && !isFetchingNextPage)) && <DimLoader />}
     </>
   );
 };

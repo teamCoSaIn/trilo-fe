@@ -41,6 +41,13 @@ export interface IChangeScheduleDetailsParams {
   endTime: ISchedule['endTime'];
 }
 
+export interface IChangeScheduleDetailsResponse {
+  scheduleId: ISchedule['scheduleId'];
+  beforeDayId: IDailyPlan['dayId'] | TTempPlanDayId;
+  afterDayId: IDailyPlan['dayId'] | TTempPlanDayId;
+  positionChanged: boolean;
+}
+
 export const createSchedule = async (schedule: ICreateScheduleParams) => {
   const res = await axios<ISchedule['scheduleId']>({
     method: 'post',
@@ -51,16 +58,28 @@ export const createSchedule = async (schedule: ICreateScheduleParams) => {
   return res.data;
 };
 
+export const changeScheduleDetails = async (
+  data: IChangeScheduleDetailsParams
+) => {
+  const res = await axios<ISchedule['scheduleId']>({
+    method: 'put',
+    url: `/schedules/${data.scheduleId}`,
+    data,
+    requireAuth: true,
+  });
+  return res.data;
+};
+
 export const changeScheduleOrder = async ({
   scheduleId,
   destinationDailyPlanId,
   destinationScheduleIdx,
 }: IChangeScheduleOrderParams) => {
-  const res = await axios({
+  const res = await axios<IChangeScheduleDetailsResponse>({
     method: 'patch',
     url: `/schedules/${scheduleId}`,
     data: {
-      targetDay: destinationDailyPlanId,
+      targetDayId: destinationDailyPlanId,
       targetOrder: destinationScheduleIdx,
     },
     requireAuth: true,
@@ -83,18 +102,6 @@ export const getScheduleDetails = async (
   const res = await axios<ISchedule>({
     method: 'get',
     url: `/schedules/${scheduleId}`,
-    requireAuth: true,
-  });
-  return res.data;
-};
-
-export const changeScheduleDetails = async (
-  data: IChangeScheduleDetailsParams
-) => {
-  const res = await axios<ISchedule['scheduleId']>({
-    method: 'put',
-    url: `/schedules/${data.scheduleId}`,
-    data,
     requireAuth: true,
   });
   return res.data;

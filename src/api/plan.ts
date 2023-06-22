@@ -44,16 +44,7 @@ export const getDailyPlanList = async (tripId: ITrip['tripId']) => {
   return res.data;
 };
 
-export const getTempPlanList = async (tripId: ITrip['tripId']) => {
-  const res = await axios<TScheduleSummary[]>({
-    method: 'get',
-    url: `/trips/${tripId}/temporary-storage`,
-    requireAuth: true,
-  });
-  return res.data;
-};
-
-export const getTempPlanList1 = async ({
+export const getTempPlanList = async ({
   tripId,
   scheduleId,
   size,

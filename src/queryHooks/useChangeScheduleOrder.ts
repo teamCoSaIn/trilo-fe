@@ -64,14 +64,14 @@ const useChangeScheduleOrder = () => {
         size,
       }: IMutateParams) => {
         await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
-        await queryClient.cancelQueries([`tempPlanList1${tripId}`]);
+        await queryClient.cancelQueries([`tempPlanList${tripId}`]);
 
         const previousDailyPlanList = queryClient.getQueryData<IDailyPlan[]>([
           `dailyPlanList${tripId}`,
         ]);
         const previousTempPlanList = queryClient.getQueryData<
           InfiniteData<ITempPlan>
-        >([`tempPlanList1${tripId}`]);
+        >([`tempPlanList${tripId}`]);
 
         // dailyPlan -> dailyPlan
         if (
@@ -186,7 +186,7 @@ const useChangeScheduleOrder = () => {
 
           // 이동할 영역에 해당 스케줄 추가
           queryClient.setQueryData<InfiniteData<ITempPlan>>(
-            [`tempPlanList1${tripId}`],
+            [`tempPlanList${tripId}`],
             prevTempPlanList => {
               if (!prevTempPlanList) {
                 return prevTempPlanList;
@@ -254,7 +254,7 @@ const useChangeScheduleOrder = () => {
 
           // 기존 영역에서 해당 스케줄 제거
           queryClient.setQueryData<InfiniteData<ITempPlan>>(
-            [`tempPlanList1${tripId}`],
+            [`tempPlanList${tripId}`],
             prevTempPlanList => {
               if (!prevTempPlanList) {
                 return prevTempPlanList;
@@ -342,7 +342,7 @@ const useChangeScheduleOrder = () => {
           destinationDailyPlanId === TEMP_PLAN_ID
         ) {
           queryClient.setQueryData<InfiniteData<ITempPlan>>(
-            [`tempPlanList1${tripId}`],
+            [`tempPlanList${tripId}`],
             prevTempPlanList => {
               if (!prevTempPlanList) {
                 return prevTempPlanList;

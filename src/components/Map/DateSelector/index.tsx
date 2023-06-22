@@ -40,7 +40,7 @@ const DateSelector = () => {
         if (variables.dayId) {
           queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
         } else {
-          queryClient.invalidateQueries([`tempPlanList1${tripId}`]);
+          queryClient.invalidateQueries([`tempPlanList${tripId}`]);
         }
         resetGoogleMarkerLatLng();
       },

@@ -6,9 +6,9 @@ import { SIZE_OF_TEMP_PLAN_PAGE } from '@/constants/tempPlan';
 
 const useGetTempPlanPageList = (tripId: ITrip['tripId']) => {
   return useInfiniteQuery(
-    [`tempPlanList1${tripId}`],
+    [`tempPlanList${tripId}`],
     ({ pageParam = null }) => {
-      return HTTP.getTempPlanList1({
+      return HTTP.getTempPlanList({
         tripId,
         scheduleId: pageParam,
         size: SIZE_OF_TEMP_PLAN_PAGE,

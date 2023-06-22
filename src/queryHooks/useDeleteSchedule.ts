@@ -21,7 +21,7 @@ const useDeleteSchedule = () => {
         if (variables.dayId >= 0) {
           queryClient.invalidateQueries([`dailyPlanList${variables.tripId}`]);
         } else {
-          queryClient.invalidateQueries([`tempPlanList1${variables.tripId}`]);
+          queryClient.invalidateQueries([`tempPlanList${variables.tripId}`]);
         }
       },
       onError: () => {

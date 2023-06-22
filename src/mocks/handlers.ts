@@ -752,18 +752,6 @@ const changeScheduleDetails = rest.put(
 );
 
 const getTempPlanList = rest.get(
-  '/api/trips/:tripId/temporary-storage',
-  async (req, res, ctx) => {
-    await sleep(1000);
-    const { tripId } = req.params;
-    if (tripId) {
-      return res(ctx.json(tempPlan));
-    }
-    return res(ctx.status(400));
-  }
-);
-
-const getTempPlanList1 = rest.get(
   '/api/trips/:tripId/temporary-storage1',
   async (req, res, ctx) => {
     await sleep(2000);
@@ -830,7 +818,6 @@ const handlers = [
   getScheduleDetails,
   changeScheduleDetails,
   getTempPlanList,
-  getTempPlanList1,
   changeTripImg,
 ];
 

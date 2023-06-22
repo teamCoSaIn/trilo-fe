@@ -778,7 +778,7 @@ const changeScheduleDetails = rest.put(
 );
 
 const getTempPlanList = rest.get(
-  '/api/trips/:tripId/temporary-storage1',
+  '/api/trips/:tripId/temporary-storage',
   async (req, res, ctx) => {
     await sleep(2000);
 

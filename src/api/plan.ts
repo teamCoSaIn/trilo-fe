@@ -51,7 +51,7 @@ export const getTempPlanList = async ({
 }: IGetTempPlanListParams) => {
   const res = await axios<ITempPlan>({
     method: 'get',
-    url: `/trips/${tripId}/temporary-storage1`,
+    url: `/trips/${tripId}/temporary-storage`,
     requireAuth: true,
     params: scheduleId
       ? {

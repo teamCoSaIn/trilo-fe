@@ -1,11 +1,12 @@
-const DailyPlanColor = [
-  '#D14081',
-  '#EF798A',
-  '#F9F5E3',
-  '#EBFFDB',
-  '#CCF5AC',
-  '#B6C7FF',
-  '#456CEB',
-];
+export const DAILYPLAN_COLORS = {
+  red: '#FB6C6C',
+  orange: '#F4A17D',
+  lightGreen: '#B9F15D',
+  green: '#43D65A',
+  blue: '#4D77FF',
+  purple: '#D96FF8',
+  violet: '#8F57FB',
+  black: '#383B40',
+};
 
-export default DailyPlanColor;
+export type TDailyPlanColorName = keyof typeof DAILYPLAN_COLORS;

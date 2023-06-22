@@ -147,7 +147,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 1,
     tripId: 1,
     date: '2023-02-15',
-    color: '#FB6C6C',
+    color: {
+      name: 'red',
+      code: '#FB6C6C',
+    },
     schedules: [
       {
         scheduleId: 235410,
@@ -175,7 +178,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 2,
     tripId: 1,
     date: '2023-02-16',
-    color: '#5800FF',
+    color: {
+      name: 'blue',
+      code: '#4D77FF',
+    },
     schedules: [
       {
         scheduleId: 235412,
@@ -213,7 +219,10 @@ const tripDays: IDailyPlan[] = [
     dayId: 3,
     tripId: 1,
     date: '2023-02-17',
-    color: '#209b43',
+    color: {
+      name: 'green',
+      code: '#43D65A',
+    },
     schedules: [
       {
         scheduleId: 235415,
@@ -232,7 +241,7 @@ const tripDays: IDailyPlan[] = [
 const tempPlan = [
   {
     scheduleId: 335410,
-    title: '포트 드루시 해변 공원',
+    title: '1',
     placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
     placeName: '캐널시티 하카타',
     coordinate: {
@@ -242,7 +251,7 @@ const tempPlan = [
   },
   {
     scheduleId: 335411,
-    title: '콜로왈루 공원',
+    title: '2',
     placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
     placeName: '콜로왈루 공원',
     coordinate: {
@@ -252,12 +261,202 @@ const tempPlan = [
   },
   {
     scheduleId: 335412,
-    title: '카마넬 공원',
+    title: '3',
     placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
     placeName: '카마넬 공원',
     coordinate: {
       latitude: 21.44985050848401,
       longitude: -157.7248269653323,
+    },
+  },
+  {
+    scheduleId: 335413,
+    title: '4',
+    placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
+    placeName: '하카타',
+    coordinate: {
+      latitude: 21.35,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335414,
+    title: '5',
+    placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
+    placeName: '콜로왈공원',
+    coordinate: {
+      latitude: 21.26,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335415,
+    title: '6',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카마공원',
+    coordinate: {
+      latitude: 21.46,
+      longitude: -157.7248269653323,
+    },
+  },
+  {
+    scheduleId: 335416,
+    title: '7',
+    placeId: 'ChIJYcOBiZWRQTUR0Rl0ehe67eA',
+    placeName: '하카타',
+    coordinate: {
+      latitude: 21.37,
+      longitude: -157.80890464782715,
+    },
+  },
+  {
+    scheduleId: 335417,
+    title: '8',
+    placeId: 'ChIJUf6gTvttAHwRi4AmgKEUacM',
+    placeName: '콜공원',
+    coordinate: {
+      latitude: 21.28,
+      longitude: -157.8248269653323,
+    },
+  },
+  {
+    scheduleId: 335418,
+    title: '9',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카공원',
+    coordinate: {
+      latitude: 21.48,
+      longitude: -157.7248269653323,
+    },
+  },
+  {
+    scheduleId: 335419,
+    title: '10',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카공원123',
+    coordinate: {
+      latitude: 21.49,
+      longitude: -157.7348269653323,
+    },
+  },
+  {
+    scheduleId: 335420,
+    title: '11',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '카공원',
+    coordinate: {
+      latitude: 21.5,
+      longitude: -157.7148269653323,
+    },
+  },
+  {
+    scheduleId: 335421,
+    title: '12',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: '올공원',
+    coordinate: {
+      latitude: 21.528,
+      longitude: -157.545,
+    },
+  },
+  {
+    scheduleId: 335422,
+    title: '13',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'abc',
+    coordinate: {
+      latitude: 21.538,
+      longitude: -157.525,
+    },
+  },
+  {
+    scheduleId: 335423,
+    title: '14',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335424,
+    title: '15',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335425,
+    title: '16',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335426,
+    title: '17',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335427,
+    title: '18',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335428,
+    title: '19',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335429,
+    title: '20',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335430,
+    title: '21',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
+    },
+  },
+  {
+    scheduleId: 335431,
+    title: '22',
+    placeId: 'ChIJG4al8aJtAHwRIJk2N8_beUI',
+    placeName: 'def',
+    coordinate: {
+      latitude: 21.529,
+      longitude: -157.245,
     },
   },
 ];
@@ -269,7 +468,10 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
       dayId: 3,
       tripId: 1,
       date: '2023-05-18',
-      color: '#ccc',
+      color: {
+        name: 'red',
+        code: '#ccc',
+      },
       schedules: [],
     },
   ],
@@ -501,11 +703,11 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
   if (data.dayId) {
     tripDays.forEach((tripDay, idx, arr) => {
       if (tripDay.dayId === data.dayId) {
-        arr[idx].schedules.push(newSchedule);
+        arr[idx].schedules.unshift(newSchedule);
       }
     });
   } else {
-    tempPlan.push(newSchedule);
+    tempPlan.unshift(newSchedule);
   }
 
   return res(ctx.status(200));
@@ -536,6 +738,13 @@ const deleteSchedule = rest.delete(
         day.schedules.splice(idx, 1);
       }
     });
+
+    for (let i = 0; i < tempPlan.length; i += 1) {
+      if (tempPlan[i].scheduleId === +scheduleId) {
+        tempPlan.splice(i, 1);
+        break;
+      }
+    }
     return res(ctx.status(200));
   }
 );
@@ -569,13 +778,43 @@ const changeScheduleDetails = rest.put(
 );
 
 const getTempPlanList = rest.get(
-  '/api/trips/:tripId/temporary-storage',
+  '/api/trips/:tripId/temporary-storage1',
   async (req, res, ctx) => {
-    await sleep(1000);
-    const { tripId } = req.params;
-    if (tripId) {
-      return res(ctx.json(tempPlan));
+    await sleep(2000);
+
+    const scheduleId = +req.url.searchParams.get('scheduleId')!;
+    const size = +req.url.searchParams.get('size')!;
+
+    if (!scheduleId) {
+      return res(
+        ctx.json({
+          tempSchedules: tempPlan.slice(0, size),
+          hasNext: size < tempPlan.length,
+        })
+      );
     }
+
+    let formerLastIdx = null;
+
+    for (let i = 0; i < tempPlan.length; i += 1) {
+      if (tempPlan[i].scheduleId === scheduleId) {
+        formerLastIdx = i;
+        break;
+      }
+    }
+
+    if (formerLastIdx) {
+      return res(
+        ctx.json({
+          tempSchedules: tempPlan.slice(
+            formerLastIdx + 1,
+            formerLastIdx + 1 + size
+          ),
+          hasNext: formerLastIdx + 1 + size < tempPlan.length,
+        })
+      );
+    }
+
     return res(ctx.status(400));
   }
 );

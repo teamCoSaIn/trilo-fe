@@ -2,18 +2,34 @@
 import axios from '@/api/core';
 import { ISchedule } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
+import { TDailyPlanColorName } from '@/constants/dailyPlanColor';
+
+interface IDailyPlanColor {
+  name: TDailyPlanColorName;
+  code: string;
+}
 
 export interface IDailyPlan {
   tripId: ITrip['tripId'];
   dayId: number;
   date: string;
-  color: string;
+  color: IDailyPlanColor;
   schedules: TScheduleSummary[];
+}
+
+export interface ITempPlan {
+  tempSchedules: TScheduleSummary[];
+  hasNext: boolean;
+}
+
+interface IGetTempPlanListParams {
+  tripId: ITrip['tripId'];
+  scheduleId: ISchedule['scheduleId'] | null;
+  size: number;
 }
 
 export type TTempPlanDayId = null;
 
-// 스케줄 서머리
 export type TScheduleSummary = Pick<
   ISchedule,
   'scheduleId' | 'title' | 'placeId' | 'placeName' | 'coordinate'
@@ -28,11 +44,23 @@ export const getDailyPlanList = async (tripId: ITrip['tripId']) => {
   return res.data;
 };
 
-export const getTempPlanList = async (tripId: ITrip['tripId']) => {
-  const res = await axios<TScheduleSummary[]>({
+export const getTempPlanList = async ({
+  tripId,
+  scheduleId,
+  size,
+}: IGetTempPlanListParams) => {
+  const res = await axios<ITempPlan>({
     method: 'get',
-    url: `/trips/${tripId}/temporary-storage`,
+    url: `/trips/${tripId}/temporary-storage1`,
     requireAuth: true,
+    params: scheduleId
+      ? {
+          scheduleId,
+          size,
+        }
+      : {
+          size,
+        },
   });
   return res.data;
 };

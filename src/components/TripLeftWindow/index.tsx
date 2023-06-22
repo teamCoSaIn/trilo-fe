@@ -89,7 +89,14 @@ const WindowFoldBtn = styled.button`
   top: calc(50% - 30px);
   width: 30px;
   height: 60px;
-  background-color: #aaa;
+  background-color: #ecf0ff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.25);
+  border-radius: 0 3px 3px 0;
+  &:hover {
+    path {
+      stroke: ${color.blue3};
+    }
+  }
 `;
 
 const TabBtn = styled.button<{ isFocused: boolean }>`

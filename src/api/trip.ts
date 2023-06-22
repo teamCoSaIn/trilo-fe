@@ -64,7 +64,7 @@ export const changeTripTitle = async (
   tripTitleData: TChangeTripTitleParams
 ) => {
   const res = await axios({
-    method: 'patch',
+    method: 'put',
     url: `/trips/${tripTitleData.tripId}/title`,
     data: tripTitleData,
     requireAuth: true,
@@ -76,7 +76,7 @@ export const changeTripPeriod = async (
   tripPeriodData: TChangeTripPeriodParams
 ) => {
   const res = await axios({
-    method: 'patch',
+    method: 'put',
     url: `/trips/${tripPeriodData.tripId}/period`,
     data: tripPeriodData,
     requireAuth: true,
@@ -86,8 +86,8 @@ export const changeTripPeriod = async (
 
 export const changeTripImg = async (tripImgData: IChangeTripImageParams) => {
   const res = await axios({
-    method: 'patch',
-    url: `/trips/${tripImgData.tripId}/image`,
+    method: 'post',
+    url: `/trips/${tripImgData.tripId}/image/update`,
     data: tripImgData.formData,
     requireAuth: true,
   });

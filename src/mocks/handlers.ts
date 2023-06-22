@@ -318,6 +318,7 @@ const refreshAccessToken = rest.post(
         authType: `Bearer`,
         accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+        tripperId: 0,
       })
     );
   }
@@ -405,7 +406,7 @@ const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
   return res(ctx.json(response));
 });
 
-const changeTripTitle = rest.patch(
+const changeTripTitle = rest.put(
   '/api/trips/:tripId/title',
   async (req, res, ctx) => {
     const { title, tripId } = await req.json();
@@ -422,15 +423,15 @@ const changeTripTitle = rest.patch(
   }
 );
 
-const changeTripImg = rest.patch(
-  '/api/trips/:tripId/image',
+const changeTripImg = rest.post(
+  '/api/trips/:tripId/image/update',
   async (req, res, ctx) => {
     await sleep(1000);
     return res(ctx.status(200));
   }
 );
 
-const changeTripPeriod = rest.patch(
+const changeTripPeriod = rest.put(
   '/api/trips/:tripId/period',
   async (req, res, ctx) => {
     const { startDate, endDate, tripId } = await req.json();

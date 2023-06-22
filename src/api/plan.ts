@@ -17,6 +17,10 @@ export interface IDailyPlan {
   schedules: TScheduleSummary[];
 }
 
+export interface IGetDailyPlanResponse {
+  days: IDailyPlan[];
+}
+
 export interface ITempPlan {
   tempSchedules: TScheduleSummary[];
   hasNext: boolean;
@@ -36,7 +40,7 @@ export type TScheduleSummary = Pick<
 >;
 
 export const getDailyPlanList = async (tripId: ITrip['tripId']) => {
-  const res = await axios<IDailyPlan[]>({
+  const res = await axios<IGetDailyPlanResponse>({
     method: 'get',
     url: `/trips/${tripId}/days`,
     requireAuth: true,

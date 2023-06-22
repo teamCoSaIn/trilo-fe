@@ -88,16 +88,18 @@ const DateSelector = () => {
     }
   };
 
-  const dateSelectorDateList = dailyPlanListData?.map((dailyPlanData, idx) => {
-    const date = dailyPlanData.date?.split('-').join('.').substring(2);
-    return (
-      <DateSelectorDateItem key={dailyPlanData.dayId}>
-        <DateSelectorDateBtn
-          onClick={handleCreateScheduleClick(dailyPlanData.dayId)}
-        >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
-      </DateSelectorDateItem>
-    );
-  });
+  const dateSelectorDateList = dailyPlanListData?.days.map(
+    (dailyPlanData, idx) => {
+      const date = dailyPlanData.date?.split('-').join('.').substring(2);
+      return (
+        <DateSelectorDateItem key={dailyPlanData.dayId}>
+          <DateSelectorDateBtn
+            onClick={handleCreateScheduleClick(dailyPlanData.dayId)}
+          >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
+        </DateSelectorDateItem>
+      );
+    }
+  );
 
   return (
     <DateSelectorBox

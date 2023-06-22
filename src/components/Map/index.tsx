@@ -121,8 +121,8 @@ const Map = () => {
     if (dailyPlanListData) {
       const allBounds = new google.maps.LatLngBounds();
       tempArr.push(allBounds);
-      for (let i = 0; i < dailyPlanListData.length; i += 1) {
-        const dailyPlanData = dailyPlanListData[i];
+      for (let i = 0; i < dailyPlanListData.days.length; i += 1) {
+        const dailyPlanData = dailyPlanListData.days[i];
         const bounds = new google.maps.LatLngBounds();
         for (let j = 0; j < dailyPlanData.schedules.length; j += 1) {
           const scheduleData = dailyPlanData.schedules[j];
@@ -230,13 +230,16 @@ const Map = () => {
     if (!dailyPlanListData) {
       return [];
     }
-    return dailyPlanListData.map(dailyPlanData =>
+    return dailyPlanListData.days.map(dailyPlanData =>
       dailyPlanData.schedules.map((scheduleData, idx) => {
         const svg =
           selectedEditorScheduleId === scheduleData.scheduleId ||
           selectedMarkerScheduleId === scheduleData.scheduleId
-            ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.color.code)
-            : createTriloMarkerSvg(idx + 1, dailyPlanData.color.code);
+            ? createSelectedTriloMarkerSvg(
+                idx + 1,
+                dailyPlanData.color?.code || 'red'
+              )
+            : createTriloMarkerSvg(idx + 1, dailyPlanData.color?.code || 'red');
         const triloMarkerDataUrl = convertToDataUrl(svg);
         const animation =
           selectedEditorScheduleId === scheduleData.scheduleId
@@ -320,7 +323,7 @@ const Map = () => {
     if (!dailyPlanListData) {
       return [];
     }
-    return dailyPlanListData.map(dailyPlanData =>
+    return dailyPlanListData.days.map(dailyPlanData =>
       dailyPlanData.schedules.slice(0, -1).map((scheduleData, idx) => {
         const path = [
           {
@@ -338,7 +341,7 @@ const Map = () => {
             {
               icon: {
                 path: 'M 0,0 0,2 1,2 1,0 Z',
-                fillColor: dailyPlanData.color.code,
+                fillColor: dailyPlanData.color?.code || 'red',
                 fillOpacity: 1,
                 scale: 2.8,
                 strokeWeight: 0,

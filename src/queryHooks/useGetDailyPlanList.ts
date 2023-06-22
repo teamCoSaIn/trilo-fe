@@ -1,12 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
 
 import HTTP from '@/api';
-import { IDailyPlan } from '@/api/plan';
+import { IGetDailyPlanResponse } from '@/api/plan';
 import { ITrip } from '@/api/trip';
 
 interface IUseGetDailyPlanListParam {
   tripId: ITrip['tripId'];
-  onSuccess?: (data: IDailyPlan[]) => void;
+  onSuccess?: (data: IGetDailyPlanResponse) => void;
   onError?: () => void;
 }
 

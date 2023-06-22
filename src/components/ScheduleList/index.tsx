@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { IDailyPlan, ITempPlan, TScheduleSummary } from '@/api/plan';
+import { IGetDailyPlanResponse, ITempPlan, TScheduleSummary } from '@/api/plan';
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
@@ -65,13 +65,14 @@ const ScheduleList = () => {
   );
   const [onDragging, setOnDragging] = useState<boolean>(false);
 
-  const onSuccessCallback = (dailyPlanListData: IDailyPlan[]) => {
-    const newDropdownMenu = dailyPlanListData.map((dailyPlanData, idx) => {
+  const onSuccessCallback = (dailyPlanListData: IGetDailyPlanResponse) => {
+    const newDropdownMenu = dailyPlanListData.days.map((dailyPlanData, idx) => {
       return {
         dailyPlanId: dailyPlanData.dayId,
         name: `Day${idx + 1}`,
         date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-        color: dailyPlanData.color.code,
+        // TODO: API 반영
+        color: dailyPlanData.color?.code || 'red',
       };
     });
     setDropdownMenu(newDropdownMenu);
@@ -97,8 +98,8 @@ const ScheduleList = () => {
 
   const selectedDailyPlanList =
     dropdownMenuIdx === -1
-      ? dailyPlanListData
-      : dailyPlanListData?.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
+      ? dailyPlanListData?.days
+      : dailyPlanListData?.days.slice(dropdownMenuIdx, dropdownMenuIdx + 1);
 
   const handleDragStart = (start: DragStart) => {
     setOnDragging(true);
@@ -200,7 +201,7 @@ const ScheduleList = () => {
             <Flex alignCenter>
               <DailyPlanIndex>{dayString}</DailyPlanIndex>
               <DailyPlanDate>{dateString}</DailyPlanDate>
-              <DailyPlanColor dailyPlanColor={dailyPlan.color.code} />
+              <DailyPlanColor dailyPlanColor={dailyPlan.color?.code || 'red'} />
             </Flex>
             <Spacing height={10} />
             <Droppable droppableId={String(dailyPlan.dayId)}>

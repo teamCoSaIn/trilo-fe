@@ -9,6 +9,7 @@ import { original, produce } from 'immer';
 import HTTP from '@/api';
 import {
   IDailyPlan,
+  IGetDailyPlanResponse,
   ITempPlan,
   TScheduleSummary,
   TTempPlanDayId,
@@ -66,9 +67,10 @@ const useChangeScheduleOrder = () => {
         await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
         await queryClient.cancelQueries([`tempPlanList${tripId}`]);
 
-        const previousDailyPlanList = queryClient.getQueryData<IDailyPlan[]>([
-          `dailyPlanList${tripId}`,
-        ]);
+        const previousDailyPlanList =
+          queryClient.getQueryData<IGetDailyPlanResponse>([
+            `dailyPlanList${tripId}`,
+          ]);
         const previousTempPlanList = queryClient.getQueryData<
           InfiniteData<ITempPlan>
         >([`tempPlanList${tripId}`]);
@@ -78,7 +80,7 @@ const useChangeScheduleOrder = () => {
           sourceDailyPlanId !== TEMP_PLAN_ID &&
           destinationDailyPlanId !== TEMP_PLAN_ID
         ) {
-          queryClient.setQueryData<IDailyPlan[]>(
+          queryClient.setQueryData<IGetDailyPlanResponse>(
             [`dailyPlanList${tripId}`],
             prevDailyPlanList => {
               if (!prevDailyPlanList) {
@@ -90,7 +92,7 @@ const useChangeScheduleOrder = () => {
                 const nextDailyPlanList = produce(
                   prevDailyPlanList,
                   draftDailyPlanList => {
-                    const targetDailyPlan = draftDailyPlanList.find(
+                    const targetDailyPlan = draftDailyPlanList.days.find(
                       dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                     );
 
@@ -116,10 +118,10 @@ const useChangeScheduleOrder = () => {
               const nextDailyPlanList = produce(
                 prevDailyPlanList,
                 draftDailyPlanList => {
-                  const sourceDailyPlan = draftDailyPlanList.find(
+                  const sourceDailyPlan = draftDailyPlanList.days.find(
                     dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                   );
-                  const destinationDailyPlan = draftDailyPlanList.find(
+                  const destinationDailyPlan = draftDailyPlanList.days.find(
                     dailyPlan => dailyPlan.dayId === destinationDailyPlanId
                   );
 
@@ -154,7 +156,7 @@ const useChangeScheduleOrder = () => {
           let reorderedSchedule: TScheduleSummary | undefined;
 
           // 기존 영역에서 해당 스케줄 제거
-          queryClient.setQueryData<IDailyPlan[]>(
+          queryClient.setQueryData<IGetDailyPlanResponse>(
             [`dailyPlanList${tripId}`],
             prevDailyPlanList => {
               if (!prevDailyPlanList) {
@@ -164,7 +166,7 @@ const useChangeScheduleOrder = () => {
               const nextDailyPlanList = produce(
                 prevDailyPlanList,
                 draftDailyPlanList => {
-                  const sourceDailyPlan = draftDailyPlanList.find(
+                  const sourceDailyPlan = draftDailyPlanList.days.find(
                     dailyPlan => dailyPlan.dayId === sourceDailyPlanId
                   );
 
@@ -305,7 +307,7 @@ const useChangeScheduleOrder = () => {
           );
 
           // 이동할 영역에 해당 스케줄 추가
-          queryClient.setQueryData<IDailyPlan[]>(
+          queryClient.setQueryData<IGetDailyPlanResponse>(
             [`dailyPlanList${tripId}`],
             prevDailyPlanList => {
               if (!prevDailyPlanList) {
@@ -315,7 +317,7 @@ const useChangeScheduleOrder = () => {
               const nextDailyPlanList = produce(
                 prevDailyPlanList,
                 draftDailyPlanList => {
-                  const destinationDailyPlan = draftDailyPlanList.find(
+                  const destinationDailyPlan = draftDailyPlanList.days.find(
                     dailyPlan => dailyPlan.dayId === destinationDailyPlanId
                   );
 
@@ -388,13 +390,13 @@ const useChangeScheduleOrder = () => {
         err,
         variables,
         context?: {
-          previousDailyPlanList: IDailyPlan[] | undefined;
+          previousDailyPlanList: IGetDailyPlanResponse | undefined;
           previousTempPlanList: InfiniteData<ITempPlan> | undefined;
           tripId: ITrip['tripId'];
         }
       ) => {
         if (context?.previousDailyPlanList) {
-          queryClient.setQueryData<IDailyPlan[]>(
+          queryClient.setQueryData<IGetDailyPlanResponse>(
             [`dailyPlanList${context.tripId}`],
             context.previousDailyPlanList
           );

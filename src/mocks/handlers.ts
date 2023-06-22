@@ -686,7 +686,7 @@ const getDailyPlanList = rest.get(
     await sleep(1000);
     const { tripId } = req.params;
     if (tripId && tripCardIds[tripId as string]) {
-      return res(ctx.json(tripCardIds[tripId as string]));
+      return res(ctx.json({ days: tripCardIds[tripId as string] }));
     }
     return res(ctx.status(400));
   }

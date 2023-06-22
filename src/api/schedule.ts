@@ -4,7 +4,8 @@ import { IDailyPlan, TTempPlanDayId } from '@/api/plan';
 import { ITrip } from '@/api/trip';
 
 // 스케줄 생성할 때의 타입
-export interface ICreateScheduleParams extends Omit<ISchedule, 'scheduleId'> {
+export interface ICreateScheduleParams
+  extends Omit<ISchedule, 'scheduleId' | 'content' | 'startTime' | 'endTime'> {
   tripId: ITrip['tripId'];
 }
 
@@ -41,7 +42,7 @@ export interface IChangeScheduleDetailsParams {
 }
 
 export const createSchedule = async (schedule: ICreateScheduleParams) => {
-  const res = await axios({
+  const res = await axios<ISchedule['scheduleId']>({
     method: 'post',
     url: '/schedules',
     data: schedule,

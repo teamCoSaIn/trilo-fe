@@ -11,9 +11,6 @@ import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
 import { PlaceInfo } from '@/states/schedule';
 
-const INITIAL_HOUR = '00';
-const INITIAL_MINUTE = '00';
-
 const DateSelector = () => {
   const { tripId } = useParams();
 
@@ -43,7 +40,7 @@ const DateSelector = () => {
         if (variables.dayId) {
           queryClient.invalidateQueries([`dailyPlanList${tripId}`]);
         } else {
-          queryClient.invalidateQueries([`tempPlanList${tripId}`]);
+          queryClient.invalidateQueries([`tempPlanList1${tripId}`]);
         }
         resetGoogleMarkerLatLng();
       },
@@ -79,15 +76,12 @@ const DateSelector = () => {
         tripId: +tripId,
         dayId: dailyPlanId,
         title: placeInfo.name,
-        content: '',
         placeId: placeInfo.id,
         placeName: placeInfo.name,
         coordinate: {
           latitude: googleMarkerLatLng.lat,
           longitude: googleMarkerLatLng.lng,
         },
-        startTime: INITIAL_HOUR,
-        endTime: INITIAL_MINUTE,
       };
       mutate(newSchedule);
       setIsDateSelectorVisible(false);

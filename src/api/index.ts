@@ -6,7 +6,11 @@ import {
   checkRefreshToken,
   resign,
 } from '@/api/oauth';
-import { getDailyPlanList, getTempPlanList } from '@/api/plan';
+import {
+  getDailyPlanList,
+  getTempPlanList,
+  getTempPlanList1,
+} from '@/api/plan';
 import {
   createSchedule,
   changeScheduleOrder,
@@ -40,6 +44,7 @@ const HTTP = {
   deleteTrip,
   getDailyPlanList,
   getTempPlanList,
+  getTempPlanList1,
   createSchedule,
   changeScheduleOrder,
   deleteSchedule,

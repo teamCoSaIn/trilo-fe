@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
-import UserStatus, { UserStatusTypes } from '@/states/userStatus';
+import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
 interface IAuthCheckerProps {
   children: ReactNode;
@@ -11,12 +11,13 @@ interface IAuthCheckerProps {
 
 const AuthChecker = ({ children }: IAuthCheckerProps) => {
   const setUserStatus = useSetRecoilState(UserStatus);
+  const setUserId = useSetRecoilState(UserId);
 
   const { data } = useQuery(
     ['checkRefreshToken'],
     () => HTTP.checkRefreshToken(),
     {
-      onSuccess: async response => {
+      onSuccess: response => {
         if (response.availability) {
           return setUserStatus(UserStatusTypes.LOGIN);
         }
@@ -30,10 +31,17 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
     }
   );
 
-  // TODO: staleTime 제거 고민해보기
+  // 최초 한번만 동작하는 자동로그인
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
+    onSuccess: response => {
+      setUserId(response.tripperId);
+    },
+    onError: () => {
+      setUserStatus(UserStatusTypes.LOGOUT);
+    },
     enabled: !!data?.availability,
     staleTime: Infinity,
+    cacheTime: Infinity,
     suspense: true,
     useErrorBoundary: false,
   });

@@ -44,6 +44,7 @@ const DateContainer = ({
     (startMonth === dateInfo.month && startDate > dateInfo.date);
 
   const handleClickDateBox = () => {
+    if (disabled) return;
     if (!selectedStartDate && !selectedEndDate) {
       setSelectedDates([
         new Date(dateInfo.year, dateInfo.month - 1, dateInfo.date),
@@ -78,36 +79,31 @@ const DateContainer = ({
     }
   };
 
-  return disabled ? (
-    <DisabledDateBox>{dateInfo.date}</DisabledDateBox>
-  ) : (
+  return (
     <DateBox
       isStartOnRange={isStartOnRange}
       isEnd={isEnd}
       isBetween={isBetween}
       onClick={handleClickDateBox}
+      disabled={disabled}
     >
-      <DateCircle isSunday={dayIndex === 0} isStart={isStart} isEnd={isEnd}>
+      <DateCircle
+        isSunday={dayIndex === 0}
+        isStart={isStart}
+        isEnd={isEnd}
+        disabled={disabled}
+      >
         {dateInfo.date}
       </DateCircle>
     </DateBox>
   );
 };
 
-const DisabledDateBox = styled.td`
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 30px;
-  height: 30px;
-  font-size: 1.2rem;
-  color: ${color.gray2};
-`;
-
 const DateBox = styled.td<{
   isStartOnRange: boolean;
   isBetween: boolean;
   isEnd: boolean;
+  disabled: boolean;
 }>`
   display: flex;
   justify-content: center;
@@ -136,6 +132,7 @@ const DateCircle = styled.div<{
   isSunday: boolean;
   isStart: boolean;
   isEnd: boolean;
+  disabled: boolean;
 }>`
   display: flex;
   justify-content: center;
@@ -146,13 +143,29 @@ const DateCircle = styled.div<{
   font-size: 1.2rem;
   border: 1px solid transparent;
   &:hover {
-    border: 1px solid black;
+    ${({ disabled }) => {
+      if (disabled) {
+        return css`
+          border: 1px solid ${color.gray2};
+        `;
+      }
+      return css`
+        border: 1px solid black;
+      `;
+    }};
   }
-  ${({ isSunday }) => css`
-    ${isSunday && {
-      color: 'red',
-    }}
-  `};
+  ${({ isSunday, disabled }) => {
+    if (isSunday && !disabled) {
+      return css`
+        color: red;
+      `;
+    }
+    if (disabled) {
+      return css`
+        color: ${color.gray2};
+      `;
+    }
+  }};
   ${({ isStart, isEnd }) => css`
     ${(isStart || isEnd) && {
       color: color.white,

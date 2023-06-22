@@ -3,9 +3,10 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
+import { IGetAccessTokenResponse } from '@/api/oauth';
 import CircularLoader from '@/components/common/CircularLoader/index';
 import REDIRECT_URL from '@/constants/route';
-import UserStatus, { UserStatusTypes } from '@/states/userStatus';
+import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
 const Callback = () => {
   const [searchParams] = useSearchParams();
@@ -14,9 +15,11 @@ const Callback = () => {
 
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
+  const setUserId = useSetRecoilState(UserId);
 
-  const onSuccess = () => {
+  const onSuccess = (data: IGetAccessTokenResponse) => {
     setUserStatus(UserStatusTypes.LOGIN);
+    setUserId(data.tripperId);
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };
@@ -24,6 +27,24 @@ const Callback = () => {
   const onError = () => {
     alert('잘못된 접근입니다.');
     navigate('/login');
+  };
+
+  const getOauthData = (
+    oauthServerName: string,
+    code: string,
+    state: string,
+    redirectUri: string
+  ) => {
+    switch (oauthServerName) {
+      case 'kakao':
+        return { code, redirect_uri: redirectUri };
+      case 'google':
+        return { code, redirect_uri: redirectUri };
+      case 'naver':
+        return { code, state };
+      default:
+        return { code, state, redirect_uri: redirectUri };
+    }
   };
 
   useEffect(() => {
@@ -36,12 +57,14 @@ const Callback = () => {
       localOauthServerName &&
       oauthState === localOauthState
     ) {
-      HTTP.getAccessToken(
+      const oauthData = getOauthData(
         localOauthServerName,
         oauthCode,
+        oauthState,
         process.env.OAUTH_REDIRECT_URI as string
-      )
-        .then(() => onSuccess())
+      );
+      HTTP.getAccessToken({ oauthServerName: localOauthServerName, oauthData })
+        .then(data => onSuccess(data))
         .catch(() => onError());
     } else {
       onError();

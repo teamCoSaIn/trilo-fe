@@ -1,5 +1,6 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import HTTP from '@/api';
@@ -10,9 +11,13 @@ import Spacing from '@/components/common/Spacing';
 import TripCard from '@/components/TripCardList/TripCard';
 import TripCardAddBtn from '@/components/TripCardList/TripCardAddBtn/index';
 import TripCardListSkeleton from '@/components/TripCardList/TripCardListSkeleton';
+import { UserId } from '@/states/userStatus';
+
+const TRIP_LIST_SIZE = 8;
 
 const TripCardList = () => {
   // TODO: 방문자일 때와 로그인일 때 구분
+  const userId = useRecoilValue(UserId);
 
   const {
     data: tripListPageData,
@@ -22,16 +27,21 @@ const TripCardList = () => {
     isFetchingNextPage,
   } = useInfiniteQuery(
     ['tripList'],
-    ({ pageParam = 0 }) => HTTP.getTripList({ tripperId: 0, page: pageParam }),
+    ({ pageParam = null }) =>
+      HTTP.getTripList({
+        tripperId: userId,
+        tripId: pageParam,
+        size: pageParam ? TRIP_LIST_SIZE : TRIP_LIST_SIZE - 1,
+      }),
     {
       suspense: true,
       staleTime: 30 * 60 * 1000,
       refetchOnWindowFocus: false,
       getNextPageParam: lastPage => {
-        if (lastPage.isLast) {
+        if (!lastPage.hasNext) {
           return;
         }
-        return lastPage.currentPage + 1;
+        return lastPage.trips[lastPage.trips.length - 1].tripId;
       },
     }
   );

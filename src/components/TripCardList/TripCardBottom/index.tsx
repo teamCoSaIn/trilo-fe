@@ -44,9 +44,13 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   const { mutate: changeTripImgMutate, isLoading: isChangeTripImgLoading } =
     useChangeTripImg();
 
+  const convertDate = (date: string) => date.replace(/-/g, '.').substring(2);
+
   const tripPeriod = (
     <TripPeriod>
-      {trip.startDay ? `${trip.startDay} ~ ${trip.endDay}` : '여행 기간 미정'}
+      {trip.startDate
+        ? `${convertDate(trip.startDate)} ~ ${convertDate(trip.endDate)}`
+        : '여행 기간 미정'}
     </TripPeriod>
   );
 
@@ -99,7 +103,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
 
   const handleTripImgSaveBtnClick = () => {
     if (!imgData) return;
-    changeTripImgMutate(imgData);
+    changeTripImgMutate({ tripId: trip.tripId, formData: imgData });
   };
 
   const OptionContent = previewImg ? (

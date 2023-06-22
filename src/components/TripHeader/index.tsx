@@ -8,7 +8,7 @@ import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 import { TRIP_HEADER_Z_INDEX } from '@/constants/zIndex';
-import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
+import useGetTrip from '@/queryHooks/useGetTrip';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import SelectedDates from '@/states/calendar';
 import { transformDateToDotFormat } from '@/utils/calendar';
@@ -17,25 +17,19 @@ const TripHeader = () => {
   const { tripId } = useParams();
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
-  const { data: dailyPlanListData } = useGetDailyPlanList({
+  const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });
   const setSelectedDates = useSetRecoilState(SelectedDates);
 
-  const startDate =
-    dailyPlanListData &&
-    dailyPlanListData[0] &&
-    new Date(dailyPlanListData[0].date);
-  const endDate =
-    dailyPlanListData &&
-    dailyPlanListData[dailyPlanListData.length - 1] &&
-    new Date(dailyPlanListData[dailyPlanListData.length - 1].date);
+  const startDate = tripData && new Date(tripData.startDate);
+  const endDate = tripData && new Date(tripData.endDate);
 
   const disabled = !startDate || !endDate;
-  const transformedStartDate = disabled
-    ? ''
-    : transformDateToDotFormat(startDate);
-  const transformedEndDate = disabled ? '' : transformDateToDotFormat(endDate);
+  const transformedStartDate = startDate
+    ? transformDateToDotFormat(startDate)
+    : '';
+  const transformedEndDate = endDate ? transformDateToDotFormat(endDate) : '';
 
   useEffect(() => {
     if (startDate && endDate) {

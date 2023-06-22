@@ -1,45 +1,26 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import HTTP from '@/api';
-import { IUserProfile } from '@/api/userInfo';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
-import useQueries2 from '@/utils/useQueries2';
+import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 
 const TripsInfo = () => {
-  const [{ data: nickname }, { data: tripListPageData }] = useQueries2({
-    queries: [
-      {
-        queryKey: ['userProfile'],
-        queryFn: HTTP.getUserProfile,
-        staleTime: Infinity,
-        cacheTime: 1000 * 60 * 10,
-        suspense: true,
-        select: (data: IUserProfile) => data.nickname,
-      },
-      {
-        queryKey: ['tripListInfo'],
-        queryFn: () => HTTP.getTripList({ tripperId: 0, page: 0 }),
-        staleTime: 30 * 60 * 1000,
-        refetchOnWindowFocus: false,
-        suspense: true,
-      },
-    ],
+  // TODO: useProfile 에 전체 Trip 개수 포함해야함.
+  const { data: nicknameData } = useGetUserProfile({
+    selectKey: 'nickname',
   });
-
-  const numOfTrips = tripListPageData ? tripListPageData.totalCount : 0;
 
   return (
     <Flex column>
       <Flex>
         <Description color={color.blue3} fontSize={2.4}>
-          {nickname}님의 여행기록
+          {nicknameData as string}님의 여행기록
         </Description>
         <Spacing width={14} />
-        <Label>{numOfTrips}개</Label>
+        <Label>10개</Label>
       </Flex>
       <Spacing height={16} />
       <Description color="#979696" fontSize={1.4}>

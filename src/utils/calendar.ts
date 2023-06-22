@@ -42,3 +42,11 @@ export const transformDateToDotFormat = (date: Date) => {
     .slice(0, 3);
   return `${yearStr}.${monthStr.padStart(2, '0')}.${dateStr.padStart(2, '0')}`;
 };
+
+// 형식 변환 : Date 객체 -> yyyy-mm-dd
+export const transformDateToApiFormat = (date: Date) => {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(
+    2,
+    '0'
+  )}-${String(date.getDate()).padStart(2, '0')}`;
+};

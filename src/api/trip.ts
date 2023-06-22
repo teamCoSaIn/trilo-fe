@@ -3,39 +3,57 @@ import axios from '@/api/core';
 export type TTripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
 
 export interface ITrip {
+  tripperId: number;
   tripId: number;
   title: string;
   picUrl: string;
   status: TTripCardStatus;
-  startDay: string;
-  endDay: string;
+  startDate: string;
+  endDate: string;
 }
 
 export type TChangeTripTitleParams = Pick<ITrip, 'tripId' | 'title'>;
 
-export type TCreateTripTitleParams = ITrip['title'];
+export type TChangeTripPeriodParams = Pick<
+  ITrip,
+  'tripId' | 'startDate' | 'endDate'
+>;
 
-export type TDeleteTripTitleParams = ITrip['tripId'];
+export interface IChangeTripImageParams {
+  tripId: ITrip['tripId'];
+  formData: FormData;
+}
+
+type TCreateTripParams = ITrip['title'];
+
+type TDeleteTripParams = ITrip['tripId'];
+
+type TGetTripParams = ITrip['tripId'];
 
 interface IGetTripListParams {
-  tripperId: number;
-  size?: number;
-  page?: number;
-  sort?: string;
+  tripperId: ITrip['tripperId'];
+  tripId: ITrip['tripId'] | null;
+  size: number;
 }
 
 export interface IGetTripListResponse {
   trips: ITrip[];
-  totalCount: number;
-  totalPage: number;
-  currentPage: number;
-  isLast: boolean;
+  hasNext: boolean;
 }
+
+export const getTrip = async (tripId: TGetTripParams) => {
+  const res = await axios<ITrip>({
+    method: 'get',
+    url: `/trips/${tripId}`,
+    requireAuth: true,
+  });
+  return res.data;
+};
 
 export const getTripList = async (reqParams: IGetTripListParams) => {
   const res = await axios<IGetTripListResponse>({
     method: 'get',
-    url: `/tripcard-list`,
+    url: `/trips`,
     requireAuth: true,
     params: reqParams,
   });
@@ -47,37 +65,49 @@ export const changeTripTitle = async (
 ) => {
   const res = await axios({
     method: 'put',
-    url: `/tripcard-title`,
+    url: `/trips/${tripTitleData.tripId}/title`,
     data: tripTitleData,
     requireAuth: true,
   });
   return res.status;
 };
 
-export const changeTripImg = async (tripImgData: FormData) => {
+export const changeTripPeriod = async (
+  tripPeriodData: TChangeTripPeriodParams
+) => {
   const res = await axios({
     method: 'put',
-    url: `/tripcard-img`,
-    data: tripImgData,
+    url: `/trips/${tripPeriodData.tripId}/period`,
+    data: tripPeriodData,
     requireAuth: true,
   });
   return res.status;
 };
 
-export const createTrip = async (tripTitle: TCreateTripTitleParams) => {
+export const changeTripImg = async (tripImgData: IChangeTripImageParams) => {
   const res = await axios({
     method: 'post',
-    url: `/tripcard`,
+    url: `/trips/${tripImgData.tripId}/image/update`,
+    data: tripImgData.formData,
+    requireAuth: true,
+  });
+  return res.status;
+};
+
+export const createTrip = async (tripTitle: TCreateTripParams) => {
+  const res = await axios({
+    method: 'post',
+    url: `/trips`,
     data: { title: tripTitle },
     requireAuth: true,
   });
   return res.status;
 };
 
-export const deleteTrip = async (tripId: TDeleteTripTitleParams) => {
+export const deleteTrip = async (tripId: TDeleteTripParams) => {
   const res = await axios({
     method: 'delete',
-    url: `/tripcard/${tripId}`,
+    url: `/trips/${tripId}`,
     requireAuth: true,
   });
   return res.status;

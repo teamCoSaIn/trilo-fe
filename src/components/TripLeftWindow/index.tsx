@@ -8,18 +8,17 @@ import DateTab from '@/components/DateTab';
 import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
 import { TRIP_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
-import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
+import useGetTrip from '@/queryHooks/useGetTrip';
 
 const DATE = 'date';
 const PLACE = 'place';
 
 const TripLeftWindow = () => {
   const { tripId } = useParams();
-  const { data: dailyPlanListData } = useGetDailyPlanList({
+  const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });
-  const initFocusedTab =
-    dailyPlanListData && dailyPlanListData[0]?.date ? PLACE : DATE;
+  const initFocusedTab = tripData && tripData.startDate ? PLACE : DATE;
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);

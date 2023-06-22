@@ -15,8 +15,10 @@ import {
   changeScheduleDetails,
 } from '@/api/schedule';
 import {
+  getTrip,
   getTripList,
   changeTripTitle,
+  changeTripPeriod,
   changeTripImg,
   createTrip,
   deleteTrip,
@@ -33,8 +35,10 @@ const HTTP = {
   getUserProfile,
   changeNickname,
   getUserInfo,
+  getTrip,
   getTripList,
   changeTripTitle,
+  changeTripPeriod,
   changeTripImg,
   createTrip,
   deleteTrip,

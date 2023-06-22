@@ -1,11 +1,13 @@
 /* eslint-disable import/no-cycle */
 import axios from '@/api/core';
+import { ITrip } from '@/api/trip';
 
 export type TToken = string;
 
-interface IGetAccessTokenResponse {
+export interface IGetAccessTokenResponse {
   authType: string;
   accessToken: TToken;
+  tripperId: ITrip['tripperId'];
 }
 
 interface IGetLoginUriResponse {
@@ -20,6 +22,15 @@ interface IResignResponse {
   response?: boolean;
 }
 
+export interface IGetAccessTokenParams {
+  oauthServerName: string;
+  oauthData: {
+    code: string;
+    redirect_uri?: string;
+    state?: string;
+  };
+}
+
 // 백엔드 서버에 OAuth 로그인 url 요청
 export const getLoginUri = async (oauthServer: string) => {
   const res = await axios<IGetLoginUriResponse>({
@@ -31,14 +42,14 @@ export const getLoginUri = async (oauthServer: string) => {
 };
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
-export const getAccessToken = async (
-  oauthServerName: string,
-  oauthCode: string,
-  redirectUri: string
-) => {
+export const getAccessToken = async ({
+  oauthServerName,
+  oauthData,
+}: IGetAccessTokenParams) => {
   const res = await axios<IGetAccessTokenResponse>({
-    method: 'get',
-    url: `/auth/login/${oauthServerName}?code=${oauthCode}&redirect_uri=${redirectUri}`,
+    method: 'post',
+    url: `/auth/login/${oauthServerName}`,
+    data: oauthData,
     requireAuth: false,
   });
   return res.data;

@@ -19,8 +19,9 @@ import { ReactComponent as PositionIcon } from '@/assets/position.svg';
 import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
 import SelectedMarkerInfo from '@/components/Map/SelectedMarkerInfo';
+import { SIZE_OF_TEMP_PLAN_PAGE, TEMP_PLAN_COLOR } from '@/constants/tempPlan';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
-import useGetTempPlanList from '@/queryHooks/useGetTempPlanList';
+import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import {
   PlacesService,
   MapInstance,
@@ -75,9 +76,9 @@ const Map = () => {
     tripId: +(tripId as string),
   });
 
-  const { data: tempPlanData } = useGetTempPlanList({
-    tripId: +(tripId as string),
-  });
+  const { data: tempPlanPageData } = useGetTempPlanPageList(
+    +(tripId as string)
+  );
 
   const googleMapStyle = {
     width: '100%',
@@ -269,43 +270,51 @@ const Map = () => {
   }, [dailyPlanListData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const tempScheduleMarkers = useMemo(() => {
-    if (!tempPlanData) {
+    if (!tempPlanPageData) {
       return [];
     }
-    return tempPlanData.schedules.map((scheduleData, idx) => {
-      const svg =
-        selectedEditorScheduleId === scheduleData.scheduleId
-          ? createSelectedTriloMarkerSvg(idx + 1, tempPlanData.color)
-          : createTriloMarkerSvg(idx + 1, tempPlanData.color);
-      const triloMarkerDataUrl = convertToDataUrl(svg);
-      const animation =
-        selectedEditorScheduleId === scheduleData.scheduleId
-          ? google.maps.Animation.BOUNCE
-          : google.maps.Animation.DROP;
-      return (
-        <MarkerF
-          key={scheduleData.scheduleId}
-          position={{
-            lat: scheduleData.coordinate.latitude,
-            lng: scheduleData.coordinate.longitude,
-          }}
-          options={{
-            icon: {
-              url: triloMarkerDataUrl,
-            },
-          }}
-          onClick={handleClickTriloMarker(scheduleData.scheduleId)}
-          animation={animation}
-        >
-          {selectedMarkerScheduleId === scheduleData.scheduleId && (
-            <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
-              <SelectedMarkerInfo scheduleData={scheduleData} />
-            </InfoBoxF>
-          )}
-        </MarkerF>
-      );
+    return tempPlanPageData.pages.map((page, pageIdx) => {
+      return page.tempSchedules.map((scheduleData, idx) => {
+        const svg =
+          selectedEditorScheduleId === scheduleData.scheduleId
+            ? createSelectedTriloMarkerSvg(
+                pageIdx * SIZE_OF_TEMP_PLAN_PAGE + idx + 1,
+                TEMP_PLAN_COLOR
+              )
+            : createTriloMarkerSvg(
+                pageIdx * SIZE_OF_TEMP_PLAN_PAGE + idx + 1,
+                TEMP_PLAN_COLOR
+              );
+        const triloMarkerDataUrl = convertToDataUrl(svg);
+        const animation =
+          selectedEditorScheduleId === scheduleData.scheduleId
+            ? google.maps.Animation.BOUNCE
+            : google.maps.Animation.DROP;
+        return (
+          <MarkerF
+            key={scheduleData.scheduleId}
+            position={{
+              lat: scheduleData.coordinate.latitude,
+              lng: scheduleData.coordinate.longitude,
+            }}
+            options={{
+              icon: {
+                url: triloMarkerDataUrl,
+              },
+            }}
+            onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+            animation={animation}
+          >
+            {selectedMarkerScheduleId === scheduleData.scheduleId && (
+              <InfoBoxF options={SelectedMarkerInfoBoxOptions}>
+                <SelectedMarkerInfo scheduleData={scheduleData} />
+              </InfoBoxF>
+            )}
+          </MarkerF>
+        );
+      });
     });
-  }, [tempPlanData, selectedEditorScheduleId, selectedMarkerScheduleId]);
+  }, [tempPlanPageData, selectedEditorScheduleId, selectedMarkerScheduleId]);
 
   const schedulePolyLines = useMemo(() => {
     if (!dailyPlanListData) {

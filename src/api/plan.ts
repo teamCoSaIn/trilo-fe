@@ -17,6 +17,17 @@ export interface IDailyPlan {
   schedules: TScheduleSummary[];
 }
 
+export interface ITempPlan {
+  tempSchedules: TScheduleSummary[];
+  hasNext: boolean;
+}
+
+interface IGetTempPlanListParams {
+  tripId: ITrip['tripId'];
+  scheduleId: ISchedule['scheduleId'] | null;
+  size: number;
+}
+
 export type TTempPlanDayId = null;
 
 export type TScheduleSummary = Pick<
@@ -38,6 +49,27 @@ export const getTempPlanList = async (tripId: ITrip['tripId']) => {
     method: 'get',
     url: `/trips/${tripId}/temporary-storage`,
     requireAuth: true,
+  });
+  return res.data;
+};
+
+export const getTempPlanList1 = async ({
+  tripId,
+  scheduleId,
+  size,
+}: IGetTempPlanListParams) => {
+  const res = await axios<ITempPlan>({
+    method: 'get',
+    url: `/trips/${tripId}/temporary-storage1`,
+    requireAuth: true,
+    params: scheduleId
+      ? {
+          scheduleId,
+          size,
+        }
+      : {
+          size,
+        },
   });
   return res.data;
 };

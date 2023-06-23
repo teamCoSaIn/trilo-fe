@@ -13,7 +13,7 @@ export interface IDailyPlan {
   tripId: ITrip['tripId'];
   dayId: number;
   date: string;
-  color: IDailyPlanColor;
+  dayColor: IDailyPlanColor;
   schedules: TScheduleSummary[];
 }
 
@@ -30,6 +30,11 @@ interface IGetTempPlanListParams {
   tripId: ITrip['tripId'];
   scheduleId: ISchedule['scheduleId'] | null;
   size: number;
+}
+
+export interface IChangeDayColorParams {
+  dayId: IDailyPlan['dayId'];
+  colorName: TDailyPlanColorName;
 }
 
 export type TTempPlanDayId = null;
@@ -65,6 +70,19 @@ export const getTempPlanList = async ({
       : {
           size,
         },
+  });
+  return res.data;
+};
+
+export const changeDayColor = async ({
+  dayId,
+  colorName,
+}: IChangeDayColorParams) => {
+  const res = await axios<ITempPlan>({
+    method: 'put',
+    url: `/days/${dayId}/color`,
+    requireAuth: true,
+    data: { colorName },
   });
   return res.data;
 };

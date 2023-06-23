@@ -147,8 +147,8 @@ const tripDays: IDailyPlan[] = [
     dayId: 1,
     tripId: 1,
     date: '2023-02-15',
-    color: {
-      name: 'red',
+    dayColor: {
+      name: 'RED',
       code: '#FB6C6C',
     },
     schedules: [
@@ -178,8 +178,8 @@ const tripDays: IDailyPlan[] = [
     dayId: 2,
     tripId: 1,
     date: '2023-02-16',
-    color: {
-      name: 'blue',
+    dayColor: {
+      name: 'BLUE',
       code: '#4D77FF',
     },
     schedules: [
@@ -219,8 +219,8 @@ const tripDays: IDailyPlan[] = [
     dayId: 3,
     tripId: 1,
     date: '2023-02-17',
-    color: {
-      name: 'green',
+    dayColor: {
+      name: 'GREEN',
       code: '#43D65A',
     },
     schedules: [
@@ -468,8 +468,8 @@ const tripCardIds: { [index: string]: typeof tripDays } = {
       dayId: 3,
       tripId: 1,
       date: '2023-05-18',
-      color: {
-        name: 'red',
+      dayColor: {
+        name: 'RED',
         code: '#ccc',
       },
       schedules: [],
@@ -827,6 +827,14 @@ const getTrip = rest.get('/api/trips/:tripId', async (req, res, ctx) => {
   return res(ctx.json(response));
 });
 
+const changeDayColor = rest.put(
+  '/api/days/:dayId/color',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    return res(ctx.status(200));
+  }
+);
+
 const handlers = [
   getAccessToken,
   refreshAccessToken,
@@ -850,6 +858,7 @@ const handlers = [
   changeTripImg,
   changeTripPeriod,
   getTrip,
+  changeDayColor,
 ];
 
 export default handlers;

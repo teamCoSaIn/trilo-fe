@@ -713,8 +713,8 @@ const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
-const changeScheduleOrder = rest.patch(
-  '/api/schedules/:scheduleId',
+const changeScheduleOrder = rest.put(
+  '/api/schedules/:scheduleId/position',
   async (req, res, ctx) => {
     // do something
     // const { scheduleId } = req.params;

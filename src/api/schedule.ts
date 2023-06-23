@@ -76,8 +76,8 @@ export const changeScheduleOrder = async ({
   destinationScheduleIdx,
 }: IChangeScheduleOrderParams) => {
   const res = await axios<IChangeScheduleDetailsResponse>({
-    method: 'patch',
-    url: `/schedules/${scheduleId}`,
+    method: 'put',
+    url: `/schedules/${scheduleId}/position`,
     data: {
       targetDayId: destinationDailyPlanId,
       targetOrder: destinationScheduleIdx,

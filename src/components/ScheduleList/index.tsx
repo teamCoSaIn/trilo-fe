@@ -71,8 +71,7 @@ const ScheduleList = () => {
         dailyPlanId: dailyPlanData.dayId,
         name: `Day${idx + 1}`,
         date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-        // TODO: API 반영
-        color: dailyPlanData.color?.code || 'red',
+        colorName: dailyPlanData.dayColor.name,
       };
     });
     setDropdownMenu(newDropdownMenu);
@@ -82,6 +81,21 @@ const ScheduleList = () => {
     tripId: +(tripId as string),
     onSuccess: onSuccessCallback,
   });
+
+  useEffect(() => {
+    if (!dailyPlanListData || !isMounted) {
+      return;
+    }
+    const newDropdownMenu = dailyPlanListData.days.map((dailyPlanData, idx) => {
+      return {
+        dailyPlanId: dailyPlanData.dayId,
+        name: `Day${idx + 1}`,
+        date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
+        colorName: dailyPlanData.dayColor.name,
+      };
+    });
+    setDropdownMenu(newDropdownMenu);
+  }, [dailyPlanListData]);
 
   const {
     data: tempPlanPageData,
@@ -201,7 +215,7 @@ const ScheduleList = () => {
             <Flex alignCenter>
               <DailyPlanIndex>{dayString}</DailyPlanIndex>
               <DailyPlanDate>{dateString}</DailyPlanDate>
-              <DailyPlanColor dailyPlanColor={dailyPlan.color?.code || 'red'} />
+              <DailyPlanColor dailyPlanColor={dailyPlan.dayColor.code} />
             </Flex>
             <Spacing height={10} />
             <Droppable droppableId={String(dailyPlan.dayId)}>

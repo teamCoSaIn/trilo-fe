@@ -235,11 +235,8 @@ const Map = () => {
         const svg =
           selectedEditorScheduleId === scheduleData.scheduleId ||
           selectedMarkerScheduleId === scheduleData.scheduleId
-            ? createSelectedTriloMarkerSvg(
-                idx + 1,
-                dailyPlanData.color?.code || 'red'
-              )
-            : createTriloMarkerSvg(idx + 1, dailyPlanData.color?.code || 'red');
+            ? createSelectedTriloMarkerSvg(idx + 1, dailyPlanData.dayColor.code)
+            : createTriloMarkerSvg(idx + 1, dailyPlanData.dayColor.code);
         const triloMarkerDataUrl = convertToDataUrl(svg);
         const animation =
           selectedEditorScheduleId === scheduleData.scheduleId
@@ -341,7 +338,7 @@ const Map = () => {
             {
               icon: {
                 path: 'M 0,0 0,2 1,2 1,0 Z',
-                fillColor: dailyPlanData.color?.code || 'red',
+                fillColor: dailyPlanData.dayColor.code,
                 fillOpacity: 1,
                 scale: 2.8,
                 strokeWeight: 0,

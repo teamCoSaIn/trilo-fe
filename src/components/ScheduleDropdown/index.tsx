@@ -8,8 +8,12 @@ import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import { ReactComponent as WhiteCheckIcon } from '@/assets/whiteCheck.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
-import { DAILYPLAN_COLORS } from '@/constants/dailyPlanColor';
+import {
+  DAILYPLAN_COLORS,
+  TDailyPlanColorName,
+} from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
+import useChangeDayColor from '@/queryHooks/useChangeDayColor';
 import {
   DropdownMenuFamily,
   DropdownIndexFamily,
@@ -29,6 +33,8 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const resetSelectedEditorScheduleId = useResetRecoilState(
     SelectedEditorScheduleId
   );
+
+  const { mutate } = useChangeDayColor();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -72,14 +78,15 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const selectedMenu =
     dayDropdownIdx === -1 ? null : dayDropdownMenu[dayDropdownIdx];
 
-  const handleColorBtnClick = (selectedColor: string) => {
-    console.log(
-      'dayId',
-      selectedMenu?.dailyPlanId,
-      'color',
-      selectedColor,
-      '변경'
-    );
+  const handleColorBtnClick = (selectedColor: TDailyPlanColorName) => () => {
+    if (!selectedMenu) {
+      return;
+    }
+    mutate({
+      tripId: +tripId,
+      dayId: selectedMenu.dailyPlanId,
+      colorName: selectedColor,
+    });
   };
 
   const handleDropdownBoxClickAway = (event: Event | SyntheticEvent) => {
@@ -130,16 +137,22 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
         </DropdownPopper>
         <DropdownPopper isDropdownOpen={isColorDropdownOpen}>
           <ColorBox>
-            {Object.values(DAILYPLAN_COLORS).map(dayColor => (
-              <ColorMenu key={dayColor}>
-                <ColorBtn
-                  dayColor={dayColor}
-                  onClick={() => handleColorBtnClick(dayColor)}
-                >
-                  {dayColor === selectedMenu?.color && <WhiteCheckIcon />}
-                </ColorBtn>
-              </ColorMenu>
-            ))}
+            {Object.entries(DAILYPLAN_COLORS).map(
+              ([dayColorName, dayColorCode]) => (
+                <ColorMenu key={dayColorName}>
+                  <ColorBtn
+                    dayColor={dayColorCode}
+                    onClick={handleColorBtnClick(
+                      dayColorName as TDailyPlanColorName
+                    )}
+                  >
+                    {dayColorName === selectedMenu?.colorName && (
+                      <WhiteCheckIcon />
+                    )}
+                  </ColorBtn>
+                </ColorMenu>
+              )
+            )}
           </ColorBox>
         </DropdownPopper>
       </DropdownBox>

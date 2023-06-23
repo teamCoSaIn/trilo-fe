@@ -81,9 +81,12 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
       if (!file) {
         return;
       }
+      if (file.size > 2 * 1024 * 1024) {
+        alert('첨부 이미지는 2MB 이내로 등록 가능합니다.');
+        return;
+      }
       const formData = new FormData();
-      formData.append('tripId', String(trip.tripId));
-      formData.append('file', file);
+      formData.append('image', file);
       setImgData(formData);
 
       const reader = new FileReader();
@@ -131,7 +134,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
       </TripImgLabel>
       <TripImgInput
         type="file"
-        accept={'image/*'}
+        accept="image/jpeg, image/jpg, image/png, image/gif, image/webp"
         id={`tripThumbnail${trip.tripId}`}
         onChange={handleTripImgInputChange}
       />

@@ -22,8 +22,10 @@ const TripHeader = () => {
   });
   const setSelectedDates = useSetRecoilState(SelectedDates);
 
-  const startDate = tripData && new Date(tripData.startDate);
-  const endDate = tripData && new Date(tripData.endDate);
+  const startDate = tripData?.startDate
+    ? new Date(tripData.startDate)
+    : new Date();
+  const endDate = tripData?.endDate ? new Date(tripData.endDate) : new Date();
 
   const disabled = !startDate || !endDate;
   const transformedStartDate = startDate

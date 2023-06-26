@@ -18,7 +18,7 @@ const TripCardContent = ({ trip }: ITripCardContentProps) => {
   const [isHover, setIsHover] = useState(false);
   const previewImg = useRecoilValue(PreviewImgFamily(trip.tripId));
 
-  const tripContentPicUrl = previewImg || trip.picUrl || tripCardDefaultPic;
+  const tripContentImageURL = previewImg || trip.imageURL || tripCardDefaultPic;
 
   const handleTripCardMouseEnter = () => {
     setIsHover(true);
@@ -40,7 +40,7 @@ const TripCardContent = ({ trip }: ITripCardContentProps) => {
 
   return (
     <TripContent
-      picUrl={tripContentPicUrl}
+      imageUrl={tripContentImageURL}
       onMouseEnter={handleTripCardMouseEnter}
       onMouseLeave={handleTripCardMouseLeave}
     >
@@ -50,12 +50,12 @@ const TripCardContent = ({ trip }: ITripCardContentProps) => {
   );
 };
 
-const TripContent = styled.div<{ picUrl: string }>`
+const TripContent = styled.div<{ imageUrl: string }>`
   position: relative;
   width: 100%;
   height: 176px;
-  ${({ picUrl }) => css`
-    ${picUrl && { backgroundImage: `url(${picUrl})` }};
+  ${({ imageUrl }) => css`
+    ${imageUrl && { backgroundImage: `url(${imageUrl})` }};
   `}
   background-size: cover;
 `;

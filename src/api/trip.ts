@@ -3,13 +3,13 @@ import axios from '@/api/core';
 export type TTripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
 
 export interface ITrip {
-  tripperId: number;
   tripId: number;
+  tripperId: number;
   title: string;
-  picUrl: string;
   status: TTripCardStatus;
   startDate: string;
   endDate: string;
+  imageURL: string;
 }
 
 export type TChangeTripTitleParams = Pick<ITrip, 'tripId' | 'title'>;

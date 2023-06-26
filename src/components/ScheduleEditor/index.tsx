@@ -31,7 +31,7 @@ const ScheduleEditor = () => {
   const { mutate } = useChangeScheduleDetails();
 
   const [titleInputValue, setTitleInputValue] = useState(
-    scheduleDetails?.title
+    scheduleDetails?.title || '알 수 없는 장소'
   );
   const [contentInputValue, setContentInputValue] = useState(
     JSON.parse(scheduleDetails?.content || JSON.stringify(''))
@@ -124,7 +124,7 @@ const ScheduleEditor = () => {
       </Editor>
       <PlaceNameBox onClick={handlePlaceNameBtnClick}>
         <LocationIcon />
-        <PlaceName>{scheduleDetails?.placeName}</PlaceName>
+        <PlaceName>{scheduleDetails?.placeName || '알 수 없는 장소'}</PlaceName>
       </PlaceNameBox>
     </ScheduleEditorBox>
   );

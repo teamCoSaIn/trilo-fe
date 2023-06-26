@@ -281,7 +281,11 @@ const useChangeScheduleOrder = () => {
                   );
                   reorderedSchedule = original(extractedSchedule);
 
-                  const numOfPages = Math.ceil(tempPlanSchedules.length / size);
+                  const numOfPages = Math.ceil(
+                    tempPlanSchedules.length
+                      ? tempPlanSchedules.length
+                      : tempPlanSchedules.length + 1 / size
+                  );
 
                   for (let i = 0; i < numOfPages; i++) {
                     draftTempPlanList.pages[i] = {

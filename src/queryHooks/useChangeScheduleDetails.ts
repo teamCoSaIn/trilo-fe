@@ -27,8 +27,10 @@ const useChangeScheduleDetails = () => {
               const newData = produce(prevData, draftData => {
                 draftData.title = data.title;
                 draftData.content = data.content;
-                draftData.startTime = data.startTime;
-                draftData.endTime = data.endTime;
+                draftData.scheduleTime = {
+                  startTime: data.startTime,
+                  endTime: data.endTime,
+                };
               });
               return newData;
             }

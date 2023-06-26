@@ -11,8 +11,7 @@ interface ITimePickerProps {
 }
 
 const TimePicker = ({ time, setTime, clearTimer }: ITimePickerProps) => {
-  const [initHour, initMinute] = (time || '').split(':');
-
+  const [initHour, initMinute] = (time || '').split(':').slice(0, 2);
   const [hour, setHour] = useState(initHour);
   const [minute, setMinute] = useState(initMinute);
 

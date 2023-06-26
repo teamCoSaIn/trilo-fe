@@ -36,8 +36,10 @@ const ScheduleEditor = () => {
   const [contentInputValue, setContentInputValue] = useState(
     JSON.parse(scheduleDetails?.content || JSON.stringify(''))
   );
-  const [startTime, setStartTime] = useState(scheduleDetails?.startTime);
-  const [endTime, setEndTime] = useState(scheduleDetails?.endTime);
+  const [startTime, setStartTime] = useState(
+    scheduleDetails?.scheduleTime.startTime
+  );
+  const [endTime, setEndTime] = useState(scheduleDetails?.scheduleTime.endTime);
 
   const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
 
@@ -55,8 +57,8 @@ const ScheduleEditor = () => {
           scheduleId: scheduleDetails.scheduleId,
           title: titleInputValue,
           content: JSON.stringify(contentInputValue),
-          startTime: startTime || scheduleDetails.startTime,
-          endTime: endTime || scheduleDetails.endTime,
+          startTime: startTime || scheduleDetails.scheduleTime.startTime,
+          endTime: endTime || scheduleDetails.scheduleTime.endTime,
         });
       }
     }, SCHEDULE_DETAILS_DEBOUNCE_TIME);
@@ -103,13 +105,13 @@ const ScheduleEditor = () => {
         <ClockIcon />
         <TimeDescription>일정 시간</TimeDescription>
         <TimePicker
-          time={scheduleDetails?.startTime}
+          time={scheduleDetails?.scheduleTime.startTime}
           setTime={setStartTime}
           clearTimer={debouncingTimer.current}
         />
         <Line left={6} right={6} width={30} color="#D9D9D9" />
         <TimePicker
-          time={scheduleDetails?.endTime}
+          time={scheduleDetails?.scheduleTime.endTime}
           setTime={setEndTime}
           clearTimer={debouncingTimer.current}
         />

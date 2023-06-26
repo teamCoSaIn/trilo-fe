@@ -5,21 +5,25 @@ import { ITrip } from '@/api/trip';
 
 // 스케줄 생성할 때의 타입
 export interface ICreateScheduleParams
-  extends Omit<ISchedule, 'scheduleId' | 'content' | 'startTime' | 'endTime'> {
+  extends Omit<ISchedule, 'scheduleId' | 'content' | 'scheduleTime'> {
   tripId: ITrip['tripId'];
+}
+
+interface IScheduleTime {
+  startTime: string;
+  endTime: string;
 }
 
 // 진짜 스케줄: get으로 불러올 때의 타입
 export interface ISchedule {
-  dayId: IDailyPlan['dayId'] | TTempPlanDayId;
   scheduleId: number;
+  dayId: IDailyPlan['dayId'] | TTempPlanDayId;
   title: string;
+  placeName: string;
   content: string;
   placeId: string;
-  placeName: string;
   coordinate: ICoordinate;
-  startTime: string;
-  endTime: string;
+  scheduleTime: IScheduleTime;
 }
 
 export interface ICoordinate {

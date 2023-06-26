@@ -41,8 +41,8 @@ export interface IChangeScheduleDetailsParams {
   scheduleId: ISchedule['scheduleId'];
   title: ISchedule['title'];
   content: ISchedule['content'];
-  startTime: ISchedule['startTime'];
-  endTime: ISchedule['endTime'];
+  startTime: IScheduleTime['startTime'];
+  endTime: IScheduleTime['endTime'];
 }
 
 export interface IChangeScheduleDetailsResponse {
@@ -62,13 +62,22 @@ export const createSchedule = async (schedule: ICreateScheduleParams) => {
   return res.data;
 };
 
-export const changeScheduleDetails = async (
-  data: IChangeScheduleDetailsParams
-) => {
+export const changeScheduleDetails = async ({
+  scheduleId,
+  title,
+  content,
+  startTime,
+  endTime,
+}: IChangeScheduleDetailsParams) => {
   const res = await axios<ISchedule['scheduleId']>({
     method: 'put',
-    url: `/schedules/${data.scheduleId}`,
-    data,
+    url: `/schedules/${scheduleId}`,
+    data: {
+      title,
+      content,
+      startTime,
+      endTime,
+    },
     requireAuth: true,
   });
   return res.data;

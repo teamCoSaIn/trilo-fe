@@ -52,10 +52,10 @@ const ScheduleEditor = () => {
 
   useEffect(() => {
     debouncingTimer.current = setTimeout(() => {
-      if (scheduleDetails && titleInputValue) {
+      if (scheduleDetails) {
         mutate({
           scheduleId: scheduleDetails.scheduleId,
-          title: titleInputValue,
+          title: titleInputValue || '',
           content: JSON.stringify(contentInputValue),
           startTime: startTime || scheduleDetails.scheduleTime.startTime,
           endTime: endTime || scheduleDetails.scheduleTime.endTime,

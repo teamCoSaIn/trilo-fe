@@ -15,6 +15,7 @@ import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
 import useChangeTripPeriod from '@/queryHooks/useChangeTripPeriod';
+import useGetTrip from '@/queryHooks/useGetTrip';
 import SelectedDates, { IsPeriodOver10Days } from '@/states/calendar';
 import {
   transformDateToApiFormat,
@@ -34,6 +35,9 @@ const DateTab = () => {
 
   const { mutate, isLoading: isChangeTripPeriodLoading } =
     useChangeTripPeriod();
+  const { data: tripData } = useGetTrip({
+    tripId: +(tripId as string),
+  });
 
   const [selectedStartDate, selectedEndDate] = useRecoilValue(SelectedDates);
   const resetSelectedDates = useResetRecoilState(SelectedDates);
@@ -83,6 +87,10 @@ const DateTab = () => {
       endDate: transformDateToApiFormat(selectedEndDate),
     });
   };
+
+  const isPeriodSame =
+    tripData?.startDate.replace(/-/g, '.') === startDateString &&
+    tripData?.endDate.replace(/-/g, '.') === endDateString;
 
   return (
     <Flex column alignCenter justifyCenter>
@@ -150,7 +158,12 @@ const DateTab = () => {
       <Button
         type="button"
         btnSize="medium"
-        disabled={!selectedStartDate || !selectedEndDate || isPeriodOver10Days}
+        disabled={
+          !selectedStartDate ||
+          !selectedEndDate ||
+          isPeriodOver10Days ||
+          isPeriodSame
+        }
         onClick={handleChangePeriodBtnClick}
       >
         확인

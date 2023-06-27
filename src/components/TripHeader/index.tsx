@@ -11,33 +11,31 @@ import { TRIP_HEADER_Z_INDEX } from '@/constants/zIndex';
 import useGetTrip from '@/queryHooks/useGetTrip';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import SelectedDates from '@/states/calendar';
-import { transformDateToDotFormat } from '@/utils/calendar';
 
 const TripHeader = () => {
   const { tripId } = useParams();
+
+  const setSelectedDates = useSetRecoilState(SelectedDates);
+
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
   const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });
-  const setSelectedDates = useSetRecoilState(SelectedDates);
 
-  const startDate = tripData?.startDate
-    ? new Date(tripData.startDate)
-    : new Date();
-  const endDate = tripData?.endDate ? new Date(tripData.endDate) : new Date();
-
-  const disabled = !startDate || !endDate;
-  const transformedStartDate = startDate
-    ? transformDateToDotFormat(startDate)
-    : '';
-  const transformedEndDate = endDate ? transformDateToDotFormat(endDate) : '';
+  const disabled = !tripData?.startDate;
+  const transformedStartDate = disabled
+    ? ''
+    : tripData.startDate.replace(/-/g, '.');
+  const transformedEndDate = disabled
+    ? ''
+    : tripData.endDate.replace(/-/g, '.');
 
   useEffect(() => {
-    if (startDate && endDate) {
-      setSelectedDates([startDate, endDate]);
-    }
-  }, [startDate, endDate]);
+    const startDate = tripData?.startDate ? new Date(tripData.startDate) : null;
+    const endDate = tripData?.endDate ? new Date(tripData.endDate) : null;
+    setSelectedDates([startDate, endDate]);
+  }, [tripData]);
 
   return (
     <Box>

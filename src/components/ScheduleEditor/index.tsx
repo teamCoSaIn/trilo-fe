@@ -2,6 +2,7 @@ import { BlockNoteEditor } from '@blocknote/core';
 import { BlockNoteView, useBlockNote } from '@blocknote/react';
 import '@blocknote/core/style.css';
 import { useEffect, useRef, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -19,6 +20,8 @@ import { MapInstance } from '@/states/googleMaps';
 import { SelectedEditorScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
+  const { tripId } = useParams();
+
   const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
   const resetSelectedEditorScheduleId = useResetRecoilState(
     SelectedEditorScheduleId
@@ -31,7 +34,7 @@ const ScheduleEditor = () => {
   const { mutate } = useChangeScheduleDetails();
 
   const [titleInputValue, setTitleInputValue] = useState(
-    scheduleDetails?.title || '알 수 없는 장소'
+    scheduleDetails?.title
   );
   const [contentInputValue, setContentInputValue] = useState(
     JSON.parse(scheduleDetails?.content || JSON.stringify(''))
@@ -54,6 +57,8 @@ const ScheduleEditor = () => {
     debouncingTimer.current = setTimeout(() => {
       if (scheduleDetails) {
         mutate({
+          tripId: +(tripId as string),
+          dayId: scheduleDetails.dayId,
           scheduleId: scheduleDetails.scheduleId,
           title: titleInputValue || '',
           content: JSON.stringify(contentInputValue),
@@ -95,6 +100,7 @@ const ScheduleEditor = () => {
         <ScheduleTitle
           value={titleInputValue}
           onChange={handleTitleInputChange}
+          placeholder="Untitled..."
         />
         <CancelBtn onClick={handleCancelBtnClick}>
           <CancelIcon width={13} height={13} fill="#4F4F4F" />
@@ -149,6 +155,11 @@ const ScheduleTitle = styled.input`
   width: 100%;
   font-size: 16px;
   font-weight: 700;
+  ::placeholder {
+    color: #bbb;
+    font-weight: 500;
+    font-style: italic;
+  }
 `;
 
 const CancelBtn = styled.button``;

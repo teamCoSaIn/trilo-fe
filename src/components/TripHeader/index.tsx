@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Description from '@/components/common/Description';
@@ -16,6 +16,7 @@ const TripHeader = () => {
   const { tripId } = useParams();
 
   const setSelectedDates = useSetRecoilState(SelectedDates);
+  const resetSelectedDates = useResetRecoilState(SelectedDates);
 
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
@@ -32,9 +33,24 @@ const TripHeader = () => {
     : tripData.endDate.replace(/-/g, '.');
 
   useEffect(() => {
-    const startDate = tripData?.startDate ? new Date(tripData.startDate) : null;
-    const endDate = tripData?.endDate ? new Date(tripData.endDate) : null;
-    setSelectedDates([startDate, endDate]);
+    if (tripData?.startDate) {
+      const [startYear, startMonth, startDay] = tripData.startDate
+        .split('-')
+        .map(Number);
+      const [endYear, endMonth, endDay] = tripData.endDate
+        .split('-')
+        .map(Number);
+
+      const startDate = tripData?.startDate
+        ? new Date(startYear, startMonth - 1, startDay)
+        : null;
+      const endDate = tripData?.endDate
+        ? new Date(endYear, endMonth - 1, endDay)
+        : null;
+      setSelectedDates([startDate, endDate]);
+    } else {
+      resetSelectedDates();
+    }
   }, [tripData]);
 
   return (

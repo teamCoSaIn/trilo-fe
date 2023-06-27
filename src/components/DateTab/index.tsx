@@ -89,8 +89,8 @@ const DateTab = () => {
   };
 
   const isPeriodSame =
-    tripData?.startDate.replace(/-/g, '.') === startDateString &&
-    tripData?.endDate.replace(/-/g, '.') === endDateString;
+    tripData?.startDate?.replace(/-/g, '.') === startDateString &&
+    tripData?.endDate?.replace(/-/g, '.') === endDateString;
 
   return (
     <Flex column alignCenter justifyCenter>

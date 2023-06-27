@@ -11,7 +11,7 @@ import { useParams } from 'react-router-dom';
 import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { IGetDailyPlanResponse, ITempPlan, TScheduleSummary } from '@/api/plan';
+import { ITempPlan, TScheduleSummary } from '@/api/plan';
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
 import { ReactComponent as DeleteIcon } from '@/assets/multiply.svg';
 import { ReactComponent as PlaceIcon } from '@/assets/place.svg';
@@ -65,36 +65,24 @@ const ScheduleList = () => {
   );
   const [onDragging, setOnDragging] = useState<boolean>(false);
 
-  const onSuccessCallback = (dailyPlanListData: IGetDailyPlanResponse) => {
-    const newDropdownMenu = dailyPlanListData.days.map((dailyPlanData, idx) => {
-      return {
-        dailyPlanId: dailyPlanData.dayId,
-        name: `Day${idx + 1}`,
-        date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-        colorName: dailyPlanData.dayColor.name,
-      };
-    });
-    setDropdownMenu(newDropdownMenu);
-  };
-
   const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
     tripId: +(tripId as string),
-    onSuccess: onSuccessCallback,
   });
 
   useEffect(() => {
-    if (!dailyPlanListData || !isMounted) {
-      return;
+    if (dailyPlanListData && isMounted) {
+      const newDropdownMenu = dailyPlanListData.days.map(
+        (dailyPlanData, idx) => {
+          return {
+            dailyPlanId: dailyPlanData.dayId,
+            name: `Day${idx + 1}`,
+            date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
+            colorName: dailyPlanData.dayColor.name,
+          };
+        }
+      );
+      setDropdownMenu(newDropdownMenu);
     }
-    const newDropdownMenu = dailyPlanListData.days.map((dailyPlanData, idx) => {
-      return {
-        dailyPlanId: dailyPlanData.dayId,
-        name: `Day${idx + 1}`,
-        date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-        colorName: dailyPlanData.dayColor.name,
-      };
-    });
-    setDropdownMenu(newDropdownMenu);
   }, [dailyPlanListData]);
 
   const {
@@ -205,11 +193,12 @@ const ScheduleList = () => {
       {selectedDailyPlanList?.map((dailyPlan, dailyPlanIdx) => {
         const [dayString, dateString] =
           dropdownMenuIdx === -1
-            ? [dropdownMenu[dailyPlanIdx].name, dropdownMenu[dailyPlanIdx].date]
+            ? [`Day${dailyPlanIdx + 1}`, dailyPlan.date.replace(/-/g, '.')]
             : [
                 dropdownMenu[dropdownMenuIdx].name,
                 dropdownMenu[dropdownMenuIdx].date,
               ];
+
         return (
           <DailyPlan key={dailyPlan.dayId}>
             <Flex alignCenter>

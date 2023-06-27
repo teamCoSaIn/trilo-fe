@@ -14,7 +14,6 @@ import {
 } from '@/api/plan';
 import { ISchedule, IChangeScheduleDetailsParams } from '@/api/schedule';
 import { ITrip } from '@/api/trip';
-import { TEMP_PLAN_ID } from '@/constants/tempPlan';
 
 interface IMutateParams extends IChangeScheduleDetailsParams {
   tripId: ITrip['tripId'];

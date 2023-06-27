@@ -58,12 +58,15 @@ const useChangeScheduleOrder = () => {
     {
       onMutate: async ({
         tripId,
+        scheduleId,
         sourceDailyPlanId,
         sourceScheduleIdx,
         destinationDailyPlanId,
         destinationScheduleIdx,
         size,
       }: IMutateParams) => {
+        queryClient.invalidateQueries([`scheduleDetail${scheduleId}`]);
+
         await queryClient.cancelQueries([`dailyPlanList${tripId}`]);
         await queryClient.cancelQueries([`tempPlanList${tripId}`]);
 

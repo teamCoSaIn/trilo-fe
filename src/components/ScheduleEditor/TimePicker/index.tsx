@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import styled from 'styled-components';
 
 import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
@@ -16,6 +16,8 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
   const [initHour, initMinute] = (time || '').split(':').slice(0, 2);
   const [hour, setHour] = useState(initHour);
   const [minute, setMinute] = useState(initMinute);
+  const [hourScrollIndex, setHourScrollIndex] = useState(0);
+  const [minuteScrollIndex, setMinuteScrollIndex] = useState(0);
 
   const [isRefreshIconVisible, setIsRefreshIconVisible] = useState(false);
   const [isTimeOptionsVisible, setIsTimeOptionsVisible] = useState(false);
@@ -25,6 +27,8 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
     useState(false);
 
   const timeOptionsRef = useRef<HTMLDivElement>(null);
+  const hourOptionsRef = useRef<HTMLUListElement>(null);
+  const minuteOptionsRef = useRef<HTMLUListElement>(null);
 
   const hourDataList = Array.from({ length: 24 }, (_, i) => i);
   const minuteDataList = Array.from({ length: 12 }, (_, i) => i * 5);
@@ -71,6 +75,20 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
 
   const handleTimePickerClick = () => {
     setIsTimeOptionsVisible(prev => !prev);
+
+    if (hourOptionsRef.current && hourScrollIndex) {
+      const itemElement = hourOptionsRef.current.children[hourScrollIndex];
+      if (itemElement) {
+        itemElement.scrollIntoView();
+      }
+    }
+
+    if (minuteOptionsRef.current && minuteScrollIndex) {
+      const itemElement = minuteOptionsRef.current.children[minuteScrollIndex];
+      if (itemElement) {
+        itemElement.scrollIntoView();
+      }
+    }
   };
 
   const handleRefreshBtnClick = (event: React.MouseEvent) => {
@@ -91,30 +109,40 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
     setTime(`${hour}:${paddedMinute}`);
   };
 
-  const hourOptions = hourDataList.map((hourData, idx) => {
-    const paddedHour = `${hourData}`.padStart(2, '0');
-    return (
-      <TimeOptionsItem
-        key={idx}
-        onClick={handleHourOptionsClick(paddedHour)}
-        isSelected={paddedHour === hour}
-      >
-        {paddedHour}
-      </TimeOptionsItem>
-    );
-  });
-  const minuteOptions = minuteDataList.map((minuteData, idx) => {
-    const paddedMinute = `${minuteData}`.padStart(2, '0');
-    return (
-      <TimeOptionsItem
-        key={idx}
-        onClick={handleMinuteOptionsClick(paddedMinute)}
-        isSelected={paddedMinute === minute}
-      >
-        {paddedMinute}
-      </TimeOptionsItem>
-    );
-  });
+  const hourOptions = useMemo(() => {
+    return hourDataList.map((hourData, idx) => {
+      const paddedHour = `${hourData}`.padStart(2, '0');
+      if (paddedHour === hour) {
+        setHourScrollIndex(idx);
+      }
+      return (
+        <TimeOptionsItem
+          key={idx}
+          onClick={handleHourOptionsClick(paddedHour)}
+          isSelected={paddedHour === hour}
+        >
+          {paddedHour}
+        </TimeOptionsItem>
+      );
+    });
+  }, [hour]);
+  const minuteOptions = useMemo(() => {
+    return minuteDataList.map((minuteData, idx) => {
+      const paddedMinute = `${minuteData}`.padStart(2, '0');
+      if (paddedMinute === minute) {
+        setMinuteScrollIndex(idx);
+      }
+      return (
+        <TimeOptionsItem
+          key={idx}
+          onClick={handleMinuteOptionsClick(paddedMinute)}
+          isSelected={paddedMinute === minute}
+        >
+          {paddedMinute}
+        </TimeOptionsItem>
+      );
+    });
+  }, [minute]);
 
   return (
     <TimePickerBox>
@@ -139,6 +167,7 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
             onMouseEnter={handleHourOptionsMouseEnter}
             onMouseLeave={handleHourOptionsMouseLeave}
             isVisible={isHourOptionsScrollVisible}
+            ref={hourOptionsRef}
           >
             {hourOptions}
           </TimeOptionsList>
@@ -146,6 +175,7 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
             onMouseEnter={handleMinuteOptionsMouseEnter}
             onMouseLeave={handleMinuteOptionsMouseLeave}
             isVisible={isMinuteOptionsScrollVisible}
+            ref={minuteOptionsRef}
           >
             {minuteOptions}
           </TimeOptionsList>

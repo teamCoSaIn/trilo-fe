@@ -64,7 +64,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   };
 
   const handleTripDeleteBtnClick = () => {
-    if (window.confirm('찐으로 삭제하시렵니까?')) {
+    if (window.confirm('해당 여행을 삭제하시겠습니까?')) {
       deleteTripMutate(trip.tripId);
     }
   };

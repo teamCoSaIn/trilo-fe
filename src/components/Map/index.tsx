@@ -4,6 +4,7 @@ import {
   PolylineF,
   InfoBoxF,
 } from '@react-google-maps/api';
+import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import {
@@ -15,6 +16,7 @@ import {
 import styled from 'styled-components';
 import { LatLng } from 'use-places-autocomplete';
 
+import HTTP from '@/api';
 import { ReactComponent as PositionIcon } from '@/assets/position.svg';
 import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
@@ -50,6 +52,7 @@ const Map = () => {
   const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
     MapInstance
   );
+  const resetMapInstance = useResetRecoilState(MapInstance);
   const setPlacesService =
     useSetRecoilState<google.maps.places.PlacesService | null>(PlacesService);
   const setAutocompleteService =
@@ -80,6 +83,15 @@ const Map = () => {
     +(tripId as string)
   );
 
+  const { data: initLocationData } = useQuery(
+    ['initLocation'],
+    () => HTTP.getLocation(),
+    {
+      suspense: true,
+      staleTime: Infinity,
+    }
+  );
+
   const googleMapStyle = {
     width: '100%',
     height: '100%',
@@ -93,9 +105,8 @@ const Map = () => {
 
   const googleMapCenter = useMemo(() => {
     return {
-      // 광화문
-      lat: 37.576026,
-      lng: 126.9768428,
+      lat: initLocationData.latitude,
+      lng: initLocationData.longitude,
     };
   }, []);
 
@@ -155,7 +166,7 @@ const Map = () => {
   };
 
   const onGetCurPosFail = () => {
-    alert(`Current browser doesn't support geolocation.`);
+    alert(`현재 배포 버전(http)에서는 현재 위치 탐색이 불가능합니다.`);
     setIsGetCurrPosLoading(false);
   };
 
@@ -173,15 +184,10 @@ const Map = () => {
   }, [dropdownMenuIdx, mapInstance]);
 
   useEffect(() => {
-    if (boundsArray[0].isEmpty()) {
-      if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-          onGetCurPosSuccess,
-          onGetCurPosFail
-        );
-      }
-    }
-  }, [mapInstance]);
+    return () => {
+      resetMapInstance();
+    };
+  }, []);
 
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);

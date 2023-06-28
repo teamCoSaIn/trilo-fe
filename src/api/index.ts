@@ -1,3 +1,4 @@
+import { getLocation } from '@/api/location';
 import {
   getLoginUri,
   getAccessToken,
@@ -50,6 +51,7 @@ const HTTP = {
   deleteSchedule,
   getScheduleDetails,
   changeScheduleDetails,
+  getLocation,
 };
 
 export default HTTP;

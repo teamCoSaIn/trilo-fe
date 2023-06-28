@@ -559,15 +559,21 @@ const logout = rest.post('/api/auth/logout', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
-const getUserProfile = rest.get('/api/user-profile', async (req, res, ctx) => {
-  // 쿠키에서 RT 확인 -> 유저 판별 -> 응답 전송
-  return res(
-    ctx.json({
-      nickname,
-      imgUrl: 'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
-    })
-  );
-});
+const getUserProfile = rest.get(
+  'api/users/:userId/profile',
+  async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        id: 1,
+        name: nickname,
+        profileImageURL:
+          'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
+        authProvider: 'GOOGLE',
+        role: 'MEMBER',
+      })
+    );
+  }
+);
 
 const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
   const { nickname: newNickname } = await req.json();

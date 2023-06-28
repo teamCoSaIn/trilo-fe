@@ -1,17 +1,12 @@
 /* eslint-disable import/no-cycle */
 import axios from '@/api/core';
-import { ITrip } from '@/api/trip';
 
 export type TToken = string;
 
 export interface IGetAccessTokenResponse {
   authType: string;
   accessToken: TToken;
-  userId: ITrip['tripperId'];
-}
-
-interface IGetLoginUriResponse {
-  uri: string;
+  userId: number;
 }
 
 interface ICheckRefreshTokenResponse {
@@ -30,16 +25,6 @@ export interface IGetAccessTokenParams {
     state?: string;
   };
 }
-
-// 백엔드 서버에 OAuth 로그인 url 요청
-export const getLoginUri = async (oauthServer: string) => {
-  const res = await axios<IGetLoginUriResponse>({
-    method: 'get',
-    url: `/auth/login/${oauthServer}`,
-    requireAuth: false,
-  });
-  return res.data;
-};
 
 // oauth code를 백엔드에 전송해서 access token(& refresh token)을 요청
 export const getAccessToken = async ({

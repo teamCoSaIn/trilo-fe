@@ -1,6 +1,5 @@
 import { getLocation } from '@/api/location';
 import {
-  getLoginUri,
   getAccessToken,
   logout,
   refreshAccessToken,
@@ -27,7 +26,6 @@ import {
 import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
 
 const HTTP = {
-  getLoginUri,
   getAccessToken,
   logout,
   refreshAccessToken,

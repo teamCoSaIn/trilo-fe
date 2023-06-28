@@ -1,8 +1,12 @@
 import axios from '@/api/core';
 
 export interface IUserProfile {
-  nickname: string;
-  imgUrl: string;
+  id: number;
+  name: string;
+  email: string;
+  profileImageURL: string;
+  authProvider: string;
+  role: string;
 }
 
 interface IUserInfo {
@@ -11,16 +15,16 @@ interface IUserInfo {
   badgeImgUrl: string;
 }
 
-export const getUserProfile = async () => {
+export const getUserProfile = async (userId: IUserProfile['id']) => {
   const res = await axios<IUserProfile>({
     method: 'get',
-    url: `/user-profile`,
+    url: `/users/${userId}/profile`,
     requireAuth: true,
   });
   return res.data;
 };
 
-export const changeNickname = async (nickname: IUserProfile['nickname']) => {
+export const changeNickname = async (nickname: IUserProfile['name']) => {
   const res = await axios({
     method: 'put',
     url: `/user-nickname`,

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 
 import Description from '@/components/common/Description';
@@ -6,11 +7,14 @@ import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
+import { UserId } from '@/states/userStatus';
 
 const TripsInfo = () => {
+  const userId = useRecoilValue(UserId);
   // TODO: useProfile 에 전체 Trip 개수 포함해야함.
   const { data: nicknameData } = useGetUserProfile({
-    selectKey: 'nickname',
+    userId,
+    selectKey: 'name',
   });
 
   return (

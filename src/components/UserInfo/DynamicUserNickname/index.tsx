@@ -1,6 +1,7 @@
 import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useRef, useState } from 'react';
+import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
@@ -10,18 +11,22 @@ import CircularLoader from '@/components/common/CircularLoader/index';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
+import { UserId } from '@/states/userStatus';
 import { nicknameRegExp } from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
-  // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
-  const { data: nicknameData, isFetching } = useGetUserProfile({
-    selectKey: 'nickname',
-  });
+  const userId = useRecoilValue(UserId);
+
   const [nicknameInputValue, setNicknameInputValue] = useState('');
   const [isEdit, setIsEdit] = useState(false);
-  const queryClient = useQueryClient();
   const nicknameOnEditRef = useRef<HTMLDivElement>(null);
 
+  // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
+  const queryClient = useQueryClient();
+  const { data: nicknameData, isFetching } = useGetUserProfile({
+    userId,
+    selectKey: 'name',
+  });
   const { mutate, isLoading } = useMutation(
     (newNickname: string) => HTTP.changeNickname(newNickname),
     {

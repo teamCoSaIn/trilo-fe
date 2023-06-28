@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useResetRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Description from '@/components/common/Description';
@@ -11,15 +11,20 @@ import { TRIP_HEADER_Z_INDEX } from '@/constants/zIndex';
 import useGetTrip from '@/queryHooks/useGetTrip';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import SelectedDates from '@/states/calendar';
+import { UserId } from '@/states/userStatus';
 
 const TripHeader = () => {
   const { tripId } = useParams();
 
+  const userId = useRecoilValue(UserId);
   const setSelectedDates = useSetRecoilState(SelectedDates);
   const resetSelectedDates = useResetRecoilState(SelectedDates);
 
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
-  const { data: nicknameData } = useGetUserProfile({ selectKey: 'nickname' });
+  const { data: nicknameData } = useGetUserProfile({
+    userId,
+    selectKey: 'name',
+  });
   const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });

@@ -19,29 +19,46 @@ const DateContainer = ({
   const [[selectedStartDate, selectedEndDate], setSelectedDates] =
     useRecoilState(SelectedDates);
 
+  const startYear = selectedStartDate ? selectedStartDate.getFullYear() : 0;
   const startMonth = selectedStartDate ? selectedStartDate.getMonth() + 1 : 0;
   const startDate = selectedStartDate ? selectedStartDate.getDate() : 0;
+  const endYear = selectedEndDate ? selectedEndDate.getFullYear() : 0;
   const endMonth = selectedEndDate ? selectedEndDate.getMonth() + 1 : 0;
   const endDate = selectedEndDate ? selectedEndDate.getDate() : 0;
 
   const isStartSameEnd =
     !!selectedStartDate &&
     !!selectedEndDate &&
+    startYear === endYear &&
     startMonth === endMonth &&
     startDate === endDate;
-  const isStart = startMonth === dateInfo.month && startDate === dateInfo.date;
+  const isStart =
+    startYear === dateInfo.year &&
+    startMonth === dateInfo.month &&
+    startDate === dateInfo.date;
   const isStartOnRange = isStart && !!endDate && !isStartSameEnd;
   const isEnd =
-    endMonth === dateInfo.month && endDate === dateInfo.date && !isStartSameEnd;
+    endYear === dateInfo.year &&
+    endMonth === dateInfo.month &&
+    endDate === dateInfo.date &&
+    !isStartSameEnd;
   const isBetween =
-    (startMonth < dateInfo.month ||
-      (startMonth === dateInfo.month && startDate < dateInfo.date)) &&
-    (endMonth > dateInfo.month ||
-      (endMonth === dateInfo.month && endDate > dateInfo.date));
-
+    (startYear < dateInfo.year ||
+      (startYear === dateInfo.year && startMonth < dateInfo.month) ||
+      (startYear === dateInfo.year &&
+        startMonth === dateInfo.month &&
+        startDate < dateInfo.date)) &&
+    (endYear > dateInfo.year ||
+      (endYear === dateInfo.year && endMonth > dateInfo.month) ||
+      (endYear === dateInfo.year &&
+        endMonth === dateInfo.month &&
+        endDate > dateInfo.date));
   const isBeforeStart =
-    startMonth > dateInfo.month ||
-    (startMonth === dateInfo.month && startDate > dateInfo.date);
+    startYear > dateInfo.year ||
+    (startYear === dateInfo.year && startMonth > dateInfo.month) ||
+    (startYear === dateInfo.year &&
+      startMonth === dateInfo.month &&
+      startDate > dateInfo.date);
 
   const handleClickDateBox = () => {
     if (disabled) return;

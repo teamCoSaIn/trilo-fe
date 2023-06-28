@@ -88,8 +88,8 @@ const DateSelector = () => {
     }
   };
 
-  const dateSelectorDateList = dailyPlanListData?.days.map(
-    (dailyPlanData, idx) => {
+  const dateSelectorDateList = dailyPlanListData?.days.length ? (
+    dailyPlanListData.days.map((dailyPlanData, idx) => {
       const date = dailyPlanData.date?.split('-').join('.').substring(2);
       return (
         <DateSelectorDateItem key={dailyPlanData.dayId}>
@@ -98,7 +98,9 @@ const DateSelector = () => {
           >{`Day ${idx + 1} - ${date}`}</DateSelectorDateBtn>
         </DateSelectorDateItem>
       );
-    }
+    })
+  ) : (
+    <EmptyBox>여행 기간을 정해주세요.</EmptyBox>
   );
 
   return (
@@ -185,6 +187,14 @@ const DateSelectorTempStorageBox = styled.div`
   color: #4d77ff;
   background-color: #ecf0ff;
   border-radius: 0 0 5px 5px;
+`;
+
+const EmptyBox = styled.div`
+  color: #b6b6b6;
+  height: 35px;
+  line-height: 35px;
+  text-align: center;
+  padding-right: 6px;
 `;
 
 export default DateSelector;

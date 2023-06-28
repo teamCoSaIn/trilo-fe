@@ -10,6 +10,7 @@ const useChangeTripPeriod = () => {
     (periodData: TChangeTripPeriodParams) => HTTP.changeTripPeriod(periodData),
     {
       onSuccess: (_, variables) => {
+        queryClient.invalidateQueries([`tripList`]);
         queryClient.invalidateQueries([`trip${variables.tripId}`]);
         queryClient.invalidateQueries([`dailyPlanList${variables.tripId}`]);
         queryClient.invalidateQueries([`tempPlanList${variables.tripId}`]);

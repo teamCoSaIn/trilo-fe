@@ -7,10 +7,12 @@ import { TIMEPICKER_Z_INDEX } from '@/constants/zIndex';
 interface ITimePickerProps {
   time: string | undefined;
   setTime: React.Dispatch<React.SetStateAction<string | undefined>>;
-  clearTimer: NodeJS.Timeout | null;
 }
 
-const TimePicker = ({ time, setTime, clearTimer }: ITimePickerProps) => {
+const DEFAULT_HOUR = '00';
+const DEFAULT_MINUTE = '00';
+
+const TimePicker = ({ time, setTime }: ITimePickerProps) => {
   const [initHour, initMinute] = (time || '').split(':').slice(0, 2);
   const [hour, setHour] = useState(initHour);
   const [minute, setMinute] = useState(initMinute);
@@ -72,11 +74,9 @@ const TimePicker = ({ time, setTime, clearTimer }: ITimePickerProps) => {
   };
 
   const handleRefreshBtnClick = (event: React.MouseEvent) => {
-    setHour(initHour);
-    setMinute(initMinute);
-    if (clearTimer) {
-      clearTimeout(clearTimer);
-    }
+    setHour(DEFAULT_HOUR);
+    setMinute(DEFAULT_MINUTE);
+    setTime(`${DEFAULT_HOUR}:${DEFAULT_MINUTE}`);
     event.stopPropagation();
   };
 

@@ -35,7 +35,6 @@ import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import {
   DropdownIndexFamily,
-  DropdownMenuFamily,
   IsTempBoxOpen,
   SelectedEditorScheduleId,
   SelectedMarkerScheduleId,
@@ -50,9 +49,6 @@ const ScheduleList = () => {
 
   const { tripId } = useParams();
 
-  const [dropdownMenu, setDropdownMenu] = useRecoilState(
-    DropdownMenuFamily(tripId as string)
-  );
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
   const setSelectedEditorScheduleId = useSetRecoilState(
     SelectedEditorScheduleId
@@ -68,22 +64,6 @@ const ScheduleList = () => {
   const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
-
-  useEffect(() => {
-    if (dailyPlanListData && isMounted) {
-      const newDropdownMenu = dailyPlanListData.days.map(
-        (dailyPlanData, idx) => {
-          return {
-            dailyPlanId: dailyPlanData.dayId,
-            name: `Day${idx + 1}`,
-            date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-            colorName: dailyPlanData.dayColor.name,
-          };
-        }
-      );
-      setDropdownMenu(newDropdownMenu);
-    }
-  }, [dailyPlanListData]);
 
   const {
     data: tempPlanPageData,
@@ -198,8 +178,8 @@ const ScheduleList = () => {
           dropdownMenuIdx === -1
             ? [`Day${dailyPlanIdx + 1}`, dailyPlan.date.replace(/-/g, '.')]
             : [
-                dropdownMenu[dropdownMenuIdx].name,
-                dropdownMenu[dropdownMenuIdx].date,
+                `Day${dropdownMenuIdx + 1}`,
+                dailyPlanListData?.days[dropdownMenuIdx].date,
               ];
 
         return (

@@ -1,19 +1,6 @@
 import { atom, atomFamily } from 'recoil';
 
 import { ISchedule } from '@/api/schedule';
-import { TDailyPlanColorName } from '@/constants/dailyPlanColor';
-
-interface IMenu {
-  dailyPlanId: number;
-  name: string;
-  date: string;
-  colorName: TDailyPlanColorName;
-}
-
-export const DropdownMenuFamily = atomFamily<IMenu[], string>({
-  key: 'dropdownMenu',
-  default: [],
-});
 
 export const DropdownIndexFamily = atomFamily<number, string>({
   key: 'dropdownIndex',

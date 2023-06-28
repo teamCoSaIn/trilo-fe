@@ -190,6 +190,9 @@ const ScheduleList = () => {
 
   const dailyPlanDragDropBox = (
     <DailyPlanList>
+      {selectedDailyPlanList?.length === 0 && (
+        <NoDayMessage>일정이 없습니다.</NoDayMessage>
+      )}
       {selectedDailyPlanList?.map((dailyPlan, dailyPlanIdx) => {
         const [dayString, dateString] =
           dropdownMenuIdx === -1
@@ -233,7 +236,7 @@ const ScheduleList = () => {
                             }
                           >
                             <ScheduleTitle>
-                              {schedule.title || '알 수 없는 장소'}
+                              {schedule.title || 'Untitled'}
                             </ScheduleTitle>
                             <Place>
                               <PlaceIcon />
@@ -331,7 +334,7 @@ const ScheduleList = () => {
                         }
                       >
                         <ScheduleTitle>
-                          {tempSchedule.title || '알 수 없는 장소'}
+                          {tempSchedule.title || 'Untitled'}
                         </ScheduleTitle>
                         <Place>
                           <PlaceIcon />
@@ -409,6 +412,13 @@ const DailyPlanList = styled.ul`
   ::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const NoDayMessage = styled.span`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b6b6b6;
+  margin: auto auto;
 `;
 
 const DailyPlan = styled.li`

@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
@@ -65,7 +66,22 @@ const Callback = () => {
       );
       HTTP.getAccessToken({ oauthServerName: localOauthServerName, oauthData })
         .then(data => onSuccess(data))
-        .catch(() => onError());
+        .catch(
+          (
+            err: AxiosError<{
+              errorCode?: string;
+              errorDetail?: string;
+              errorMessage?: string;
+            }>
+          ) => {
+            if (err.response?.data?.errorDetail) {
+              alert(err.response.data.errorDetail);
+            } else {
+              alert('server error');
+            }
+            navigate('/login');
+          }
+        );
     } else {
       onError();
     }

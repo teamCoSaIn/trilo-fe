@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { produce } from 'immer';
 
 import HTTP from '@/api';
@@ -55,7 +56,11 @@ const useChangeDayColor = () => {
         return { prevDailyPlanData };
       },
       onError: (
-        err,
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>,
         variables,
         context?: { prevDailyPlanData: IGetDailyPlanResponse | undefined }
       ) => {
@@ -64,6 +69,11 @@ const useChangeDayColor = () => {
             [`dailyPlanList${variables.tripId}`],
             context.prevDailyPlanData
           );
+        }
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
         }
       },
     }

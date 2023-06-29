@@ -1,4 +1,5 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
@@ -30,8 +31,18 @@ const UserInfo = () => {
         setUserStatus(UserStatusTypes.LOGOUT);
       });
     },
-    onError: () => {
-      alert('탈퇴 실패');
+    onError: (
+      err: AxiosError<{
+        errorCode?: string;
+        errorDetail?: string;
+        errorMessage?: string;
+      }>
+    ) => {
+      if (err.response?.data?.errorDetail) {
+        alert(err.response.data.errorDetail);
+      } else {
+        alert('server error');
+      }
     },
   });
 

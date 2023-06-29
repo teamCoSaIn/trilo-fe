@@ -1,6 +1,6 @@
 import { ClickAwayListener } from '@mui/material';
 import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
-import { useRecoilState, useRecoilValue, useResetRecoilState } from 'recoil';
+import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ReactComponent as DownArrowIcon } from '@/assets/downArrow.svg';
@@ -14,8 +14,8 @@ import {
 } from '@/constants/dailyPlanColor';
 import { SCHEDULE_TAB_DROPDOWN_Z_INDEX } from '@/constants/zIndex';
 import useChangeDayColor from '@/queryHooks/useChangeDayColor';
+import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import {
-  DropdownMenuFamily,
   DropdownIndexFamily,
   SelectedEditorScheduleId,
 } from '@/states/schedule';
@@ -25,7 +25,6 @@ interface IScheduleDropdownProps {
 }
 
 const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
-  const dayDropdownMenu = useRecoilValue(DropdownMenuFamily(tripId));
   const [dayDropdownIdx, setDayDropdownIdx] = useRecoilState(
     DropdownIndexFamily(tripId)
   );
@@ -34,6 +33,9 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     SelectedEditorScheduleId
   );
 
+  const { data: dailyPlanListData } = useGetDailyPlanList({
+    tripId: +(tripId as string),
+  });
   const { mutate } = useChangeDayColor();
 
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -76,7 +78,9 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   }, []);
 
   const selectedMenu =
-    dayDropdownIdx === -1 ? null : dayDropdownMenu[dayDropdownIdx];
+    dayDropdownIdx === -1 || !dailyPlanListData
+      ? null
+      : dailyPlanListData.days[dayDropdownIdx];
 
   const handleColorBtnClick = (selectedColor: TDailyPlanColorName) => () => {
     if (!selectedMenu) {
@@ -84,7 +88,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     }
     mutate({
       tripId: +tripId,
-      dayId: selectedMenu.dailyPlanId,
+      dayId: selectedMenu.dayId,
       colorName: selectedColor,
     });
   };
@@ -109,7 +113,10 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
         >
           <SelectedDay fontSize={1.6}>
             {selectedMenu
-              ? `${selectedMenu.name} - ${selectedMenu.date}`
+              ? `Day${dayDropdownIdx + 1} - ${selectedMenu.date.replace(
+                  /-/g,
+                  '.'
+                )}`
               : '전체일정'}
           </SelectedDay>
           {selectedMenu && (
@@ -124,12 +131,9 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
         </DropdownMenu>
         <DropdownPopper isDropdownOpen={isDayDropdownOpen}>
           <DayBox>
-            {dayDropdownMenu.map((menu, idx) => (
-              <DayMenu
-                key={menu.dailyPlanId}
-                onClick={handleDropdownItemClick(idx)}
-              >
-                {`${menu.name} - ${menu.date}`}
+            {dailyPlanListData?.days.map((day, idx) => (
+              <DayMenu key={day.dayId} onClick={handleDropdownItemClick(idx)}>
+                {`Day${idx + 1} - ${day.date.replace(/-/g, '.')}`}
               </DayMenu>
             ))}
             <DayMenu onClick={handleDropdownItemClick(-1)}>전체일정</DayMenu>
@@ -146,7 +150,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
                       dayColorName as TDailyPlanColorName
                     )}
                   >
-                    {dayColorName === selectedMenu?.colorName && (
+                    {dayColorName === selectedMenu?.dayColor.name && (
                       <WhiteCheckIcon />
                     )}
                   </ColorBtn>

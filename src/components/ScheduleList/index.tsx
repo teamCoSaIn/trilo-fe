@@ -35,7 +35,6 @@ import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import {
   DropdownIndexFamily,
-  DropdownMenuFamily,
   IsTempBoxOpen,
   SelectedEditorScheduleId,
   SelectedMarkerScheduleId,
@@ -50,9 +49,6 @@ const ScheduleList = () => {
 
   const { tripId } = useParams();
 
-  const [dropdownMenu, setDropdownMenu] = useRecoilState(
-    DropdownMenuFamily(tripId as string)
-  );
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
   const setSelectedEditorScheduleId = useSetRecoilState(
     SelectedEditorScheduleId
@@ -68,22 +64,6 @@ const ScheduleList = () => {
   const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
     tripId: +(tripId as string),
   });
-
-  useEffect(() => {
-    if (dailyPlanListData && isMounted) {
-      const newDropdownMenu = dailyPlanListData.days.map(
-        (dailyPlanData, idx) => {
-          return {
-            dailyPlanId: dailyPlanData.dayId,
-            name: `Day${idx + 1}`,
-            date: `${dailyPlanData.date?.replace(/-/g, '.')}`,
-            colorName: dailyPlanData.dayColor.name,
-          };
-        }
-      );
-      setDropdownMenu(newDropdownMenu);
-    }
-  }, [dailyPlanListData]);
 
   const {
     data: tempPlanPageData,
@@ -190,13 +170,16 @@ const ScheduleList = () => {
 
   const dailyPlanDragDropBox = (
     <DailyPlanList>
+      {selectedDailyPlanList?.length === 0 && (
+        <NoDayMessage>일정이 없습니다.</NoDayMessage>
+      )}
       {selectedDailyPlanList?.map((dailyPlan, dailyPlanIdx) => {
         const [dayString, dateString] =
           dropdownMenuIdx === -1
             ? [`Day${dailyPlanIdx + 1}`, dailyPlan.date.replace(/-/g, '.')]
             : [
-                dropdownMenu[dropdownMenuIdx].name,
-                dropdownMenu[dropdownMenuIdx].date,
+                `Day${dropdownMenuIdx + 1}`,
+                dailyPlanListData?.days[dropdownMenuIdx].date,
               ];
 
         return (
@@ -234,7 +217,7 @@ const ScheduleList = () => {
                           >
                             <ScheduleTitle>
                               {`${scheduleIdx + 1}. ${
-                                schedule.title || '알 수 없는 장소'
+                                schedule.title || 'Untitled'
                               }`}
                             </ScheduleTitle>
                             <Place>
@@ -334,7 +317,7 @@ const ScheduleList = () => {
                       >
                         <ScheduleTitle>
                           {`${tempScheduleIdx + 1}. ${
-                            tempSchedule.title || '알 수 없는 장소'
+                            tempSchedule.title || 'Untitled'
                           }`}
                         </ScheduleTitle>
                         <Place>
@@ -413,6 +396,13 @@ const DailyPlanList = styled.ul`
   ::-webkit-scrollbar {
     display: none;
   }
+`;
+
+const NoDayMessage = styled.span`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b6b6b6;
+  margin: auto auto;
 `;
 
 const DailyPlan = styled.li`

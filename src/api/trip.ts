@@ -26,7 +26,7 @@ export interface IChangeTripImageParams {
 
 type TCreateTripParams = ITrip['title'];
 
-type TDeleteTripParams = ITrip['tripId'];
+export type TDeleteTripParams = ITrip['tripId'];
 
 type TGetTripParams = ITrip['tripId'];
 

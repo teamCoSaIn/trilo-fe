@@ -4,6 +4,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { original, produce } from 'immer';
 
 import HTTP from '@/api';
@@ -391,7 +392,11 @@ const useChangeScheduleOrder = () => {
         return { previousDailyPlanList, previousTempPlanList, tripId };
       },
       onError: (
-        err,
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>,
         variables,
         context?: {
           previousDailyPlanList: IGetDailyPlanResponse | undefined;
@@ -410,6 +415,11 @@ const useChangeScheduleOrder = () => {
             [`tempPlanList${context.tripId}`],
             context.previousTempPlanList
           );
+        }
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
         }
       },
     }

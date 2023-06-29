@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -43,6 +44,19 @@ const DateSelector = () => {
           queryClient.invalidateQueries([`tempPlanList${tripId}`]);
         }
         resetGoogleMarkerLatLng();
+      },
+      onError: (
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>
+      ) => {
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
+        }
       },
     }
   );

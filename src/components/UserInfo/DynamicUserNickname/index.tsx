@@ -1,5 +1,6 @@
 import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
@@ -33,8 +34,18 @@ const DynamicUserNickname = () => {
       onSuccess: () => {
         queryClient.invalidateQueries(['userProfile']);
       },
-      onError: () => {
-        alert('서버 오류');
+      onError: (
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>
+      ) => {
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
+        }
       },
       onSettled: () => {
         setIsEdit(false);

@@ -216,7 +216,9 @@ const ScheduleList = () => {
                             }
                           >
                             <ScheduleTitle>
-                              {schedule.title || 'Untitled'}
+                              {`${scheduleIdx + 1}. ${
+                                schedule.title || 'Untitled'
+                              }`}
                             </ScheduleTitle>
                             <Place>
                               <PlaceIcon />
@@ -314,7 +316,9 @@ const ScheduleList = () => {
                         }
                       >
                         <ScheduleTitle>
-                          {tempSchedule.title || 'Untitled'}
+                          {`${tempScheduleIdx + 1}. ${
+                            tempSchedule.title || 'Untitled'
+                          }`}
                         </ScheduleTitle>
                         <Place>
                           <PlaceIcon />

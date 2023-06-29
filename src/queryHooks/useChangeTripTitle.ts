@@ -3,6 +3,7 @@ import {
   useMutation,
   useQueryClient,
 } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 import { produce } from 'immer';
 
 import HTTP from '@/api';
@@ -47,7 +48,11 @@ const useChangeTripTitle = () => {
         return { previousTripList };
       },
       onError: (
-        err,
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>,
         variables,
         context?: {
           previousTripList: InfiniteData<IGetTripListResponse> | undefined;
@@ -58,6 +63,11 @@ const useChangeTripTitle = () => {
             ['tripList'],
             context.previousTripList
           );
+        }
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
         }
       },
     }

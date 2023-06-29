@@ -113,13 +113,11 @@ const ScheduleEditor = () => {
         <TimePicker
           time={scheduleDetails?.scheduleTime.startTime}
           setTime={setStartTime}
-          clearTimer={debouncingTimer.current}
         />
         <Line left={6} right={6} width={30} color="#D9D9D9" />
         <TimePicker
           time={scheduleDetails?.scheduleTime.endTime}
           setTime={setEndTime}
-          clearTimer={debouncingTimer.current}
         />
       </Flex>
       <Spacing height={12} />

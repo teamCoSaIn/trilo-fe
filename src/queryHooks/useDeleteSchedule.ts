@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import HTTP from '@/api/index';
 import { IDailyPlan } from '@/api/plan';
@@ -24,8 +25,18 @@ const useDeleteSchedule = () => {
           queryClient.invalidateQueries([`tempPlanList${variables.tripId}`]);
         }
       },
-      onError: () => {
-        alert('delete failed.');
+      onError: (
+        err: AxiosError<{
+          errorCode?: string;
+          errorDetail?: string;
+          errorMessage?: string;
+        }>
+      ) => {
+        if (err.response?.data?.errorDetail) {
+          alert(err.response.data.errorDetail);
+        } else {
+          alert('server error');
+        }
       },
     }
   );

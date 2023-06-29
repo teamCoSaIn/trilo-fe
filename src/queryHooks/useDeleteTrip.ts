@@ -1,17 +1,28 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { AxiosError } from 'axios';
 
 import HTTP from '@/api/index';
-import { TDeleteTripTitleParams } from '@/api/trip';
+import { TDeleteTripParams } from '@/api/trip';
 
 const useDeleteTrip = () => {
   const queryClient = useQueryClient();
 
-  return useMutation((id: TDeleteTripTitleParams) => HTTP.deleteTrip(id), {
+  return useMutation((id: TDeleteTripParams) => HTTP.deleteTrip(id), {
     onSuccess: () => {
       queryClient.invalidateQueries(['tripList']);
     },
-    onError: () => {
-      alert('delete failed.');
+    onError: (
+      err: AxiosError<{
+        errorCode?: string;
+        errorDetail?: string;
+        errorMessage?: string;
+      }>
+    ) => {
+      if (err.response?.data?.errorDetail) {
+        alert(err.response.data.errorDetail);
+      } else {
+        alert('server error');
+      }
     },
   });
 };

@@ -220,9 +220,6 @@ const useChangeScheduleOrder = () => {
                     reorderedSchedule
                   );
 
-                  // pages 배열 초기화
-                  draftTempPlanList.pages.length = 0;
-
                   const numOfPages = Math.ceil(tempPlanSchedules.length / size);
 
                   for (let i = 0; i < numOfPages; i++) {
@@ -284,11 +281,11 @@ const useChangeScheduleOrder = () => {
                   );
                   reorderedSchedule = original(extractedSchedule);
 
-                  const numOfPages = Math.ceil(
-                    tempPlanSchedules.length
-                      ? tempPlanSchedules.length
-                      : tempPlanSchedules.length + 1 / size
-                  );
+                  const numOfPages = tempPlanSchedules.length
+                    ? Math.ceil(tempPlanSchedules.length / size)
+                    : 1;
+
+                  draftTempPlanList.pages.length = 0;
 
                   for (let i = 0; i < numOfPages; i++) {
                     draftTempPlanList.pages[i] = {

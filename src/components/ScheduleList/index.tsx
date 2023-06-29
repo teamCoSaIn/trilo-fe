@@ -233,7 +233,9 @@ const ScheduleList = () => {
                             }
                           >
                             <ScheduleTitle>
-                              {schedule.title || '알 수 없는 장소'}
+                              {`${scheduleIdx + 1}. ${
+                                schedule.title || '알 수 없는 장소'
+                              }`}
                             </ScheduleTitle>
                             <Place>
                               <PlaceIcon />
@@ -331,7 +333,9 @@ const ScheduleList = () => {
                         }
                       >
                         <ScheduleTitle>
-                          {tempSchedule.title || '알 수 없는 장소'}
+                          {`${tempScheduleIdx + 1}. ${
+                            tempSchedule.title || '알 수 없는 장소'
+                          }`}
                         </ScheduleTitle>
                         <Place>
                           <PlaceIcon />

@@ -36,7 +36,7 @@ const Trip = () => {
         <Suspense fallback={<CircularLoader />}>
           <TripHeader />
           <TripLeftWindow />
-          {isLoaded ? <Map /> : <div>loading...</div>}
+          {isLoaded ? <Map /> : <CircularLoader />}
           <TripRightWindow />
         </Suspense>
       </ErrorBoundary>

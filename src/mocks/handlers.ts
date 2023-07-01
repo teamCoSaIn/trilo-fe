@@ -560,7 +560,7 @@ const logout = rest.post('/api/auth/logout', async (req, res, ctx) => {
 });
 
 const getUserProfile = rest.get(
-  'api/users/:userId/profile',
+  '/api/users/:userId/profile',
   async (req, res, ctx) => {
     return res(
       ctx.json({

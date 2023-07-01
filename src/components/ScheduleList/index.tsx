@@ -61,9 +61,10 @@ const ScheduleList = () => {
   );
   const [onDragging, setOnDragging] = useState<boolean>(false);
 
-  const { data: dailyPlanListData, isFetching } = useGetDailyPlanList({
-    tripId: +(tripId as string),
-  });
+  const { data: dailyPlanListData, isFetching: isDailyPlanListDataFetching } =
+    useGetDailyPlanList({
+      tripId: +(tripId as string),
+    });
 
   const {
     data: tempPlanPageData,
@@ -376,7 +377,7 @@ const ScheduleList = () => {
         ) : null}
       </DragDropContext>
       {(isDeleteLoading ||
-        isFetching ||
+        isDailyPlanListDataFetching ||
         (isTempPlanPageDataFetching && !isFetchingNextPage)) && <DimLoader />}
     </>
   );

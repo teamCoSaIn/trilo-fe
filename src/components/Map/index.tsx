@@ -79,9 +79,9 @@ const Map = () => {
     tripId: +(tripId as string),
   });
 
-  const { data: tempPlanPageData } = useGetTempPlanPageList(
-    +(tripId as string)
-  );
+  const { data: tempPlanPageData } = useGetTempPlanPageList({
+    tripId: +(tripId as string),
+  });
 
   const { data: initLocationData } = useQuery(
     ['initLocation'],

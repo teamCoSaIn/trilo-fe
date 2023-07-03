@@ -560,7 +560,7 @@ const logout = rest.post('/api/auth/logout', async (req, res, ctx) => {
 });
 
 const getUserProfile = rest.get(
-  'api/users/:userId/profile',
+  '/api/users/:userId/profile',
   async (req, res, ctx) => {
     return res(
       ctx.json({
@@ -701,6 +701,7 @@ const getDailyPlanList = rest.get(
 );
 
 const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
+  await sleep(2000);
   const data = await req.json();
 
   const newSchedule: IScheduleResponse = {

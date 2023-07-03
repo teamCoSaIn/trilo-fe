@@ -11,6 +11,7 @@ import Description from '@/components/common/Description';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
+import Portal from '@/components/common/Portal';
 import Spacing from '@/components/common/Spacing';
 import Calendar from '@/components/DateTab/Calendar';
 import color from '@/constants/color';
@@ -35,6 +36,7 @@ const DateTab = () => {
 
   const { mutate, isLoading: isChangeTripPeriodLoading } =
     useChangeTripPeriod();
+
   const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });
@@ -168,7 +170,7 @@ const DateTab = () => {
       >
         확인
       </Button>
-      {isChangeTripPeriodLoading && <DimLoader />}
+      {isChangeTripPeriodLoading && <Portal childComponent={<DimLoader />} />}
       <Spacing height={40} />
     </Flex>
   );

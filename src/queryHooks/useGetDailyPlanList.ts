@@ -8,12 +8,14 @@ interface IUseGetDailyPlanListParam {
   tripId: ITrip['tripId'];
   onSuccess?: (data: IGetDailyPlanResponse) => void;
   onError?: () => void;
+  enabled?: boolean;
 }
 
 const useGetDailyPlanList = ({
   tripId,
   onSuccess,
   onError,
+  enabled,
 }: IUseGetDailyPlanListParam) => {
   return useQuery(
     [`dailyPlanList${tripId}`],
@@ -24,6 +26,7 @@ const useGetDailyPlanList = ({
       suspense: true,
       staleTime: Infinity,
       cacheTime: 1000 * 60 * 10,
+      enabled,
     }
   );
 };

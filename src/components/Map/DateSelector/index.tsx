@@ -8,6 +8,7 @@ import styled from 'styled-components';
 import HTTP from '@/api';
 import { ICreateScheduleParams } from '@/api/schedule';
 import DimLoader from '@/components/common/DimLoader';
+import Portal from '@/components/common/Portal';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import { GoogleMarkerLatLng, InfoBoxVisible } from '@/states/googleMaps';
 import { PlaceInfo } from '@/states/schedule';
@@ -44,6 +45,7 @@ const DateSelector = () => {
           queryClient.invalidateQueries([`tempPlanList${tripId}`]);
         }
         resetGoogleMarkerLatLng();
+        setIsDateSelectorVisible(false);
       },
       onError: (
         err: AxiosError<{
@@ -98,7 +100,6 @@ const DateSelector = () => {
         },
       };
       mutate(newSchedule);
-      setIsDateSelectorVisible(false);
     }
   };
 
@@ -132,7 +133,7 @@ const DateSelector = () => {
           임시 보관함
         </DateSelectorDateBtn>
       </DateSelectorTempStorageBox>
-      {isLoading && <DimLoader />}
+      {isLoading && <Portal childComponent={<DimLoader />} />}
     </DateSelectorBox>
   );
 };

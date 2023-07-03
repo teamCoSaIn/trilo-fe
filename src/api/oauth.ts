@@ -13,10 +13,6 @@ interface ICheckRefreshTokenResponse {
   availability: boolean;
 }
 
-interface IResignResponse {
-  response?: boolean;
-}
-
 export interface IGetAccessTokenParams {
   oauthServerName: string;
   oauthData: {
@@ -67,14 +63,4 @@ export const logout = async () => {
   });
   delete axios.defaults.headers.common.Authorization;
   return res.status;
-};
-
-export const resign = async () => {
-  const res = await axios<IResignResponse>({
-    method: 'get',
-    url: `/auth/resign`,
-    requireAuth: true,
-  });
-  delete axios.defaults.headers.common.Authorization;
-  return res.data;
 };

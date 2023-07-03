@@ -4,7 +4,6 @@ import {
   logout,
   refreshAccessToken,
   checkRefreshToken,
-  resign,
 } from '@/api/oauth';
 import { getDailyPlanList, getTempPlanList, changeDayColor } from '@/api/plan';
 import {
@@ -23,7 +22,12 @@ import {
   createTrip,
   deleteTrip,
 } from '@/api/trip';
-import { getUserProfile, changeNickname, getUserInfo } from '@/api/userInfo';
+import {
+  getUserProfile,
+  changeNickname,
+  getUserInfo,
+  resign,
+} from '@/api/user';
 
 const HTTP = {
   getAccessToken,

@@ -4,7 +4,15 @@ import HTTP from '@/api';
 import { ITrip } from '@/api/trip';
 import { SIZE_OF_TEMP_PLAN_PAGE } from '@/constants/tempPlan';
 
-const useGetTempPlanPageList = (tripId: ITrip['tripId']) => {
+interface IUseGetTempPlanPageListParam {
+  tripId: ITrip['tripId'];
+  enabled?: boolean;
+}
+
+const useGetTempPlanPageList = ({
+  tripId,
+  enabled,
+}: IUseGetTempPlanPageListParam) => {
   return useInfiniteQuery(
     [`tempPlanList${tripId}`],
     ({ pageParam = null }) => {
@@ -25,6 +33,7 @@ const useGetTempPlanPageList = (tripId: ITrip['tripId']) => {
         return lastPage.tempSchedules[lastPage.tempSchedules.length - 1]
           .scheduleId;
       },
+      enabled,
     }
   );
 };

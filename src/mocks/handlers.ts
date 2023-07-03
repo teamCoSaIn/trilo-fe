@@ -701,6 +701,7 @@ const getDailyPlanList = rest.get(
 );
 
 const createSchedule = rest.post('/api/schedules', async (req, res, ctx) => {
+  await sleep(2000);
   const data = await req.json();
 
   const newSchedule: IScheduleResponse = {

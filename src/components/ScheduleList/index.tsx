@@ -19,6 +19,7 @@ import { ReactComponent as UpArrowIcon } from '@/assets/upArrow.svg';
 import CircularLoader from '@/components/common/CircularLoader';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
+import Portal from '@/components/common/Portal';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import {
@@ -61,18 +62,18 @@ const ScheduleList = () => {
   );
   const [onDragging, setOnDragging] = useState<boolean>(false);
 
-  const { data: dailyPlanListData, isFetching: isDailyPlanListDataFetching } =
-    useGetDailyPlanList({
-      tripId: +(tripId as string),
-    });
+  const { data: dailyPlanListData } = useGetDailyPlanList({
+    tripId: +(tripId as string),
+  });
 
   const {
     data: tempPlanPageData,
-    isFetching: isTempPlanPageDataFetching,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
-  } = useGetTempPlanPageList(+(tripId as string));
+  } = useGetTempPlanPageList({
+    tripId: +(tripId as string),
+  });
 
   const { mutate: scheduleOrderMutate } = useChangeScheduleOrder();
 
@@ -376,9 +377,8 @@ const ScheduleList = () => {
           </>
         ) : null}
       </DragDropContext>
-      {(isDeleteLoading ||
-        isDailyPlanListDataFetching ||
-        (isTempPlanPageDataFetching && !isFetchingNextPage)) && <DimLoader />}
+
+      {isDeleteLoading && <Portal childComponent={<DimLoader />} />}
     </>
   );
 };

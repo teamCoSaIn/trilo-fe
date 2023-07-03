@@ -18,8 +18,11 @@ const Login = () => {
   const setUserStatus = useSetRecoilState(UserStatus);
 
   const handleVisitorBtnClick = () => {
-    setUserStatus(UserStatusTypes.VISITOR);
-    navigate(redirectUrl);
+    alert(
+      '\n방문자 기능은 현재 개발 중입니다.\n\n다른 로그인 방법을 이용해주세요! 🙏'
+    );
+    // setUserStatus(UserStatusTypes.VISITOR);
+    // navigate(redirectUrl);
   };
 
   return (

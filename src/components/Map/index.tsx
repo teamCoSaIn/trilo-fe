@@ -114,7 +114,6 @@ const Map = () => {
     closeBoxURL: '',
     enableEventPropagation: false,
     pixelOffset: new window.google.maps.Size(25, -35),
-    disableAutoPan: true,
   };
 
   const SelectedMarkerInfoBoxOptions = {
@@ -124,7 +123,6 @@ const Map = () => {
       selectedEditorScheduleId === selectedMarkerScheduleId
         ? new window.google.maps.Size(-90, -170)
         : new window.google.maps.Size(-90, -150),
-    disableAutoPan: true,
   };
 
   const boundsArray = useMemo(() => {

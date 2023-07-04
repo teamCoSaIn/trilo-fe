@@ -562,6 +562,7 @@ const logout = rest.post('/api/auth/logout', async (req, res, ctx) => {
 const getUserProfile = rest.get(
   '/api/users/:userId/profile',
   async (req, res, ctx) => {
+    await sleep(2000);
     return res(
       ctx.json({
         id: 1,

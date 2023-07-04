@@ -107,6 +107,12 @@ const MyProfileBtn = () => {
         placement="bottom-start"
         transition
         disablePortal
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            enabled: false,
+          },
+        ]}
       >
         {({ TransitionProps, placement }) => (
           <Grow

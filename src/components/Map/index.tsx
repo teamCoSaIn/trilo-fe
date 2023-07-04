@@ -61,6 +61,7 @@ const Map = () => {
     );
   const [googleMarkerLatLng, setGoogleMarkerLatLng] =
     useRecoilState(GoogleMarkerLatLng);
+  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
@@ -184,6 +185,13 @@ const Map = () => {
   useEffect(() => {
     return () => {
       resetMapInstance();
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      setIsDateSelectorVisible(false);
+      resetGoogleMarkerLatLng();
     };
   }, []);
 

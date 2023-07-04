@@ -2,6 +2,7 @@ import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -42,9 +43,17 @@ const DynamicUserNickname = () => {
         }>
       ) => {
         if (err.response?.data?.errorDetail) {
-          alert(err.response.data.errorDetail);
+          toast.error(err.response.data.errorDetail, {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         } else {
-          alert('server error');
+          toast.error('Server Error', {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         }
       },
       onSettled: () => {
@@ -78,8 +87,13 @@ const DynamicUserNickname = () => {
     if (isValidNickname(nicknameInputValue)) {
       mutate(nicknameInputValue);
     } else {
-      alert(
-        '올바르지 않은 입력입니다. 3~20 글자 사이의 한글, 영문, 숫자만 가능합니다.'
+      toast.error(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
       );
     }
   };

@@ -6,6 +6,7 @@ import {
 } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { original, produce } from 'immer';
+import { toast } from 'react-toastify';
 
 import HTTP from '@/api';
 import {
@@ -417,9 +418,17 @@ const useChangeScheduleOrder = () => {
           );
         }
         if (err.response?.data?.errorDetail) {
-          alert(err.response.data.errorDetail);
+          toast.error(err.response.data.errorDetail, {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         } else {
-          alert('server error');
+          toast.error('Server Error', {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         }
       },
     }

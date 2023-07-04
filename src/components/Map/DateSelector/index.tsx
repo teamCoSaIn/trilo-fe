@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useCallback, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -55,9 +56,17 @@ const DateSelector = () => {
         }>
       ) => {
         if (err.response?.data?.errorDetail) {
-          alert(err.response.data.errorDetail);
+          toast.error(err.response.data.errorDetail, {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         } else {
-          alert('server error');
+          toast.error('Server Error', {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         }
       },
     }

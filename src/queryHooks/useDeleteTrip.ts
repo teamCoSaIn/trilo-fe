@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
+import { toast } from 'react-toastify';
 
 import HTTP from '@/api/index';
 import { TDeleteTripParams } from '@/api/trip';
@@ -19,9 +20,17 @@ const useDeleteTrip = () => {
       }>
     ) => {
       if (err.response?.data?.errorDetail) {
-        alert(err.response.data.errorDetail);
+        toast.error(err.response.data.errorDetail, {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       } else {
-        alert('server error');
+        toast.error('Server Error', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       }
     },
   });

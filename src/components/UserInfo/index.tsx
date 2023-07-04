@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -39,9 +40,17 @@ const UserInfo = () => {
       }>
     ) => {
       if (err.response?.data?.errorDetail) {
-        alert(err.response.data.errorDetail);
+        toast.error(err.response.data.errorDetail, {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       } else {
-        alert('server error');
+        toast.error('Server Error', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       }
     },
   });

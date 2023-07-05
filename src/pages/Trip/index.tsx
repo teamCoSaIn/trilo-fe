@@ -56,17 +56,17 @@ const Trip = () => {
 
   return (
     <Layout>
-      <ErrorBoundary FallbackComponent={Error} onReset={reset}>
-        <Suspense fallback={<CircularLoader />}>
-          <TripHeader />
-          <TripLeftWindow />
-          {isLoaded ? <Map /> : <CircularLoader />}
-          <TripRightWindow />
-          {(isDailyPlanListDataFetching ||
-            (isTempPlanPageDataFetching && !isFetchingNextPage) ||
-            isTripFetching) && <Portal childComponent={<DimLoader />} />}
-        </Suspense>
-      </ErrorBoundary>
+      {/* <ErrorBoundary FallbackComponent={Error} onReset={reset}> */}
+      <Suspense fallback={<CircularLoader />}>
+        <TripHeader />
+        <TripLeftWindow />
+        {isLoaded ? <Map /> : <CircularLoader />}
+        <TripRightWindow />
+        {(isDailyPlanListDataFetching ||
+          (isTempPlanPageDataFetching && !isFetchingNextPage) ||
+          isTripFetching) && <Portal childComponent={<DimLoader />} />}
+      </Suspense>
+      {/* </ErrorBoundary> */}
     </Layout>
   );
 };

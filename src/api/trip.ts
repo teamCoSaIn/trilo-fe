@@ -24,7 +24,7 @@ export interface IChangeTripImageParams {
   formData: FormData;
 }
 
-type TCreateTripParams = ITrip['title'];
+export type TCreateTripParams = ITrip['title'];
 
 export type TDeleteTripParams = ITrip['tripId'];
 

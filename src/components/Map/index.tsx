@@ -7,6 +7,7 @@ import {
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useMemo, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import {
   useRecoilState,
   useRecoilValue,
@@ -61,6 +62,7 @@ const Map = () => {
     );
   const [googleMarkerLatLng, setGoogleMarkerLatLng] =
     useRecoilState(GoogleMarkerLatLng);
+  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
   const [isDateSelectorVisible, setIsDateSelectorVisible] =
     useRecoilState(InfoBoxVisible);
   const dropdownMenuIdx = useRecoilValue(DropdownIndexFamily(tripId as string));
@@ -114,7 +116,6 @@ const Map = () => {
     closeBoxURL: '',
     enableEventPropagation: false,
     pixelOffset: new window.google.maps.Size(25, -35),
-    disableAutoPan: true,
   };
 
   const SelectedMarkerInfoBoxOptions = {
@@ -124,7 +125,6 @@ const Map = () => {
       selectedEditorScheduleId === selectedMarkerScheduleId
         ? new window.google.maps.Size(-90, -170)
         : new window.google.maps.Size(-90, -150),
-    disableAutoPan: true,
   };
 
   const boundsArray = useMemo(() => {
@@ -166,7 +166,11 @@ const Map = () => {
   };
 
   const onGetCurPosFail = () => {
-    alert(`현재 배포 버전(http)에서는 현재 위치 탐색이 불가능합니다.`);
+    toast.info('현재 배포 버전(http)에서는 사용자 위치 탐색이 불가합니다.', {
+      autoClose: 3000,
+      pauseOnHover: false,
+      draggable: false,
+    });
     setIsGetCurrPosLoading(false);
   };
 
@@ -186,6 +190,13 @@ const Map = () => {
   useEffect(() => {
     return () => {
       resetMapInstance();
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      setIsDateSelectorVisible(false);
+      resetGoogleMarkerLatLng();
     };
   }, []);
 
@@ -228,7 +239,14 @@ const Map = () => {
         onGetCurPosFail
       );
     } else {
-      alert(`Browser doesn't support Geolocation!`);
+      toast.error(
+        '사용 중이신 브라우저에서 Geolocation API를 지원하지 않습니다.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
+      );
     }
   };
 

@@ -1,3 +1,4 @@
+import { toast } from 'react-toastify';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 import { LatLng } from 'use-places-autocomplete';
@@ -47,7 +48,11 @@ const PlaceCard = ({
     event.stopPropagation();
     if (address) {
       await navigator.clipboard.writeText(address);
-      alert('copied!');
+      toast.success('클립보드에 복사되었습니다.', {
+        autoClose: 3000,
+        pauseOnHover: false,
+        draggable: false,
+      });
     }
   };
 

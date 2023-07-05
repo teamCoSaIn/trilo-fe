@@ -1,4 +1,5 @@
-import React, { useRef } from 'react';
+import { useRef } from 'react';
+import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -33,8 +34,13 @@ const DynamicTripCardTitle = ({
     }
     const isInputValid = tripTitleRegExp.test(curTitleInput.replace(/\s/g, ''));
     if (!isInputValid) {
-      alert(
-        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      toast.error(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
       );
       return;
     }

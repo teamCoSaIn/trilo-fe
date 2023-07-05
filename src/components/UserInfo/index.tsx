@@ -1,6 +1,7 @@
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -31,7 +32,12 @@ const UserInfo = () => {
     () => HTTP.resign(userId),
     {
       onSuccess: () => {
-        alert('탈퇴가 완료되었습니다.');
+        toast.success('탈퇴가 완료되었습니다.', {
+          position: 'top-center',
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
         navigate('/');
         setTimeout(() => {
           setUserStatus(UserStatusTypes.LOGOUT);
@@ -45,9 +51,17 @@ const UserInfo = () => {
         }>
       ) => {
         if (err.response?.data?.errorDetail) {
-          alert(err.response.data.errorDetail);
+          toast.error(err.response.data.errorDetail, {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         } else {
-          alert('server error');
+          toast.error('Server Error', {
+            autoClose: 3000,
+            pauseOnHover: false,
+            draggable: false,
+          });
         }
       },
     }

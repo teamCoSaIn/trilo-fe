@@ -18,6 +18,7 @@ import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import {
   DropdownIndexFamily,
   SelectedEditorScheduleId,
+  SelectedMarkerScheduleId,
 } from '@/states/schedule';
 
 interface IScheduleDropdownProps {
@@ -31,6 +32,9 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
   const resetDayDropdownIdx = useResetRecoilState(DropdownIndexFamily(tripId));
   const resetSelectedEditorScheduleId = useResetRecoilState(
     SelectedEditorScheduleId
+  );
+  const resetSelectedMarkerScheduleId = useResetRecoilState(
+    SelectedMarkerScheduleId
   );
 
   const { data: dailyPlanListData } = useGetDailyPlanList({
@@ -61,6 +65,7 @@ const ScheduleDropdown = ({ tripId }: IScheduleDropdownProps) => {
     setDayDropdownIdx(idx);
     setIsDayDropdownOpen(false);
     resetSelectedEditorScheduleId();
+    resetSelectedMarkerScheduleId();
   };
 
   const handleColorDropdownBtnMouseEnter = () => {

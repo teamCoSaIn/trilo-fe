@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { toast } from 'react-toastify';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -82,7 +83,11 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
         return;
       }
       if (file.size > 2 * 1024 * 1024) {
-        alert('첨부 이미지는 2MB 이내로 등록 가능합니다.');
+        toast.error('첨부 이미지는 2MB 이내로 등록 가능합니다.', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
         return;
       }
       const formData = new FormData();

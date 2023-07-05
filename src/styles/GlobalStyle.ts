@@ -52,6 +52,9 @@ const GlobalStyle = createGlobalStyle`
   ._blockContent_63zqr_10._isEmpty_63zqr_224._hasAnchor_63zqr_247>:first-child:before {
     content: "Enter text..." !important;
   }
+  .Toastify__toast {
+    font-size: 15px;
+}
 `;
 
 export default GlobalStyle;

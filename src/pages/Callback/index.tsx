@@ -1,6 +1,7 @@
 import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useSetRecoilState } from 'recoil';
 
 import HTTP from '@/api';
@@ -26,7 +27,12 @@ const Callback = () => {
   };
 
   const onError = () => {
-    alert('잘못된 접근입니다.');
+    toast.error('잘못된 접근입니다!', {
+      position: 'top-center',
+      autoClose: 3000,
+      pauseOnHover: false,
+      draggable: false,
+    });
     navigate('/login');
   };
 
@@ -75,9 +81,17 @@ const Callback = () => {
             }>
           ) => {
             if (err.response?.data?.errorDetail) {
-              alert(err.response.data.errorDetail);
+              toast.error(err.response.data.errorDetail, {
+                autoClose: 3000,
+                pauseOnHover: false,
+                draggable: false,
+              });
             } else {
-              alert('server error');
+              toast.error('Server Error', {
+                autoClose: 3000,
+                pauseOnHover: false,
+                draggable: false,
+              });
             }
             navigate('/login');
           }

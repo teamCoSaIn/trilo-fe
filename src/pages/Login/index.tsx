@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -18,8 +19,22 @@ const Login = () => {
   const setUserStatus = useSetRecoilState(UserStatus);
 
   const handleVisitorBtnClick = () => {
-    setUserStatus(UserStatusTypes.VISITOR);
-    navigate(redirectUrl);
+    toast.info(
+      <div>
+        방문자 기능은 현재 개발 중입니다.
+        <br />
+        <br />
+        다른 로그인 방법을 이용해주세요! 🙏
+      </div>,
+      {
+        position: 'top-center',
+        autoClose: 3000,
+        pauseOnHover: false,
+        draggable: false,
+      }
+    );
+    // setUserStatus(UserStatusTypes.VISITOR);
+    // navigate(redirectUrl);
   };
 
   return (

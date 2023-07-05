@@ -95,7 +95,7 @@ const DateTab = () => {
     tripData?.endDate?.replace(/-/g, '.') === endDateString;
 
   return (
-    <Flex column alignCenter justifyCenter>
+    <DateTabBox column alignCenter justifyCenter>
       <Spacing height={30} />
       <SlidingWindow>
         <Slider
@@ -172,9 +172,13 @@ const DateTab = () => {
       </Button>
       {isChangeTripPeriodLoading && <Portal childComponent={<DimLoader />} />}
       <Spacing height={40} />
-    </Flex>
+    </DateTabBox>
   );
 };
+
+const DateTabBox = styled(Flex)`
+  min-width: 364px;
+`;
 
 const SlidingWindow = styled.div`
   height: ${TRANSITION_WINDOW_HEIGHT}px;

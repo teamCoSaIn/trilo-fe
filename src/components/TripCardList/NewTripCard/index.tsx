@@ -1,10 +1,11 @@
 import { ClickAwayListener } from '@mui/material';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useState, SyntheticEvent, useRef } from 'react';
+import { toast } from 'react-toastify';
 import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
-import { TCreateTripTitleParams } from '@/api/trip';
+import { TCreateTripParams } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import DimLoader from '@/components/common/DimLoader';
@@ -27,7 +28,7 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
   const queryClient = useQueryClient();
 
   const { mutate, isLoading } = useMutation(
-    (tripTitle: TCreateTripTitleParams) => HTTP.createTrip(tripTitle),
+    (tripTitle: TCreateTripParams) => HTTP.createTrip(tripTitle),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['tripList']);
@@ -41,8 +42,13 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
       titleInputValue.replace(/\s/g, '')
     );
     if (!isInputValid) {
-      alert(
-        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.'
+      toast.error(
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
       );
       return;
     }

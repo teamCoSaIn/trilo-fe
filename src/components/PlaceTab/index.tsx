@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useRecoilValue, useResetRecoilState } from 'recoil';
+import { toast } from 'react-toastify';
+import { useRecoilValue } from 'recoil';
 import styled from 'styled-components';
 import { LatLng } from 'use-places-autocomplete';
 
@@ -19,7 +20,6 @@ import useSearchPlacesByText from '@/queryHooks/useSearchPlacesByText';
 import {
   PlacesService,
   AutocompleteService,
-  GoogleMarkerLatLng,
   MapInstance,
 } from '@/states/googleMaps';
 import { placeSearchInputRegExp } from '@/utils/regExp';
@@ -49,7 +49,6 @@ const PlaceTab = () => {
   const placesService = useRecoilValue(PlacesService);
   const autocompleteService = useRecoilValue(AutocompleteService);
   const mapInstance = useRecoilValue(MapInstance);
-  const resetGoogleMarkerLatLng = useResetRecoilState(GoogleMarkerLatLng);
 
   const [inputValue, setInputValue] = useState<string>('');
   const [searchText, setSearchText] = useState<string>('');
@@ -75,6 +74,64 @@ const PlaceTab = () => {
     curLocation
   );
 
+  const displaySuggestions = (
+    queryPredictions: google.maps.places.QueryAutocompletePrediction[] | null,
+    status: google.maps.places.PlacesServiceStatus
+  ) => {
+    if (
+      status === google.maps.places.PlacesServiceStatus.OK &&
+      queryPredictions
+    ) {
+      const filteredPredictions = queryPredictions.map(queryPrediction => {
+        const prediction =
+          queryPrediction as google.maps.places.AutocompletePrediction;
+        return {
+          placeId: prediction.place_id,
+          mainText: prediction.structured_formatting.main_text,
+          description: prediction.description,
+        };
+      });
+      setAutocompleteDataList(filteredPredictions);
+    } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
+      setAutocompleteDataList([]);
+    } else {
+      console.log(status);
+    }
+  };
+
+  useEffect(() => {
+    setCurrAutocompleteIdx(0);
+
+    let debouncingTimer: NodeJS.Timeout | null = null;
+
+    if (autocompleteService && inputValue) {
+      debouncingTimer = setTimeout(() => {
+        autocompleteService.getQueryPredictions(
+          {
+            input: `${inputValue}`,
+          },
+          displaySuggestions
+        );
+      }, PLACE_SEARCH_DEBOUNCE_TIME);
+    } else {
+      setAutocompleteDataList(undefined);
+    }
+
+    return () => {
+      if (debouncingTimer) {
+        clearTimeout(debouncingTimer);
+      }
+    };
+  }, [inputValue]);
+
+  useEffect(() => {
+    if (autocompleteDataList && inputRef.current === document.activeElement) {
+      setIsAutocompleteVisible(true);
+    } else {
+      setIsAutocompleteVisible(false);
+    }
+  }, [autocompleteDataList]);
+
   const handlePlaceSearchSubmit = async (
     event: React.FormEvent<HTMLFormElement>
   ) => {
@@ -97,14 +154,30 @@ const PlaceTab = () => {
         setIsFirstRender(false);
         inputRef.current?.blur();
       } else if (inputValue === '') {
-        alert('값을 입력해주세요.');
+        toast.error('값을 입력해주세요!', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       } else if (inputValue.length > 85) {
-        alert('85자 이하의 글자만 검색할 수 있습니다.');
+        toast.error('85자 이하의 글자만 검색할 수 있습니다.', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       } else {
-        alert('<, > 는 검색어에 포함할 수 없습니다.');
+        toast.error('<, > 는 검색어에 포함할 수 없습니다.', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
       }
     } else {
-      alert('google map api 오류');
+      toast.error('Google Maps API Error', {
+        autoClose: 3000,
+        pauseOnHover: false,
+        draggable: false,
+      });
     }
   };
 
@@ -157,31 +230,6 @@ const PlaceTab = () => {
     }, 100);
   };
 
-  const displaySuggestions = (
-    queryPredictions: google.maps.places.QueryAutocompletePrediction[] | null,
-    status: google.maps.places.PlacesServiceStatus
-  ) => {
-    if (
-      status === google.maps.places.PlacesServiceStatus.OK &&
-      queryPredictions
-    ) {
-      const filteredPredictions = queryPredictions.map(queryPrediction => {
-        const prediction =
-          queryPrediction as google.maps.places.AutocompletePrediction;
-        return {
-          placeId: prediction.place_id,
-          mainText: prediction.structured_formatting.main_text,
-          description: prediction.description,
-        };
-      });
-      setAutocompleteDataList(filteredPredictions);
-    } else if (status === google.maps.places.PlacesServiceStatus.ZERO_RESULTS) {
-      setAutocompleteDataList([]);
-    } else {
-      console.log(status);
-    }
-  };
-
   const handleSearchInputKeyDown = (
     event: React.KeyboardEvent<HTMLElement>
   ) => {
@@ -203,45 +251,6 @@ const PlaceTab = () => {
       }, 0);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      resetGoogleMarkerLatLng();
-    };
-  }, []);
-
-  useEffect(() => {
-    setCurrAutocompleteIdx(0);
-
-    let debouncingTimer: NodeJS.Timeout | null = null;
-
-    if (autocompleteService && inputValue) {
-      debouncingTimer = setTimeout(() => {
-        autocompleteService.getQueryPredictions(
-          {
-            input: `${inputValue}`,
-          },
-          displaySuggestions
-        );
-      }, PLACE_SEARCH_DEBOUNCE_TIME);
-    } else {
-      setAutocompleteDataList(undefined);
-    }
-
-    return () => {
-      if (debouncingTimer) {
-        clearTimeout(debouncingTimer);
-      }
-    };
-  }, [inputValue]);
-
-  useEffect(() => {
-    if (autocompleteDataList && inputRef.current === document.activeElement) {
-      setIsAutocompleteVisible(true);
-    } else {
-      setIsAutocompleteVisible(false);
-    }
-  }, [autocompleteDataList]);
 
   const autocompleteList = autocompleteDataList?.length ? (
     autocompleteDataList?.map((autocompleteData, idx) => {

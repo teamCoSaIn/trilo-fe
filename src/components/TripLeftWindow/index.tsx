@@ -59,15 +59,14 @@ const TripLeftWindow = () => {
 };
 
 const TripLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 363px;
+  position: relative;
+  width: 374px;
   height: 100%;
-  ${props => (props.isWindowFold ? 'transform: translate(-363px);' : null)}
+  ${props => (props.isWindowFold ? 'width: 0px;' : null)}
   transition: all .5s;
   background-color: ${color.white};
   z-index: ${TRIP_LEFT_WINDOW_Z_INDEX};
+  white-space: nowrap;
 `;
 
 const InnerContents = styled.div`
@@ -110,6 +109,7 @@ const TabBtn = styled.button<{ isFocused: boolean }>`
     border-bottom: 3px solid ${color.blue3};
     color: ${color.blue3};
   }
+  overflow: hidden;
   ${props =>
     props.isFocused
       ? css`

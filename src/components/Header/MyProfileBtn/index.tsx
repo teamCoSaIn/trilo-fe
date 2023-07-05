@@ -16,6 +16,7 @@ import {
   useState,
 } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -65,7 +66,11 @@ const MyProfileBtn = () => {
       await HTTP.logout();
       setUserStatus(UserStatusTypes.LOGOUT);
     } catch (e) {
-      alert('logout fail. please retry.');
+      toast.error('logout fail. please retry.', {
+        autoClose: 3000,
+        pauseOnHover: false,
+        draggable: false,
+      });
     }
   };
 
@@ -107,6 +112,12 @@ const MyProfileBtn = () => {
         placement="bottom-start"
         transition
         disablePortal
+        modifiers={[
+          {
+            name: 'preventOverflow',
+            enabled: false,
+          },
+        ]}
       >
         {({ TransitionProps, placement }) => (
           <Grow

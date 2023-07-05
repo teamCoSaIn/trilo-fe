@@ -507,7 +507,6 @@ const getAccessToken = rest.post(
         authType: `code:${oauthCode}`,
         accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-        userId: 0,
       })
     );
   }
@@ -522,7 +521,6 @@ const refreshAccessToken = rest.post(
         authType: `Bearer`,
         accessToken:
           'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
-        userId: 0,
       })
     );
   }

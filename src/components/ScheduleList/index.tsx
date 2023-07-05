@@ -21,6 +21,7 @@ import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Portal from '@/components/common/Portal';
 import Spacing from '@/components/common/Spacing';
+import Transparent from '@/components/common/Transparent';
 import color from '@/constants/color';
 import {
   SCHEDULE_HEIGHT,
@@ -40,6 +41,8 @@ import {
   SelectedEditorScheduleId,
   SelectedMarkerScheduleId,
 } from '@/states/schedule';
+
+const TEMP_TITLE_DROPPABLE_ID = 'TEMP_TITLE';
 
 const ScheduleList = () => {
   const [isMounted, setIsMounted] = useState(false);
@@ -61,6 +64,7 @@ const ScheduleList = () => {
     null
   );
   const [onDragging, setOnDragging] = useState<boolean>(false);
+  const [isDraggingOverTempBox, setIsDraggingOverTempBox] = useState(false);
 
   const { data: dailyPlanListData } = useGetDailyPlanList({
     tripId: +(tripId as string),
@@ -107,6 +111,20 @@ const ScheduleList = () => {
       return;
     }
 
+    if (isDraggingOverTempBox) {
+      scheduleOrderMutate({
+        tripId: +tripId,
+        scheduleId: +draggableId,
+        sourceDailyPlanId: +source.droppableId,
+        sourceScheduleIdx: source.index,
+        destinationDailyPlanId: TEMP_PLAN_ID,
+        destinationScheduleIdx: 0,
+        size: SIZE_OF_TEMP_PLAN_PAGE,
+      });
+      setIsDraggingOverTempBox(false);
+      return;
+    }
+
     if (
       destination.droppableId === source.droppableId &&
       source.index === destination.index
@@ -127,6 +145,9 @@ const ScheduleList = () => {
 
   const handleDragUpdate = (update: DragUpdate) => {
     if (!update.destination) {
+      return;
+    }
+    if (update.destination.droppableId === TEMP_TITLE_DROPPABLE_ID) {
       return;
     }
     const draggableHeight =
@@ -169,6 +190,14 @@ const ScheduleList = () => {
       }
     }
   };
+
+  const handleTempBoxMouseEnter = () => {
+    if (onDragging && !isTempBoxOpen) {
+      setIsDraggingOverTempBox(true);
+    }
+  };
+
+  const handleTempBoxMouseLeave = () => setIsDraggingOverTempBox(false);
 
   const dailyPlanDragDropBox = (
     <DailyPlanList>
@@ -271,7 +300,11 @@ const ScheduleList = () => {
   );
 
   const tempPlanDragDropBox = (
-    <TempBox>
+    <TempBox
+      isDraggingOver={isDraggingOverTempBox}
+      onMouseEnter={handleTempBoxMouseEnter}
+      onMouseLeave={handleTempBoxMouseLeave}
+    >
       <TempPopUpBtn type="button" onClick={handleTempPopUpBtnClick}>
         {isTempBoxOpen ? (
           <DownArrowIcon width={27} height={15} strokeWidth={2} />
@@ -279,7 +312,19 @@ const ScheduleList = () => {
           <UpArrowIcon width={27} height={15} strokeWidth={2} />
         )}
       </TempPopUpBtn>
-      <TempTitle>임시보관함</TempTitle>
+      <Droppable droppableId={TEMP_TITLE_DROPPABLE_ID}>
+        {droppableProvided => (
+          <TempTitleWrapper isDraggingOver={isDraggingOverTempBox}>
+            <TempTitle
+              {...droppableProvided.droppableProps}
+              ref={droppableProvided.innerRef}
+            >
+              임시보관함
+            </TempTitle>
+            <Transparent>{droppableProvided.placeholder}</Transparent>
+          </TempTitleWrapper>
+        )}
+      </Droppable>
       <Droppable droppableId={String(TEMP_PLAN_ID)}>
         {(droppableProvided, droppableSnapshot) => (
           <TempList
@@ -550,7 +595,7 @@ const Ghost = styled.div`
   opacity: 80%;
 `;
 
-const TempBox = styled.div`
+const TempBox = styled.div<{ isDraggingOver: boolean }>`
   flex-shrink: 0;
   position: relative;
   width: 100%;
@@ -559,6 +604,28 @@ const TempBox = styled.div`
   border: 1px solid #d9d9d9;
   border-radius: 7px 7px 0 0;
   padding: 20px 8px 20px 16px;
+  transition: all 0.2s ease-out;
+  ${({ isDraggingOver }) => {
+    if (isDraggingOver) {
+      return css`
+        border: 1.5px solid ${color.blue3};
+      `;
+    }
+  }};
+`;
+
+const TempTitleWrapper = styled.div<{ isDraggingOver: boolean }>`
+  transition: all 0.2s ease-out;
+  ${({ isDraggingOver }) => {
+    if (isDraggingOver) {
+      return css`
+        height: 30px;
+      `;
+    }
+    return css`
+      height: 16px;
+    `;
+  }};
 `;
 
 const TempTitle = styled.h3`
@@ -576,7 +643,7 @@ const TempList = styled.ul<{ isPopUpOpen: boolean }>`
     if (isPopUpOpen) {
       return css`
         height: 312px;
-        margin-top: 10px;
+        margin-top: 20px;
       `;
     }
     return css`

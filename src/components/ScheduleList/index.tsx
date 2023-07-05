@@ -245,11 +245,11 @@ const ScheduleList = () => {
                       </Draggable>
                     ))
                   ) : (
-                    <NoScheduleMessage>
+                    <NoDailyPlanScheduleMessage>
                       {droppableSnapshot.isDraggingOver
                         ? ''
                         : '일정이 없습니다.'}
-                    </NoScheduleMessage>
+                    </NoDailyPlanScheduleMessage>
                   )}
                   {droppableProvided.placeholder}
                   {placeholderClientY !== null &&
@@ -280,16 +280,16 @@ const ScheduleList = () => {
         )}
       </TempPopUpBtn>
       <TempTitle>임시보관함</TempTitle>
-      {tempPlanPageData?.pages.length ? (
-        <Droppable droppableId={String(TEMP_PLAN_ID)}>
-          {(droppableProvided, droppableSnapshot) => (
-            <TempList
-              {...droppableProvided.droppableProps}
-              ref={droppableProvided.innerRef}
-              isPopUpOpen={isTempBoxOpen}
-              onScroll={handleTempListScroll}
-            >
-              {tempPlanPageData.pages
+      <Droppable droppableId={String(TEMP_PLAN_ID)}>
+        {(droppableProvided, droppableSnapshot) => (
+          <TempList
+            {...droppableProvided.droppableProps}
+            ref={droppableProvided.innerRef}
+            isPopUpOpen={isTempBoxOpen}
+            onScroll={handleTempListScroll}
+          >
+            {tempPlanPageData?.pages[0].tempSchedules.length ? (
+              tempPlanPageData.pages
                 .reduce(
                   (
                     tempPlanSchedules: TScheduleSummary[],
@@ -339,27 +339,31 @@ const ScheduleList = () => {
                       </Schedule>
                     )}
                   </Draggable>
-                ))}
-              {droppableProvided.placeholder}
-              {placeholderClientY !== null &&
-                droppableSnapshot.isDraggingOver && (
-                  <Ghost
-                    style={{
-                      top: placeholderClientY,
-                      left: SCHEDULE_MARGIN_LEFT,
-                    }}
-                  />
-                )}
-              {isFetchingNextPage && (
-                <>
-                  <Spacing height={20} />
-                  <CircularLoader />
-                </>
+                ))
+            ) : (
+              <NoTempPlanScheduleMessage>
+                {droppableSnapshot.isDraggingOver ? '' : '일정이 없습니다.'}
+              </NoTempPlanScheduleMessage>
+            )}
+            {droppableProvided.placeholder}
+            {placeholderClientY !== null &&
+              droppableSnapshot.isDraggingOver && (
+                <Ghost
+                  style={{
+                    top: placeholderClientY,
+                    left: SCHEDULE_MARGIN_LEFT,
+                  }}
+                />
               )}
-            </TempList>
-          )}
-        </Droppable>
-      ) : null}
+            {isFetchingNextPage && (
+              <>
+                <Spacing height={20} />
+                <CircularLoader />
+              </>
+            )}
+          </TempList>
+        )}
+      </Droppable>
     </TempBox>
   );
 
@@ -526,7 +530,14 @@ const ScheduleDeleteBtn = styled.button`
   height: 14px;
 `;
 
-const NoScheduleMessage = styled.span``;
+const NoDailyPlanScheduleMessage = styled.span``;
+
+const NoTempPlanScheduleMessage = styled.span`
+  font-size: 2rem;
+  font-weight: 700;
+  color: #b6b6b6;
+  margin: auto auto;
+`;
 
 const Ghost = styled.div`
   position: absolute;

@@ -42,3 +42,13 @@ export const getUserInfo = async () => {
   });
   return res.data;
 };
+
+export const resign = async (userId: IUserProfile['id']) => {
+  const res = await axios({
+    method: 'delete',
+    url: `/users/${userId}`,
+    requireAuth: true,
+  });
+  delete axios.defaults.headers.common.Authorization;
+  return res.status;
+};

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
 import styled from 'styled-components';
@@ -23,15 +23,16 @@ const DynamicTripCardTitle = ({
   const [isTitleEdit, setIsTitleEdit] = useRecoilState(
     IsTitleEditFamily(tripCardId)
   );
-  const [titleInputValue, setTitleInputValue] = useState('');
-
+  const titleInputRef = useRef<HTMLInputElement>(null);
   const { mutate } = useChangeTripTitle();
 
   const handleTitleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    const isInputValid = tripTitleRegExp.test(
-      titleInputValue.replace(/\s/g, '')
-    );
+    const curTitleInput = titleInputRef.current?.value;
+    if (!curTitleInput) {
+      return;
+    }
+    const isInputValid = tripTitleRegExp.test(curTitleInput.replace(/\s/g, ''));
     if (!isInputValid) {
       toast.error(
         '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
@@ -43,28 +44,20 @@ const DynamicTripCardTitle = ({
       );
       return;
     }
-    if (isInputValid && tripTitle !== titleInputValue) {
-      mutate({ title: titleInputValue, tripId: tripCardId });
+    if (isInputValid && tripTitle !== curTitleInput) {
+      mutate({ title: curTitleInput, tripId: tripCardId });
     }
     setTimeout(() => {
-      setTitleInputValue('');
       setIsTitleEdit(false);
     }, 0);
-  };
-
-  const handleTitleInputChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setTitleInputValue(event.target.value);
   };
 
   const DynamicTitle = isTitleEdit ? (
     <TitleForm onSubmit={handleTitleSubmit}>
       <TitleEditInput
         type="text"
-        value={titleInputValue}
         placeholder={tripTitle}
-        onChange={handleTitleInputChange}
+        ref={titleInputRef}
         autoFocus
         maxLength={20}
       />

@@ -8,13 +8,7 @@ import {
   Popper,
   Stack,
 } from '@mui/material';
-import {
-  KeyboardEvent,
-  SyntheticEvent,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { KeyboardEvent, SyntheticEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useRecoilValue, useSetRecoilState } from 'recoil';
@@ -82,15 +76,6 @@ const MyProfileBtn = () => {
       setOpen(false);
     }
   };
-
-  // return focus to the button when we transitioned from !open -> open
-  const prevOpen = useRef(open);
-  useEffect(() => {
-    if (prevOpen.current === true && open === false) {
-      anchorRef.current!.focus();
-    }
-    prevOpen.current = open;
-  }, [open]);
 
   return (
     <Stack direction="row" spacing={2}>

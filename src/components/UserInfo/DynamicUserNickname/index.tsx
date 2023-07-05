@@ -18,8 +18,10 @@ import { nicknameRegExp } from '@/utils/regExp';
 const DynamicUserNickname = () => {
   const userId = useRecoilValue(UserId);
 
-  const [nicknameInputValue, setNicknameInputValue] = useState('');
+  const [isOverNicknameInputLength, setIsOverNicknameInputLength] =
+    useState(false);
   const [isEdit, setIsEdit] = useState(false);
+  const nicknameInputRef = useRef<HTMLInputElement>(null);
   const nicknameOnEditRef = useRef<HTMLDivElement>(null);
 
   // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
@@ -49,18 +51,17 @@ const DynamicUserNickname = () => {
       },
       onSettled: () => {
         setIsEdit(false);
-        setNicknameInputValue('');
       },
     }
   );
 
   const handleNicknameEditBtnClick = () => {
     setIsEdit(true);
+    setIsOverNicknameInputLength(false);
   };
 
   const handleNicknameOnEditClickAway = () => {
     setIsEdit(false);
-    setNicknameInputValue('');
   };
 
   const isValidNickname = (curNicknameInputValue: string) => {
@@ -70,13 +71,13 @@ const DynamicUserNickname = () => {
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (nicknameData === nicknameInputValue) {
+    const curNicknameInput = nicknameInputRef.current?.value;
+    if (!curNicknameInput || nicknameData === curNicknameInput) {
       setIsEdit(false);
-      setNicknameInputValue('');
       return;
     }
-    if (isValidNickname(nicknameInputValue)) {
-      mutate(nicknameInputValue);
+    if (isValidNickname(curNicknameInput)) {
+      mutate(curNicknameInput);
     } else {
       alert(
         '올바르지 않은 입력입니다. 3~20 글자 사이의 한글, 영문, 숫자만 가능합니다.'
@@ -87,8 +88,14 @@ const DynamicUserNickname = () => {
   const handleChangeNicknameInput = (
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
-    setNicknameInputValue(event.target.value);
+    const curInput = event.target.value;
+    if (curInput.length >= 20) {
+      setIsOverNicknameInputLength(true);
+    } else {
+      setIsOverNicknameInputLength(false);
+    }
   };
+
   const Nickname = isFetching ? (
     <ProfileBox backgroundColor={color.gray1} />
   ) : (
@@ -113,12 +120,12 @@ const DynamicUserNickname = () => {
       <ProfileBox backgroundColor={color.blue1} ref={nicknameOnEditRef}>
         <NicknameForm
           onSubmit={handleSubmit}
-          inputLength={nicknameInputValue.length}
+          isOverLength={isOverNicknameInputLength}
         >
           <NicknameEditInput
             type="text"
             placeholder={nicknameData as string}
-            value={nicknameInputValue}
+            ref={nicknameInputRef}
             onChange={handleChangeNicknameInput}
             autoFocus
             maxLength={20}
@@ -178,13 +185,13 @@ const ProfileNickname = styled(Description)`
   text-align: right;
 `;
 
-const NicknameForm = styled.form<{ inputLength: number }>`
+const NicknameForm = styled.form<{ isOverLength: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  ${({ inputLength }) => {
-    if (inputLength >= 20) {
+  ${({ isOverLength }) => {
+    if (isOverLength) {
       return css`
         &::after {
           content: '20글자 이내로 입력해주세요.';

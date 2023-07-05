@@ -844,6 +844,11 @@ const changeDayColor = rest.put(
   }
 );
 
+const resign = rest.delete('/api/users/:userId', async (req, res, ctx) => {
+  await sleep(1000);
+  return res(ctx.status(204));
+});
+
 const handlers = [
   getAccessToken,
   refreshAccessToken,
@@ -868,6 +873,7 @@ const handlers = [
   changeTripPeriod,
   getTrip,
   changeDayColor,
+  resign,
 ];
 
 export default handlers;

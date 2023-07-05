@@ -1,7 +1,7 @@
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 
 import HTTP from '@/api';
-import { IUserProfile } from '@/api/userInfo';
+import { IUserProfile } from '@/api/user';
 import defaultProfileImg from '@/assets/defaultProfileImg.png';
 
 interface IUseGetUserProfileParam {

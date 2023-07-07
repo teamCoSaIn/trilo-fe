@@ -8,7 +8,7 @@ const GlobalStyle = createGlobalStyle`
     box-sizing: border-box;
   }
   html {
-    font-size: 10px;
+    font-size: 62.5%;
     height: 100%;
     // TripTripCardWidth(245) * 4 + TripTripCardBoxGap(28) * 3 + padding(100) * 2
     min-width: 1264px;
@@ -53,7 +53,7 @@ const GlobalStyle = createGlobalStyle`
     content: "Enter text..." !important;
   }
   .Toastify__toast {
-    font-size: 15px;
+    font-size: 1.5rem;
 }
 `;
 

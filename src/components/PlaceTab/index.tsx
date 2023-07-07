@@ -382,7 +382,7 @@ const PlaceSearchForm = styled.form`
 
 const PlaceSearchInput = styled.input`
   width: 242px;
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: 400;
   line-height: 16px;
   z-index: ${PLACE_SEARCH_INPUT_Z_INDEX};
@@ -404,7 +404,7 @@ const AutocompleteListBox = styled.ul`
   display: flex;
   flex-direction: column;
   padding: 10px 0 15px 0;
-  font-size: 13px;
+  font-size: 1.3rem;
   font-weight: 400;
   line-height: 16px;
   border-top: 1.5px solid #ccc;
@@ -427,7 +427,7 @@ const AutocompleteMainText = styled.span`
 `;
 
 const AutocompleteDescription = styled.span`
-  font-size: 10px;
+  font-size: 1rem;
   font-weight: 200;
   color: #777;
   white-space: nowrap;
@@ -475,7 +475,7 @@ const LabelBox = styled.div`
 `;
 
 const PlaceLabel = styled(Button)`
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 700;
   &:hover,
   :focus {
@@ -496,7 +496,7 @@ const PlaceCardContainer = styled.div`
 const NoticeMessageBox = styled.div`
   margin-top: 200px;
   color: #b6b6b6;
-  font-size: 20px;
+  font-size: 2rem;
   font-weight: 700;
 `;
 

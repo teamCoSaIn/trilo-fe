@@ -182,7 +182,7 @@ const PlaceRatingBox = styled.div`
 `;
 
 const PlaceRating = styled.p`
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #4f4f4f;
   margin-top: 3px;
@@ -203,7 +203,7 @@ const PlaceLinkBtn = styled.button`
   background: #fff;
   box-shadow: 0 2px 10px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  font-size: 8px;
+  font-size: 1rem;
   font-weight: 400;
 `;
 

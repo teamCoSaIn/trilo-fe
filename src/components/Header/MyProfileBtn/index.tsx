@@ -157,7 +157,7 @@ const DropDownMenuItem = styled(MenuItem)`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  font-size: 14px;
+  font-size: 1.4rem;
 `;
 
 export default MyProfileBtn;

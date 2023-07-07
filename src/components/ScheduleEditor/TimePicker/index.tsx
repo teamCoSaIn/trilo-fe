@@ -199,7 +199,7 @@ const TimePickerContent = styled.div`
   border: 1px solid #d9d9d9;
   border-radius: 5px;
   color: #4f4f4f;
-  font-size: 12px;
+  font-size: 1.2rem;
   line-height: 20px;
   transition: border-color 0.2s;
   &:hover {
@@ -224,7 +224,7 @@ const TimeOptionsDropdown = styled.div<{ isTimeOptionsVisible: boolean }>`
   transition: max-height 0.1s ease-out;
   position: absolute;
   top: 22px;
-  left: 0px;
+  left: 0;
   width: 90px;
   height: 180px;
   background-color: #fff;
@@ -264,7 +264,7 @@ const TimeOptionsList = styled.ul<{ isVisible: boolean }>`
 const TimeOptionsItem = styled.li<{
   isSelected: boolean;
 }>`
-  font-size: 12px;
+  font-size: 1.2rem;
   padding: 4px 10px;
   border-radius: 5px;
   background-color: ${({ isSelected }) => (isSelected ? '#e6f4ff' : 'none')};

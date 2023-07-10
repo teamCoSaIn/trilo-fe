@@ -24,7 +24,7 @@ const Header = () => {
         <MyProfileBtn />
       </Suspense>
     ) : (
-      <MuiButton width={92}>
+      <MuiButton width={92} height={HEADER_HEIGHT}>
         <HeaderLink to="/login">로그인</HeaderLink>
       </MuiButton>
     );
@@ -42,13 +42,12 @@ const Header = () => {
   );
 };
 
-const HeaderBox = styled.header`
+const HeaderBox = styled.header<{ isMobile: boolean }>`
   position: sticky;
   top: 0;
   left: 0;
-  height: ${HEADER_HEIGHT};
+  height: ${HEADER_HEIGHT}px;
   width: 100%;
-  padding: 0 80px;
   display: flex;
   align-items: center;
   justify-content: space-between;

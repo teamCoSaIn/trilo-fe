@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import MuiButton from '@/components/common/MuiButton';
+import { HEADER_HEIGHT } from '@/constants/size';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
@@ -81,6 +82,7 @@ const MyProfileBtn = () => {
     <Stack direction="row" spacing={2}>
       <MuiButton
         width={92}
+        height={HEADER_HEIGHT}
         ref={anchorRef}
         id="composition-button"
         aria-controls={open ? 'composition-menu' : undefined}

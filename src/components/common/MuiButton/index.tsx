@@ -2,10 +2,8 @@ import { Button } from '@mui/material';
 import styled, { css } from 'styled-components';
 
 import color from '@/constants/color';
-import { HEADER_HEIGHT } from '@/constants/size';
 
-const MuiButton = styled(Button)<{ width?: number }>`
-  height: ${HEADER_HEIGHT};
+const MuiButton = styled(Button)<{ width?: number; height?: number }>`
   padding: 0;
   color: #3867ff;
   font-size: 1.6rem;
@@ -16,6 +14,7 @@ const MuiButton = styled(Button)<{ width?: number }>`
   }
   ${props => css`
     ${props.width && { width: props.width }}
+    ${props.height && { height: props.height }}
   `}
 `;
 

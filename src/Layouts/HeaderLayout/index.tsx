@@ -19,5 +19,5 @@ export default HeaderLayout;
 
 const Container = styled.div`
   width: 100%;
-  height: calc(100% - ${HEADER_HEIGHT});
+  height: calc(100% - ${HEADER_HEIGHT}px);
 `;

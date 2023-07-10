@@ -35,7 +35,7 @@ export const getDateInfoArray = (date: Date): IDateInfo[][] => {
 // 형식 변환 : 2021.04.19
 export const transformDateToDotFormat = (date: Date) => {
   //  '2021. 4. 19. 오전 12:00:00'
-  const localeStringFormat = date.toLocaleString();
+  const localeStringFormat = date.toLocaleString('ko-KR');
   const [yearStr, monthStr, dateStr] = localeStringFormat
     .replace(/\./g, '')
     .split(' ')

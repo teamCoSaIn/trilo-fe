@@ -11,9 +11,11 @@ import MyProfileBtnSkeleton from '@/components/Header/MyProfileBtnSkeleton';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 import { HEADER_Z_INDEX } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Header = () => {
+  const { isMobile, isDesktop } = useMedia();
   const userStatus = useRecoilValue(UserStatus);
 
   const userStatusBtn =
@@ -53,6 +55,16 @@ const HeaderBox = styled.header`
   background-color: ${color.white};
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
   z-index: ${HEADER_Z_INDEX};
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        padding: 0 20px;
+      `;
+    }
+    return css`
+      padding: 0 80px;
+    `;
+  }}
 `;
 
 const HeaderLink = styled(Link)`
@@ -62,4 +74,5 @@ const HeaderLink = styled(Link)`
   align-items: center;
   justify-content: center;
 `;
+
 export default Header;

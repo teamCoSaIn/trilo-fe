@@ -13,8 +13,11 @@ const GlobalStyle = createGlobalStyle`
     // TripTripCardWidth(245) * 4 + TripTripCardBoxGap(28) * 3 + padding(100) * 2
     min-width: 1264px;
     min-height: 789px;
-    max-width: 2560px;
     margin: 0 auto;
+    @media screen and (max-width: 767px) {
+      // mobile
+      min-width: 320px;
+    }
   }
   body {
     height: 100%;

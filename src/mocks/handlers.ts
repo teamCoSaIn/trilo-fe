@@ -582,16 +582,22 @@ const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
-const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
-  return res(
-    ctx.json({
-      totalDistanceOfPastTrip: 410,
-      totalNumOfTrip: 10,
-      badgeImgUrl:
-        'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
-    })
-  );
-});
+const getUserInfo = rest.get(
+  '/api/users/:userId/my-page',
+  async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        name: 'Oliver',
+        imgaeURL:
+          'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
+        tripStatisctics: {
+          totalTripCnt: 10,
+          terminatedTripCnt: 3,
+        },
+      })
+    );
+  }
+);
 
 const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
   await sleep(1000);

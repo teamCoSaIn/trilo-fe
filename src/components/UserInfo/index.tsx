@@ -21,7 +21,7 @@ const UserInfo = () => {
 
   const { data: userInfoData } = useQuery(
     ['userInfo'],
-    () => HTTP.getUserInfo(),
+    () => HTTP.getUserInfo(userId),
     {
       staleTime: 30 * 60 * 1000,
       suspense: true,
@@ -73,34 +73,14 @@ const UserInfo = () => {
     }
   };
 
-  const totalDistance = userInfoData?.totalDistanceOfPastTrip
-    ? userInfoData.totalDistanceOfPastTrip.toLocaleString()
-    : 0;
-
-  const totalTrip = userInfoData?.totalNumOfTrip
-    ? userInfoData.totalNumOfTrip
-    : 0;
+  const totalTrip = userInfoData?.tripStatistics.totalTripCnt;
+  const terminatedTrip = userInfoData?.tripStatistics.terminatedTripCnt;
 
   return (
     <>
-      <ProfileBadge src={userInfoData?.badgeImgUrl} />
+      <ProfileBadge src={userInfoData?.imageURL} alt="user profile badge" />
       <Spacing height={30} />
       <DynamicUserNickname />
-      <Spacing height={24} />
-      <InfoBox backgroundColor={color.white}>
-        <InfoKey color={color.blue3} fontSize={1.6}>
-          나의 여정
-        </InfoKey>
-        <FlexibleSpacing />
-        <InfoValueBox>
-          <InfoValue color={color.gray3} fontSize={1.6}>
-            {totalDistance}
-          </InfoValue>
-          <InfoValueUnit color={color.gray3} fontSize={1.6}>
-            KM
-          </InfoValueUnit>
-        </InfoValueBox>
-      </InfoBox>
       <Spacing height={24} />
       <InfoBox backgroundColor={color.white}>
         <InfoKey color={color.blue3} fontSize={1.6}>
@@ -110,6 +90,21 @@ const UserInfo = () => {
         <InfoValueBox>
           <InfoValue color={color.gray3} fontSize={1.6}>
             {totalTrip}
+          </InfoValue>
+          <InfoValueUnit color={color.gray3} fontSize={1.6}>
+            개
+          </InfoValueUnit>
+        </InfoValueBox>
+      </InfoBox>
+      <Spacing height={24} />
+      <InfoBox backgroundColor={color.white}>
+        <InfoKey color={color.blue3} fontSize={1.6}>
+          완료된 일정
+        </InfoKey>
+        <FlexibleSpacing />
+        <InfoValueBox>
+          <InfoValue color={color.gray3} fontSize={1.6}>
+            {terminatedTrip}
           </InfoValue>
           <InfoValueUnit color={color.gray3} fontSize={1.6}>
             개

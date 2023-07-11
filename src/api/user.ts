@@ -10,9 +10,14 @@ export interface IUserProfile {
 }
 
 interface IUserInfo {
-  totalDistanceOfPastTrip: number;
-  totalNumOfTrip: number;
-  badgeImgUrl: string;
+  name: string;
+  imageURL: string;
+  tripStatistics: ITripStatistics;
+}
+
+interface ITripStatistics {
+  totalTripCnt: number;
+  terminatedTripCnt: number;
 }
 
 export const getUserProfile = async (userId: IUserProfile['id']) => {
@@ -34,10 +39,10 @@ export const changeNickname = async (nickname: IUserProfile['name']) => {
   return res.status;
 };
 
-export const getUserInfo = async () => {
+export const getUserInfo = async (userId: IUserProfile['id']) => {
   const res = await axios<IUserInfo>({
     method: 'get',
-    url: '/user-info',
+    url: `/users/${userId}/my-page`,
     requireAuth: true,
   });
   return res.data;

@@ -1,4 +1,4 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -11,6 +11,7 @@ import Description from '@/components/common/Description/index';
 import Spacing from '@/components/common/Spacing/index';
 import DynamicUserNickname from '@/components/UserInfo/DynamicUserNickname/index';
 import color from '@/constants/color';
+import useGetUserInfo from '@/queryHooks/useGetUserInfo';
 import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
 const UserInfo = () => {
@@ -19,14 +20,7 @@ const UserInfo = () => {
   const userId = useRecoilValue(UserId);
   const setUserStatus = useSetRecoilState(UserStatus);
 
-  const { data: userInfoData } = useQuery(
-    ['userInfo'],
-    () => HTTP.getUserInfo(userId),
-    {
-      staleTime: 30 * 60 * 1000,
-      suspense: true,
-    }
-  );
+  const { data: userInfoData } = useGetUserInfo(userId);
   const { isLoading, mutate } = useMutation(
     ['resign'],
     () => HTTP.resign(userId),

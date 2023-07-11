@@ -41,6 +41,10 @@ export const whiteBtnStyle = css`
   background-color: ${color.white};
   color: ${color.blue2};
   border: 1px solid ${color.blue2};
+  &:hover {
+    color: ${color.blue3};
+    border: 1px solid ${color.blue3};
+  }
 `;
 
 export const grayBtnStyle = css`

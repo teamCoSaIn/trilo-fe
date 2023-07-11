@@ -56,12 +56,12 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
     event.stopPropagation();
   };
 
-  const handleClickGoogleLink = (event: React.MouseEvent) => {
+  const handleGoogleLinkClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     window.open(selectedPlaceData?.url || 'https://www.google.com/maps');
   };
 
-  const handleClickNaverLink = (event: React.MouseEvent) => {
+  const handleNaverLinkClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     window.open(
       `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${scheduleData.placeName}`
@@ -88,11 +88,11 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
       </PlaceRatingBox>
       <Spacing height={10} />
       <PlaceLinkBtnBox>
-        <PlaceLinkBtn onClick={handleClickGoogleLink}>
+        <PlaceLinkBtn onClick={handleGoogleLinkClick}>
           <GoogleIcon />
           구글 맵
         </PlaceLinkBtn>
-        <PlaceLinkBtn onClick={handleClickNaverLink}>
+        <PlaceLinkBtn onClick={handleNaverLinkClick}>
           <NaverIcon />
           네이버
         </PlaceLinkBtn>

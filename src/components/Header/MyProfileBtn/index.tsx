@@ -48,12 +48,12 @@ const MyProfileBtn = () => {
     setOpen(false);
   };
 
-  const handleClickMyAccount = () => {
+  const handleMyAccountClick = () => {
     navigate('/user');
     setOpen(false);
   };
 
-  const handleClickLogout = async () => {
+  const handleLogoutClick = async () => {
     navigate('/');
     setOpen(false);
 
@@ -122,10 +122,10 @@ const MyProfileBtn = () => {
                   aria-labelledby="composition-button"
                   onKeyDown={handleListKeyDown}
                 >
-                  <DropDownMenuItem onClick={handleClickMyAccount}>
+                  <DropDownMenuItem onClick={handleMyAccountClick}>
                     내 정보
                   </DropDownMenuItem>
-                  <DropDownMenuItem onClick={handleClickLogout}>
+                  <DropDownMenuItem onClick={handleLogoutClick}>
                     로그아웃
                   </DropDownMenuItem>
                 </DropDownMenuList>

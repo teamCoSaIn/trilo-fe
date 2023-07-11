@@ -15,8 +15,11 @@ import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HOME_CONTENT_Z_INDEX } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 
 const Home = () => {
+  const { isMobile } = useMedia();
+
   const [observedContentNum, setObservedContentNum] = useState(0);
 
   const intersectionCallback: IntersectionObserverCallback = entries => {
@@ -48,18 +51,18 @@ const Home = () => {
   return (
     <Layout column alignCenter>
       <MainContent column alignCenter>
-        <Description color={color.white} fontSize={3}>
+        <Description color={color.white} fontSize={isMobile ? 1.8 : 3}>
           Welcome to
         </Description>
         <Spacing height={42} />
         <LogoImg
-          width={326}
-          height={132}
+          width={isMobile ? 208 : 326}
+          height={isMobile ? 84 : 132}
           fill={color.white}
           style={{ flexShrink: 0 }}
         />
         <Spacing height={42} />
-        <Description color={color.white} fontSize={2}>
+        <Description color={color.white} fontSize={isMobile ? 1.8 : 2}>
           Trilo, 여행을 위한 완벽한 메모장
         </Description>
         <Spacing height={150} />
@@ -67,6 +70,9 @@ const Home = () => {
           <NewTripLink to="/triplist">여행 계획 만들기</NewTripLink>
         </NewTripBtn>
         <Spacing height={50} />
+        <DownBtn onClick={handleDownBtnClick} isMobile={isMobile}>
+          <DownArrow />
+        </DownBtn>
       </MainContent>
       <Content
         column
@@ -75,7 +81,7 @@ const Home = () => {
         isObserved={observedContentNum >= 1}
       >
         <Spacing height={50} ref={scrollTargetRef} />
-        <ContentText color={color.gray3} fontSize={3.2}>
+        <ContentText color={color.gray3} fontSize={isMobile ? 1.5 : 3.2}>
           여행 계획, 평소에 어떻게 짜셨나요? <br />
           <br />
           엑셀, 다이어리, 메모장 여러가지 섞어서 사용하시다가 짜증나신 적은
@@ -87,7 +93,7 @@ const Home = () => {
         <ContentImage
           src={laptopImg}
           alt="trilo가 실행된 노트북 이미지"
-          width={600}
+          width={isMobile ? 300 : 600}
         />
       </Content>
       <Content
@@ -96,11 +102,11 @@ const Home = () => {
         ref={observeTarget}
         isObserved={observedContentNum >= 2}
       >
-        <Description fontSize={4} color={color.blue3}>
+        <Description fontSize={isMobile ? 2 : 4} color={color.blue3}>
           여행 기록
         </Description>
         <Spacing height={40} />
-        <ContentText fontSize={2.4} color="#767676">
+        <ContentText fontSize={isMobile ? 1.6 : 2.4} color="#767676">
           새로운 여행계획을 생성하세요.
           <br />
           <br />
@@ -110,7 +116,7 @@ const Home = () => {
         <ContentImage
           src={tripListImg}
           alt="trilo 여행 목록 페이지 이미지"
-          width={750}
+          width={isMobile ? 320 : 750}
         />
       </Content>
       <Content
@@ -119,11 +125,11 @@ const Home = () => {
         ref={observeTarget}
         isObserved={observedContentNum >= 3}
       >
-        <Description fontSize={4} color={color.blue3}>
+        <Description fontSize={isMobile ? 2 : 4} color={color.blue3}>
           장소 검색
         </Description>
         <Spacing height={40} />
-        <ContentText fontSize={2.4} color="#767676">
+        <ContentText fontSize={isMobile ? 1.6 : 2.4} color="#767676">
           유명한 관광지, 맛집, 액티비티 편하게 검색해보세요.
           <br />
           <br />
@@ -133,7 +139,7 @@ const Home = () => {
         <ContentImage
           src={leftWindowImg}
           alt="trilo 여행 계획 페이지 장소 검색 이미지"
-          width={700}
+          width={isMobile ? 300 : 700}
         />
       </Content>
       <Content
@@ -142,11 +148,11 @@ const Home = () => {
         ref={observeTarget}
         isObserved={observedContentNum >= 4}
       >
-        <Description fontSize={4} color={color.blue3}>
+        <Description fontSize={isMobile ? 2 : 4} color={color.blue3}>
           나만의 여행 메모장
         </Description>
         <Spacing height={40} />
-        <ContentText fontSize={2.4} color="#767676">
+        <ContentText fontSize={isMobile ? 1.6 : 2.4} color="#767676">
           드래그하여 일정을 자유롭게 수정할 수 있어요.
           <br />
           <br />
@@ -156,10 +162,10 @@ const Home = () => {
         <ContentImage
           src={rightWindowImg}
           alt="trilo 여행 계획 페이지 일정 목록 이미지"
-          width={400}
+          width={isMobile ? 200 : 400}
         />
         <Spacing height={100} />
-        <ContentText fontSize={2.4} color="#767676">
+        <ContentText fontSize={isMobile ? 1.6 : 2.4} color="#767676">
           이제 여행 계획을 만들어 볼까요?
         </ContentText>
         <Spacing height={40} />
@@ -168,9 +174,6 @@ const Home = () => {
         </NewTripBtn>
         <Spacing height={100} />
       </Content>
-      <DownBtn onClick={handleDownBtnClick}>
-        <DownArrow />
-      </DownBtn>
       <BackgroundImage src={backgroundImg} alt="homepage background" />
     </Layout>
   );
@@ -182,8 +185,11 @@ const Layout = styled(Flex)`
 `;
 
 const MainContent = styled(Flex)`
-  min-height: 100%;
-  margin: 100px 0;
+  position: relative;
+  min-height: 500px;
+  height: 100%;
+  max-height: 1200px;
+  padding: 50px 0;
   opacity: 0;
   animation: show 0.5s ease-in-out 0.5s 1 normal forwards running;
   @keyframes show {
@@ -201,8 +207,13 @@ const MainContent = styled(Flex)`
 `;
 
 const Content = styled(Flex)<{ isObserved: boolean }>`
-  min-height: 100%;
-  margin: 50px 0;
+  @media screen and (max-height: 1199px) {
+    min-height: 100%;
+  }
+  @media screen and (min-height: 1200px) {
+    height: 1000px;
+  }
+  padding: 50px 0;
   opacity: 0;
   ${({ isObserved }) => css`
     ${isObserved && {
@@ -238,9 +249,9 @@ const NewTripLink = styled(Link)`
   border-radius: 3rem;
 `;
 
-const DownBtn = styled.button`
+const DownBtn = styled.button<{ isMobile: boolean }>`
   position: absolute;
-  bottom: 40px;
+  bottom: 10px;
   animation: flow 1s linear infinite alternate;
   @keyframes flow {
     0% {
@@ -251,6 +262,26 @@ const DownBtn = styled.button`
     }
   }
   z-index: ${HOME_CONTENT_Z_INDEX};
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        path {
+          fill: ${color.blue2};
+        }
+        circle {
+          stroke: ${color.blue2};
+        }
+      `;
+    }
+  }}
+  &:hover {
+    path {
+      fill: ${color.blue3};
+    }
+    circle {
+      stroke: ${color.blue3};
+    }
+  }
 `;
 
 const BackgroundImage = styled.img`

@@ -9,6 +9,13 @@ export const largeBtnStyle = css`
   font-size: 2.3rem;
 `;
 
+export const mobileLargeBtnStyle = css`
+  width: 320px;
+  height: 45px;
+  border-radius: 41px;
+  font-size: 1.6rem;
+`;
+
 export const mediumBtnStyle = css`
   width: 152px;
   height: 36px;

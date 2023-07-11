@@ -10,25 +10,28 @@ import { ReactComponent as NaverLogin } from '@/assets/naver-login.svg';
 import CircularLoader from '@/components/common/CircularLoader/index';
 import Error from '@/components/common/Error';
 import OAuthBtn from '@/components/OAuthBtnContainer/OAuthBtn';
+import useMedia from '@/hooks/useMedia';
 
 const OAuthBtnContainer = () => {
+  const { isMobile } = useMedia();
+
   const oauthState = uuidv4();
   localStorage.setItem('oauthState', oauthState);
 
   const OAuthList = [
     {
       name: 'google',
-      svg: <GoogleLogin />,
+      svg: <GoogleLogin width={isMobile ? 100 : 176} />,
       loginUri: `https://accounts.google.com/o/oauth2/v2/auth?scope=email profile&include_granted_scopes=true&response_type=code&state=${oauthState}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}&client_id=${process.env.GOOGLE_CLIENT_ID}`,
     },
     {
       name: 'naver',
-      svg: <NaverLogin />,
+      svg: <NaverLogin width={isMobile ? 100 : 176} />,
       loginUri: `https://nid.naver.com/oauth2.0/authorize?response_type=code&client_id=${process.env.NAVER_CLIENT_ID}&state=${oauthState}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}`,
     },
     {
       name: 'kakao',
-      svg: <KakaoLogin />,
+      svg: <KakaoLogin width={isMobile ? 100 : 176} />,
       loginUri: `https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=${process.env.KAKAO_CLIENT_ID}&scope=profile_nickname%20profile_image%20account_email&state=${oauthState}&redirect_uri=${process.env.OAUTH_REDIRECT_URI}`,
     },
   ];

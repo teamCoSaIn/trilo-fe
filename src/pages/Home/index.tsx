@@ -93,7 +93,7 @@ const Home = () => {
         <ContentImage
           src={laptopImg}
           alt="trilo가 실행된 노트북 이미지"
-          width={isMobile ? 300 : 600}
+          width="50%"
         />
       </Content>
       <Content
@@ -116,7 +116,7 @@ const Home = () => {
         <ContentImage
           src={tripListImg}
           alt="trilo 여행 목록 페이지 이미지"
-          width={isMobile ? 320 : 750}
+          width="70%"
         />
       </Content>
       <Content
@@ -139,7 +139,7 @@ const Home = () => {
         <ContentImage
           src={leftWindowImg}
           alt="trilo 여행 계획 페이지 장소 검색 이미지"
-          width={isMobile ? 300 : 700}
+          width="50%"
         />
       </Content>
       <Content
@@ -162,7 +162,7 @@ const Home = () => {
         <ContentImage
           src={rightWindowImg}
           alt="trilo 여행 계획 페이지 일정 목록 이미지"
-          width={isMobile ? 200 : 400}
+          width="70%"
         />
         <Spacing height={100} />
         <ContentText fontSize={isMobile ? 1.6 : 2.4} color="#767676">

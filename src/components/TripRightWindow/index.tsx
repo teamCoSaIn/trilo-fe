@@ -1,17 +1,19 @@
 import { Suspense, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import CircularLoader from '@/components/common/CircularLoader';
 import ScheduleDropdown from '@/components/ScheduleDropdown';
 import ScheduleEditor from '@/components/ScheduleEditor';
 import ScheduleList from '@/components/ScheduleList';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import { IsTempBoxOpen, SelectedEditorScheduleId } from '@/states/schedule';
 
 const TripRightWindow = () => {
   const { tripId } = useParams();
+  const { isMobile } = useMedia();
 
   const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
   const resetSelectedEditorScheduleId = useResetRecoilState(
@@ -35,21 +37,30 @@ const TripRightWindow = () => {
   );
 
   return (
-    <TripRightWindowBox>
+    <TripRightWindowBox isMobile={isMobile}>
       <ScheduleDropdown tripId={tripId as string} />
       <ScheduleContent>{dynamicScheduleList}</ScheduleContent>
     </TripRightWindowBox>
   );
 };
 
-const TripRightWindowBox = styled.div`
-  width: 400px;
-  height: 100%;
+const TripRightWindowBox = styled.div<{ isMobile: boolean }>`
   background-color: ${color.white};
   padding: 12px 17px;
   flex-shrink: 0;
-  // MEMO: min-height 임시 설정 값임.
-  min-height: 500px;
+  // TODO: min-height 필요한지 체크
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 100%;
+        height: 60%;
+      `;
+    }
+    return css`
+      width: 400px;
+      height: 100%;
+    `;
+  }}
 `;
 
 const ScheduleContent = styled.div`

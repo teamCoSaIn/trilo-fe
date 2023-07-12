@@ -500,7 +500,7 @@ const ScheduleListBox = styled.ul<{ isEmpty: boolean }>`
         box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.03);
         border-radius: 7px;
         font-weight: 400;
-        font-size: 12px;
+        font-size: 1.2rem;
         color: #b6b6b6;
       `;
     }

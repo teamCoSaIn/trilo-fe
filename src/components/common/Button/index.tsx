@@ -7,9 +7,10 @@ import {
   whiteBtnStyle,
   grayBtnStyle,
   blueBtnStyle,
+  mobileLargeBtnStyle,
 } from '@/components/common/Button/style';
 
-type TBtnSize = 'large' | 'medium' | 'small';
+type TBtnSize = 'large' | 'medium' | 'small' | 'mobileLarge';
 type TBtnColor = 'white' | 'gray' | 'blue';
 
 const Button = styled.button<{ btnSize?: TBtnSize; btnColor?: TBtnColor }>`
@@ -50,6 +51,11 @@ const Button = styled.button<{ btnSize?: TBtnSize; btnColor?: TBtnColor }>`
       case 'medium':
         return css`
           ${mediumBtnStyle}
+        `;
+
+      case 'mobileLarge':
+        return css`
+          ${mobileLargeBtnStyle}
         `;
 
       default:

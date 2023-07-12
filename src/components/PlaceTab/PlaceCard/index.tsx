@@ -142,7 +142,7 @@ const PlaceCardContent = styled.div`
 
 const PlaceCardTitle = styled.h2`
   max-width: 160px;
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 700;
   white-space: nowrap;
   overflow: hidden;
@@ -157,13 +157,13 @@ const PlaceCardRatingBox = styled.div`
 `;
 
 const PlaceCardRating = styled.span`
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #4f4f4f;
 `;
 
 const PlaceCardNumOfReviews = styled.span`
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 400;
   color: #4f4f4f;
 `;
@@ -176,7 +176,7 @@ const PlaceCardAddressBtn = styled.button`
 
 const PlaceCardAddressSpan = styled.span`
   max-width: 150px;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 400;
   white-space: nowrap;
   overflow: hidden;
@@ -187,14 +187,13 @@ const PlaceCardBusinessHoursBox = styled.div`
   display: flex;
   gap: 5px;
   margin-top: 12px;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 500;
   color: #4f4f4f;
 `;
 
 const PlaceCardBusinessHours = styled.span`
   max-width: 125px;
-  font-size: inherit;
   font-weight: 400;
   color: inherit;
   white-space: nowrap;
@@ -218,7 +217,7 @@ const PlaceCardGoogleLinkBtn = styled.button`
   background: #fff;
   box-shadow: 0 2px 10px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  font-size: 8px;
+  font-size: 1rem;
   font-weight: 400;
 `;
 

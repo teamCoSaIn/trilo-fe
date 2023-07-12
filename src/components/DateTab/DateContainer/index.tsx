@@ -60,7 +60,7 @@ const DateContainer = ({
       startMonth === dateInfo.month &&
       startDate > dateInfo.date);
 
-  const handleClickDateBox = () => {
+  const handleDateBoxClick = () => {
     if (disabled) return;
     if (!selectedStartDate && !selectedEndDate) {
       setSelectedDates([
@@ -101,7 +101,7 @@ const DateContainer = ({
       isStartOnRange={isStartOnRange}
       isEnd={isEnd}
       isBetween={isBetween}
-      onClick={handleClickDateBox}
+      onClick={handleDateBoxClick}
       disabled={disabled}
     >
       <DateCircle

@@ -244,7 +244,7 @@ const DayMenu = styled.li`
   display: flex;
   align-items: center;
   font-weight: 700;
-  font-size: 16px;
+  font-size: 1.6rem;
   color: ${color.gray3};
   padding-left: 34px;
   cursor: pointer;

@@ -16,6 +16,7 @@ import styled from 'styled-components';
 
 import HTTP from '@/api';
 import MuiButton from '@/components/common/MuiButton';
+import { HEADER_HEIGHT } from '@/constants/size';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
@@ -47,12 +48,12 @@ const MyProfileBtn = () => {
     setOpen(false);
   };
 
-  const handleClickMyAccount = () => {
+  const handleMyAccountClick = () => {
     navigate('/user');
     setOpen(false);
   };
 
-  const handleClickLogout = async () => {
+  const handleLogoutClick = async () => {
     navigate('/');
     setOpen(false);
 
@@ -81,6 +82,7 @@ const MyProfileBtn = () => {
     <Stack direction="row" spacing={2}>
       <MuiButton
         width={92}
+        height={HEADER_HEIGHT}
         ref={anchorRef}
         id="composition-button"
         aria-controls={open ? 'composition-menu' : undefined}
@@ -120,10 +122,10 @@ const MyProfileBtn = () => {
                   aria-labelledby="composition-button"
                   onKeyDown={handleListKeyDown}
                 >
-                  <DropDownMenuItem onClick={handleClickMyAccount}>
+                  <DropDownMenuItem onClick={handleMyAccountClick}>
                     내 정보
                   </DropDownMenuItem>
-                  <DropDownMenuItem onClick={handleClickLogout}>
+                  <DropDownMenuItem onClick={handleLogoutClick}>
                     로그아웃
                   </DropDownMenuItem>
                 </DropDownMenuList>
@@ -157,7 +159,7 @@ const DropDownMenuItem = styled(MenuItem)`
   box-sizing: border-box;
   display: flex;
   justify-content: center;
-  font-size: 14px;
+  font-size: 1.4rem;
 `;
 
 export default MyProfileBtn;

@@ -56,12 +56,12 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
     event.stopPropagation();
   };
 
-  const handleClickGoogleLink = (event: React.MouseEvent) => {
+  const handleGoogleLinkClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     window.open(selectedPlaceData?.url || 'https://www.google.com/maps');
   };
 
-  const handleClickNaverLink = (event: React.MouseEvent) => {
+  const handleNaverLinkClick = (event: React.MouseEvent) => {
     event.stopPropagation();
     window.open(
       `https://search.naver.com/search.naver?where=nexearch&sm=top_hty&fbm=0&ie=utf8&query=${scheduleData.placeName}`
@@ -88,11 +88,11 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
       </PlaceRatingBox>
       <Spacing height={10} />
       <PlaceLinkBtnBox>
-        <PlaceLinkBtn onClick={handleClickGoogleLink}>
+        <PlaceLinkBtn onClick={handleGoogleLinkClick}>
           <GoogleIcon />
           구글 맵
         </PlaceLinkBtn>
-        <PlaceLinkBtn onClick={handleClickNaverLink}>
+        <PlaceLinkBtn onClick={handleNaverLinkClick}>
           <NaverIcon />
           네이버
         </PlaceLinkBtn>
@@ -182,7 +182,7 @@ const PlaceRatingBox = styled.div`
 `;
 
 const PlaceRating = styled.p`
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 700;
   color: #4f4f4f;
   margin-top: 3px;
@@ -203,7 +203,7 @@ const PlaceLinkBtn = styled.button`
   background: #fff;
   box-shadow: 0 2px 10px 1px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
-  font-size: 8px;
+  font-size: 1rem;
   font-weight: 400;
 `;
 

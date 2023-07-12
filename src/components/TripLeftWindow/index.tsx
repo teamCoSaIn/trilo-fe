@@ -103,7 +103,7 @@ const TabBtn = styled.button<{ isFocused: boolean }>`
   height: 51px;
   color: #d9d9d9;
   font-weight: 700;
-  font-size: 20px;
+  font-size: 2rem;
   border-bottom: 3px solid white;
   &:hover {
     border-bottom: 3px solid ${color.blue3};

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { ReactNode } from 'react';
 import { useSetRecoilState } from 'recoil';
 
@@ -34,7 +35,8 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
   // 최초 한번만 동작하는 자동로그인
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
     onSuccess: response => {
-      setUserId(response.userId);
+      const decoded: JwtPayload = jwt_decode(response.accessToken);
+      setUserId(+(decoded.sub as string));
     },
     onError: () => {
       setUserStatus(UserStatusTypes.LOGOUT);

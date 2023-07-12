@@ -208,7 +208,7 @@ const Map = () => {
     setAutocompleteService(service2);
   };
 
-  const handleClickGoogleMap = (event: google.maps.MapMouseEvent) => {
+  const handleGoogleMapClick = (event: google.maps.MapMouseEvent) => {
     if (!isDateSelectorVisible && event.latLng) {
       const selectedLocation = {
         lat: event.latLng.lat(),
@@ -219,11 +219,11 @@ const Map = () => {
     resetPlaceInfo();
   };
 
-  const handleClickGoogleMarker = () => {
+  const handleGoogleMarkerClick = () => {
     setIsDateSelectorVisible(true);
   };
 
-  const handleClickTriloMarker = (scheduleId: number) => () => {
+  const handleTriloMarkerClick = (scheduleId: number) => () => {
     if (selectedMarkerScheduleId === scheduleId) {
       resetSelectedMarkerScheduleId();
     } else {
@@ -279,7 +279,7 @@ const Map = () => {
                 url: triloMarkerDataUrl,
               },
             }}
-            onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+            onClick={handleTriloMarkerClick(scheduleData.scheduleId)}
             animation={animation}
           >
             {selectedMarkerScheduleId === scheduleData.scheduleId && (
@@ -326,7 +326,7 @@ const Map = () => {
                 url: triloMarkerDataUrl,
               },
             }}
-            onClick={handleClickTriloMarker(scheduleData.scheduleId)}
+            onClick={handleTriloMarkerClick(scheduleData.scheduleId)}
             animation={animation}
           >
             {selectedMarkerScheduleId === scheduleData.scheduleId && (
@@ -402,7 +402,7 @@ const Map = () => {
       mapContainerStyle={googleMapStyle}
       options={googleMapOptions}
       onLoad={handleOnMapLoad}
-      onClick={handleClickGoogleMap}
+      onClick={handleGoogleMapClick}
     >
       {googleMarkerLatLng?.lat && googleMarkerLatLng?.lng && (
         <MarkerF
@@ -411,7 +411,7 @@ const Map = () => {
             lng: googleMarkerLatLng.lng,
           }}
           animation={google.maps.Animation.DROP}
-          onClick={handleClickGoogleMarker}
+          onClick={handleGoogleMarkerClick}
         >
           {isDateSelectorVisible && (
             <InfoBoxF options={dateSelectorInfoBoxOptions}>

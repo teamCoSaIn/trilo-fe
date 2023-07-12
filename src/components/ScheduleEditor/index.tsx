@@ -140,7 +140,7 @@ const ScheduleEditorBox = styled.div`
   margin: 46px 17px 15px 17px;
   padding: 11px 14px 18px 14px;
   background: #fff;
-  box-shadow: 0px 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
   border-radius: 7px;
   overflow: hidden;
 `;
@@ -151,7 +151,7 @@ const ScheduleTitleBox = styled(Flex)`
 
 const ScheduleTitle = styled.input`
   width: 100%;
-  font-size: 16px;
+  font-size: 1.6rem;
   font-weight: 700;
   ::placeholder {
     color: #bbb;
@@ -163,7 +163,7 @@ const ScheduleTitle = styled.input`
 const CancelBtn = styled.button``;
 
 const TimeDescription = styled.span`
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 400;
   margin: 0 18px 0 5px;
 `;
@@ -195,7 +195,7 @@ const PlaceNameBox = styled.button`
 `;
 
 const PlaceName = styled.span`
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 500;
   color: inherit;
 `;

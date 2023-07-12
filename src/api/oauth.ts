@@ -6,7 +6,6 @@ export type TToken = string;
 export interface IGetAccessTokenResponse {
   authType: string;
   accessToken: TToken;
-  userId: number;
 }
 
 interface ICheckRefreshTokenResponse {

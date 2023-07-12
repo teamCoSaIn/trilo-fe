@@ -159,7 +159,7 @@ const DateSelctorHeader = styled.div`
   align-items: center;
   height: 36px;
   padding: 8px 30px;
-  font-size: 14px;
+  font-size: 1.4rem;
   font-weight: 400;
   color: #fff;
   background-color: #456ceb;
@@ -184,7 +184,7 @@ const DateSelectorDateItem = styled.li`
   height: 25px;
   text-align: center;
   font-weight: 400;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: #4f4f4f;
   &:hover {
     background: #ecf0ff;
@@ -206,7 +206,7 @@ const DateSelectorTempStorageBox = styled.div`
   justify-content: center;
   align-items: center;
   height: 36px;
-  font-size: 12px;
+  font-size: 1.2rem;
   font-weight: 500;
   color: #4d77ff;
   background-color: #ecf0ff;

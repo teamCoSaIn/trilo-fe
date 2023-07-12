@@ -14,6 +14,6 @@ const MyProfileBtnSkeleton = () => {
 
 const FlexBox = styled(Flex)`
   width: 92px;
-  height: ${HEADER_HEIGHT};
+  height: ${HEADER_HEIGHT}px;
 `;
 export default MyProfileBtnSkeleton;

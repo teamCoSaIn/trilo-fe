@@ -230,7 +230,7 @@ const TripImgLabel = styled.label`
   align-items: center;
   height: 52px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: ${color.gray3};
   &:hover {
     color: ${color.blue3};
@@ -251,7 +251,7 @@ const IconBtn = styled.button`
   align-items: center;
   height: 52px;
   font-weight: 500;
-  font-size: 12px;
+  font-size: 1.2rem;
   color: ${color.gray3};
   &:hover {
     color: ${color.blue3};

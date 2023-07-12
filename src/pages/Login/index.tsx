@@ -11,9 +11,12 @@ import Logo from '@/components/common/Logo';
 import Spacing from '@/components/common/Spacing';
 import OAuthBtnContainer from '@/components/OAuthBtnContainer';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
 
 const Login = () => {
+  const { isMobile } = useMedia();
+
   const redirectUrl = localStorage.getItem('redirectUrl') || '/';
   const navigate = useNavigate();
   const setUserStatus = useSetRecoilState(UserStatus);
@@ -48,14 +51,18 @@ const Login = () => {
       <OAuthBtnContainer />
       <Spacing height={35} />
       <Flex alignCenter>
-        <Line width={193} right={35} />
+        <Line width={isMobile ? 90 : 193} right={35} />
         <Description color={color.gray2} fontSize={1.4}>
           또는
         </Description>
-        <Line width={193} left={35} />
+        <Line width={isMobile ? 90 : 193} left={35} />
       </Flex>
       <Spacing height={35} />
-      <Button type="button" onClick={handleVisitorBtnClick} btnSize="large">
+      <Button
+        type="button"
+        onClick={handleVisitorBtnClick}
+        btnSize={isMobile ? 'mobileLarge' : 'large'}
+      >
         로그인 없이 둘러보기
       </Button>
     </Layout>

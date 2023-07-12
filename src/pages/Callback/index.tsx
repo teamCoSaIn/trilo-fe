@@ -1,4 +1,5 @@
 import { AxiosError } from 'axios';
+import jwt_decode, { JwtPayload } from 'jwt-decode';
 import { useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
@@ -21,7 +22,8 @@ const Callback = () => {
 
   const onSuccess = (data: IGetAccessTokenResponse) => {
     setUserStatus(UserStatusTypes.LOGIN);
-    setUserId(data.userId);
+    const decoded: JwtPayload = jwt_decode(data.accessToken);
+    setUserId(+(decoded.sub as string));
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };

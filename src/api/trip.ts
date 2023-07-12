@@ -1,12 +1,10 @@
 import axios from '@/api/core';
 
-export type TTripCardStatus = 'BEFORE' | 'AFTER' | 'ON' | '';
-
 export interface ITrip {
   tripId: number;
   tripperId: number;
   title: string;
-  status: TTripCardStatus;
+  status: string;
   startDate: string;
   endDate: string;
   imageURL: string;

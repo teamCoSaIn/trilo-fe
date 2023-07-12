@@ -75,10 +75,10 @@ const TripHeader = () => {
 
 const Box = styled.div`
   position: absolute;
-  top: -${HEADER_HEIGHT};
+  top: -${HEADER_HEIGHT}px;
   left: 50%;
   transform: translateX(-50%);
-  height: ${HEADER_HEIGHT};
+  height: ${HEADER_HEIGHT}px;
   display: flex;
   flex-direction: column;
   justify-content: center;

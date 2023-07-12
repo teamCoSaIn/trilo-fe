@@ -6,16 +6,20 @@ import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
+import useGetUserInfo from '@/queryHooks/useGetUserInfo';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
 const TripsInfo = () => {
   const userId = useRecoilValue(UserId);
-  // TODO: useProfile 에 전체 Trip 개수 포함해야함.
+
   const { data: nicknameData } = useGetUserProfile({
     userId,
     selectKey: 'name',
   });
+  const { data: userInfoData } = useGetUserInfo(userId);
+
+  const totalTrip = userInfoData?.tripStatistics.totalTripCnt;
 
   return (
     <Flex column>
@@ -24,7 +28,7 @@ const TripsInfo = () => {
           {nicknameData as string}님의 여행기록
         </Description>
         <Spacing width={14} />
-        <Label>10개</Label>
+        <Label>{totalTrip} 개</Label>
       </Flex>
       <Spacing height={16} />
       <Description color="#979696" fontSize={1.4}>

@@ -11,6 +11,7 @@ const useDeleteTrip = () => {
   return useMutation((id: TDeleteTripParams) => HTTP.deleteTrip(id), {
     onSuccess: () => {
       queryClient.invalidateQueries(['tripList']);
+      queryClient.invalidateQueries(['userInfo']);
     },
     onError: (
       err: AxiosError<{

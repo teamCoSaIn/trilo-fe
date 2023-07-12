@@ -121,7 +121,7 @@ const ScheduleEditor = () => {
         />
       </Flex>
       <Spacing height={12} />
-      <Line width={302} color="#B8B8B8" />
+      <Line width="fit" color="#B8B8B8" />
       <Spacing height={12} />
       <Editor>
         <BlockNoteView editor={editor} />

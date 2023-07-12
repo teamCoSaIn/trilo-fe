@@ -48,8 +48,8 @@ const tripList = [
     imageUrl:
       'https://s3-alpha-sig.figma.com/img/0304/b1fa/45b3c6de7187bb138e7099de0a1dfb3f?Expires=1682294400&Signature=kThV6-Fsjp1jdxtFz4H63msIV7qxx2Ptly3kPNTSIsmV6EGMbUDTUAKU7TkmsL5cw-dFkw9VVI1UFqO3AgzQ590Vzgy3oKTUB0mx7vO~is~fi334wDnFoHnZNK1l2nq77~DpiJ1wkStp-FpHfO9Y-2bWXhK5nSNoEVWiDqVUDfstouvzJnKmYuEMQNfv0i0k43xnZ-hu4vrvBLFDsa5AkygCANAjP3UUBPKmYZfDF-hSKcHkzk64RN~jffjeQtSHNd-8akS6Xy2uW3Ep5l4CEgjzoQwd6F-zlNeJbpPRt8KCMFFNyzTR1k~xoquN-lhJcG-s8V66pmbsD9G9EnzvlA__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'BEFORE',
-    startDate: '2023-08-20',
-    endDate: '2023-08-22',
+    startDate: '2023-07-11',
+    endDate: '2023-07-15',
   },
   {
     tripId: 3,
@@ -57,8 +57,8 @@ const tripList = [
     imageUrl:
       'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'BEFORE',
-    startDate: '2023-03-25',
-    endDate: '2023-03-27',
+    startDate: '2023-07-14',
+    endDate: '2023-07-19',
   },
   {
     tripId: 4,
@@ -128,8 +128,8 @@ const tripList = [
     imageUrl:
       'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'AFTER',
-    startDate: '2023.09.25',
-    endDate: '2023.09.27',
+    startDate: '2023-09-25',
+    endDate: '2023-09-27',
   },
   {
     tripId: 12,
@@ -137,8 +137,8 @@ const tripList = [
     imageUrl:
       'https://s3-alpha-sig.figma.com/img/fc0a/bdc9/b5c73cf2f3111648643a68d4d03a5603?Expires=1682294400&Signature=GWAOm2~bFRjjYm7WsF~M-fnfWaAGNU79ettg9lRy7anIZIRNz6K-MBnEcXCcNV6eMyU69SqAdU9n3OW4bd0MH6lk7FAzfZ5t8QQPqWXuTnRO64oN42XcyUf4AjtDe7E1pGF9txfIR8pn4h6H2EmlSjCchv51UZoA99OZdxKqchIRDIrdHm~3LPFlg1deuBDpG0EA9Dx4HkFMhIZBFpL33vLfm-X5pm4Us2RJ58xpW-V2ehK6Arrz4C4v1F~ew4rQIcdvrYP6-e6-h~47GclmkYcBTAEbEEhqqAng2GxJC878MJkYRcNptjUx8FmTBQCZT9UCjIluQlWGQ~R~bfTQ0A__&Key-Pair-Id=APKAQ4GOSFWCVNEHN3O4',
     status: 'AFTER',
-    startDate: '2023.09.25',
-    endDate: '2023.09.27',
+    startDate: '2023-09-25',
+    endDate: '2023-09-27',
   },
 ];
 
@@ -582,16 +582,22 @@ const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
   return res(ctx.status(200));
 });
 
-const getUserInfo = rest.get('/api/user-info', async (req, res, ctx) => {
-  return res(
-    ctx.json({
-      totalDistanceOfPastTrip: 410,
-      totalNumOfTrip: 10,
-      badgeImgUrl:
-        'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
-    })
-  );
-});
+const getUserInfo = rest.get(
+  '/api/users/:userId/my-page',
+  async (req, res, ctx) => {
+    return res(
+      ctx.json({
+        name: 'Oliver',
+        imageURL:
+          'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
+        tripStatistics: {
+          totalTripCnt: 13,
+          terminatedTripCnt: 3,
+        },
+      })
+    );
+  }
+);
 
 const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
   await sleep(1000);

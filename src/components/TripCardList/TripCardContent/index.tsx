@@ -45,7 +45,7 @@ const TripCardContent = ({ trip }: ITripCardContentProps) => {
       onMouseLeave={handleTripCardMouseLeave}
     >
       {isHover && HoverMask}
-      <TripCardStatusLabel status={trip.status} />
+      <TripCardStatusLabel startDate={trip.startDate} endDate={trip.endDate} />
     </TripContent>
   );
 };

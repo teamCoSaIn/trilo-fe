@@ -63,7 +63,7 @@ const TripLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   width: 374px;
   height: 100%;
   ${props => (props.isWindowFold ? 'width: 0px;' : null)}
-  transition: all .5s;
+  transition: width .5s;
   background-color: ${color.white};
   z-index: ${TRIP_LEFT_WINDOW_Z_INDEX};
   white-space: nowrap;

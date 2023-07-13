@@ -3,7 +3,7 @@ import { useQueryErrorResetBoundary } from '@tanstack/react-query';
 import { Suspense } from 'react';
 import { ErrorBoundary } from 'react-error-boundary';
 import { useParams } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 
 import CircularLoader from '@/components/common/CircularLoader';
 import DimLoader from '@/components/common/DimLoader';
@@ -57,16 +57,13 @@ const Trip = () => {
   });
 
   return (
-    <Layout>
+    <Layout column={isMobile}>
       <ErrorBoundary FallbackComponent={Error} onReset={reset}>
         <Suspense fallback={<CircularLoader />}>
           {isDesktop && <TripHeader />}
           {isDesktop && <TripLeftWindow />}
-          <Wrapper isMobile={isMobile}>
-            {isLoaded ? <Map /> : <CircularLoader />}
-            <TripRightWindow />
-          </Wrapper>
-
+          {isLoaded ? <Map /> : <CircularLoader />}
+          <TripRightWindow />
           {(isDailyPlanListDataFetching ||
             (isTempPlanPageDataFetching && !isFetchingNextPage) ||
             isTripFetching) && <Portal childComponent={<DimLoader />} />}
@@ -79,18 +76,6 @@ const Trip = () => {
 const Layout = styled(Flex)`
   position: relative;
   height: 100%;
-`;
-
-const Wrapper = styled.div<{ isMobile: boolean }>`
-  width: 100%;
-  display: flex;
-  ${({ isMobile }) => {
-    if (isMobile) {
-      return css`
-        display: block;
-      `;
-    }
-  }}
 `;
 
 export default Trip;

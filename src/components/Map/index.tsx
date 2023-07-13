@@ -50,7 +50,7 @@ const ZOOM_LEVEL = 15;
 
 const Map = () => {
   const { tripId } = useParams();
-  const { isDesktop, isMobile } = useMedia();
+  const { isMobile } = useMedia();
 
   const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
     MapInstance
@@ -98,7 +98,8 @@ const Map = () => {
 
   const googleMapStyle = {
     width: '100%',
-    height: isDesktop ? '100%' : '40%',
+    // height: isDesktop ? '100%' : `${mobileMapHeight}%`,
+    height: '100%',
   };
 
   const googleMapOptions = {

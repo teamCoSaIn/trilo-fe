@@ -14,6 +14,7 @@ import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
 import TimePicker from '@/components/ScheduleEditor/TimePicker';
 import { SCHEDULE_DETAILS_DEBOUNCE_TIME } from '@/constants/debounce';
+import useMedia from '@/hooks/useMedia';
 import useChangeScheduleDetails from '@/queryHooks/useChangeScheduleDetails';
 import useGetScheduleDetails from '@/queryHooks/useGetScheduleDetails';
 import { MapInstance } from '@/states/googleMaps';
@@ -21,6 +22,7 @@ import { SelectedEditorScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
   const { tripId } = useParams();
+  const { isDesktop } = useMedia();
 
   const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
   const resetSelectedEditorScheduleId = useResetRecoilState(
@@ -46,12 +48,16 @@ const ScheduleEditor = () => {
 
   const debouncingTimer = useRef<NodeJS.Timeout | null>(null);
 
-  const editor: BlockNoteEditor | null = useBlockNote({
-    initialContent: contentInputValue,
-    onEditorContentChange: (editorParams: BlockNoteEditor) => {
-      setContentInputValue(editorParams.topLevelBlocks);
+  const editor: BlockNoteEditor | null = useBlockNote(
+    {
+      initialContent: contentInputValue,
+      onEditorContentChange: (editorParams: BlockNoteEditor) => {
+        setContentInputValue(editorParams.topLevelBlocks);
+      },
+      editable: isDesktop,
     },
-  });
+    [isDesktop]
+  );
 
   useEffect(() => {
     debouncingTimer.current = setTimeout(() => {
@@ -121,7 +127,7 @@ const ScheduleEditor = () => {
         />
       </Flex>
       <Spacing height={12} />
-      <Line width={302} color="#B8B8B8" />
+      <Line width="fit" color="#B8B8B8" />
       <Spacing height={12} />
       <Editor>
         <BlockNoteView editor={editor} />
@@ -169,7 +175,6 @@ const TimeDescription = styled.span`
 `;
 
 const Editor = styled.div`
-  width: 302px;
   height: calc(100% - 110px);
   overflow: auto;
 `;

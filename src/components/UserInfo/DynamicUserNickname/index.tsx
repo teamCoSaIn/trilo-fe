@@ -35,7 +35,8 @@ const DynamicUserNickname = () => {
     selectKey: 'nickName',
   });
   const { mutate, isLoading } = useMutation(
-    (newNickname: string) => HTTP.changeNickname(newNickname),
+    (newNickname: string) =>
+      HTTP.changeNickname({ userId, nickName: newNickname }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['userProfile']);

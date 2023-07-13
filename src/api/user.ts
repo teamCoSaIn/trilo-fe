@@ -20,6 +20,11 @@ interface ITripStatistics {
   terminatedTripCnt: number;
 }
 
+interface IChangeNicknameParams {
+  userId: IUserProfile['id'];
+  nickName: IUserProfile['nickName'];
+}
+
 export const getUserProfile = async (userId: IUserProfile['id']) => {
   const res = await axios<IUserProfile>({
     method: 'get',
@@ -29,11 +34,14 @@ export const getUserProfile = async (userId: IUserProfile['id']) => {
   return res.data;
 };
 
-export const changeNickname = async (nickname: IUserProfile['name']) => {
+export const changeNickname = async ({
+  userId,
+  nickName,
+}: IChangeNicknameParams) => {
   const res = await axios({
-    method: 'put',
-    url: `/user-nickname`,
-    data: { nickname },
+    method: 'patch',
+    url: `/users/${userId}`,
+    data: { nickName },
     requireAuth: true,
   });
   return res.status;

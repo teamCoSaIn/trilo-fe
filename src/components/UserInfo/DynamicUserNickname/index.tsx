@@ -32,7 +32,7 @@ const DynamicUserNickname = () => {
   const queryClient = useQueryClient();
   const { data: nicknameData, isFetching } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { mutate, isLoading } = useMutation(
     (newNickname: string) => HTTP.changeNickname(newNickname),

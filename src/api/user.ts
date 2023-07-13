@@ -2,7 +2,7 @@ import axios from '@/api/core';
 
 export interface IUserProfile {
   id: number;
-  name: string;
+  nickName: string;
   email: string;
   profileImageURL: string;
   authProvider: string;
@@ -10,7 +10,7 @@ export interface IUserProfile {
 }
 
 interface IUserInfo {
-  name: string;
+  nickName: string;
   imageURL: string;
   tripStatistics: ITripStatistics;
 }

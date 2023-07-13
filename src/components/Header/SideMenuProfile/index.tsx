@@ -22,7 +22,7 @@ const SideMenuProfile = () => {
         />
         <Spacing width={7} />
         <UserProfileNickname fontSize={1.6} color="#3867ff">
-          {(userProfileData as IUserProfile).name} 님
+          {(userProfileData as IUserProfile).nickName} 님
         </UserProfileNickname>
       </>
     );

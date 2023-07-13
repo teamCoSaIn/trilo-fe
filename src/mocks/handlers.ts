@@ -564,7 +564,7 @@ const getUserProfile = rest.get(
     return res(
       ctx.json({
         id: 1,
-        name: nickname,
+        nickName: nickname,
         profileImageURL:
           'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
         authProvider: 'GOOGLE',
@@ -587,7 +587,7 @@ const getUserInfo = rest.get(
   async (req, res, ctx) => {
     return res(
       ctx.json({
-        name: 'Oliver',
+        nickName: 'Oliver',
         imageURL:
           'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
         tripStatistics: {

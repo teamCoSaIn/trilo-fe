@@ -18,7 +18,7 @@ const TripsInfo = () => {
 
   const { data: nicknameData } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { data: userInfoData } = useGetUserInfo(userId);
 

@@ -23,7 +23,7 @@ const TripHeader = () => {
   // TODO: suspense option 으로 지정할 수 있도록 변경 필요해보임.
   const { data: nicknameData } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),

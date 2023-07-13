@@ -8,6 +8,7 @@ import tripCardDefaultPic from '@/assets/tripCardDefaultPic.png';
 import TripCardStatusLabel from '@/components/TripCardList/TripCardStatusLabel';
 import color from '@/constants/color';
 import { TRIP_LIST_DIM_LAYER_Z_INDEX } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 import { PreviewImgFamily } from '@/states/trip';
 
 interface ITripCardContentProps {
@@ -15,6 +16,8 @@ interface ITripCardContentProps {
 }
 
 const TripCardContent = ({ trip }: ITripCardContentProps) => {
+  const { isMobile } = useMedia();
+
   const [isHover, setIsHover] = useState(false);
   const previewImg = useRecoilValue(PreviewImgFamily(trip.tripId));
 
@@ -41,23 +44,41 @@ const TripCardContent = ({ trip }: ITripCardContentProps) => {
   return (
     <TripContent
       imageUrl={tripContentImageURL}
+      isMobile={isMobile}
       onMouseEnter={handleTripCardMouseEnter}
       onMouseLeave={handleTripCardMouseLeave}
     >
-      {isHover && HoverMask}
-      <TripCardStatusLabel startDate={trip.startDate} endDate={trip.endDate} />
+      {!isMobile && isHover && HoverMask}
+      {!isMobile && (
+        <TripCardStatusLabel
+          startDate={trip.startDate}
+          endDate={trip.endDate}
+        />
+      )}
     </TripContent>
   );
 };
 
-const TripContent = styled.div<{ imageUrl: string }>`
+const TripContent = styled.div<{ imageUrl: string; isMobile: boolean }>`
   position: relative;
-  width: 100%;
-  height: 176px;
+  flex-shrink: 0;
   ${({ imageUrl }) => css`
     ${imageUrl && { backgroundImage: `url(${imageUrl})` }};
   `}
   background-size: cover;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+      `;
+    }
+    return css`
+      width: 100%;
+      height: 176px;
+    `;
+  }}
 `;
 
 const DimLayer = styled.div`

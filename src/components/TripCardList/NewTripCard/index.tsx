@@ -15,6 +15,7 @@ import {
   NEW_TRIP_CARD_Z_INDEX,
   TRIP_LIST_DIM_LAYER_Z_INDEX,
 } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 import { tripTitleRegExp } from '@/utils/regExp';
 
 interface INewTripCardProps {
@@ -22,6 +23,8 @@ interface INewTripCardProps {
 }
 
 const NewTripCard = ({ handleClose }: INewTripCardProps) => {
+  const { isMobile } = useMedia();
+
   const [titleInputValue, setTitleInputValue] = useState('');
   const [isAwayClicked, setIsAwayClicked] = useState(false);
   const newTripCardRef = useRef<HTMLDivElement>(null);
@@ -83,17 +86,19 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
       <DimLayer />
       <ClickAwayListener onClickAway={handleTitleFormClickAway}>
         <TripCardBox
-          column
+          column={!isMobile}
+          isMobile={isMobile}
+          alignCenter
           ref={newTripCardRef}
           isAwayClicked={isAwayClicked}
           onAnimationEnd={handleTripCardAnimationEnd}
         >
           {isLoading && <DimLoader />}
-          <LogoBox>
+          <LogoBox isMobile={isMobile}>
             <LogoIcon fill="white" />
           </LogoBox>
-          <BottomBox>
-            <TitleForm onSubmit={handleTitleSubmit}>
+          <BottomBox alignCenter={isMobile}>
+            <TitleForm onSubmit={handleTitleSubmit} isMobile={isMobile}>
               <TitleEditInput
                 type="text"
                 value={titleInputValue}
@@ -124,35 +129,39 @@ const DimLayer = styled.div`
   width: 100%;
 `;
 
-const TripCardBox = styled(Flex)<{ isAwayClicked: boolean }>`
+const TripCardBox = styled(Flex)<{ isAwayClicked: boolean; isMobile: boolean }>`
   z-index: ${NEW_TRIP_CARD_Z_INDEX};
-  height: 256px;
   border-radius: 10px;
   overflow: hidden;
-  margin-left: 28px;
-  ${({ isAwayClicked }) => {
+  background-color: ${color.white};
+  ${({ isAwayClicked, isMobile }) => {
     if (isAwayClicked) {
       return css`
-        animation: decreaseWidth 0.3s forwards;
+        animation: ${isMobile ? 'decreaseHeight' : 'decreaseWidth'} 0.3s
+          forwards;
         @keyframes decreaseWidth {
           0% {
             width: 245px;
-          }
-          50% {
-            margin-left: 24px;
-          }
-          90% {
-            margin-left: 12px;
           }
           100% {
             width: 0;
             margin-left: 0;
           }
         }
+        @keyframes decreaseHeight {
+          0% {
+            height: 70px;
+          }
+          100% {
+            height: 0;
+            margin-top: 0;
+          }
+        }
       `;
     }
     return css`
-      animation-name: increaseWidth, boxShadowFlicker;
+      animation-name: ${isMobile ? 'increaseHeight' : 'increaseWidth'},
+        boxShadowFlicker;
       animation-duration: 0.3s, 2s;
       animation-iteration-count: 1, infinite;
       animation-direction: normal, alternate;
@@ -171,17 +180,49 @@ const TripCardBox = styled(Flex)<{ isAwayClicked: boolean }>`
           width: 245px;
         }
       }
+      @keyframes increaseHeight {
+        0% {
+          height: 0;
+        }
+        100% {
+          height: 70px;
+        }
+      }
     `;
   }};
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 100%;
+        margin-top: 28px;
+        padding: 0 10px;
+      `;
+    }
+    return css`
+      height: 256px;
+      margin-left: 28px;
+    `;
+  }}
 `;
 
-const LogoBox = styled.div`
-  width: 100%;
-  height: 176px;
+const LogoBox = styled.div<{ isMobile: boolean }>`
   background-color: #4d77ff;
   display: flex;
   justify-content: center;
   align-items: center;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 48px;
+        height: 48px;
+        border-radius: 50%;
+      `;
+    }
+    return css`
+      width: 100%;
+      height: 176px;
+    `;
+  }}
 `;
 
 const BottomBox = styled(Flex)`
@@ -191,15 +232,24 @@ const BottomBox = styled(Flex)`
   background-color: ${color.white};
 `;
 
-const TitleForm = styled.form`
+const TitleForm = styled.form<{ isMobile: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #eaefff;
   height: 28px;
-  width: 220px;
   padding: 2px 8px;
   box-sizing: border-box;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 100%;
+      `;
+    }
+    return css`
+      width: 220px;
+    `;
+  }}
 `;
 
 const TitleEditInput = styled.input`

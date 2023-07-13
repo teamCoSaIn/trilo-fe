@@ -1,12 +1,13 @@
 import { useRef } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ITrip } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useChangeTripTitle from '@/queryHooks/useChangeTripTitle';
 import { IsTitleEditFamily } from '@/states/trip';
 import { tripTitleRegExp } from '@/utils/regExp';
@@ -20,6 +21,8 @@ const DynamicTripCardTitle = ({
   tripCardId,
   tripTitle,
 }: IDynamicTripCardTitleProps) => {
+  const { isMobile } = useMedia();
+
   const [isTitleEdit, setIsTitleEdit] = useRecoilState(
     IsTitleEditFamily(tripCardId)
   );
@@ -53,21 +56,22 @@ const DynamicTripCardTitle = ({
   };
 
   const DynamicTitle = isTitleEdit ? (
-    <TitleForm onSubmit={handleTitleSubmit}>
+    <TitleForm isMobile={isMobile} onSubmit={handleTitleSubmit}>
       <TitleEditInput
         type="text"
         placeholder={tripTitle}
         ref={titleInputRef}
         autoFocus
         maxLength={20}
+        isMobile={isMobile}
       />
       <TitleConfirmBtn type="submit">
         <CheckIcon fill="#4D77FF" width={14} height={14} />
       </TitleConfirmBtn>
     </TitleForm>
   ) : (
-    <Box>
-      <Description color={color.gray3} fontSize={1.6}>
+    <Box isMobile={isMobile}>
+      <Description color={color.gray3} fontSize={isMobile ? 1.4 : 1.6}>
         {tripTitle}
       </Description>
     </Box>
@@ -76,29 +80,58 @@ const DynamicTripCardTitle = ({
   return DynamicTitle;
 };
 
-const TitleForm = styled.form`
+const TitleForm = styled.form<{ isMobile: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   background-color: #eaefff;
   height: 28px;
-  width: 220px;
   padding: 2px 8px;
   box-sizing: border-box;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 100%;
+      `;
+    }
+    return css`
+      width: 220px;
+    `;
+  }}
 `;
 
-const TitleEditInput = styled.input`
+const TitleEditInput = styled.input<{ isMobile: boolean }>`
   font-size: 1.6rem;
   color: #b8b8b8;
   width: 100%;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        font-size: 1.4rem;
+      `;
+    }
+    return css`
+      font-size: 1.6rem;
+    `;
+  }}
 `;
 
-const Box = styled.div`
+const Box = styled.div<{ isMobile: boolean }>`
   display: flex;
   align-items: center;
   height: 28px;
   width: 220px;
   padding: 2px 8px;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 100%;
+      `;
+    }
+    return css`
+      width: 220px;
+    `;
+  }}
 `;
 
 const TitleConfirmBtn = styled.button`

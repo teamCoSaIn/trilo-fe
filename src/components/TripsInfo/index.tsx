@@ -6,11 +6,14 @@ import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useGetUserInfo from '@/queryHooks/useGetUserInfo';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
 const TripsInfo = () => {
+  const { isMobile } = useMedia();
+
   const userId = useRecoilValue(UserId);
 
   const { data: nicknameData } = useGetUserProfile({
@@ -23,8 +26,8 @@ const TripsInfo = () => {
 
   return (
     <Flex column>
-      <Flex>
-        <Description color={color.blue3} fontSize={2.4}>
+      <Flex alignCenter>
+        <Description color={color.blue3} fontSize={isMobile ? 2 : 2.4}>
           {nicknameData as string}님의 여행기록
         </Description>
         <Spacing width={14} />
@@ -49,6 +52,7 @@ const Label = styled.div`
   justify-content: center;
   color: white;
   font-size: 1.4rem;
+  flex-shrink: 0;
 `;
 
 export default TripsInfo;

@@ -11,10 +11,13 @@ import Description from '@/components/common/Description/index';
 import Spacing from '@/components/common/Spacing/index';
 import DynamicUserNickname from '@/components/UserInfo/DynamicUserNickname/index';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useGetUserInfo from '@/queryHooks/useGetUserInfo';
 import UserStatus, { UserId, UserStatusTypes } from '@/states/userStatus';
 
 const UserInfo = () => {
+  const { isMobile } = useMedia();
+
   const navigate = useNavigate();
 
   const userId = useRecoilValue(UserId);
@@ -72,11 +75,15 @@ const UserInfo = () => {
 
   return (
     <>
-      <ProfileBadge src={userInfoData?.imageURL} alt="user profile badge" />
+      <ProfileBadge
+        src={userInfoData?.imageURL}
+        alt="user profile badge"
+        isMobile={isMobile}
+      />
       <Spacing height={30} />
       <DynamicUserNickname />
       <Spacing height={24} />
-      <InfoBox backgroundColor={color.white}>
+      <InfoBox backgroundColor={color.white} isMobile={isMobile}>
         <InfoKey color={color.blue3} fontSize={1.6}>
           나의 일정
         </InfoKey>
@@ -91,7 +98,7 @@ const UserInfo = () => {
         </InfoValueBox>
       </InfoBox>
       <Spacing height={24} />
-      <InfoBox backgroundColor={color.white}>
+      <InfoBox backgroundColor={color.white} isMobile={isMobile}>
         <InfoKey color={color.blue3} fontSize={1.6}>
           완료된 일정
         </InfoKey>
@@ -113,24 +120,47 @@ const UserInfo = () => {
   );
 };
 
-const ProfileBadge = styled.img`
-  height: 436px;
+const ProfileBadge = styled.img<{ isMobile: boolean }>`
   border-radius: 36px;
   object-fit: cover;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 50vw;
+        min-width: 250px;
+        max-width: 310px;
+      `;
+    }
+    return css`
+      width: 30vw;
+      min-width: 310px;
+      max-width: 400px;
+    `;
+  }}
 `;
 
-const InfoBox = styled.div<{ backgroundColor?: string }>`
+const InfoBox = styled.div<{ backgroundColor?: string; isMobile: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   flex-shrink: 0;
-  width: 307px;
-  height: 70px;
   padding: 0 50px;
   border-radius: 48px;
   ${({ backgroundColor }) => css`
     ${backgroundColor && { backgroundColor }}
   `};
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 250px;
+        height: 50px;
+      `;
+    }
+    return css`
+      width: 310px;
+      height: 70px;
+    `;
+  }}
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
 `;
 

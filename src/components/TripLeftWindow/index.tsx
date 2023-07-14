@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -22,6 +22,14 @@ const TripLeftWindow = () => {
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);
+
+  useEffect(() => {
+    if (!tripData) {
+      return;
+    }
+    const newFocusedTab = tripData.startDate ? PLACE : DATE;
+    setCurFocusedTab(newFocusedTab);
+  }, [tripData]);
 
   const handleTabClick = (
     event: React.MouseEvent,

@@ -93,7 +93,7 @@ const DynamicUserNickname = () => {
       mutate(curNicknameInput);
     } else {
       toast.error(
-        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 100자 이내로 입력해주세요.',
         {
           autoClose: 3000,
           pauseOnHover: false,
@@ -107,7 +107,7 @@ const DynamicUserNickname = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const curInput = event.target.value;
-    if (curInput.length >= 20) {
+    if (curInput.length >= 100) {
       setIsOverNicknameInputLength(true);
     } else {
       setIsOverNicknameInputLength(false);
@@ -154,7 +154,7 @@ const DynamicUserNickname = () => {
             ref={nicknameInputRef}
             onChange={handleChangeNicknameInput}
             autoFocus
-            maxLength={20}
+            maxLength={100}
           />
           <IconBtn type="submit">
             <CheckIcon fill={color.blue3} width={17} height={17} />
@@ -232,7 +232,7 @@ const NicknameForm = styled.form<{ isOverLength: boolean }>`
     if (isOverLength) {
       return css`
         &::after {
-          content: '20글자 이내로 입력해주세요.';
+          content: '100글자 이내로 입력해주세요.';
           font-size: 1.2rem;
           color: red;
           position: absolute;

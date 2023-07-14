@@ -4,6 +4,7 @@ import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import Description from '@/components/common/Description';
+import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
@@ -60,7 +61,12 @@ const TripHeader = () => {
 
   return (
     <Box>
-      <TripTitle>{nicknameData as string}님의 여행</TripTitle>
+      <Flex>
+        <TripTitle title={nicknameData as string}>
+          {nicknameData as string}
+        </TripTitle>
+        <TripTitleDescription>님의 여행</TripTitleDescription>
+      </Flex>
       <Spacing height={10} />
       <Period disabled={disabled}>
         <Description>{transformedStartDate}</Description>
@@ -87,8 +93,19 @@ const Box = styled.div`
 `;
 
 const TripTitle = styled.h2`
+  max-width: 15vw;
   font-size: 1.4rem;
   font-weight: 700;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const TripTitleDescription = styled.span`
+  flex-shrink: 0;
+  font-size: 1.4rem;
+  font-weight: 700;
+  padding-left: 5px;
 `;
 
 const Period = styled.div<{ disabled: boolean }>`

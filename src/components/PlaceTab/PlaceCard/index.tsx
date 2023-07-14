@@ -82,21 +82,19 @@ const PlaceCard = ({
   return (
     <PlaceCardBox onClick={handlePlaceCardClick}>
       <PlaceCardContent>
-        <PlaceCardTitle title={name}>{name}</PlaceCardTitle>
+        <PlaceCardTitle>{name}</PlaceCardTitle>
         <PlaceCardRatingBox>
           <PlaceCardRating>{rating?.toFixed(1)}</PlaceCardRating>
           <PlaceCardStar rating={rating} />
           <PlaceCardNumOfReviews>({numOfReviews})</PlaceCardNumOfReviews>
         </PlaceCardRatingBox>
-        <PlaceCardAddressBtn onClick={handleAddressBtnClick} title={address}>
+        <PlaceCardAddressBtn onClick={handleAddressBtnClick}>
           <PlaceCardAddressSpan>{address}</PlaceCardAddressSpan>
           <CopyIcon />
         </PlaceCardAddressBtn>
         <PlaceCardBusinessHoursBox>
           영업시간
-          <PlaceCardBusinessHours title={businessHours}>
-            {businessHours}
-          </PlaceCardBusinessHours>
+          <PlaceCardBusinessHours>{businessHours}</PlaceCardBusinessHours>
         </PlaceCardBusinessHoursBox>
         <PlaceCardLinkBtnBox>
           <PlaceCardGoogleLinkBtn onClick={handleClickGoogleLink}>
@@ -138,6 +136,7 @@ const PlaceCardContent = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: space-evenly;
 `;
 
 const PlaceCardTitle = styled.h2`
@@ -153,7 +152,6 @@ const PlaceCardRatingBox = styled.div`
   display: flex;
   gap: 6px;
   align-items: center;
-  margin-top: 10px;
 `;
 
 const PlaceCardRating = styled.span`
@@ -171,7 +169,6 @@ const PlaceCardNumOfReviews = styled.span`
 const PlaceCardAddressBtn = styled.button`
   display: flex;
   gap: 5px;
-  margin-top: 13px;
 `;
 
 const PlaceCardAddressSpan = styled.span`
@@ -186,7 +183,6 @@ const PlaceCardAddressSpan = styled.span`
 const PlaceCardBusinessHoursBox = styled.div`
   display: flex;
   gap: 5px;
-  margin-top: 12px;
   font-size: 1.2rem;
   font-weight: 500;
   color: #4f4f4f;
@@ -204,7 +200,6 @@ const PlaceCardBusinessHours = styled.span`
 const PlaceCardLinkBtnBox = styled.div`
   display: flex;
   gap: 6px;
-  margin-top: 11px;
 `;
 
 const PlaceCardGoogleLinkBtn = styled.button`

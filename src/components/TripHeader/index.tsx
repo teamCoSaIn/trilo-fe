@@ -112,7 +112,7 @@ const Period = styled.div<{ disabled: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: 204px;
+  padding: 1.5rem;
   height: 33px;
   border-radius: 16px;
   ${({ disabled }) => {

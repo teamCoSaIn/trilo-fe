@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 
@@ -22,6 +22,14 @@ const TripLeftWindow = () => {
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);
+
+  useEffect(() => {
+    if (!tripData) {
+      return;
+    }
+    const newFocusedTab = tripData.startDate ? PLACE : DATE;
+    setCurFocusedTab(newFocusedTab);
+  }, [tripData]);
 
   const handleTabClick = (
     event: React.MouseEvent,
@@ -63,7 +71,7 @@ const TripLeftWindowBox = styled.div<{ isWindowFold: boolean }>`
   width: 374px;
   height: 100%;
   ${props => (props.isWindowFold ? 'width: 0px;' : null)}
-  transition: all .5s;
+  transition: width .5s;
   background-color: ${color.white};
   z-index: ${TRIP_LEFT_WINDOW_Z_INDEX};
   white-space: nowrap;

@@ -14,6 +14,7 @@ import Map from '@/components/Map';
 import TripHeader from '@/components/TripHeader';
 import TripLeftWindow from '@/components/TripLeftWindow';
 import TripRightWindow from '@/components/TripRightWindow';
+import useMedia from '@/hooks/useMedia';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import useGetTrip from '@/queryHooks/useGetTrip';
@@ -30,6 +31,7 @@ const libraries: TLibraries = ['places'];
 
 const Trip = () => {
   const { reset } = useQueryErrorResetBoundary();
+  const { isMobile, isDesktop } = useMedia();
 
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: `${process.env.GOOGLE_MAPS_API_KEY}`,
@@ -55,18 +57,18 @@ const Trip = () => {
   });
 
   return (
-    <Layout>
-      {/* <ErrorBoundary FallbackComponent={Error} onReset={reset}> */}
-      <Suspense fallback={<CircularLoader />}>
-        <TripHeader />
-        <TripLeftWindow />
-        {isLoaded ? <Map /> : <CircularLoader />}
-        <TripRightWindow />
-        {(isDailyPlanListDataFetching ||
-          (isTempPlanPageDataFetching && !isFetchingNextPage) ||
-          isTripFetching) && <Portal childComponent={<DimLoader />} />}
-      </Suspense>
-      {/* </ErrorBoundary> */}
+    <Layout column={isMobile}>
+      <ErrorBoundary FallbackComponent={Error} onReset={reset}>
+        <Suspense fallback={<CircularLoader />}>
+          {isDesktop && <TripHeader />}
+          {isDesktop && <TripLeftWindow />}
+          {isLoaded ? <Map /> : <CircularLoader />}
+          <TripRightWindow />
+          {(isDailyPlanListDataFetching ||
+            (isTempPlanPageDataFetching && !isFetchingNextPage) ||
+            isTripFetching) && <Portal childComponent={<DimLoader />} />}
+        </Suspense>
+      </ErrorBoundary>
     </Layout>
   );
 };

@@ -6,16 +6,19 @@ import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex/index';
 import Spacing from '@/components/common/Spacing/index';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useGetUserInfo from '@/queryHooks/useGetUserInfo';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
 const TripsInfo = () => {
+  const { isMobile } = useMedia();
+
   const userId = useRecoilValue(UserId);
 
   const { data: nicknameData } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { data: userInfoData } = useGetUserInfo(userId);
 
@@ -23,10 +26,17 @@ const TripsInfo = () => {
 
   return (
     <Flex column>
-      <Flex>
-        <Description color={color.blue3} fontSize={2.4}>
-          {nicknameData as string}님의 여행기록
-        </Description>
+      <Flex alignCenter>
+        <Nickname
+          color={color.blue3}
+          fontSize={isMobile ? 2 : 2.4}
+          title={nicknameData as string}
+        >
+          {nicknameData as string}
+        </Nickname>
+        <NicknameDescription color={color.blue3} fontSize={isMobile ? 2 : 2.4}>
+          님의 여행기록
+        </NicknameDescription>
         <Spacing width={14} />
         <Label>{totalTrip} 개</Label>
       </Flex>
@@ -37,6 +47,18 @@ const TripsInfo = () => {
     </Flex>
   );
 };
+
+const Nickname = styled(Description)`
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const NicknameDescription = styled(Description)`
+  flex-shrink: 0;
+  padding-left: 5px;
+`;
 
 // TODO: common 분리
 const Label = styled.div`
@@ -49,6 +71,7 @@ const Label = styled.div`
   justify-content: center;
   color: white;
   font-size: 1.4rem;
+  flex-shrink: 0;
 `;
 
 export default TripsInfo;

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
 import { TIMEPICKER_Z_INDEX } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 
 interface ITimePickerProps {
   time: string | undefined;
@@ -13,6 +14,8 @@ const DEFAULT_HOUR = '00';
 const DEFAULT_MINUTE = '00';
 
 const TimePicker = ({ time, setTime }: ITimePickerProps) => {
+  const { isDesktop, isMobile } = useMedia();
+
   const [initHour, initMinute] = (time || '').split(':').slice(0, 2);
   const [hour, setHour] = useState(initHour);
   const [minute, setMinute] = useState(initMinute);
@@ -42,7 +45,7 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
 
   useEffect(() => {
     setTimeout(() => {
-      if (isTimeOptionsVisible) {
+      if (isTimeOptionsVisible && isDesktop) {
         document.addEventListener('click', handleClickAway);
       }
     }, 0);
@@ -52,6 +55,12 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
       }
     };
   }, [isTimeOptionsVisible]);
+
+  useEffect(() => {
+    if (isMobile) {
+      setIsTimeOptionsVisible(false);
+    }
+  }, [isMobile]);
 
   const handleTimePickerMouseEnter = () => {
     setIsRefreshIconVisible(true);
@@ -74,6 +83,9 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
   };
 
   const handleTimePickerClick = () => {
+    if (isMobile) {
+      return;
+    }
     setIsTimeOptionsVisible(prev => !prev);
 
     if (hourOptionsRef.current && hourScrollIndex) {
@@ -147,40 +159,43 @@ const TimePicker = ({ time, setTime }: ITimePickerProps) => {
   return (
     <TimePickerBox>
       <TimePickerContent
+        isDesktop={isDesktop}
         onClick={handleTimePickerClick}
         onMouseEnter={handleTimePickerMouseEnter}
         onMouseLeave={handleTimePickerMouseLeave}
       >
         {`${hour} : ${minute}`}
-        {isRefreshIconVisible && (
+        {isRefreshIconVisible && isDesktop && (
           <RefreshBtn type="button" onClick={handleRefreshBtnClick}>
             <RefreshIcon width={10} height={10} />
           </RefreshBtn>
         )}
       </TimePickerContent>
-      <TimeOptionsDropdown
-        isTimeOptionsVisible={isTimeOptionsVisible}
-        ref={timeOptionsRef}
-      >
-        <TimeOptionsListBox>
-          <TimeOptionsList
-            onMouseEnter={handleHourOptionsMouseEnter}
-            onMouseLeave={handleHourOptionsMouseLeave}
-            isVisible={isHourOptionsScrollVisible}
-            ref={hourOptionsRef}
-          >
-            {hourOptions}
-          </TimeOptionsList>
-          <TimeOptionsList
-            onMouseEnter={handleMinuteOptionsMouseEnter}
-            onMouseLeave={handleMinuteOptionsMouseLeave}
-            isVisible={isMinuteOptionsScrollVisible}
-            ref={minuteOptionsRef}
-          >
-            {minuteOptions}
-          </TimeOptionsList>
-        </TimeOptionsListBox>
-      </TimeOptionsDropdown>
+      {isDesktop && (
+        <TimeOptionsDropdown
+          isTimeOptionsVisible={isTimeOptionsVisible}
+          ref={timeOptionsRef}
+        >
+          <TimeOptionsListBox>
+            <TimeOptionsList
+              onMouseEnter={handleHourOptionsMouseEnter}
+              onMouseLeave={handleHourOptionsMouseLeave}
+              isVisible={isHourOptionsScrollVisible}
+              ref={hourOptionsRef}
+            >
+              {hourOptions}
+            </TimeOptionsList>
+            <TimeOptionsList
+              onMouseEnter={handleMinuteOptionsMouseEnter}
+              onMouseLeave={handleMinuteOptionsMouseLeave}
+              isVisible={isMinuteOptionsScrollVisible}
+              ref={minuteOptionsRef}
+            >
+              {minuteOptions}
+            </TimeOptionsList>
+          </TimeOptionsListBox>
+        </TimeOptionsDropdown>
+      )}
     </TimePickerBox>
   );
 };
@@ -189,7 +204,7 @@ const TimePickerBox = styled.div`
   position: relative;
 `;
 
-const TimePickerContent = styled.div`
+const TimePickerContent = styled.div<{ isDesktop: boolean }>`
   position: relative;
   width: 90px;
   height: 20px;
@@ -202,9 +217,15 @@ const TimePickerContent = styled.div`
   font-size: 1.2rem;
   line-height: 20px;
   transition: border-color 0.2s;
-  &:hover {
-    border-color: #4096ff;
-  }
+  ${({ isDesktop }) => {
+    if (isDesktop) {
+      return css`
+        &:hover {
+          border-color: #4096ff;
+        }
+      `;
+    }
+  }}
   cursor: pointer;
 `;
 

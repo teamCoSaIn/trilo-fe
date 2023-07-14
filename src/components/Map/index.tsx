@@ -23,6 +23,7 @@ import CircularLoader from '@/components/common/CircularLoader';
 import DateSelector from '@/components/Map/DateSelector';
 import SelectedMarkerInfo from '@/components/Map/SelectedMarkerInfo';
 import { SIZE_OF_TEMP_PLAN_PAGE, TEMP_PLAN_COLOR } from '@/constants/tempPlan';
+import useMedia from '@/hooks/useMedia';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
 import useGetTempPlanPageList from '@/queryHooks/useGetTempPlanPageList';
 import {
@@ -49,6 +50,7 @@ const ZOOM_LEVEL = 15;
 
 const Map = () => {
   const { tripId } = useParams();
+  const { isMobile } = useMedia();
 
   const [mapInstance, setMapInstance] = useRecoilState<google.maps.Map | null>(
     MapInstance
@@ -96,6 +98,7 @@ const Map = () => {
 
   const googleMapStyle = {
     width: '100%',
+    // height: isDesktop ? '100%' : `${mobileMapHeight}%`,
     height: '100%',
   };
 
@@ -200,6 +203,13 @@ const Map = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isMobile) {
+      setIsDateSelectorVisible(false);
+      resetGoogleMarkerLatLng();
+    }
+  }, [isMobile]);
+
   const handleOnMapLoad = (map: google.maps.Map) => {
     const service = new google.maps.places.PlacesService(map);
     const service2 = new google.maps.places.AutocompleteService();
@@ -209,6 +219,9 @@ const Map = () => {
   };
 
   const handleGoogleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (isMobile) {
+      return;
+    }
     if (!isDateSelectorVisible && event.latLng) {
       const selectedLocation = {
         lat: event.latLng.lat(),

@@ -564,7 +564,7 @@ const getUserProfile = rest.get(
     return res(
       ctx.json({
         id: 1,
-        name: nickname,
+        nickName: nickname,
         profileImageURL:
           'https://avatars.githubusercontent.com/u/84956036?s=40&v=4',
         authProvider: 'GOOGLE',
@@ -574,20 +574,23 @@ const getUserProfile = rest.get(
   }
 );
 
-const changeNickname = rest.put('/api/user-nickname', async (req, res, ctx) => {
-  const { nickname: newNickname } = await req.json();
-  nickname = newNickname;
-  await sleep(1000);
+const changeNickname = rest.patch(
+  '/api/users/:userId',
+  async (req, res, ctx) => {
+    const { nickName: newNickname } = await req.json();
+    nickname = newNickname;
+    await sleep(1000);
 
-  return res(ctx.status(200));
-});
+    return res(ctx.status(200));
+  }
+);
 
 const getUserInfo = rest.get(
   '/api/users/:userId/my-page',
   async (req, res, ctx) => {
     return res(
       ctx.json({
-        name: 'Oliver',
+        nickName: 'Oliver',
         imageURL:
           'https://user-images.githubusercontent.com/84956036/227441024-9853dda6-2100-466a-af20-b13d2e720f5f.png',
         tripStatistics: {

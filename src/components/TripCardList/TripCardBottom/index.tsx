@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { MouseEventHandler, useState } from 'react';
 import { toast } from 'react-toastify';
 import { useRecoilState, useResetRecoilState, useSetRecoilState } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import { ITrip } from '@/api/trip';
 import { ReactComponent as CameraIcon } from '@/assets/camera.svg';
@@ -11,11 +11,13 @@ import { ReactComponent as PencilIcon } from '@/assets/pencil.svg';
 import { ReactComponent as RefreshIcon } from '@/assets/refresh.svg';
 import { ReactComponent as TrashCanIcon } from '@/assets/trash-can.svg';
 import { ReactComponent as CheckIcon } from '@/assets/whiteCheck.svg';
+import Description from '@/components/common/Description';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import Spacing from '@/components/common/Spacing';
 import DynamicTripCardTitle from '@/components/TripCardList/DynamicTripCardTitle';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useChangeTripImg from '@/queryHooks/useChangeTripImg';
 import useDeleteTrip from '@/queryHooks/useDeleteTrip';
 import {
@@ -29,6 +31,8 @@ interface ITripCardBottomProps {
 }
 
 const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
+  const { isMobile } = useMedia();
+
   const [isOptionOpen, setIsOptionOpen] = useRecoilState(
     IsOptionOpenFamily(trip.tripId)
   );
@@ -48,14 +52,16 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   const convertDate = (date: string) => date.replace(/-/g, '.').substring(2);
 
   const tripPeriod = (
-    <TripPeriod>
+    <TripPeriod color={color.gray2} fontSize={isMobile ? 1.2 : 1.4}>
       {trip.startDate
         ? `${convertDate(trip.startDate)} ~ ${convertDate(trip.endDate)}`
         : '여행 기간 미정'}
     </TripPeriod>
   );
 
-  const handleOptionOpenBtnClick = () => {
+  const handleOptionOpenBtnClick: MouseEventHandler = e => {
+    e.stopPropagation();
+
     setIsOptionOpen(true);
   };
 
@@ -116,13 +122,13 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
 
   const OptionContent = previewImg ? (
     <>
-      <IconBtn onClick={handleTripImgRefreshBtnClick}>
+      <IconBtn isMobile={isMobile} onClick={handleTripImgRefreshBtnClick}>
         <IconWrapper>
           <RefreshIcon width={16} height={16} />
         </IconWrapper>
         되돌리기
       </IconBtn>
-      <IconBtn onClick={handleTripImgSaveBtnClick}>
+      <IconBtn isMobile={isMobile} onClick={handleTripImgSaveBtnClick}>
         <IconWrapper>
           <CheckIcon fill={color.gray3} />
         </IconWrapper>
@@ -131,7 +137,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
     </>
   ) : (
     <>
-      <TripImgLabel htmlFor={`tripThumbnail${trip.tripId}`}>
+      <TripImgLabel isMobile={isMobile} htmlFor={`tripThumbnail${trip.tripId}`}>
         <IconWrapper>
           <CameraIcon />
         </IconWrapper>
@@ -143,13 +149,13 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
         id={`tripThumbnail${trip.tripId}`}
         onChange={handleTripImgInputChange}
       />
-      <IconBtn onClick={handleTitleEditBtnClick}>
+      <IconBtn isMobile={isMobile} onClick={handleTitleEditBtnClick}>
         <IconWrapper>
           <PencilIcon />
         </IconWrapper>
         이름 수정
       </IconBtn>
-      <IconBtn onClick={handleTripDeleteBtnClick}>
+      <IconBtn isMobile={isMobile} onClick={handleTripDeleteBtnClick}>
         <IconWrapper>
           <TrashCanIcon />
         </IconWrapper>
@@ -159,7 +165,7 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   );
 
   const BottomContent = isOptionOpen ? (
-    <OptionBox>
+    <OptionBox isMobile={isMobile}>
       {(isDeleteTripLoading || isChangeTripImgLoading) && <DimLoader />}
       <OptionCloseBtn onClick={handleOptionCloseBtnClick}>
         <MultiplyIcon />
@@ -167,13 +173,16 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
       {OptionContent}
     </OptionBox>
   ) : (
-    <BottomBox column alignCenter justifyCenter>
+    <BottomBox column alignCenter={!isMobile} justifyCenter isMobile={isMobile}>
       <DynamicTripCardTitle tripCardId={trip.tripId} tripTitle={trip.title} />
       <Spacing height={9} />
       <Wrapper>
         {tripPeriod}
-        <OptionOpenBtn onClick={handleOptionOpenBtnClick}>
-          <EllipsisIcon />
+        <OptionOpenBtn isMobile={isMobile} onClick={handleOptionOpenBtnClick}>
+          <EllipsisIcon
+            width={isMobile ? 30 : 17}
+            height={isMobile ? 30 : 17}
+          />
         </OptionOpenBtn>
       </Wrapper>
     </BottomBox>
@@ -182,55 +191,82 @@ const TripCardBottom = ({ trip }: ITripCardBottomProps) => {
   return BottomContent;
 };
 
-const BottomBox = styled(Flex)`
+const BottomBox = styled(Flex)<{ isMobile: boolean }>`
+  position: relative;
   width: 100%;
-  height: 80px;
+  height: 100%;
   padding: 14px 12px;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        padding: 10px 52px 10px 12px;
+      `;
+    }
+  }}
 `;
 
 const Wrapper = styled(Flex)`
   width: 100%;
   flex-grow: 1;
-  justify-content: space-between;
   padding: 0 8px;
 `;
 
-const TripPeriod = styled.p`
+const TripPeriod = styled(Description)`
   display: flex;
   align-items: center;
-  color: ${color.gray2};
-  font-size: 1.4rem;
 `;
 
-const OptionOpenBtn = styled.button`
+const OptionOpenBtn = styled.button<{ isMobile: boolean }>`
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        top: 50%;
+        right: 10px;
+        transform: translateY(-50%);
+      `;
+    }
+    return css`
+      right: 20px;
+    `;
+  }}
 `;
 
-const OptionBox = styled(Flex)`
+const OptionBox = styled(Flex)<{ isMobile: boolean }>`
   position: relative;
-  justify-content: space-evenly;
   width: 100%;
-  height: 80px;
-  padding: 14px 22px;
+  height: 100%;
   &:hover {
     color: ${color.blue3};
   }
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        gap: 20px;
+        padding: 10px 22px;
+      `;
+    }
+    return css`
+      justify-content: space-evenly;
+      padding: 14px 22px;
+    `;
+  }}
 `;
 
 const TripImgInput = styled.input`
   display: none;
 `;
 
-const TripImgLabel = styled.label`
+const TripImgLabel = styled.label<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 52px;
+  height: 100%;
   font-weight: 500;
-  font-size: 1.2rem;
   color: ${color.gray3};
   &:hover {
     color: ${color.blue3};
@@ -242,16 +278,26 @@ const TripImgLabel = styled.label`
     }
   }
   cursor: pointer;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        font-weight: 400;
+        font-size: 1rem;
+      `;
+    }
+    return css`
+      font-weight: 500;
+      font-size: 1.2rem;
+    `;
+  }}
 `;
 
-const IconBtn = styled.button`
+const IconBtn = styled.button<{ isMobile: boolean }>`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
-  height: 52px;
-  font-weight: 500;
-  font-size: 1.2rem;
+  height: 100%;
   color: ${color.gray3};
   &:hover {
     color: ${color.blue3};
@@ -262,6 +308,18 @@ const IconBtn = styled.button`
       }
     }
   }
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        font-weight: 400;
+        font-size: 1rem;
+      `;
+    }
+    return css`
+      font-weight: 500;
+      font-size: 1.2rem;
+    `;
+  }}
 `;
 
 const IconWrapper = styled.div`

@@ -12,11 +12,14 @@ import { ReactComponent as EditIcon } from '@/assets/pencil.svg';
 import CircularLoader from '@/components/common/CircularLoader/index';
 import Description from '@/components/common/Description';
 import color from '@/constants/color';
+import useMedia from '@/hooks/useMedia';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 import { nicknameRegExp } from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
+  const { isMobile } = useMedia();
+
   const userId = useRecoilValue(UserId);
 
   const [isOverNicknameInputLength, setIsOverNicknameInputLength] =
@@ -29,10 +32,11 @@ const DynamicUserNickname = () => {
   const queryClient = useQueryClient();
   const { data: nicknameData, isFetching } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { mutate, isLoading } = useMutation(
-    (newNickname: string) => HTTP.changeNickname(newNickname),
+    (newNickname: string) =>
+      HTTP.changeNickname({ userId, nickName: newNickname }),
     {
       onSuccess: () => {
         queryClient.invalidateQueries(['userProfile']);
@@ -89,7 +93,7 @@ const DynamicUserNickname = () => {
       mutate(curNicknameInput);
     } else {
       toast.error(
-        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 20자 이내로 입력해주세요.',
+        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 100자 이내로 입력해주세요.',
         {
           autoClose: 3000,
           pauseOnHover: false,
@@ -103,7 +107,7 @@ const DynamicUserNickname = () => {
     event: React.ChangeEvent<HTMLInputElement>
   ) => {
     const curInput = event.target.value;
-    if (curInput.length >= 20) {
+    if (curInput.length >= 100) {
       setIsOverNicknameInputLength(true);
     } else {
       setIsOverNicknameInputLength(false);
@@ -111,15 +115,19 @@ const DynamicUserNickname = () => {
   };
 
   const Nickname = isFetching ? (
-    <ProfileBox backgroundColor={color.gray1} />
+    <ProfileBox backgroundColor={color.gray1} isMobile={isMobile} />
   ) : (
-    <ProfileBox backgroundColor={color.white}>
+    <ProfileBox backgroundColor={color.white} isMobile={isMobile}>
       <ProfileKey color={color.blue3} fontSize={1.6}>
         닉네임
       </ProfileKey>
       <FlexibleSpacing />
       <ProfileValueBox>
-        <ProfileNickname color={color.gray3} fontSize={1.6}>
+        <ProfileNickname
+          color={color.gray3}
+          fontSize={1.6}
+          title={nicknameData as string}
+        >
           {nicknameData as string}
         </ProfileNickname>
         <IconBtn type="button" onClick={handleNicknameEditBtnClick}>
@@ -131,7 +139,11 @@ const DynamicUserNickname = () => {
 
   const NicknameOnEdit = (
     <ClickAwayListener onClickAway={handleNicknameOnEditClickAway}>
-      <ProfileBox backgroundColor={color.blue1} ref={nicknameOnEditRef}>
+      <ProfileBox
+        backgroundColor={color.blue1}
+        ref={nicknameOnEditRef}
+        isMobile={isMobile}
+      >
         <NicknameForm
           onSubmit={handleSubmit}
           isOverLength={isOverNicknameInputLength}
@@ -142,7 +154,7 @@ const DynamicUserNickname = () => {
             ref={nicknameInputRef}
             onChange={handleChangeNicknameInput}
             autoFocus
-            maxLength={20}
+            maxLength={100}
           />
           <IconBtn type="submit">
             <CheckIcon fill={color.blue3} width={17} height={17} />
@@ -155,7 +167,7 @@ const DynamicUserNickname = () => {
   const DynamicNickname = isEdit ? NicknameOnEdit : Nickname;
 
   return isLoading ? (
-    <ProfileBox backgroundColor={color.blue1}>
+    <ProfileBox backgroundColor={color.blue1} isMobile={isMobile}>
       <CircularLoader />
     </ProfileBox>
   ) : (
@@ -163,32 +175,42 @@ const DynamicUserNickname = () => {
   );
 };
 
-const ProfileBox = styled.div<{ backgroundColor?: string }>`
+const ProfileBox = styled.div<{ backgroundColor?: string; isMobile?: boolean }>`
   position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
   flex-shrink: 0;
-  width: 307px;
-  height: 70px;
   padding: 0 50px;
   border-radius: 48px;
   ${({ backgroundColor }) => css`
     ${backgroundColor && { backgroundColor }}
   `};
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        width: 250px;
+        height: 50px;
+      `;
+    }
+    return css`
+      width: 310px;
+      height: 70px;
+    `;
+  }}
   box-shadow: 0 2px 24px rgba(0, 0, 0, 0.1);
 `;
 
 const FlexibleSpacing = styled.div`
   flex-grow: 1;
   flex-shrink: 1;
-  min-width: 10px;
+  min-width: 15px;
 `;
 
 const ProfileValueBox = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+  overflow: hidden;
 `;
 
 const ProfileKey = styled(Description)`
@@ -196,7 +218,9 @@ const ProfileKey = styled(Description)`
 `;
 
 const ProfileNickname = styled(Description)`
-  text-align: right;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 const NicknameForm = styled.form<{ isOverLength: boolean }>`
@@ -208,7 +232,7 @@ const NicknameForm = styled.form<{ isOverLength: boolean }>`
     if (isOverLength) {
       return css`
         &::after {
-          content: '20글자 이내로 입력해주세요.';
+          content: '100글자 이내로 입력해주세요.';
           font-size: 1.2rem;
           color: red;
           position: absolute;
@@ -221,6 +245,7 @@ const NicknameForm = styled.form<{ isOverLength: boolean }>`
 `;
 
 const NicknameEditInput = styled.input`
+  max-width: 85%;
   font-size: 1.6rem;
   font-weight: 700;
   color: #606060;

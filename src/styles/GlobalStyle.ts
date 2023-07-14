@@ -15,8 +15,8 @@ const GlobalStyle = createGlobalStyle`
     min-height: 789px;
     margin: 0 auto;
     @media screen and (max-width: 767px) {
-      // mobile
       min-width: 320px;
+      min-height: 653px;
     }
   }
   body {

@@ -1,7 +1,7 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
 import { useRecoilValue } from 'recoil';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
 import Button from '@/components/common/Button';
@@ -11,12 +11,14 @@ import Spacing from '@/components/common/Spacing';
 import TripCard from '@/components/TripCardList/TripCard';
 import TripCardAddBtn from '@/components/TripCardList/TripCardAddBtn/index';
 import TripCardListSkeleton from '@/components/TripCardList/TripCardListSkeleton';
+import useMedia from '@/hooks/useMedia';
 import { UserId } from '@/states/userStatus';
 
 const TRIP_LIST_SIZE = 8;
 
 const TripCardList = () => {
-  // TODO: 방문자일 때와 로그인일 때 구분
+  const { isMobile } = useMedia();
+
   const userId = useRecoilValue(UserId);
 
   const {
@@ -56,7 +58,7 @@ const TripCardList = () => {
     <TripCardListSkeleton />
   ) : (
     <>
-      <TripCardListBox>
+      <TripCardListBox isMobile={isMobile}>
         <TripCardAddBtn />
         {tripCardList}
       </TripCardListBox>
@@ -73,10 +75,20 @@ const TripCardList = () => {
   );
 };
 
-const TripCardListBox = styled.div`
+const TripCardListBox = styled.div<{ isMobile: boolean }>`
+  width: 100%;
   display: flex;
-  flex-wrap: wrap;
   gap: 28px;
+  ${({ isMobile }) => {
+    if (isMobile) {
+      return css`
+        flex-direction: column;
+      `;
+    }
+    return css`
+      flex-wrap: wrap;
+    `;
+  }}
 `;
 
 export default TripCardList;

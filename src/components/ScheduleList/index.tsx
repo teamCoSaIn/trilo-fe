@@ -25,12 +25,12 @@ import Transparent from '@/components/common/Transparent';
 import color from '@/constants/color';
 import {
   SCHEDULE_HEIGHT,
-  SCHEDULE_WIDTH,
   SCHEDULE_MARGIN_TOP,
   SCHEDULE_MARGIN_BOTTOM,
   SCHEDULE_MARGIN_LEFT,
 } from '@/constants/scheduleDnd';
 import { SIZE_OF_TEMP_PLAN_PAGE, TEMP_PLAN_ID } from '@/constants/tempPlan';
+import useMedia from '@/hooks/useMedia';
 import useChangeScheduleOrder from '@/queryHooks/useChangeScheduleOrder';
 import useDeleteSchedule from '@/queryHooks/useDeleteSchedule';
 import useGetDailyPlanList from '@/queryHooks/useGetDailyPlanList';
@@ -45,6 +45,7 @@ import {
 const TEMP_TITLE_DROPPABLE_ID = 'TEMP_TITLE';
 
 const ScheduleList = () => {
+  const { isDesktop, isMobile } = useMedia();
   const [isMounted, setIsMounted] = useState(false);
 
   useEffect(() => {
@@ -234,6 +235,7 @@ const ScheduleList = () => {
                         key={schedule.scheduleId}
                         draggableId={String(schedule.scheduleId)}
                         index={scheduleIdx}
+                        isDragDisabled={isMobile}
                       >
                         {(draggableProvided, draggableSnapshot) => (
                           <Schedule
@@ -257,18 +259,20 @@ const ScheduleList = () => {
                                 {schedule.placeName || '알 수 없는 장소'}
                               </PlaceName>
                             </Place>
-                            <ScheduleDeleteBtn
-                              onClick={handleScheduleDeleteBtnClick(
-                                schedule.scheduleId,
-                                dailyPlan.dayId
-                              )}
-                            >
-                              <DeleteIcon
-                                width={7}
-                                height={7}
-                                fill={color.gray2}
-                              />
-                            </ScheduleDeleteBtn>
+                            {isDesktop && (
+                              <ScheduleDeleteBtn
+                                onClick={handleScheduleDeleteBtnClick(
+                                  schedule.scheduleId,
+                                  dailyPlan.dayId
+                                )}
+                              >
+                                <DeleteIcon
+                                  width={7}
+                                  height={7}
+                                  fill={color.gray2}
+                                />
+                              </ScheduleDeleteBtn>
+                            )}
                           </Schedule>
                         )}
                       </Draggable>
@@ -422,7 +426,7 @@ const ScheduleList = () => {
         {isMounted ? (
           <>
             {dailyPlanDragDropBox}
-            {tempPlanDragDropBox}
+            {isDesktop && tempPlanDragDropBox}
           </>
         ) : null}
       </DragDropContext>
@@ -514,7 +518,7 @@ const Schedule = styled.li<{ isDragging: boolean; isSelectedMarker: boolean }>`
   flex-shrink: 0;
   display: flex;
   align-items: center;
-  width: ${SCHEDULE_WIDTH}px;
+  width: calc(100% - 10px);
   height: ${SCHEDULE_HEIGHT}px;
   background-color: ${color.white};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -586,7 +590,7 @@ const NoTempPlanScheduleMessage = styled.span`
 
 const Ghost = styled.div`
   position: absolute;
-  width: ${SCHEDULE_WIDTH}px;
+  width: calc(100% - 10px);
   height: ${SCHEDULE_HEIGHT}px;
   background-color: ${color.white};
   border: 1px dashed ${color.blue3};

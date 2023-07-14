@@ -7,9 +7,7 @@ import styled, { css } from 'styled-components';
 
 import HTTP from '@/api';
 import { ReactComponent as BackIcon } from '@/assets/RightArrow.svg';
-import Flex from '@/components/common/Flex';
 import MuiButton from '@/components/common/MuiButton';
-import Spacing from '@/components/common/Spacing';
 import SideMenuProfile from '@/components/Header/SideMenuProfile';
 import { MOBILE_HEADER_HEIGHT } from '@/constants/size';
 import useMedia from '@/hooks/useMedia';
@@ -61,16 +59,12 @@ const SideMenu = () => {
 
   const userStatusProfile =
     userStatus === UserStatusTypes.LOGIN ? (
-      <Flex justifyCenter alignCenter>
-        <Suspense
-          fallback={<Skeleton variant="circular" width={39} height={39} />}
-        >
-          <SideMenuProfile />
-        </Suspense>
-      </Flex>
-    ) : (
-      <Spacing width={40} />
-    );
+      <Suspense
+        fallback={<Skeleton variant="circular" width={39} height={39} />}
+      >
+        <SideMenuProfile />
+      </Suspense>
+    ) : null;
 
   const userStatusBtn =
     userStatus === UserStatusTypes.LOGIN ? (

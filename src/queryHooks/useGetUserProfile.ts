@@ -22,7 +22,7 @@ const useGetUserProfile = (param: IUseGetUserProfileParam) => {
       queryClient.setQueryData(['userProfile'], () => {
         return {
           id: param.userId,
-          name: '여행가',
+          nickName: '여행가',
           profileImageURL: defaultProfileImg,
           authProvider: '',
           role: 'MEMBER',

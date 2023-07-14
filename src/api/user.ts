@@ -2,7 +2,7 @@ import axios from '@/api/core';
 
 export interface IUserProfile {
   id: number;
-  name: string;
+  nickName: string;
   email: string;
   profileImageURL: string;
   authProvider: string;
@@ -10,7 +10,7 @@ export interface IUserProfile {
 }
 
 interface IUserInfo {
-  name: string;
+  nickName: string;
   imageURL: string;
   tripStatistics: ITripStatistics;
 }
@@ -18,6 +18,11 @@ interface IUserInfo {
 interface ITripStatistics {
   totalTripCnt: number;
   terminatedTripCnt: number;
+}
+
+interface IChangeNicknameParams {
+  userId: IUserProfile['id'];
+  nickName: IUserProfile['nickName'];
 }
 
 export const getUserProfile = async (userId: IUserProfile['id']) => {
@@ -29,11 +34,14 @@ export const getUserProfile = async (userId: IUserProfile['id']) => {
   return res.data;
 };
 
-export const changeNickname = async (nickname: IUserProfile['name']) => {
+export const changeNickname = async ({
+  userId,
+  nickName,
+}: IChangeNicknameParams) => {
   const res = await axios({
-    method: 'put',
-    url: `/user-nickname`,
-    data: { nickname },
+    method: 'patch',
+    url: `/users/${userId}`,
+    data: { nickName },
     requireAuth: true,
   });
   return res.status;

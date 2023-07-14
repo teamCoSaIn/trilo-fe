@@ -18,7 +18,7 @@ const TripsInfo = () => {
 
   const { data: nicknameData } = useGetUserProfile({
     userId,
-    selectKey: 'name',
+    selectKey: 'nickName',
   });
   const { data: userInfoData } = useGetUserInfo(userId);
 
@@ -27,9 +27,16 @@ const TripsInfo = () => {
   return (
     <Flex column>
       <Flex alignCenter>
-        <Description color={color.blue3} fontSize={isMobile ? 2 : 2.4}>
-          {nicknameData as string}님의 여행기록
-        </Description>
+        <Nickname
+          color={color.blue3}
+          fontSize={isMobile ? 2 : 2.4}
+          title={nicknameData as string}
+        >
+          {nicknameData as string}
+        </Nickname>
+        <NicknameDescription color={color.blue3} fontSize={isMobile ? 2 : 2.4}>
+          님의 여행기록
+        </NicknameDescription>
         <Spacing width={14} />
         <Label>{totalTrip} 개</Label>
       </Flex>
@@ -40,6 +47,18 @@ const TripsInfo = () => {
     </Flex>
   );
 };
+
+const Nickname = styled(Description)`
+  max-width: 50%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+const NicknameDescription = styled(Description)`
+  flex-shrink: 0;
+  padding-left: 5px;
+`;
 
 // TODO: common 분리
 const Label = styled.div`

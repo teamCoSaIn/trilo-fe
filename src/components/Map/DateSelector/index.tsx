@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { AxiosError } from 'axios';
-import { useCallback, useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
 import { toast } from 'react-toastify';
 import { useRecoilValue, useResetRecoilState, useSetRecoilState } from 'recoil';
@@ -28,11 +28,11 @@ const DateSelector = () => {
 
   const infoBoxRef = useRef<HTMLDivElement>(null);
 
-  const handleClickAway = useCallback((event: MouseEvent) => {
+  const handleMousedownAway = (event: MouseEvent) => {
     if (event.target !== infoBoxRef.current) {
       setIsDateSelectorVisible(false);
     }
-  }, []);
+  };
 
   const queryClient = useQueryClient();
 
@@ -73,9 +73,9 @@ const DateSelector = () => {
   );
 
   useEffect(() => {
-    document.addEventListener('click', handleClickAway);
+    document.addEventListener('mousedown', handleMousedownAway);
     return () => {
-      document.removeEventListener('click', handleClickAway);
+      document.removeEventListener('mousedown', handleMousedownAway);
     };
   }, []);
 

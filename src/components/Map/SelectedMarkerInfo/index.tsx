@@ -1,4 +1,5 @@
 /* eslint-disable no-nested-ternary */
+import { useEffect, useRef } from 'react';
 import { useRecoilValue, useResetRecoilState } from 'recoil';
 import styled from 'styled-components';
 
@@ -40,6 +41,14 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
     }
   );
 
+  const infoBoxRef = useRef<HTMLDivElement>(null);
+
+  const handleMousedownAway = (event: MouseEvent) => {
+    if (event.target !== infoBoxRef.current) {
+      resetSelectedMarkerScheduleId();
+    }
+  };
+
   const handleInfoBoxClick = (event: React.MouseEvent) => {
     event.stopPropagation();
   };
@@ -71,6 +80,13 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
   const handleCancelBtnClick = () => {
     resetSelectedMarkerScheduleId();
   };
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleMousedownAway);
+    return () => {
+      document.removeEventListener('mousedown', handleMousedownAway);
+    };
+  }, []);
 
   const infoContent = scheduleData.placeId ? (
     <>
@@ -113,6 +129,7 @@ const SelectedMarkerInfo = ({ scheduleData }: SelectedMarkerInfoProps) => {
       onWheel={handleInfoBoxWheel}
       onMouseDown={handleInfoBoxMouseDown}
       onDoubleClick={handleInfoBoxDoubleClick}
+      ref={infoBoxRef}
     >
       <Box column justifyCenter>
         {isError ? (

@@ -220,13 +220,13 @@ const TimePickerContent = styled.div<{ isDesktop: boolean }>`
   ${({ isDesktop }) => {
     if (isDesktop) {
       return css`
+        cursor: pointer;
         &:hover {
           border-color: #4096ff;
         }
       `;
     }
   }}
-  cursor: pointer;
 `;
 
 const RefreshBtn = styled.button`

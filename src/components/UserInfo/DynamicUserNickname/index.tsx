@@ -15,18 +15,19 @@ import color from '@/constants/color';
 import useMedia from '@/hooks/useMedia';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
-import { nicknameRegExp } from '@/utils/regExp';
+import {
+  specialCharRegExp,
+  nicknameRegExp,
+  min1max100RegExp,
+} from '@/utils/regExp';
 
 const DynamicUserNickname = () => {
   const { isMobile } = useMedia();
 
   const userId = useRecoilValue(UserId);
 
-  const [isOverNicknameInputLength, setIsOverNicknameInputLength] =
-    useState(false);
   const [isEdit, setIsEdit] = useState(false);
   const nicknameInputRef = useRef<HTMLInputElement>(null);
-  const nicknameOnEditRef = useRef<HTMLDivElement>(null);
 
   // TODO: userInfo 요청과 병렬 처리 및 Skeleton 적용 필요함.
   const queryClient = useQueryClient();
@@ -70,16 +71,25 @@ const DynamicUserNickname = () => {
 
   const handleNicknameEditBtnClick = () => {
     setIsEdit(true);
-    setIsOverNicknameInputLength(false);
   };
 
   const handleNicknameOnEditClickAway = () => {
     setIsEdit(false);
   };
 
-  const isValidNickname = (curNicknameInputValue: string) => {
+  const isValidNickname = (curNicknameInputValue: string): boolean => {
     const isValid = nicknameRegExp.test(curNicknameInputValue);
     return isValid;
+  };
+
+  const isContainSpecialChar = (curNicknameInputValue: string): boolean => {
+    const isContain = specialCharRegExp.test(curNicknameInputValue);
+    return isContain;
+  };
+
+  const isNickNameValidRange = (curNicknameInputValue: string): boolean => {
+    const isVaildRange = min1max100RegExp.test(curNicknameInputValue);
+    return isVaildRange;
   };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -89,28 +99,36 @@ const DynamicUserNickname = () => {
       setIsEdit(false);
       return;
     }
+
     if (isValidNickname(curNicknameInput)) {
       mutate(curNicknameInput);
-    } else {
+    } else if (isContainSpecialChar(curNicknameInput)) {
       toast.error(
-        '올바르지 않은 입력입니다. 공백 이외의 문자를 포함하여 100자 이내로 입력해주세요.',
+        `닉네임에는 특수 문자를 사용하실 수 없습니다. 영문자, 숫자, 및 한글만 입력 가능합니다.`,
         {
           autoClose: 3000,
           pauseOnHover: false,
           draggable: false,
         }
       );
-    }
-  };
-
-  const handleChangeNicknameInput = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const curInput = event.target.value;
-    if (curInput.length >= 100) {
-      setIsOverNicknameInputLength(true);
+    } else if (isNickNameValidRange(curNicknameInput)) {
+      toast.error(
+        '입력 가능한 글자 수는 최소 1글자, 최대 100글자입니다. 다시 입력해주세요.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
+      );
     } else {
-      setIsOverNicknameInputLength(false);
+      toast.error(
+        '유효하지 않은 입력입니다. 공백 이외의 문자를 포함하여 1 ~ 100자로 입력해주세요.',
+        {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        }
+      );
     }
   };
 
@@ -139,20 +157,12 @@ const DynamicUserNickname = () => {
 
   const NicknameOnEdit = (
     <ClickAwayListener onClickAway={handleNicknameOnEditClickAway}>
-      <ProfileBox
-        backgroundColor={color.blue1}
-        ref={nicknameOnEditRef}
-        isMobile={isMobile}
-      >
-        <NicknameForm
-          onSubmit={handleSubmit}
-          isOverLength={isOverNicknameInputLength}
-        >
+      <ProfileBox backgroundColor={color.blue1} isMobile={isMobile}>
+        <NicknameForm onSubmit={handleSubmit}>
           <NicknameEditInput
             type="text"
             placeholder={nicknameData as string}
             ref={nicknameInputRef}
-            onChange={handleChangeNicknameInput}
             autoFocus
             maxLength={100}
           />
@@ -223,25 +233,11 @@ const ProfileNickname = styled(Description)`
   white-space: nowrap;
 `;
 
-const NicknameForm = styled.form<{ isOverLength: boolean }>`
+const NicknameForm = styled.form`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  ${({ isOverLength }) => {
-    if (isOverLength) {
-      return css`
-        &::after {
-          content: '100글자 이내로 입력해주세요.';
-          font-size: 1.2rem;
-          color: red;
-          position: absolute;
-          top: -10px;
-          left: 50px;
-        }
-      `;
-    }
-  }}
 `;
 
 const NicknameEditInput = styled.input`

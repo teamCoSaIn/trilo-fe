@@ -247,6 +247,7 @@ const ScheduleList = () => {
                             isSelectedMarker={
                               selectedMarkerScheduleId === schedule.scheduleId
                             }
+                            isDesktop={isDesktop}
                           >
                             <ScheduleTitle>
                               {`${scheduleIdx + 1}. ${
@@ -365,6 +366,7 @@ const ScheduleList = () => {
                         isSelectedMarker={
                           selectedMarkerScheduleId === tempSchedule.scheduleId
                         }
+                        isDesktop={isDesktop}
                       >
                         <ScheduleTitle>
                           {`${tempScheduleIdx + 1}. ${
@@ -514,7 +516,11 @@ const ScheduleListBox = styled.ul<{ isEmpty: boolean }>`
   }};
 `;
 
-const Schedule = styled.li<{ isDragging: boolean; isSelectedMarker: boolean }>`
+const Schedule = styled.li<{
+  isDragging: boolean;
+  isSelectedMarker: boolean;
+  isDesktop: boolean;
+}>`
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -530,7 +536,6 @@ const Schedule = styled.li<{ isDragging: boolean; isSelectedMarker: boolean }>`
   margin-right: 5px;
   margin-bottom: ${SCHEDULE_MARGIN_BOTTOM}px;
   border: 1px solid white;
-  cursor: grab;
   ${({ isDragging, isSelectedMarker }) => {
     if (isDragging && !isSelectedMarker) {
       return css`
@@ -543,6 +548,16 @@ const Schedule = styled.li<{ isDragging: boolean; isSelectedMarker: boolean }>`
         box-shadow: 0 2px 8px ${color.blue2};
       `;
     }
+  }};
+  ${({ isDesktop }) => {
+    if (isDesktop) {
+      return css`
+        cursor: grab;
+      `;
+    }
+    return css`
+      cursor: pointer;
+    `;
   }};
 `;
 

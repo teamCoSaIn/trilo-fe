@@ -5,6 +5,7 @@ import { ReactComponent as PlusIcon } from '@/assets/plus.svg';
 import Flex from '@/components/common/Flex';
 import NewTripCard from '@/components/TripCardList/NewTripCard';
 import color from '@/constants/color';
+import { HEADER_HEIGHT, MOBILE_HEADER_HEIGHT } from '@/constants/size';
 import useMedia from '@/hooks/useMedia';
 
 const TripCardAddBtn = () => {
@@ -12,12 +13,23 @@ const TripCardAddBtn = () => {
 
   const [onCreation, setOnCreation] = useState(false);
 
-  const handleAddBtnClick = () => {
+  const headerHeight = isMobile ? MOBILE_HEADER_HEIGHT : HEADER_HEIGHT;
+  const HEADER_HEIGHT_MARGIN = 6;
+
+  const handleAddBtnClick = (event: React.MouseEvent) => {
     setOnCreation(true);
+    const addBtnTop = event.currentTarget.getClientRects()[0].top;
+    if (addBtnTop <= headerHeight) {
+      window.scrollBy({
+        top: addBtnTop - headerHeight - HEADER_HEIGHT_MARGIN,
+      });
+    }
+    document.body.style.overflow = 'hidden';
   };
 
   const handleClose = () => {
     setOnCreation(false);
+    document.body.style.overflow = 'visible';
   };
 
   return (

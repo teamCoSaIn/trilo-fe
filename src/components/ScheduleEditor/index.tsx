@@ -22,7 +22,7 @@ import { SelectedEditorScheduleId } from '@/states/schedule';
 
 const ScheduleEditor = () => {
   const { tripId } = useParams();
-  const { isDesktop } = useMedia();
+  const { isDesktop, isMobile } = useMedia();
 
   const selectedEditorScheduleId = useRecoilValue(SelectedEditorScheduleId);
   const resetSelectedEditorScheduleId = useResetRecoilState(
@@ -107,6 +107,7 @@ const ScheduleEditor = () => {
           value={titleInputValue}
           onChange={handleTitleInputChange}
           placeholder="Untitled..."
+          disabled={isMobile}
         />
         <CancelBtn onClick={handleCancelBtnClick}>
           <CancelIcon width={13} height={13} fill="#4F4F4F" />

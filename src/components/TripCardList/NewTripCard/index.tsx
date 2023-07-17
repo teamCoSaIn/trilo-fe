@@ -8,13 +8,11 @@ import HTTP from '@/api';
 import { TCreateTripParams } from '@/api/trip';
 import { ReactComponent as CheckIcon } from '@/assets/check.svg';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
+import DimLayer from '@/components/common/DimLayer';
 import DimLoader from '@/components/common/DimLoader';
 import Flex from '@/components/common/Flex';
 import color from '@/constants/color';
-import {
-  NEW_TRIP_CARD_Z_INDEX,
-  TRIP_LIST_DIM_LAYER_Z_INDEX,
-} from '@/constants/zIndex';
+import { NEW_TRIP_CARD_Z_INDEX } from '@/constants/zIndex';
 import useMedia from '@/hooks/useMedia';
 import { tripTitleRegExp } from '@/utils/regExp';
 
@@ -83,7 +81,8 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
 
   return (
     <>
-      <DimLayer />
+      {!isLoading && <DimLayer />}
+      {isLoading && <DimLoader />}
       <ClickAwayListener onClickAway={handleTitleFormClickAway}>
         <TripCardBox
           column={!isMobile}
@@ -93,7 +92,6 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
           isAwayClicked={isAwayClicked}
           onAnimationEnd={handleTripCardAnimationEnd}
         >
-          {isLoading && <DimLoader />}
           <LogoBox isMobile={isMobile}>
             <LogoIcon fill="white" />
           </LogoBox>
@@ -117,17 +115,6 @@ const NewTripCard = ({ handleClose }: INewTripCardProps) => {
     </>
   );
 };
-
-const DimLayer = styled.div`
-  z-index: ${TRIP_LIST_DIM_LAYER_Z_INDEX};
-  background-color: ${color.black};
-  opacity: 0.5;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-`;
 
 const TripCardBox = styled(Flex)<{ isAwayClicked: boolean; isMobile: boolean }>`
   z-index: ${NEW_TRIP_CARD_Z_INDEX};

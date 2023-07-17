@@ -164,6 +164,7 @@ const DateSelctorHeader = styled.div`
   color: #fff;
   background-color: #456ceb;
   border-radius: 5px 5px 0 0;
+  white-space: nowrap;
 `;
 
 const DateSelectorDateListBox = styled.ul`

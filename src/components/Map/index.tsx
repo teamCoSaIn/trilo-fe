@@ -48,6 +48,10 @@ import {
 
 const ZOOM_LEVEL = 15;
 
+interface CustomMapMouseEvent extends google.maps.MapMouseEvent {
+  placeId: string;
+}
+
 const Map = () => {
   const { tripId } = useParams();
   const { isMobile } = useMedia();
@@ -56,8 +60,8 @@ const Map = () => {
     MapInstance
   );
   const resetMapInstance = useResetRecoilState(MapInstance);
-  const setPlacesService =
-    useSetRecoilState<google.maps.places.PlacesService | null>(PlacesService);
+  const [placesService, setPlacesService] =
+    useRecoilState<google.maps.places.PlacesService | null>(PlacesService);
   const setAutocompleteService =
     useSetRecoilState<google.maps.places.AutocompleteService | null>(
       AutocompleteService
@@ -75,6 +79,7 @@ const Map = () => {
   const resetSelectedMarkerScheduleId = useResetRecoilState(
     SelectedMarkerScheduleId
   );
+  const setPlaceInfo = useSetRecoilState(PlaceInfo);
 
   const [userPosition, setUserPosition] = useState<LatLng | null>(null);
   const [isGetCurrPosLoading, setIsGetCurrPosLoading] = useState(false);
@@ -218,7 +223,7 @@ const Map = () => {
     setAutocompleteService(service2);
   };
 
-  const handleGoogleMapClick = (event: google.maps.MapMouseEvent) => {
+  const handleGoogleMapClick = (event: CustomMapMouseEvent) => {
     if (isMobile) {
       return;
     }
@@ -228,8 +233,26 @@ const Map = () => {
         lng: event.latLng.lng(),
       };
       setGoogleMarkerLatLng(selectedLocation);
+
+      if (event.placeId && placesService) {
+        placesService.getDetails(
+          { placeId: event.placeId },
+          (place, status) => {
+            if (status === google.maps.places.PlacesServiceStatus.OK) {
+              const placeName = place?.name;
+              setPlaceInfo({
+                id: event.placeId,
+                name: placeName as string,
+              });
+            } else {
+              console.error('Error fetching place details:', status);
+            }
+          }
+        );
+      } else {
+        resetPlaceInfo();
+      }
     }
-    resetPlaceInfo();
   };
 
   const handleGoogleMarkerClick = () => {

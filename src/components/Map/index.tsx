@@ -440,22 +440,21 @@ const Map = () => {
       onLoad={handleOnMapLoad}
       onClick={handleGoogleMapClick}
     >
-      {googleMarkerLatLng?.lat && googleMarkerLatLng?.lng && (
-        <MarkerF
-          position={{
-            lat: googleMarkerLatLng.lat,
-            lng: googleMarkerLatLng.lng,
-          }}
-          animation={google.maps.Animation.DROP}
-          onClick={handleGoogleMarkerClick}
-        >
-          {isDateSelectorVisible && (
-            <InfoBoxF options={dateSelectorInfoBoxOptions}>
-              <DateSelector />
-            </InfoBoxF>
-          )}
-        </MarkerF>
-      )}
+      <MarkerF
+        position={{
+          lat: googleMarkerLatLng?.lat as number,
+          lng: googleMarkerLatLng?.lng as number,
+        }}
+        animation={google.maps.Animation.DROP}
+        onClick={handleGoogleMarkerClick}
+        visible={!!googleMarkerLatLng}
+      >
+        {isDateSelectorVisible && (
+          <InfoBoxF options={dateSelectorInfoBoxOptions}>
+            <DateSelector />
+          </InfoBoxF>
+        )}
+      </MarkerF>
       {selectedScheduleMarkers}
       {selectedTempScheduleMarkers}
       {selectedSchedulePolyLines}

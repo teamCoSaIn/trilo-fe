@@ -36,7 +36,7 @@ const AuthChecker = ({ children }: IAuthCheckerProps) => {
   useQuery(['setLogin'], () => HTTP.refreshAccessToken(), {
     onSuccess: response => {
       const decoded: JwtPayload = jwt_decode(response.accessToken);
-      setUserId(+(decoded.sub as string));
+      setUserId(+(decoded.id as string));
     },
     onError: () => {
       setUserStatus(UserStatusTypes.LOGOUT);

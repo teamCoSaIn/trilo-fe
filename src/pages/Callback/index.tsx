@@ -23,7 +23,7 @@ const Callback = () => {
   const onSuccess = (data: IGetAccessTokenResponse) => {
     setUserStatus(UserStatusTypes.LOGIN);
     const decoded: JwtPayload = jwt_decode(data.accessToken);
-    setUserId(+(decoded.sub as string));
+    setUserId(+(decoded.id as string));
     const redirectUrl = localStorage.getItem(REDIRECT_URL) || '/';
     navigate(redirectUrl);
   };

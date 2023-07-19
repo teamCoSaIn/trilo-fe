@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ReactComponent as LeftArrowIcon } from '@/assets/LeftArrow.svg';
@@ -9,16 +10,20 @@ import PlaceTab from '@/components/PlaceTab';
 import color from '@/constants/color';
 import { TRIP_LEFT_WINDOW_Z_INDEX } from '@/constants/zIndex';
 import useGetTrip from '@/queryHooks/useGetTrip';
+import SelectedDates from '@/states/calendar';
 
 const DATE = 'date';
 const PLACE = 'place';
 
 const TripLeftWindow = () => {
   const { tripId } = useParams();
+
   const { data: tripData } = useGetTrip({
     tripId: +(tripId as string),
   });
   const initFocusedTab = tripData && tripData.startDate ? PLACE : DATE;
+
+  const resetSelectedDates = useResetRecoilState(SelectedDates);
 
   const [isWindowFold, setIsWindowFold] = useState(false);
   const [curFocusedTab, setCurFocusedTab] = useState(initFocusedTab);
@@ -30,6 +35,12 @@ const TripLeftWindow = () => {
     const newFocusedTab = tripData.startDate ? PLACE : DATE;
     setCurFocusedTab(newFocusedTab);
   }, [tripData]);
+
+  useEffect(() => {
+    return () => {
+      resetSelectedDates();
+    };
+  }, []);
 
   const handleTabClick = (
     event: React.MouseEvent,

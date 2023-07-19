@@ -45,7 +45,9 @@ const DateTab = () => {
   const resetSelectedDates = useResetRecoilState(SelectedDates);
   const isPeriodOver10Days = useRecoilValue(IsPeriodOver10Days);
 
-  const [curDateObj, setCurDateObj] = useState(selectedStartDate || new Date());
+  const [curDateObj, setCurDateObj] = useState(
+    tripData?.startDate ? new Date(tripData.startDate) : new Date()
+  );
   const [curYear, curMonth] = [curDateObj.getFullYear(), curDateObj.getMonth()];
   const [slidingStatus, setSlidingStatus] = useState<TSlidingStatus>('STOP');
 

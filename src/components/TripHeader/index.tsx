@@ -69,11 +69,18 @@ const TripHeader = () => {
       </Flex>
       <Spacing height={10} />
       <Period disabled={disabled}>
-        <Description>{transformedStartDate}</Description>
-        <Spacing width={12} />
-        {!disabled && <Description>~</Description>}
-        <Spacing width={12} />
-        <Description>{transformedEndDate}</Description>
+        {disabled ? (
+          <Description color="gray">여행 일정을 선택해주세요 🙏</Description>
+        ) : (
+          <>
+            {' '}
+            <Description>{transformedStartDate}</Description>
+            <Spacing width={12} />
+            {!disabled && <Description>~</Description>}
+            <Spacing width={12} />
+            <Description>{transformedEndDate}</Description>
+          </>
+        )}
       </Period>
     </Box>
   );

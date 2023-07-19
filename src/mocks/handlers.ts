@@ -520,7 +520,7 @@ const refreshAccessToken = rest.post(
       ctx.json({
         authType: `Bearer`,
         accessToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjI1NTE2MjMwMDB9.G',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJuYW1lIjoiSm9obiIsImV4cCI6MjU1MTYyMzAwMH0.szO4PXFqterxdRWwHStGa8_tLwiUWfbk8YkqRjjhBpk',
       })
     );
   }
@@ -543,7 +543,7 @@ const getExpiredAccessToken = rest.get(
         token_type: 'Bearer Token',
         expires_in: 86400,
         access_token:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4iLCJleHAiOjE1MTYyMzAwMH0.Q',
+          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjEyMzQ1Njc4OTAiLCJuYW1lIjoiSm9obiIsImV4cCI6MTUxNjIzMDAwfQ.DkYEArJo61STQGfEVff_h3Petbbi8YUf3rar0Fp64MU',
         scope: 'photo offline_access',
         refresh_token: 'k9ysLtnRzntzxJWeBfTOdPXE',
       })

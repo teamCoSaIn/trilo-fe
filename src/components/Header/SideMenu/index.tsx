@@ -10,6 +10,7 @@ import { ReactComponent as BackIcon } from '@/assets/RightArrow.svg';
 import MuiButton from '@/components/common/MuiButton';
 import SideMenuProfile from '@/components/Header/SideMenuProfile';
 import { MOBILE_HEADER_HEIGHT } from '@/constants/size';
+import { SIDEMENU_Z_INDEX } from '@/constants/zIndex';
 import useMedia from '@/hooks/useMedia';
 import { IsSideMenuOpen } from '@/states/sideMenu';
 import UserStatus, { UserStatusTypes } from '@/states/userStatus';
@@ -132,7 +133,7 @@ const SideMenuBox = styled.aside<{ isOpen: boolean }>`
   right: 0;
   height: 100vh;
   background-color: white;
-  z-index: 11;
+  z-index: ${SIDEMENU_Z_INDEX};
   transition: all 0.5s;
   ${({ isOpen }) => {
     if (isOpen) {

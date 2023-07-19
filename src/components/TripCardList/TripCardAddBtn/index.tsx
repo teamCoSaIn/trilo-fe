@@ -24,12 +24,10 @@ const TripCardAddBtn = () => {
         top: addBtnTop - headerHeight - HEADER_HEIGHT_MARGIN,
       });
     }
-    document.body.style.overflow = 'hidden';
   };
 
   const handleClose = () => {
     setOnCreation(false);
-    document.body.style.overflow = 'visible';
   };
 
   return (

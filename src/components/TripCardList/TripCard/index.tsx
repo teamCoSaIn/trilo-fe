@@ -5,14 +5,12 @@ import { useRecoilState, useResetRecoilState } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { ITrip } from '@/api/trip';
+import DimLayer from '@/components/common/DimLayer';
 import Flex from '@/components/common/Flex';
 import TripCardBottom from '@/components/TripCardList/TripCardBottom';
 import TripCardContent from '@/components/TripCardList/TripCardContent';
 import color from '@/constants/color';
-import {
-  OPTION_OPEN_TRIP_CARD_Z_INDEX,
-  TRIP_LIST_DIM_LAYER_Z_INDEX,
-} from '@/constants/zIndex';
+import { OPTION_OPEN_TRIP_CARD_Z_INDEX } from '@/constants/zIndex';
 import useMedia from '@/hooks/useMedia';
 import {
   PreviewImgFamily,
@@ -84,17 +82,6 @@ const TripCard = ({ trip }: ITripCardProps) => {
     </>
   );
 };
-
-const DimLayer = styled.div`
-  z-index: ${TRIP_LIST_DIM_LAYER_Z_INDEX};
-  background-color: ${color.black};
-  opacity: 0.5;
-  position: fixed;
-  top: 0;
-  left: 0;
-  height: 100%;
-  width: 100%;
-`;
 
 const TripCardBox = styled(Flex)<{ isSelected: boolean; isMobile: boolean }>`
   background-color: ${color.white};

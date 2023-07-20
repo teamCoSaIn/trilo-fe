@@ -1,6 +1,10 @@
+<br />
+
 <img src='./src/assets/logo.svg' width='200' alt='Trilo-Logo'/>
 
-# ✈️ [Trilo](http://cosain-trilo.com/)와 함께 여행 계획을 세워보아요!
+<br />
+
+# [Trilo](http://cosain-trilo.com/)와 함께 여행 계획을 세워보아요!
 
 여행 계획 어디서 짜시나요?
 
@@ -20,7 +24,7 @@
 
 <br />
 
-# 📝 프로젝트 개요
+# 프로젝트 개요
 
 ### Period
 
@@ -48,7 +52,7 @@
 
 <br />
 
-# ⚒️ Skill Stack
+# 기술 스택
 
 ### FrontEnd
 

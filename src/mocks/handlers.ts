@@ -857,6 +857,37 @@ const resign = rest.delete('/api/users/:userId', async (req, res, ctx) => {
   return res(ctx.status(204));
 });
 
+const requestChat = rest.post(
+  'https://api.openai.com/v1/chat/completions',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    const body = await req.json();
+    const text = body.messages[1].content;
+    return res(
+      ctx.json({
+        id: 'chatcmpl-123',
+        object: 'chat.completion',
+        created: 1677652288,
+        choices: [
+          {
+            index: 0,
+            message: {
+              role: 'assistant',
+              content: `${text}에 대한 응답입니다.`,
+            },
+            finish_reason: 'stop',
+          },
+        ],
+        usage: {
+          prompt_tokens: 9,
+          completion_tokens: 12,
+          total_tokens: 21,
+        },
+      })
+    );
+  }
+);
+
 const handlers = [
   getAccessToken,
   refreshAccessToken,
@@ -882,6 +913,7 @@ const handlers = [
   getTrip,
   changeDayColor,
   resign,
+  requestChat,
 ];
 
 export default handlers;

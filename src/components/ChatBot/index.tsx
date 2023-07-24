@@ -1,42 +1,100 @@
-import { FormEvent, useRef, useState } from 'react';
+import { FormEvent, useEffect, useRef, useState } from 'react';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
 import { requestChat } from '@/api/chat';
 import { IUserProfile } from '@/api/user';
-import defaultProfile from '@/assets/defaultProfileImg.png';
+import chatbotImgUrl from '@/assets/chatbot.png';
+import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
 import { ReactComponent as CloseIcon } from '@/assets/multiply.svg';
 import Button from '@/components/common/Button';
 import Description from '@/components/common/Description';
 import Flex from '@/components/common/Flex';
 import Line from '@/components/common/Line';
 import Spacing from '@/components/common/Spacing';
+import color from '@/constants/color';
+import { HEADER_HEIGHT } from '@/constants/size';
+import { CHATBOT_Z_INDEX } from '@/constants/zIndex';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
-interface Chat {
+interface IChat {
   isBot: boolean;
   text: string;
 }
 
+interface IBoxPosition {
+  bottom: number;
+  right: number;
+}
+
+const OPEN_BTN_SIZE = 70;
+
 const ChatBot = () => {
+  const userId = useRecoilValue(UserId);
+  const { data: userProfileData } = useGetUserProfile({ userId });
+
+  const [boxPosition, setBoxPosition] = useState<IBoxPosition>({
+    bottom: 20,
+    right: 20,
+  });
   const [isOpen, setIsOpen] = useState(false);
-  const [chatHistory, setChatHistory] = useState<Chat[]>([
-    { text: '안녕하세요 용사님', isBot: true },
-    { text: '네 안녕하세요', isBot: false },
+  const [chatHistory, setChatHistory] = useState<IChat[]>([
+    {
+      text: `안녕하세요 ${
+        (userProfileData as IUserProfile).nickName
+      }님. 여행 정보에 대해 궁금하신 내용이 있으시면 물어봐주세요! 궁금하신 내용이 있으시면 물어봐주세요!`,
+      isBot: true,
+    },
+    { text: '뉴욕에 맛있는 스테이크집을 추천해줘', isBot: false },
+    {
+      text: `Peter Luger Steak House - 뉴욕에서 오랫동안 사랑받고 있는 유명한 스테이크 하우스입니다. 스테이크의 질과 육질이 매우 훌륭하며, 전통적인 스테이크 하우스 분위기를 즐길 수 있습니다.
+
+    Keens Steakhouse - 뉴욕에서 가장 오래된 스테이크 하우스 중 하나로, 고전적인 분위기와 다양한 스테이크 옵션을 제공합니다. 특히, 램치쇠 스테이크로 유명합니다.
+    
+    Delmonico's - 뉴욕에서 가장 오래된 연속 운영 레스토랑 중 하나로, 뛰어난 스테이크와 멋진 서비스로 유명합니다.
+    
+    Wolfgang's Steakhouse - 전 세계적으로 유명한 스테이크 하우스 체인의 뉴욕 지점입니다. 높은 품질의 스테이크와 멋진 앰비언스를 즐길 수 있습니다.
+    
+    BLT Steak - 뉴욕의 미디어 구역에 위치한 이 곳은 현대적인 분위기와 다양한 스테이크 옵션을 제공합니다.`,
+      isBot: true,
+    },
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
   const chatInputRef = useRef<HTMLInputElement>(null);
+  const isDragging = useRef<boolean>(false);
+  const isMouseDown = useRef<boolean>(false);
 
-  const userId = useRecoilValue(UserId);
+  const chatList = chatHistory.map((chat, idx) => {
+    return (
+      <ChatBox key={idx} isBot={chat.isBot}>
+        <ChatImg
+          src={
+            chat.isBot
+              ? chatbotImgUrl
+              : (userProfileData as IUserProfile).profileImageURL
+          }
+        />
+        <Text isBot={chat.isBot}>{chat.text}</Text>
+      </ChatBox>
+    );
+  });
 
-  const { data: userProfileData } = useGetUserProfile({ userId });
+  const chatSkeleton = (
+    <ChatBox isBot alignCenter>
+      <ChatImg src={chatbotImgUrl} />
+      <DotFlashing />
+    </ChatBox>
+  );
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     if (chatInputRef.current) {
       const text = chatInputRef.current.value;
+      if (!text) {
+        return;
+      }
       const reqChat = { text, isBot: false };
 
       setChatHistory(prev => [...prev, reqChat]);
@@ -54,43 +112,75 @@ const ChatBot = () => {
     }
   };
 
+  const handleOpenBtnClick = () => {
+    if (isDragging.current) {
+      isDragging.current = false;
+      return;
+    }
+    setIsOpen(true);
+  };
+
+  const handleOpenBtnMouseDown = () => {
+    isMouseDown.current = true;
+  };
+
+  const handleOpenBtnMouseUp = () => {
+    isMouseDown.current = false;
+  };
+
+  const handleOpenBtnMouseMove = (event: MouseEvent) => {
+    if (!isMouseDown.current) {
+      return;
+    }
+
+    const { clientX, clientY } = event;
+    const { innerWidth, innerHeight } = window;
+
+    if (isDragging.current) {
+      const isOutOfPage =
+        clientY < HEADER_HEIGHT + OPEN_BTN_SIZE / 2 ||
+        clientY > innerHeight - OPEN_BTN_SIZE / 2 ||
+        clientX < OPEN_BTN_SIZE / 2 ||
+        clientX > innerWidth - OPEN_BTN_SIZE / 2;
+      if (isOutOfPage) {
+        return;
+      }
+      setBoxPosition({
+        bottom: innerHeight - clientY - OPEN_BTN_SIZE / 2,
+        right: innerWidth - clientX - OPEN_BTN_SIZE / 2,
+      });
+    } else {
+      isDragging.current = true;
+    }
+  };
+
+  useEffect(() => {
+    document.addEventListener('mousemove', handleOpenBtnMouseMove);
+    return () => {
+      document.removeEventListener('mousemove', handleOpenBtnMouseMove);
+    };
+  }, []);
+
   return (
-    <Box>
+    <Box boxPosition={boxPosition}>
       {isOpen && (
         <Wrapper column alignCenter>
           <Header>
-            <BotImg src={defaultProfile} />
-            <FlexDescription fontSize={2}>챗봇과 대화하기</FlexDescription>
+            <LogoIcon width={50} />
+            <FlexDescription fontSize={1.8} color={color.blue3}>
+              트롱봇에게 물어보기
+            </FlexDescription>
             <CloseBtn onClick={() => setIsOpen(false)}>
               <CloseIcon width={20} height={20} />
             </CloseBtn>
           </Header>
           <Spacing height={10} />
-          <Line width={350} color="gray" />
+          <Line width="fit" color="#B8B8B8" />
           <ChatHistory column>
-            {chatHistory.map((chat, idx) => {
-              return (
-                <ChatBox key={idx} isBot={chat.isBot} alignCenter>
-                  <ChatImg
-                    src={
-                      chat.isBot
-                        ? defaultProfile
-                        : (userProfileData as IUserProfile).profileImageURL
-                    }
-                  />
-                  <Text>{chat.text}</Text>
-                </ChatBox>
-              );
-            })}
-            {isLoading && (
-              <ChatBox isBot alignCenter>
-                <ChatImg src={defaultProfile} />
-                <DotFlashing />
-              </ChatBox>
-            )}
+            {chatList}
+            {isLoading && chatSkeleton}
           </ChatHistory>
-          <Spacing height={10} />
-          <Line width={350} color="gray" />
+          <Line width="fit" color="#B8B8B8" />
           <Spacing height={10} />
           <InputBox onSubmit={handleSubmit}>
             <Input
@@ -106,35 +196,43 @@ const ChatBot = () => {
           </InputBox>
         </Wrapper>
       )}
-      {!isOpen && <OpenBtn onClick={() => setIsOpen(true)}>챗봇</OpenBtn>}
+      {!isOpen && (
+        <OpenBtn
+          onClick={handleOpenBtnClick}
+          onMouseDown={handleOpenBtnMouseDown}
+          onMouseUp={handleOpenBtnMouseUp}
+        >
+          <ChatImg src={chatbotImgUrl} draggable={false} />
+        </OpenBtn>
+      )}
     </Box>
   );
 };
 
-const Box = styled(Flex)`
+const Box = styled(Flex)<{ boxPosition: IBoxPosition }>`
   position: absolute;
-  bottom: 10px;
-  right: 10px;
+  ${({ boxPosition }) => {
+    return css`
+      bottom: ${boxPosition.bottom}px;
+      right: ${boxPosition.right}px;
+    `;
+  }}
+  z-index: ${CHATBOT_Z_INDEX};
 `;
 
 const Wrapper = styled(Flex)`
   width: 400px;
   height: 600px;
   padding: 20px;
-  border: 1px solid black;
+  border-radius: 20px;
   background-color: white;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 `;
 
 const Header = styled.header`
   width: 100%;
   display: flex;
   align-items: center;
-`;
-
-const BotImg = styled.img`
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
 `;
 
 const FlexDescription = styled(Description)`
@@ -155,6 +253,8 @@ const ChatHistory = styled(Flex)`
     background-color: #bbb;
     border-radius: 20px;
   }
+  gap: 20px;
+  padding: 20px 0;
 `;
 
 const InputBox = styled.form`
@@ -163,14 +263,13 @@ const InputBox = styled.form`
 `;
 
 const Input = styled.input`
-  font-size: 2rem;
+  font-size: 1.5rem;
   flex-grow: 1;
 `;
 
 const SubmitBtn = styled(Button)``;
 
 const ChatBox = styled(Flex)<{ isBot: boolean }>`
-  height: 40px;
   flex-shrink: 0;
   ${({ isBot }) => {
     if (isBot) {
@@ -183,13 +282,31 @@ const ChatBox = styled(Flex)<{ isBot: boolean }>`
 `;
 
 const ChatImg = styled.img`
-  width: 30px;
-  height: 30px;
+  width: 35px;
+  height: 35px;
   border-radius: 50%;
   margin: 0 10px;
 `;
 
-const Text = styled.p``;
+const Text = styled.p<{ isBot: boolean }>`
+  max-width: 220px;
+  font-size: 1.5rem;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  border-radius: 10px;
+  line-height: 18px;
+  white-space: pre-line;
+  ${({ isBot }) => {
+    if (isBot) {
+      return css`
+        background-color: ${color.blue1};
+      `;
+    }
+    return css`
+      background-color: ${color.white};
+    `;
+  }}
+`;
 
 const DotFlashing = styled.div`
   position: relative;
@@ -241,11 +358,17 @@ const DotFlashing = styled.div`
 `;
 
 const OpenBtn = styled.button`
-  width: 50px;
-  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: ${OPEN_BTN_SIZE}px;
+  height: ${OPEN_BTN_SIZE}px;
   border-radius: 50%;
-  background-color: blue;
-  color: white;
+  background-color: ${color.blue1};
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+  &:hover {
+    background-color: ${color.blue2};
+  }
 `;
 
 export default ChatBot;

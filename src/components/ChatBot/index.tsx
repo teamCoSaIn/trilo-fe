@@ -29,6 +29,8 @@ interface IBoxPosition {
 }
 
 const OPEN_BTN_SIZE = 70;
+const CHAT_WINDOW_WIDTH = 400;
+const CHAT_WINDOW_HEIGHT = 600;
 
 const ChatBot = () => {
   const userId = useRecoilValue(UserId);
@@ -43,7 +45,7 @@ const ChatBot = () => {
     {
       text: `안녕하세요 ${
         (userProfileData as IUserProfile).nickName
-      }님. 여행 정보에 대해 궁금하신 내용이 있으시면 물어봐주세요! 궁금하신 내용이 있으시면 물어봐주세요!`,
+      }님. 여행 정보에 대해 궁금하신 내용이 있으시면 물어봐주세요!`,
       isBot: true,
     },
     { text: '뉴욕에 맛있는 스테이크집을 추천해줘', isBot: false },
@@ -63,8 +65,13 @@ const ChatBot = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const chatInputRef = useRef<HTMLInputElement>(null);
+  const openBtnRef = useRef<HTMLButtonElement>(null);
   const isDragging = useRef<boolean>(false);
   const isMouseDown = useRef<boolean>(false);
+  const chatBoxPosition = useRef<IBoxPosition>({
+    bottom: 0,
+    right: 0,
+  });
 
   const chatList = chatHistory.map((chat, idx) => {
     return (
@@ -81,7 +88,7 @@ const ChatBot = () => {
     );
   });
 
-  const chatSkeleton = (
+  const chatLoadingDot = (
     <ChatBox isBot alignCenter>
       <ChatImg src={chatbotImgUrl} />
       <DotFlashing />
@@ -117,6 +124,25 @@ const ChatBot = () => {
       isDragging.current = false;
       return;
     }
+
+    if (openBtnRef.current) {
+      const { left, top, height, width } =
+        openBtnRef.current.getBoundingClientRect();
+      const [centerX, centerY] = [left + width / 2, top + height / 2];
+
+      if (CHAT_WINDOW_WIDTH - OPEN_BTN_SIZE / 2 > centerX) {
+        chatBoxPosition.current.right = -CHAT_WINDOW_WIDTH + OPEN_BTN_SIZE;
+      } else {
+        chatBoxPosition.current.right = 0;
+      }
+
+      if (CHAT_WINDOW_HEIGHT + HEADER_HEIGHT - OPEN_BTN_SIZE / 2 > centerY) {
+        chatBoxPosition.current.bottom = -CHAT_WINDOW_HEIGHT + OPEN_BTN_SIZE;
+      } else {
+        chatBoxPosition.current.bottom = 0;
+      }
+    }
+
     setIsOpen(true);
   };
 
@@ -136,22 +162,24 @@ const ChatBot = () => {
     const { clientX, clientY } = event;
     const { innerWidth, innerHeight } = window;
 
-    if (isDragging.current) {
-      const isOutOfPage =
-        clientY < HEADER_HEIGHT + OPEN_BTN_SIZE / 2 ||
-        clientY > innerHeight - OPEN_BTN_SIZE / 2 ||
-        clientX < OPEN_BTN_SIZE / 2 ||
-        clientX > innerWidth - OPEN_BTN_SIZE / 2;
-      if (isOutOfPage) {
-        return;
-      }
-      setBoxPosition({
-        bottom: innerHeight - clientY - OPEN_BTN_SIZE / 2,
-        right: innerWidth - clientX - OPEN_BTN_SIZE / 2,
-      });
-    } else {
+    if (!isDragging.current) {
       isDragging.current = true;
     }
+
+    const isOutOfPage =
+      clientY < HEADER_HEIGHT + OPEN_BTN_SIZE / 2 ||
+      clientY > innerHeight - OPEN_BTN_SIZE / 2 ||
+      clientX < OPEN_BTN_SIZE / 2 ||
+      clientX > innerWidth - OPEN_BTN_SIZE / 2;
+
+    if (isOutOfPage) {
+      return;
+    }
+
+    setBoxPosition({
+      bottom: innerHeight - clientY - OPEN_BTN_SIZE / 2,
+      right: innerWidth - clientX - OPEN_BTN_SIZE / 2,
+    });
   };
 
   useEffect(() => {
@@ -164,7 +192,7 @@ const ChatBot = () => {
   return (
     <Box boxPosition={boxPosition}>
       {isOpen && (
-        <Wrapper column alignCenter>
+        <Wrapper column alignCenter chatBoxPosition={chatBoxPosition.current}>
           <Header>
             <LogoIcon width={50} />
             <FlexDescription fontSize={1.8} color={color.blue3}>
@@ -178,7 +206,7 @@ const ChatBot = () => {
           <Line width="fit" color="#B8B8B8" />
           <ChatHistory column>
             {chatList}
-            {isLoading && chatSkeleton}
+            {isLoading && chatLoadingDot}
           </ChatHistory>
           <Line width="fit" color="#B8B8B8" />
           <Spacing height={10} />
@@ -201,6 +229,7 @@ const ChatBot = () => {
           onClick={handleOpenBtnClick}
           onMouseDown={handleOpenBtnMouseDown}
           onMouseUp={handleOpenBtnMouseUp}
+          ref={openBtnRef}
         >
           <ChatImg src={chatbotImgUrl} draggable={false} />
         </OpenBtn>
@@ -220,9 +249,16 @@ const Box = styled(Flex)<{ boxPosition: IBoxPosition }>`
   z-index: ${CHATBOT_Z_INDEX};
 `;
 
-const Wrapper = styled(Flex)`
-  width: 400px;
-  height: 600px;
+const Wrapper = styled(Flex)<{ chatBoxPosition: IBoxPosition }>`
+  position: relative;
+  ${({ chatBoxPosition }) => {
+    return css`
+      bottom: ${chatBoxPosition.bottom}px;
+      right: ${chatBoxPosition.right}px;
+    `;
+  }}
+  width: ${CHAT_WINDOW_WIDTH}px;
+  height: ${CHAT_WINDOW_HEIGHT}px;
   padding: 20px;
   border-radius: 20px;
   background-color: white;

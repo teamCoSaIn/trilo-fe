@@ -81,6 +81,7 @@ const ChatBot = () => {
     right: 0,
   });
   const chatInputPlaceHolder = useRef<string>(CHAT_INPUT_PLACEHOLDER.default);
+  const chatBoxRef = useRef<HTMLDivElement>(null);
 
   const chatList = chatHistory.map((chat, idx) => {
     return (
@@ -202,6 +203,14 @@ const ChatBot = () => {
     });
   };
 
+  const handleClickAwayListener = (event: MouseEvent) => {
+    const isContain = chatBoxRef.current?.contains(event.target as Node);
+    if (isContain) {
+      return;
+    }
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     document.addEventListener('mousemove', handleOpenBtnMouseMove);
     return () => {
@@ -209,10 +218,29 @@ const ChatBot = () => {
     };
   }, []);
 
+  useEffect(() => {
+    if (isOpen) {
+      setTimeout(() => {
+        document.addEventListener('click', handleClickAwayListener);
+      }, 0);
+    }
+
+    return () => {
+      if (isOpen) {
+        document.removeEventListener('click', handleClickAwayListener);
+      }
+    };
+  }, [isOpen]);
+
   return (
     <Box boxPosition={boxPosition}>
       {isOpen && (
-        <Wrapper column alignCenter chatBoxPosition={chatBoxPosition.current}>
+        <Wrapper
+          column
+          alignCenter
+          chatBoxPosition={chatBoxPosition.current}
+          ref={chatBoxRef}
+        >
           <Header>
             <LogoIcon width={50} />
             <FlexDescription fontSize={1.8} color={color.blue3}>

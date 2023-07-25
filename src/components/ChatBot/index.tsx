@@ -1,4 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
+import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
@@ -72,6 +73,7 @@ const ChatBot = () => {
     bottom: 0,
     right: 0,
   });
+  const chatInputPlaceHolder = useRef<string>('궁금한 것을 물어보세요.');
 
   const chatList = chatHistory.map((chat, idx) => {
     return (
@@ -111,10 +113,17 @@ const ChatBot = () => {
       try {
         const res = await requestChat(text);
         const resChat = { text: res.choices[0].message.content, isBot: true };
-        setIsLoading(false);
         setChatHistory(prev => [...prev, resChat]);
-      } catch (error) {
-        console.log(error);
+      } catch {
+        toast.error('현재 트롱봇을 사용할 수 없습니다.', {
+          autoClose: 3000,
+          pauseOnHover: false,
+          draggable: false,
+        });
+        chatInputRef.current.disabled = true;
+        chatInputPlaceHolder.current = '채팅 이용 불가';
+      } finally {
+        setIsLoading(false);
       }
     }
   };
@@ -215,7 +224,7 @@ const ChatBot = () => {
               ref={chatInputRef}
               type="text"
               name="text"
-              placeholder="궁금한 것을 물어보세요."
+              placeholder={chatInputPlaceHolder.current}
               autoComplete="off"
             />
             <SubmitBtn btnSize="small" btnColor="blue">

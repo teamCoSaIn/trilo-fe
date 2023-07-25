@@ -29,17 +29,24 @@ interface IBoxPosition {
   right: number;
 }
 
-const OPEN_BTN_SIZE = 70;
+const OPEN_BTN_DIAMETER = 70;
 const CHAT_WINDOW_WIDTH = 400;
 const CHAT_WINDOW_HEIGHT = 600;
 
 const ChatBot = () => {
+  const CHAT_INPUT_PLACEHOLDER = {
+    default: '궁금한 것을 물어보세요.',
+    error: '채팅 이용 불가',
+  };
+  const CHATBOT_INIT_BOTTOM = 20;
+  const CHATBOT_INIT_RIGHT = 20;
+
   const userId = useRecoilValue(UserId);
   const { data: userProfileData } = useGetUserProfile({ userId });
 
   const [boxPosition, setBoxPosition] = useState<IBoxPosition>({
-    bottom: 20,
-    right: 20,
+    bottom: CHATBOT_INIT_BOTTOM,
+    right: CHATBOT_INIT_RIGHT,
   });
   const [isOpen, setIsOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState<IChat[]>([
@@ -73,7 +80,7 @@ const ChatBot = () => {
     bottom: 0,
     right: 0,
   });
-  const chatInputPlaceHolder = useRef<string>('궁금한 것을 물어보세요.');
+  const chatInputPlaceHolder = useRef<string>(CHAT_INPUT_PLACEHOLDER.default);
 
   const chatList = chatHistory.map((chat, idx) => {
     return (
@@ -121,7 +128,7 @@ const ChatBot = () => {
           draggable: false,
         });
         chatInputRef.current.disabled = true;
-        chatInputPlaceHolder.current = '채팅 이용 불가';
+        chatInputPlaceHolder.current = CHAT_INPUT_PLACEHOLDER.error;
       } finally {
         setIsLoading(false);
       }
@@ -139,14 +146,18 @@ const ChatBot = () => {
         openBtnRef.current.getBoundingClientRect();
       const [centerX, centerY] = [left + width / 2, top + height / 2];
 
-      if (CHAT_WINDOW_WIDTH - OPEN_BTN_SIZE / 2 > centerX) {
-        chatBoxPosition.current.right = -CHAT_WINDOW_WIDTH + OPEN_BTN_SIZE;
+      if (CHAT_WINDOW_WIDTH - OPEN_BTN_DIAMETER / 2 > centerX) {
+        chatBoxPosition.current.right = -CHAT_WINDOW_WIDTH + OPEN_BTN_DIAMETER;
       } else {
         chatBoxPosition.current.right = 0;
       }
 
-      if (CHAT_WINDOW_HEIGHT + HEADER_HEIGHT - OPEN_BTN_SIZE / 2 > centerY) {
-        chatBoxPosition.current.bottom = -CHAT_WINDOW_HEIGHT + OPEN_BTN_SIZE;
+      if (
+        CHAT_WINDOW_HEIGHT + HEADER_HEIGHT - OPEN_BTN_DIAMETER / 2 >
+        centerY
+      ) {
+        chatBoxPosition.current.bottom =
+          -CHAT_WINDOW_HEIGHT + OPEN_BTN_DIAMETER;
       } else {
         chatBoxPosition.current.bottom = 0;
       }
@@ -176,18 +187,18 @@ const ChatBot = () => {
     }
 
     const isOutOfPage =
-      clientY < HEADER_HEIGHT + OPEN_BTN_SIZE / 2 ||
-      clientY > innerHeight - OPEN_BTN_SIZE / 2 ||
-      clientX < OPEN_BTN_SIZE / 2 ||
-      clientX > innerWidth - OPEN_BTN_SIZE / 2;
+      clientY < HEADER_HEIGHT + OPEN_BTN_DIAMETER / 2 ||
+      clientY > innerHeight - OPEN_BTN_DIAMETER / 2 ||
+      clientX < OPEN_BTN_DIAMETER / 2 ||
+      clientX > innerWidth - OPEN_BTN_DIAMETER / 2;
 
     if (isOutOfPage) {
       return;
     }
 
     setBoxPosition({
-      bottom: innerHeight - clientY - OPEN_BTN_SIZE / 2,
-      right: innerWidth - clientX - OPEN_BTN_SIZE / 2,
+      bottom: innerHeight - clientY - OPEN_BTN_DIAMETER / 2,
+      right: innerWidth - clientX - OPEN_BTN_DIAMETER / 2,
     });
   };
 
@@ -406,8 +417,8 @@ const OpenBtn = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  width: ${OPEN_BTN_SIZE}px;
-  height: ${OPEN_BTN_SIZE}px;
+  width: ${OPEN_BTN_DIAMETER}px;
+  height: ${OPEN_BTN_DIAMETER}px;
   border-radius: 50%;
   background-color: ${color.blue1};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);

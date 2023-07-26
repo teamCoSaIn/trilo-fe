@@ -1,7 +1,7 @@
 // HEADER
-const HEADER_Z_INDEX = 5;
+const HEADER_Z_INDEX = 6;
 
-const TRIP_HEADER_Z_INDEX = 6;
+const TRIP_HEADER_Z_INDEX = 7;
 
 // SideMenu
 const SIDEMENU_Z_INDEX = 11;

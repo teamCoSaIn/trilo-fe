@@ -154,8 +154,8 @@ const ChatBot = () => {
       }
 
       if (
-        CHAT_WINDOW_HEIGHT + HEADER_HEIGHT - OPEN_BTN_DIAMETER / 2 >
-        centerY
+        CHAT_WINDOW_HEIGHT + HEADER_HEIGHT - OPEN_BTN_DIAMETER / 2 > centerY &&
+        window.innerHeight > HEADER_HEIGHT + CHAT_WINDOW_HEIGHT
       ) {
         chatBoxPosition.current.bottom =
           -CHAT_WINDOW_HEIGHT + OPEN_BTN_DIAMETER;

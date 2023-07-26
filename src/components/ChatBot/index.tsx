@@ -211,6 +211,10 @@ const ChatBot = () => {
     setIsOpen(false);
   };
 
+  const handleCloseBtnClick = () => {
+    setIsOpen(false);
+  };
+
   useEffect(() => {
     document.addEventListener('mousemove', handleOpenBtnMouseMove);
     return () => {
@@ -246,7 +250,7 @@ const ChatBot = () => {
             <FlexDescription fontSize={1.8} color={color.blue3}>
               트롱봇에게 물어보기
             </FlexDescription>
-            <CloseBtn onClick={() => setIsOpen(false)}>
+            <CloseBtn onClick={handleCloseBtnClick}>
               <CloseIcon width={20} height={20} />
             </CloseBtn>
           </Header>

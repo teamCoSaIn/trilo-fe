@@ -1010,7 +1010,7 @@ const requestChat = rest.post(
   async (req, res, ctx) => {
     await sleep(1000);
     const body = await req.json();
-    const text = body.messages[1].content;
+    const { content } = body.messages[body.messages.length - 1];
     return res(
       ctx.json({
         id: 'chatcmpl-123',
@@ -1021,7 +1021,7 @@ const requestChat = rest.post(
             index: 0,
             message: {
               role: 'assistant',
-              content: `${text}에 대한 응답입니다.`,
+              content: `${content}에 대한 응답입니다.`,
             },
             finish_reason: 'stop',
           },

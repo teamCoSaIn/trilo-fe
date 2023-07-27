@@ -3,7 +3,7 @@ import { toast } from 'react-toastify';
 import { useRecoilValue } from 'recoil';
 import styled, { css } from 'styled-components';
 
-import { requestChat } from '@/api/chat';
+import { IChat, requestChat, TRole } from '@/api/chat';
 import { IUserProfile } from '@/api/user';
 import chatbotImgUrl from '@/assets/chatbot.png';
 import { ReactComponent as LogoIcon } from '@/assets/logo.svg';
@@ -38,8 +38,9 @@ const ChatBot = () => {
     default: '궁금한 것을 물어보세요.',
     error: '채팅 이용 불가',
   };
-  const CHATBOT_INIT_BOTTOM = 20;
-  const CHATBOT_INIT_RIGHT = 20;
+
+  const USER: TRole = 'user';
+  const ASSISTANT: TRole = 'assistant';
 
   const userId = useRecoilValue(UserId);
   const { data: userProfileData } = useGetUserProfile({ userId });
@@ -51,23 +52,10 @@ const ChatBot = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState<IChat[]>([
     {
-      text: `안녕하세요 ${
+      role: ASSISTANT,
+      content: `안녕하세요 ${
         (userProfileData as IUserProfile).nickName
       }님. 여행 정보에 대해 궁금하신 내용이 있으시면 물어봐주세요!`,
-      isBot: true,
-    },
-    { text: '뉴욕에 맛있는 스테이크집을 추천해줘', isBot: false },
-    {
-      text: `Peter Luger Steak House - 뉴욕에서 오랫동안 사랑받고 있는 유명한 스테이크 하우스입니다. 스테이크의 질과 육질이 매우 훌륭하며, 전통적인 스테이크 하우스 분위기를 즐길 수 있습니다.
-
-    Keens Steakhouse - 뉴욕에서 가장 오래된 스테이크 하우스 중 하나로, 고전적인 분위기와 다양한 스테이크 옵션을 제공합니다. 특히, 램치쇠 스테이크로 유명합니다.
-    
-    Delmonico's - 뉴욕에서 가장 오래된 연속 운영 레스토랑 중 하나로, 뛰어난 스테이크와 멋진 서비스로 유명합니다.
-    
-    Wolfgang's Steakhouse - 전 세계적으로 유명한 스테이크 하우스 체인의 뉴욕 지점입니다. 높은 품질의 스테이크와 멋진 앰비언스를 즐길 수 있습니다.
-    
-    BLT Steak - 뉴욕의 미디어 구역에 위치한 이 곳은 현대적인 분위기와 다양한 스테이크 옵션을 제공합니다.`,
-      isBot: true,
     },
   ]);
   const [isLoading, setIsLoading] = useState(false);
@@ -108,19 +96,22 @@ const ChatBot = () => {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     if (chatInputRef.current) {
-      const text = chatInputRef.current.value;
-      if (!text) {
+      const content = chatInputRef.current.value;
+      if (!content) {
         return;
       }
-      const reqChat = { text, isBot: false };
+      const reqChat = { content, role: USER };
 
       setChatHistory(prev => [...prev, reqChat]);
       setIsLoading(true);
       chatInputRef.current.value = '';
 
       try {
-        const res = await requestChat(text);
-        const resChat = { text: res.choices[0].message.content, isBot: true };
+        const res = await requestChat([...chatHistory, reqChat]);
+        const resChat = {
+          content: res.choices[0].message.content,
+          role: ASSISTANT,
+        };
         setChatHistory(prev => [...prev, resChat]);
       } catch {
         toast.error('현재 트롱봇을 사용할 수 없습니다.', {

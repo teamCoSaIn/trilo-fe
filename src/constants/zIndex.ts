@@ -1,7 +1,7 @@
 // HEADER
-const HEADER_Z_INDEX = 5;
+const HEADER_Z_INDEX = 6;
 
-const TRIP_HEADER_Z_INDEX = 6;
+const TRIP_HEADER_Z_INDEX = 7;
 
 // SideMenu
 const SIDEMENU_Z_INDEX = 11;
@@ -34,6 +34,9 @@ const TIMEPICKER_Z_INDEX = 1;
 // SelectedMarkerInfo
 const SELECTEDMARKERINFO_TAIL_Z_INDEX = 1;
 
+// ChatBot
+const CHATBOT_Z_INDEX = 5;
+
 export {
   HEADER_Z_INDEX,
   TRIP_HEADER_Z_INDEX,
@@ -49,4 +52,5 @@ export {
   TIMEPICKER_Z_INDEX,
   SELECTEDMARKERINFO_TAIL_Z_INDEX,
   SIDEMENU_Z_INDEX,
+  CHATBOT_Z_INDEX,
 };

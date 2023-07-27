@@ -103,7 +103,6 @@ const Map = () => {
 
   const googleMapStyle = {
     width: '100%',
-    // height: isDesktop ? '100%' : `${mobileMapHeight}%`,
     height: '100%',
   };
 
@@ -442,8 +441,8 @@ const Map = () => {
     >
       <MarkerF
         position={{
-          lat: googleMarkerLatLng?.lat as number,
-          lng: googleMarkerLatLng?.lng as number,
+          lat: googleMarkerLatLng?.lat || 0,
+          lng: googleMarkerLatLng?.lng || 0,
         }}
         animation={google.maps.Animation.DROP}
         onClick={handleGoogleMarkerClick}

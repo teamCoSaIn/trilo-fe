@@ -5,6 +5,7 @@ import { ErrorBoundary } from 'react-error-boundary';
 import { useParams } from 'react-router-dom';
 import styled from 'styled-components';
 
+import ChatBot from '@/components/ChatBot';
 import CircularLoader from '@/components/common/CircularLoader';
 import DimLoader from '@/components/common/DimLoader';
 import Error from '@/components/common/Error';
@@ -67,6 +68,7 @@ const Trip = () => {
           {(isDailyPlanListDataFetching ||
             (isTempPlanPageDataFetching && !isFetchingNextPage) ||
             isTripFetching) && <Portal childComponent={<DimLoader />} />}
+          {isDesktop && <ChatBot />}
         </Suspense>
       </ErrorBoundary>
     </Layout>

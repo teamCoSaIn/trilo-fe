@@ -1,3 +1,4 @@
+import { requestChat } from '@/api/chat';
 import { getLocation } from '@/api/location';
 import {
   getAccessToken,
@@ -54,6 +55,7 @@ const HTTP = {
   getScheduleDetails,
   changeScheduleDetails,
   getLocation,
+  requestChat,
 };
 
 export default HTTP;

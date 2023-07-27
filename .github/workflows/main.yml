@@ -23,8 +23,9 @@ jobs:
           KAKAO_CLIENT_ID: ${{ secrets.KAKAO_CLIENT_ID }}
           NAVER_CLIENT_ID: ${{ secrets.NAVER_CLIENT_ID }}
           GOOGLE_MAPS_API_KEY: ${{ secrets.GOOGLE_MAPS_API_KEY }}
+          OPEN_AI_API_KEY: ${{ secrets.OPEN_AI_API_KEY }}
           OAUTH_REDIRECT_URI: ${{ vars.OAUTH_REDIRECT_URI }}
-          
+
       - name: 빌드한 파일 S3에 업로드
         run: aws s3 sync dist s3://${{ secrets.AWS_BUCKET_NAME }} --region ${{secrets.AWS_BUCKET_REGION}} --acl public-read --delete
         env:

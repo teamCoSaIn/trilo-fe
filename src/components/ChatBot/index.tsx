@@ -29,9 +29,16 @@ interface IBoxPosition {
   right: number;
 }
 
+interface IChatBotTranslateValue {
+  dx: number;
+  dy: number;
+}
+
 const OPEN_BTN_DIAMETER = 70;
 const CHAT_WINDOW_WIDTH = 400;
 const CHAT_WINDOW_HEIGHT = 600;
+const CHATBOT_INIT_BOTTOM = 20;
+const CHATBOT_INIT_RIGHT = 20;
 
 const ChatBot = () => {
   const CHAT_INPUT_PLACEHOLDER = {
@@ -45,10 +52,11 @@ const ChatBot = () => {
   const userId = useRecoilValue(UserId);
   const { data: userProfileData } = useGetUserProfile({ userId });
 
-  const [boxPosition, setBoxPosition] = useState<IBoxPosition>({
-    bottom: CHATBOT_INIT_BOTTOM,
-    right: CHATBOT_INIT_RIGHT,
-  });
+  const [chatBotTranslateValue, setChatBotTranslateValue] =
+    useState<IChatBotTranslateValue>({
+      dx: 0,
+      dy: 0,
+    });
   const [isOpen, setIsOpen] = useState(false);
   const [chatHistory, setChatHistory] = useState<IChat[]>([
     {
@@ -188,9 +196,9 @@ const ChatBot = () => {
       return;
     }
 
-    setBoxPosition({
-      bottom: innerHeight - clientY - OPEN_BTN_DIAMETER / 2,
-      right: innerWidth - clientX - OPEN_BTN_DIAMETER / 2,
+    setChatBotTranslateValue({
+      dy: pageY - (scrollHeight - CHATBOT_INIT_BOTTOM - OPEN_BTN_DIAMETER / 2),
+      dx: pageX - (scrollWidth - CHATBOT_INIT_RIGHT - OPEN_BTN_DIAMETER / 2),
     });
   };
 
@@ -228,7 +236,7 @@ const ChatBot = () => {
   }, [isOpen]);
 
   return (
-    <Box boxPosition={boxPosition}>
+    <Box chatBotTranslateValue={chatBotTranslateValue}>
       {isOpen && (
         <Wrapper
           column
@@ -281,12 +289,16 @@ const ChatBot = () => {
   );
 };
 
-const Box = styled(Flex)<{ boxPosition: IBoxPosition }>`
+const Box = styled(Flex)<{ chatBotTranslateValue: IChatBotTranslateValue }>`
   position: absolute;
-  ${({ boxPosition }) => {
+  bottom: ${CHATBOT_INIT_BOTTOM}px;
+  right: ${CHATBOT_INIT_RIGHT}px;
+  ${({ chatBotTranslateValue }) => {
     return css`
-      bottom: ${boxPosition.bottom}px;
-      right: ${boxPosition.right}px;
+      transform: translate(
+        ${chatBotTranslateValue.dx}px,
+        ${chatBotTranslateValue.dy}px
+      );
     `;
   }}
   z-index: ${CHATBOT_Z_INDEX};

@@ -19,12 +19,7 @@ import { CHATBOT_Z_INDEX } from '@/constants/zIndex';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
-interface IChat {
-  isBot: boolean;
-  text: string;
-}
-
-interface IBoxPosition {
+interface IChatBoxPosition {
   bottom: number;
   right: number;
 }
@@ -50,6 +45,7 @@ const ChatBot = () => {
   const ASSISTANT: TRole = 'assistant';
 
   const userId = useRecoilValue(UserId);
+
   const { data: userProfileData } = useGetUserProfile({ userId });
 
   const [chatBotTranslateValue, setChatBotTranslateValue] =
@@ -68,37 +64,37 @@ const ChatBot = () => {
   ]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const chatInputRef = useRef<HTMLInputElement>(null);
   const openBtnRef = useRef<HTMLButtonElement>(null);
   const isDragging = useRef<boolean>(false);
   const isMouseDown = useRef<boolean>(false);
-  const chatBoxPosition = useRef<IBoxPosition>({
+  const chatBoxRef = useRef<HTMLDivElement>(null);
+  const chatBoxPosition = useRef<IChatBoxPosition>({
     bottom: 0,
     right: 0,
   });
+  const chatInputRef = useRef<HTMLInputElement>(null);
   const chatInputPlaceHolder = useRef<string>(CHAT_INPUT_PLACEHOLDER.default);
-  const chatBoxRef = useRef<HTMLDivElement>(null);
 
   const chatList = chatHistory.map((chat, idx) => {
     return (
-      <ChatBox key={idx} isBot={chat.isBot}>
-        <ChatImg
+      <ChatBubbleBox key={idx} isBot={chat.role === ASSISTANT}>
+        <ProfileImg
           src={
-            chat.isBot
+            chat.role === ASSISTANT
               ? chatbotImgUrl
               : (userProfileData as IUserProfile).profileImageURL
           }
         />
-        <Text isBot={chat.isBot}>{chat.text}</Text>
-      </ChatBox>
+        <Content isBot={chat.role === ASSISTANT}>{chat.content}</Content>
+      </ChatBubbleBox>
     );
   });
 
   const chatLoadingDot = (
-    <ChatBox isBot alignCenter>
-      <ChatImg src={chatbotImgUrl} />
+    <ChatBubbleBox isBot alignCenter>
+      <ProfileImg src={chatbotImgUrl} />
       <DotFlashing />
-    </ChatBox>
+    </ChatBubbleBox>
   );
 
   const handleSubmit = async (event: FormEvent) => {
@@ -170,8 +166,15 @@ const ChatBot = () => {
     isMouseDown.current = true;
   };
 
-  const handleOpenBtnMouseUp = () => {
-    isMouseDown.current = false;
+  const handleOpenBtnMouseUp = (event: MouseEvent) => {
+    if (isMouseDown.current) {
+      isMouseDown.current = false;
+    }
+
+    const isContain = openBtnRef.current?.contains(event.target as Node);
+    if (!isContain && isDragging.current) {
+      isDragging.current = false;
+    }
   };
 
   const handleOpenBtnMouseMove = (event: MouseEvent) => {
@@ -179,8 +182,9 @@ const ChatBot = () => {
       return;
     }
 
-    const { clientX, clientY } = event;
+    const { clientX, clientY, pageX, pageY } = event;
     const { innerWidth, innerHeight } = window;
+    const { scrollWidth, scrollHeight } = document.documentElement;
 
     if (!isDragging.current) {
       isDragging.current = true;
@@ -216,8 +220,11 @@ const ChatBot = () => {
 
   useEffect(() => {
     document.addEventListener('mousemove', handleOpenBtnMouseMove);
+    document.addEventListener('mouseup', handleOpenBtnMouseUp);
+
     return () => {
       document.removeEventListener('mousemove', handleOpenBtnMouseMove);
+      document.addEventListener('mouseup', handleOpenBtnMouseUp);
     };
   }, []);
 
@@ -238,7 +245,7 @@ const ChatBot = () => {
   return (
     <Box chatBotTranslateValue={chatBotTranslateValue}>
       {isOpen && (
-        <Wrapper
+        <ChatBox
           column
           alignCenter
           chatBoxPosition={chatBoxPosition.current}
@@ -273,16 +280,15 @@ const ChatBot = () => {
               전송
             </SubmitBtn>
           </InputBox>
-        </Wrapper>
+        </ChatBox>
       )}
       {!isOpen && (
         <OpenBtn
           onClick={handleOpenBtnClick}
           onMouseDown={handleOpenBtnMouseDown}
-          onMouseUp={handleOpenBtnMouseUp}
           ref={openBtnRef}
         >
-          <ChatImg src={chatbotImgUrl} draggable={false} />
+          <ProfileImg src={chatbotImgUrl} draggable={false} />
         </OpenBtn>
       )}
     </Box>
@@ -304,7 +310,7 @@ const Box = styled(Flex)<{ chatBotTranslateValue: IChatBotTranslateValue }>`
   z-index: ${CHATBOT_Z_INDEX};
 `;
 
-const Wrapper = styled(Flex)<{ chatBoxPosition: IBoxPosition }>`
+const ChatBox = styled(Flex)<{ chatBoxPosition: IChatBoxPosition }>`
   position: relative;
   ${({ chatBoxPosition }) => {
     return css`
@@ -360,7 +366,7 @@ const Input = styled.input`
 
 const SubmitBtn = styled(Button)``;
 
-const ChatBox = styled(Flex)<{ isBot: boolean }>`
+const ChatBubbleBox = styled(Flex)<{ isBot: boolean }>`
   flex-shrink: 0;
   ${({ isBot }) => {
     if (isBot) {
@@ -372,14 +378,14 @@ const ChatBox = styled(Flex)<{ isBot: boolean }>`
   }}
 `;
 
-const ChatImg = styled.img`
+const ProfileImg = styled.img`
   width: 35px;
   height: 35px;
   border-radius: 50%;
   margin: 0 10px;
 `;
 
-const Text = styled.p<{ isBot: boolean }>`
+const Content = styled.p<{ isBot: boolean }>`
   max-width: 220px;
   font-size: 1.5rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
@@ -458,6 +464,9 @@ const OpenBtn = styled.button`
   background-color: ${color.blue1};
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
   &:hover {
+    background-color: ${color.blue2};
+  }
+  &:active {
     background-color: ${color.blue2};
   }
 `;

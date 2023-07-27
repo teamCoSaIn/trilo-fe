@@ -68,7 +68,7 @@ const Trip = () => {
           {(isDailyPlanListDataFetching ||
             (isTempPlanPageDataFetching && !isFetchingNextPage) ||
             isTripFetching) && <Portal childComponent={<DimLoader />} />}
-          {isDesktop && <ChatBot />}
+          <ChatBot />
         </Suspense>
       </ErrorBoundary>
     </Layout>

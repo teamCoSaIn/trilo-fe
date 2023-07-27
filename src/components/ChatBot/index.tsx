@@ -16,6 +16,7 @@ import Spacing from '@/components/common/Spacing';
 import color from '@/constants/color';
 import { HEADER_HEIGHT } from '@/constants/size';
 import { CHATBOT_Z_INDEX } from '@/constants/zIndex';
+import useMedia from '@/hooks/useMedia';
 import useGetUserProfile from '@/queryHooks/useGetUserProfile';
 import { UserId } from '@/states/userStatus';
 
@@ -36,6 +37,8 @@ const CHATBOT_INIT_BOTTOM = 20;
 const CHATBOT_INIT_RIGHT = 20;
 
 const ChatBot = () => {
+  const { isDesktop } = useMedia();
+
   const CHAT_INPUT_PLACEHOLDER = {
     default: '궁금한 것을 물어보세요.',
     error: '채팅 이용 불가',
@@ -242,8 +245,12 @@ const ChatBot = () => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    setIsOpen(false);
+  }, [isDesktop]);
+
   return (
-    <Box chatBotTranslateValue={chatBotTranslateValue}>
+    <Box chatBotTranslateValue={chatBotTranslateValue} isDesktop={isDesktop}>
       {isOpen && (
         <ChatBox
           column
@@ -295,7 +302,10 @@ const ChatBot = () => {
   );
 };
 
-const Box = styled(Flex)<{ chatBotTranslateValue: IChatBotTranslateValue }>`
+const Box = styled(Flex)<{
+  chatBotTranslateValue: IChatBotTranslateValue;
+  isDesktop: boolean;
+}>`
   position: absolute;
   bottom: ${CHATBOT_INIT_BOTTOM}px;
   right: ${CHATBOT_INIT_RIGHT}px;
@@ -306,6 +316,13 @@ const Box = styled(Flex)<{ chatBotTranslateValue: IChatBotTranslateValue }>`
         ${chatBotTranslateValue.dy}px
       );
     `;
+  }}
+  ${({ isDesktop }) => {
+    if (!isDesktop) {
+      return css`
+        display: none;
+      `;
+    }
   }}
   z-index: ${CHATBOT_Z_INDEX};
 `;

@@ -750,27 +750,30 @@ const getUserInfo = rest.get(
   }
 );
 
-const getTripList = rest.get('/api/trips', async (req, res, ctx) => {
-  await sleep(1000);
-  let response;
-  const pointerId = req.url.searchParams.get('tripId');
-  const size = Number(req.url.searchParams.get('size') || '0');
-  if (!pointerId) {
-    response = {
-      trips: tripList.slice(0, size),
-      hasNext: tripList.length > size,
-    };
-  } else {
-    const pointerIdx = tripList.findIndex(it => it.tripId === +pointerId);
-    const curTripList = tripList.slice(pointerIdx + 1, pointerIdx + 1 + size);
-    response = {
-      trips: curTripList,
-      hasNext: pointerIdx + 1 + size < tripList.length,
-    };
-  }
+const getTripList = rest.get(
+  '/api/trippers/:tripperId/trips',
+  async (req, res, ctx) => {
+    await sleep(1000);
+    let response;
+    const pointerId = req.url.searchParams.get('tripId');
+    const size = Number(req.url.searchParams.get('size') || '0');
+    if (!pointerId) {
+      response = {
+        trips: tripList.slice(0, size),
+        hasNext: tripList.length > size,
+      };
+    } else {
+      const pointerIdx = tripList.findIndex(it => it.tripId === +pointerId);
+      const curTripList = tripList.slice(pointerIdx + 1, pointerIdx + 1 + size);
+      response = {
+        trips: curTripList,
+        hasNext: pointerIdx + 1 + size < tripList.length,
+      };
+    }
 
-  return res(ctx.json(response));
-});
+    return res(ctx.json(response));
+  }
+);
 
 const changeTripTitle = rest.put(
   '/api/trips/:tripId/title',

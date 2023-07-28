@@ -51,9 +51,12 @@ export const getTrip = async (tripId: TGetTripParams) => {
 export const getTripList = async (reqParams: IGetTripListParams) => {
   const res = await axios<IGetTripListResponse>({
     method: 'get',
-    url: `/trips`,
+    url: `/trippers/${reqParams.tripperId}/trips`,
     requireAuth: true,
-    params: reqParams,
+    params: {
+      tripId: reqParams.tripId,
+      size: reqParams.size,
+    },
   });
   return res.data;
 };

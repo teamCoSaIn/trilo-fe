@@ -1,13 +1,26 @@
+import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 
 import HeaderLayout from '@/Layouts/HeaderLayout';
-import { Home, Login, User, Callback, TripList, Trip } from '@/pages';
+import { Home } from '@/pages';
 import {
   EveryUser,
   OnlyLoginUser,
   ExceptLogoutUser,
   ExceptLoginUser,
 } from '@/utils/route';
+
+const Login = lazy(
+  () => import(/* webpackChunkName: "login" */ '@/pages/Login')
+);
+const User = lazy(() => import(/* webpackChunkName: "user" */ '@/pages/User'));
+const TripList = lazy(
+  () => import(/* webpackChunkName: "tripList" */ '@/pages/TripList')
+);
+const Trip = lazy(() => import(/* webpackChunkName: "trip" */ '@/pages/Trip'));
+const Callback = lazy(
+  () => import(/* webpackChunkName: "callback" */ '@/pages/Callback')
+);
 
 const Router = () => {
   return (
